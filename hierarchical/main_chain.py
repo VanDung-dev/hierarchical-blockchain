@@ -155,6 +155,13 @@ class MainChain(Blockchain):
                     event.get("details", {}).get("sub_chain_name") == sub_chain_name):
                     return True
         
+        # Search in pending events as well
+        for event in self.pending_events:
+            if (event.get("event") == "proof_submission" and
+                event.get("details", {}).get("proof_hash") == proof_hash and
+                event.get("details", {}).get("sub_chain_name") == sub_chain_name):
+                return True
+        
         return False
     
     def get_proofs_by_sub_chain(self, sub_chain_name: str) -> List[Dict[str, Any]]:
@@ -173,6 +180,12 @@ class MainChain(Blockchain):
                 if (event.get("event") == "proof_submission" and
                     event.get("details", {}).get("sub_chain_name") == sub_chain_name):
                     proofs.append(event)
+        
+        # Add pending proofs as well
+        for event in self.pending_events:
+            if (event.get("event") == "proof_submission" and
+                event.get("details", {}).get("sub_chain_name") == sub_chain_name):
+                proofs.append(event)
         
         return proofs
     
