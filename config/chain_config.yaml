@@ -3,8 +3,8 @@
 # Framework Information
 framework:
   name: "hierarchical-blockchain"
-  version: "0.dev1"
-  description: "Hierarchical Blockchain framework inspired by Hyperledger Fabric architecture"
+  version: "0.dev2"
+  description: "Advanced Hierarchical Blockchain framework with multi-org support and performance optimization"
 
 # Main Chain Configuration
 main_chain:
@@ -185,7 +185,7 @@ api:
     requests_per_minute: 100
   authentication:
     enabled: true
-    token_expiry: 3600  # 1 hour
+    session_expiry: 3600  # 1 hour
 
 # CLI Configuration
 cli:
