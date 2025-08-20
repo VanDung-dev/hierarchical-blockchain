@@ -184,3 +184,62 @@ def test_entity_tracing_across_chains():
     assert "operation_start" in event_types
     assert "status_update" in event_types
     assert "operation_complete" in event_types
+
+
+def test_cross_chain_entity_tracing():
+    """Test entity tracing across multiple sub-chains"""
+    # Create Main Chain and multiple Sub-Chains
+    main_chain = MainChain(name="CrossChainTracingMainChain")
+    sub_chain_1 = SubChain(name="ManufacturingChain", domain_type="manufacturing")
+    sub_chain_2 = SubChain(name="QualityChain", domain_type="quality_control")
+    sub_chain_3 = SubChain(name="ShippingChain", domain_type="logistics")
+    
+    # Connect all Sub-Chains to Main Chain
+    sub_chain_1.connect_to_main_chain(main_chain)
+    sub_chain_2.connect_to_main_chain(main_chain)
+    sub_chain_3.connect_to_main_chain(main_chain)
+    
+    # Track an entity across chains
+    entity_id = "PRODUCT-CROSS-CHAIN-001"
+    
+    # Manufacturing stage
+    sub_chain_1.start_operation(entity_id, "production", {"line": "A"})
+    sub_chain_1.update_entity_status(entity_id, "in_progress", {"step": 1})
+    sub_chain_1.complete_operation(entity_id, "production", {"result": "completed"})
+    sub_chain_1.finalize_sub_chain_block()
+    sub_chain_1.submit_proof_to_main(main_chain)
+    
+    # Quality control stage
+    sub_chain_2.start_operation(entity_id, "quality_check", {"station": 1})
+    sub_chain_2.complete_operation(entity_id, "quality_check", {"result": "passed"})
+    sub_chain_2.finalize_sub_chain_block()
+    sub_chain_2.submit_proof_to_main(main_chain)
+    
+    # Shipping stage
+    sub_chain_3.start_operation(entity_id, "package", {"box_id": "BOX-001"})
+    sub_chain_3.complete_operation(entity_id, "package", {"tracking": "TX-001"})
+    sub_chain_3.finalize_sub_chain_block()
+    sub_chain_3.submit_proof_to_main(main_chain)
+    
+    # Finalize all proofs in Main Chain
+    main_chain.finalize_block()
+    main_chain.finalize_block()
+    main_chain.finalize_block()
+    
+    # Validate all chains
+    assert main_chain.is_chain_valid() is True
+    assert sub_chain_1.is_chain_valid() is True
+    assert sub_chain_2.is_chain_valid() is True
+    assert sub_chain_3.is_chain_valid() is True
+    
+    # Check that all proofs are in Main Chain
+    assert main_chain.proof_count == 3
+    
+    # Verify each sub-chain's proof
+    manufacturing_proofs = main_chain.get_proofs_by_sub_chain("ManufacturingChain")
+    quality_proofs = main_chain.get_proofs_by_sub_chain("QualityChain")
+    shipping_proofs = main_chain.get_proofs_by_sub_chain("ShippingChain")
+    
+    assert len(manufacturing_proofs) == 1
+    assert len(quality_proofs) == 1
+    assert len(shipping_proofs) == 1
