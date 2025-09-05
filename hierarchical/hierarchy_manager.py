@@ -11,6 +11,9 @@ from typing import Dict, Any, List, Optional, Set, Callable
 from .main_chain import MainChain
 from .sub_chain import SubChain
 from core.utils import sanitize_metadata_for_main_chain
+from .multi_org import create_organization, MultiOrgNetwork
+from .channel import Channel, Organization as ChannelOrganization
+from .private_data import PrivateCollection
 
 
 class HierarchyManager:
@@ -22,6 +25,7 @@ class HierarchyManager:
     - Coordinates proof submissions between chains
     - Provides system-wide monitoring and integrity checks
     - Handles cross-chain communication and validation
+    - Manages organizations, channels and private data collections (0.dev3 features)
     """
     
     def __init__(self, main_chain_name: str = "MainChain"):
@@ -41,6 +45,10 @@ class HierarchyManager:
             "total_proofs": 0,
             "system_uptime": 0
         }
+        self.organizations: Dict[str, Any] = {}
+        self.network: Optional[MultiOrgNetwork] = None
+        self.channels: Dict[str, Channel] = {}
+        self.private_collections: Dict[str, PrivateCollection] = {}
     
     def create_sub_chain(self, name: str, domain_type: str, 
                         metadata: Optional[Dict[str, Any]] = None) -> bool:
@@ -391,6 +399,187 @@ class HierarchyManager:
                 validation_results["proof_consistency"][sub_chain_name] = proof_exists
         
         return validation_results
+
+    def create_organization(self, org_id: str, name: str, admin_users: List[str] = None) -> Any:
+        """
+        Create an organization with MSP configuration (0.dev3 feature).
+        
+        Args:
+            org_id: Unique organization identifier
+            name: Organization name
+            admin_users: List of admin user IDs
+            
+        Returns:
+            Created organization object
+        """
+        if org_id in self.organizations:
+            raise ValueError(f"Organization {org_id} already exists")
+        
+        # Create organization using factory function
+        org = create_organization(org_id, name, admin_users)
+        self.organizations[org_id] = org
+        
+        # Initialize network if not already done
+        if self.network is None:
+            self.network = MultiOrgNetwork()
+        
+        # Add organization to network
+        self.network.add_organization(org)
+        
+        return org
+    
+    def get_organization(self, org_id: str) -> Any:
+        """
+        Get organization by ID (0.dev3 feature).
+        
+        Args:
+            org_id: Organization ID
+            
+        Returns:
+            Organization object or None if not found
+        """
+        return self.organizations.get(org_id)
+    
+    def create_channel(self, channel_id: str, org_ids: List[str], policy_config: Dict[str, Any] = None) -> Channel:
+        """
+        Create a channel for secure data isolation (0.dev3 feature).
+        
+        Args:
+            channel_id: Unique channel identifier
+            org_ids: List of organization IDs participating in the channel
+            policy_config: Channel policy configuration
+            
+        Returns:
+            Created channel object
+        """
+        if channel_id in self.channels:
+            raise ValueError(f"Channel {channel_id} already exists")
+        
+        # Validate organizations exist
+        organizations = []
+        for org_id in org_ids:
+            org = self.get_organization(org_id)
+            if not org:
+                raise ValueError(f"Organization {org_id} not found")
+            
+            # Create ChannelOrganization object
+            channel_org = ChannelOrganization(
+                org_id=org_id,
+                name=org_id,  # Using org_id as name for simplicity
+                msp_id=f"{org_id}-MSP",
+                endpoints=[],
+                certificates={},
+                roles={"admin", "member"}  # Simplified roles
+            )
+            organizations.append(channel_org)
+        
+        # Default policy configuration
+        if policy_config is None:
+            policy_config = {
+                "read": "MEMBER",
+                "write": "ADMIN",
+                "endorsement": "MAJORITY"
+            }
+        
+        # Create channel
+        channel = Channel(channel_id, organizations, policy_config)
+        self.channels[channel_id] = channel
+        
+        return channel
+    
+    def get_channel(self, channel_id: str) -> Optional[Channel]:
+        """
+        Get channel by ID (0.dev3 feature).
+        
+        Args:
+            channel_id: Channel ID
+            
+        Returns:
+            Channel object or None if not found
+        """
+        return self.channels.get(channel_id)
+    
+    def create_private_data_collection(self, name: str, org_ids: List[str], config: Dict[str, Any] = None) -> PrivateCollection:
+        """
+        Create a private data collection (0.dev3 feature).
+        
+        Args:
+            name: Collection name
+            org_ids: List of organization IDs that are members of this collection
+            config: Collection configuration
+            
+        Returns:
+            Created private collection object
+        """
+        if name in self.private_collections:
+            raise ValueError(f"Private collection {name} already exists")
+        
+        # Validate organizations exist
+        organizations = {}
+        for org_id in org_ids:
+            org = self.get_organization(org_id)
+            if not org:
+                raise ValueError(f"Organization {org_id} not found")
+            
+            # Create ChannelOrganization object for private collection
+            channel_org = ChannelOrganization(
+                org_id=org_id,
+                name=org_id,  # Using org_id as name for simplicity
+                msp_id=f"{org_id}-MSP",
+                endpoints=[],
+                certificates={},
+                roles={"admin", "member"}  # Simplified roles
+            )
+            organizations[org_id] = channel_org
+        
+        # Default configuration
+        if config is None:
+            config = {
+                "block_to_purge": 1000,
+                "endorsement_policy": "MAJORITY",
+                "min_endorsements": 2
+            }
+        
+        # Create private collection
+        private_collection = PrivateCollection(name, organizations, config)
+        self.private_collections[name] = private_collection
+        
+        return private_collection
+    
+    def get_private_data_collection(self, name: str) -> Optional[PrivateCollection]:
+        """
+        Get private data collection by name (0.dev3 feature).
+        
+        Args:
+            name: Collection name
+            
+        Returns:
+            Private collection object or None if not found
+        """
+        return self.private_collections.get(name)
+    
+    def assign_organization_to_chain(self, org_id: str, chain_name: str) -> bool:
+        """
+        Assign an organization to a chain (0.dev3 feature).
+        
+        Args:
+            org_id: Organization ID
+            chain_name: Chain name
+            
+        Returns:
+            True if assignment was successful
+        """
+        org = self.get_organization(org_id)
+        if not org:
+            return False
+        
+        chain = self.get_sub_chain(chain_name)
+        if not chain:
+            return False
+        
+        # In a full implementation, this would establish a relationship
+        # between the organization and chain for access control
+        return True
     
     def __str__(self) -> str:
         """String representation of the Hierarchy Manager."""
