@@ -8,6 +8,9 @@ This script demonstrates the key features of the hierarchical blockchain framewo
 - Proof submissions from Sub-Chains to Main Chain
 - Entity tracing across multiple chains
 - Cross-chain validation and integrity checking
+- Membership Service Provider (MSP) integration
+- Channel-based data isolation
+- Private data collections
 
 This serves as both a demonstration and a basic test of the framework.
 """
@@ -81,8 +84,107 @@ def demonstrate_hierarchical_blockchain():
     
     print()
     
+    # Demonstrate MSP functionality
+    print("3. Demonstrating Membership Service Provider (MSP) functionality...")
+
+    # Create organizations
+    try:
+        org1 = hierarchy_manager.create_organization("ManufacturerOrg", "Manufacturing Organization", ["admin1"])
+        org2 = hierarchy_manager.create_organization("QualityOrg", "Quality Organization", ["admin2"])
+        org3 = hierarchy_manager.create_organization("LogisticsOrg", "Logistics Organization", ["admin3"])
+        print(f"   Created organizations: ManufacturerOrg, QualityOrg, LogisticsOrg")
+    except Exception as e:
+        print(f"   Error creating organizations: {e}")
+        return None
+
+    # Assign organizations to chains
+    hierarchy_manager.assign_organization_to_chain("ManufacturerOrg", "ManufacturingChain")
+    hierarchy_manager.assign_organization_to_chain("QualityOrg", "QualityChain")
+    hierarchy_manager.assign_organization_to_chain("LogisticsOrg", "LogisticsChain")
+    print("   Assigned organizations to respective chains")
+
+    print()
+
+    # Create channels for data isolation
+    print("4. Creating channels for data isolation...")
+
+    # Create channels with policies
+    try:
+        prod_channel = hierarchy_manager.create_channel("ProductionChannel", 
+                                                       ["ManufacturerOrg", "QualityOrg"],
+                                                       {
+                                                           "read": "MEMBER",
+                                                           "write": "ADMIN",
+                                                           "endorsement": "MAJORITY"
+                                                       })
+
+        supply_channel = hierarchy_manager.create_channel("SupplyChannel",
+                                                         ["QualityOrg", "LogisticsOrg"],
+                                                         {
+                                                             "read": "MEMBER",
+                                                             "write": "ADMIN",
+                                                             "endorsement": "MAJORITY"
+                                                         })
+
+        enterprise_channel = hierarchy_manager.create_channel("EnterpriseChannel",
+                                                             ["ManufacturerOrg", "QualityOrg", "LogisticsOrg"],
+                                                             {
+                                                                 "read": "MEMBER",
+                                                                 "write": "ADMIN",
+                                                                 "endorsement": "MAJORITY"
+                                                             })
+
+        print(f"   Created channels: ProductionChannel, SupplyChannel, EnterpriseChannel")
+    except Exception as e:
+        print(f"   Error creating channels: {e}")
+        return None
+
+    print()
+
+    # Create private data collections
+    print("5. Setting up private data collections...")
+
+    # Define private data collections
+    try:
+        manufacturing_private_data = hierarchy_manager.create_private_data_collection(
+            "ManufacturingSecrets", 
+            ["ManufacturerOrg"],
+            {
+                "block_to_purge": 100,
+                "endorsement_policy": "MAJORITY",
+                "min_endorsements": 1
+            }
+        )
+
+        quality_private_data = hierarchy_manager.create_private_data_collection(
+            "QualitySecrets",
+            ["QualityOrg"],
+            {
+                "block_to_purge": 100,
+                "endorsement_policy": "MAJORITY",
+                "min_endorsements": 1
+            }
+        )
+
+        shared_private_data = hierarchy_manager.create_private_data_collection(
+            "SharedSecrets",
+            ["ManufacturerOrg", "QualityOrg", "LogisticsOrg"],
+            {
+                "block_to_purge": 100,
+                "endorsement_policy": "MAJORITY",
+                "min_endorsements": 2
+            }
+        )
+
+        print("   Created private data collections: ManufacturingSecrets, QualitySecrets, SharedSecrets")
+    except Exception as e:
+        print(f"   Error creating private data collections: {e}")
+        return None
+
+    print()
+
     # Demonstrate entity lifecycle across multiple chains
-    print("3. Demonstrating Entity Lifecycle Management...")
+    print("6. Demonstrating Entity Lifecycle Management...")
     
     # Create some sample entities
     entities = [
@@ -165,7 +267,7 @@ def demonstrate_hierarchical_blockchain():
     print()
     
     # Finalize blocks and submit proofs
-    print("4. Finalizing blocks and submitting proofs to Main Chain...")
+    print("7. Finalizing blocks and submitting proofs to Main Chain...")
 
     # Finalize Sub-Chain blocks
     try:
@@ -201,7 +303,7 @@ def demonstrate_hierarchical_blockchain():
     print()
     
     # Demonstrate entity tracing
-    print("5. Demonstrating Entity Tracing Across Chains...")
+    print("8. Demonstrating Entity Tracing Across Chains...")
 
     entity_tracer = EntityTracer(hierarchy_manager)
 
@@ -231,7 +333,7 @@ def demonstrate_hierarchical_blockchain():
         print()
 
     # Demonstrate cross-chain validation
-    print("6. Demonstrating Cross-Chain Validation...")
+    print("9. Demonstrating Cross-Chain Validation...")
 
     validator = CrossChainValidator(hierarchy_manager)
 
@@ -257,7 +359,7 @@ def demonstrate_hierarchical_blockchain():
     print()
 
     # Generate comprehensive system report
-    print("7. Generating System Statistics...")
+    print("10. Generating System Statistics...")
 
     try:
         system_stats = hierarchy_manager.get_system_integrity_report()
@@ -282,7 +384,7 @@ def demonstrate_hierarchical_blockchain():
     print()
     
     # Demonstrate database persistence (optional)
-    print("8. Demonstrating Database Persistence...")
+    print("11. Demonstrating Database Persistence...")
     
     try:
         db_adapter = SQLiteAdapter("demo_blockchain.db")
@@ -323,8 +425,57 @@ def demonstrate_hierarchical_blockchain():
 
     print()
     
+    # Demonstrate private data usage
+    print("12. Demonstrating Private Data Usage...")
+
+    # Add private data to collections
+    try:
+        # Add data to ManufacturingSecrets
+        manufacturing_private_data.add_data(
+            "secret_formula_001",
+            {"formula": "A+B+C", "process_temperature": 200},
+            {"creator": "ManufacturerOrg", "endorsements": ["ManufacturerOrg"]},
+            "ManufacturerOrg"
+        )
+
+        # Add data to QualitySecrets
+        quality_private_data.add_data(
+            "quality_specs_001",
+            {"tolerance": "0.01mm", "inspection_method": "laser_scanning"},
+            {"creator": "QualityOrg", "endorsements": ["QualityOrg"]},
+            "QualityOrg"
+        )
+
+        # Add data to SharedSecrets
+        shared_private_data.add_data(
+            "shared_contract_001",
+            {"terms": "Net 30", "penalty": "2% per day"},
+            {"creator": "ManufacturerOrg", "endorsements": ["ManufacturerOrg", "QualityOrg"]},
+            "ManufacturerOrg"
+        )
+
+        print("   Added private data to collections")
+
+        # Retrieve private data
+        formula = manufacturing_private_data.get_data("secret_formula_001", "ManufacturerOrg")
+        if formula:
+            print(f"   Retrieved manufacturing secret: {formula}")
+
+        specs = quality_private_data.get_data("quality_specs_001", "QualityOrg")
+        if specs:
+            print(f"   Retrieved quality secret: {specs}")
+
+        contract = shared_private_data.get_data("shared_contract_001", "QualityOrg")
+        if contract:
+            print(f"   Retrieved shared secret: {contract}")
+
+    except Exception as e:
+        print(f"   Error with private data: {e}")
+
+    print()
+
     # Final summary
-    print("9. Framework Demonstration Summary...")
+    print("13. Framework Demonstration Summary...")
     print("   ✓ Hierarchical structure (Main Chain + Sub-Chains)")
     print("   ✓ Event-based model (no cryptocurrency terminology)")
     print("   ✓ Entity lifecycle management across multiple chains")
@@ -333,6 +484,9 @@ def demonstrate_hierarchical_blockchain():
     print("   ✓ Cross-chain entity tracing and analysis")
     print("   ✓ System integrity validation and compliance checking")
     print("   ✓ Database persistence and querying capabilities")
+    print("   ✓ Membership Service Provider (MSP) integration")
+    print("   ✓ Channel-based data isolation")
+    print("   ✓ Private data collections")
     print("   ✓ Framework guidelines compliance throughout")
 
     print()
@@ -348,7 +502,7 @@ def main():
     """Main entry point for the demonstration."""
     try:
         # Add framework version information
-        print("Framework Version: 0.dev2")
+        print("Framework Version: 0.dev3")
         print("Architecture: Hierarchical Blockchain with Main Chain/Sub-Chains")
         print("Compliance: Non-cryptocurrency, Event-based, Hierarchical Structure")
         print()
@@ -362,6 +516,7 @@ def main():
         print("- Create additional Sub-Chains")
         print("- Perform entity tracing and validation")
         print("- Explore the database contents")
+        print("- Utilize MSP, channels, and private data collections")
         
         # Return success status
         sys.exit(0)
