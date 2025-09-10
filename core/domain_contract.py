@@ -77,15 +77,15 @@ class ContractStorage:
     
     def __init__(self):
         self.data: Dict[str, Any] = {}
-        self.transaction_log: List[Dict[str, Any]] = []
+        self.event_log: List[Dict[str, Any]] = []
         
     def set(self, key: str, value: Any, contract_id: str = None) -> None:
         """Set a value in contract storage"""
         old_value = self.data.get(key)
         self.data[key] = value
         
-        # Log the transaction
-        self.transaction_log.append({
+        # Log the event
+        self.event_log.append({
             "timestamp": time.time(),
             "operation": "set",
             "key": key,
@@ -103,8 +103,8 @@ class ContractStorage:
         if key in self.data:
             old_value = self.data.pop(key)
             
-            # Log the transaction
-            self.transaction_log.append({
+            # Log the event
+            self.event_log.append({
                 "timestamp": time.time(),
                 "operation": "delete",
                 "key": key,
@@ -118,14 +118,14 @@ class ContractStorage:
         """Get all keys in storage"""
         return list(self.data.keys())
     
-    def get_transaction_log(self, limit: int = 100) -> List[Dict[str, Any]]:
-        """Get recent transaction log entries"""
-        return self.transaction_log[-limit:] if limit > 0 else self.transaction_log
+    def get_event_log(self, limit: int = 100) -> List[Dict[str, Any]]:
+        """Get recent event log entries"""
+        return self.event_log[-limit:] if limit > 0 else self.event_log
     
     def clear(self, contract_id: str = None) -> None:
         """Clear all data from storage"""
         self.data.clear()
-        self.transaction_log.append({
+        self.event_log.append({
             "timestamp": time.time(),
             "operation": "clear",
             "contract_id": contract_id
