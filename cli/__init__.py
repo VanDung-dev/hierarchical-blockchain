@@ -160,12 +160,15 @@ def add_event(ctx, chain_name, event_type, entity_id, details):
         
         # Create event based on type
         if event_type == 'start_operation':
+            # Generate deterministic resource ID based on entity_id hash
+            resource_id = 1 + (hash(entity_id) % 10)  # Range 1-10
+            
             event = {
                 "entity_id": entity_id,
                 "event": "operation_start",
                 "timestamp": time.time(),
                 "details": {
-                    "resource": f"RESOURCE-{random.randint(1,10)}",
+                    "resource": f"RESOURCE-{resource_id}",
                     **event_details
                 }
             }
