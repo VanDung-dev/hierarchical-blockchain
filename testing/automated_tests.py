@@ -17,26 +17,24 @@ from unittest.mock import Mock, patch, MagicMock
 import tempfile
 import os
 from pathlib import Path
+import sys
+
+# Add the parent directory to the path to import risk_management modules
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 # Import risk management modules
-try:
-    import sys
-    sys.path.append('..')
-    from risk_management.risk_analyzer import (
-        RiskAnalyzer, RiskAssessment, RiskCategory, RiskSeverity
-    )
-    from risk_management.mitigation_strategies import (
-        MitigationManager, MitigationStatus, ConsensusMitigationStrategies,
-        SecurityMitigationStrategies, PerformanceMitigationStrategies,
-        StorageMitigationStrategies
-    )
-    from risk_management.audit_logger import (
-        AuditLogger, AuditEvent, AuditEventType, AuditSeverity,
-        FileAuditStorage, AuditFilter
-    )
-except ImportError:
-    # Fallback for when running as module
-    pass
+from risk_management.risk_analyzer import (
+    RiskAnalyzer, RiskAssessment, RiskCategory, RiskSeverity
+)
+from risk_management.mitigation_strategies import (
+    MitigationManager, MitigationStatus, ConsensusMitigationStrategies,
+    SecurityMitigationStrategies, PerformanceMitigationStrategies,
+    StorageMitigationStrategies
+)
+from risk_management.audit_logger import (
+    AuditLogger, AuditEvent, AuditEventType, AuditSeverity,
+    FileAuditStorage, AuditFilter
+)
 
 
 class TestConfigurationValidator:
