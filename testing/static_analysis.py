@@ -310,8 +310,8 @@ class ComplianceChecker:
                 description="Verify correct block structure implementation",
                 analysis_type=AnalysisType.COMPLIANCE_CHECK,
                 severity=Severity.MEDIUM,
-                pattern=r'class\s+Block.*:',
-                message="Block class should contain multiple events, not single event",
+                pattern=r'^class\s+Block\s*[:\(]',
+                message="Verify that Block class contains multiple events, not single event",
                 remediation="Ensure Block class has 'events' parameter (plural), not 'event'"
             ),
             AnalysisRule(
