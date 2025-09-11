@@ -60,8 +60,7 @@ def generate_proof_hash(block_hash: str, metadata: Dict[str, Any]) -> str:
     """
     proof_data = {
         "block_hash": block_hash,
-        "metadata": metadata,
-        "timestamp": time.time()
+        "metadata": metadata
     }
     return generate_hash(proof_data)
 
