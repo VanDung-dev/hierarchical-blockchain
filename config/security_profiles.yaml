@@ -7,7 +7,7 @@
 
 # Framework Information
 framework:
-  version: "0.dev4"
+  version: "0.dev5"
   name: "hierarchical-blockchain"
   security_level: "enterprise"
   compliance_standards:
@@ -106,6 +106,51 @@ security:
           require_numbers: true
           require_special_chars: true
           max_age_days: 90
+
+  # Key Backup and Recovery Configuration (v0.dev5)
+  key_backup:
+    enabled: true
+    frequency: "daily"
+    encryption_algorithm: "AES-256-GCM"
+    locations: ["primary_vault", "secondary_cloud", "tertiary_offsite"]
+    integrity_check: "sha512"
+    retention_period: 365  # Days to keep old backups
+    auto_restore_threshold: 1  # Attempts before alerting admin
+    
+    # Backup triggers
+    triggers:
+      on_key_generation: true
+      on_key_rotation: true
+      scheduled: true
+      manual: true
+    
+    # Storage configuration
+    storage:
+      primary_vault:
+        type: "local_encrypted"
+        path: "backups/keys/primary"
+        encryption: "AES-256-GCM"
+      secondary_cloud:
+        type: "cloud_hsm"
+        provider: "aws_cloudhsm"
+        region: "us-east-1"
+      tertiary_offsite:
+        type: "offline_vault"
+        location: "secure_facility"
+    
+    # Access control for backups
+    access_control:
+      multi_factor_required: true
+      minimum_approvers: 2
+      admin_approval_required: true
+      audit_all_access: true
+    
+    # Recovery procedures
+    recovery:
+      automatic_detection: true
+      integrity_validation: "strict"
+      rollback_on_failure: true
+      post_restore_validation: true
 
   # Channel Security Configuration
   channels:
