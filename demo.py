@@ -795,7 +795,7 @@ def main():
     """Main entry point for the demonstration."""
     try:
         # Add framework version information
-        print("Framework Version: 0.dev4")
+        print("Framework Version: 0.dev5")
         print("Architecture: Hierarchical Blockchain with Main Chain/Sub-Chains")
         print("Compliance: Non-cryptocurrency, Event-based, Hierarchical Structure")
         print()
