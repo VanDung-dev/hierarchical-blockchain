@@ -15,7 +15,18 @@ import uvicorn
 import logging
 from contextlib import asynccontextmanager
 
-from .v1.endpoints import router as v1_router
+import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Try relative import first (when running as module)
+try:
+    from .v1.endpoints import router as v1_router
+except ImportError:
+    # Fall back to absolute import (when running directly)
+    from api.v1.endpoints import router as v1_router
+
 from config.settings import Settings
 
 # Configure logging
@@ -127,13 +138,15 @@ def run_server():
     """Run the server with uvicorn"""
     settings = Settings()
     api_config = settings.get_api_config()
+
+    is_debug = settings.LOG_LEVEL == "DEBUG"
     
     uvicorn.run(
         "api.server:app",
         host=api_config["host"],
         port=api_config["port"],
-        reload=settings.DEBUG,
-        log_level="info" if not settings.DEBUG else "debug"
+        reload=is_debug,
+        log_level="info" if not is_debug else "debug"
     )
 
 if __name__ == "__main__":
