@@ -6,6 +6,7 @@ including authority management, block validation, and event validation.
 """
 
 import time
+
 from core.consensus.proof_of_authority import ProofOfAuthority
 from core.block import Block
 

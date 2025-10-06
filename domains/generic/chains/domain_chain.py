@@ -7,8 +7,9 @@ custom domain-specific chains.
 """
 
 from typing import Dict, Any, Optional
-from .base_chain import BaseChain
-from ..events.domain_event import EventFactory
+
+from domains.generic.chains.base_chain import BaseChain
+from domains.generic.events.domain_event import EventFactory
 
 
 class DomainChain(BaseChain):

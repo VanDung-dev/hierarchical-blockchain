@@ -12,7 +12,8 @@ import threading
 from typing import Dict, List, Any, Optional, Callable, Tuple
 from enum import Enum
 from dataclasses import dataclass
-from .risk_analyzer import RiskAssessment
+
+from risk_management.risk_analyzer import RiskAssessment
 
 
 class MitigationStatus(Enum):

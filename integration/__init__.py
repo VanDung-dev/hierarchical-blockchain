@@ -3,7 +3,7 @@ Integration module for hierarchical blockchain framework.
 Provides enterprise system integration capabilities.
 """
 
-from .enterprise import (
+from integration.enterprise import (
     EnterpriseIntegration,
     BaseERPIntegration,
     SAPIntegration,

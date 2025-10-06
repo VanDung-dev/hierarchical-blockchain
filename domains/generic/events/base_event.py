@@ -9,6 +9,7 @@ It ensures proper event structure following framework guidelines.
 import time
 from typing import Dict, Any, Optional
 from abc import ABC, abstractmethod
+
 from core.utils import validate_event_structure, validate_no_cryptocurrency_terms
 
 

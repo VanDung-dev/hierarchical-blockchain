@@ -4,13 +4,9 @@ in the hierarchical blockchain framework.
 """
 
 import os
-import sys
 import json
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-
-# Add the project root to the path so we can import modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 
 from security.key_backup_manager import KeyBackupManager, BackupError, RestoreError
 

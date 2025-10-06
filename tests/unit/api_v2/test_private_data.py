@@ -7,6 +7,7 @@ including adding private data to collections.
 
 import pytest
 from unittest.mock import patch
+
 from api.v2.endpoints import add_private_data
 from api.v2.schemas import PrivateDataRequest
 

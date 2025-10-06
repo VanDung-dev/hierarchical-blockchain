@@ -13,13 +13,7 @@ import pytest
 import logging
 from typing import Dict, List, Any, Tuple
 import tempfile
-import os
-import sys
 
-# Add the parent directory to the path to import risk_management modules
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
-
-# Import risk management modules
 from risk_management.risk_analyzer import (
     RiskAnalyzer, RiskAssessment, RiskCategory, RiskSeverity
 )
@@ -29,7 +23,7 @@ from risk_management.mitigation_strategies import (
     StorageMitigationStrategies
 )
 from risk_management.audit_logger import (
-    AuditLogger, AuditEvent, AuditEventType, AuditSeverity,
+    AuditLogger, AuditEventType, AuditSeverity,
     FileAuditStorage, AuditFilter
 )
 

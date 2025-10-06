@@ -11,6 +11,7 @@ import json
 import time
 from typing import Dict, Any, List, Optional
 from contextlib import contextmanager
+
 from core.block import Block
 from core.blockchain import Blockchain
 
@@ -166,7 +167,8 @@ class SQLiteAdapter:
             print(f"Error storing chain {chain.name}: {e}")
             return False
     
-    def _store_block(self, cursor: sqlite3.Cursor, chain_name: str, block: Block) -> None:
+    @staticmethod
+    def _store_block(cursor: sqlite3.Cursor, chain_name: str, block: Block) -> None:
         """Store a single block and its events."""
         # Insert block record
         cursor.execute("""

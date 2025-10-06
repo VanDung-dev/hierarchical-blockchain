@@ -10,14 +10,9 @@ import pytest
 import time
 from unittest.mock import Mock, patch, MagicMock
 
-# Import project modules
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(__file__)))
-
 from error_mitigation.validator import ConsensusValidator
 from error_mitigation.recovery_engine import NetworkRecoveryEngine
-from security.key_backup_manager import KeyBackupManager, BackupError, RestoreError
+from security.key_backup_manager import KeyBackupManager
 from security.key_manager import KeyManager
 from api.v3.verify import VerifyAPIKey
 

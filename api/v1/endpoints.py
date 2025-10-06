@@ -10,7 +10,7 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
 import time
 
-from .schemas import (
+from api.v1.schemas import (
     EventRequest, EventResponse, ChainInfoResponse, 
     ProofSubmissionRequest, ProofSubmissionResponse,
     EntityTraceResponse, ChainStatsResponse

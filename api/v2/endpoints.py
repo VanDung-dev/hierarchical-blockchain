@@ -9,7 +9,7 @@ from fastapi import APIRouter, HTTPException, status
 import time
 import logging
 
-from .schemas import (
+from api.v2.schemas import (
     ChannelCreateRequest, ChannelResponse,
     PrivateCollectionCreateRequest, PrivateDataRequest, PrivateDataResponse,
     ContractCreateRequest, ContractExecuteRequest, ContractResponse,

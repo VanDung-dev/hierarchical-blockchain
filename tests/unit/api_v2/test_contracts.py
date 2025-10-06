@@ -7,6 +7,7 @@ including contract creation and execution.
 
 import pytest
 from unittest.mock import patch
+
 from api.v2.endpoints import create_contract, execute_contract
 from api.v2.schemas import ContractCreateRequest, ContractExecuteRequest
 

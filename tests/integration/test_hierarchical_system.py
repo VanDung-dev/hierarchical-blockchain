@@ -9,7 +9,6 @@ from hierarchical.main_chain import MainChain
 from hierarchical.sub_chain import SubChain
 
 
-
 def test_full_hierarchical_flow():
     """Test the complete hierarchical flow from Sub-Chain operations to Main-Chain proof storage"""
     # Create Main Chain

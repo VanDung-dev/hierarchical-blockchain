@@ -8,6 +8,7 @@ integrity and follows the project's architectural principles.
 """
 
 import time
+
 from core.blockchain import Blockchain
 from core.block import Block
 

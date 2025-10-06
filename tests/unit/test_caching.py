@@ -5,8 +5,9 @@ This module contains unit tests for the AdvancedCache class,
 including cache operations, eviction policies, and TTL handling.
 """
 
-from core.caching import AdvancedCache
 import time
+
+from core.caching import AdvancedCache
 
 
 def test_cache_basic_operations():

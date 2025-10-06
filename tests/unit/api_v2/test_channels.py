@@ -7,6 +7,7 @@ including channel creation, retrieval, and private collection management.
 
 import pytest
 from unittest.mock import patch
+
 from api.v2.endpoints import create_channel, get_channel, create_private_collection
 from api.v2.schemas import ChannelCreateRequest, PrivateCollectionCreateRequest
 

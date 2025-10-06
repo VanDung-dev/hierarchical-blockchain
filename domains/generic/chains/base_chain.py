@@ -9,8 +9,9 @@ with domain-specific functionality while maintaining framework guidelines.
 import time
 from typing import Dict, Any, Optional, Callable
 from abc import ABC, abstractmethod
+
 from hierarchical.sub_chain import SubChain
-from ..events.base_event import BaseEvent
+from domains.generic.events.base_event import BaseEvent
 
 
 class BaseChain(SubChain, ABC):

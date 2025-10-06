@@ -10,7 +10,8 @@ for both Main Chain and Sub-Chain implementations, following framework guideline
 
 import time
 from typing import List, Dict, Any, Optional, Callable
-from .block import Block
+
+from core.block import Block
 
 
 class Blockchain:

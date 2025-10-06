@@ -8,7 +8,7 @@ the event-based model and hierarchical structure principles.
 
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional
-from ..block import Block
+from core.block import Block
 
 
 class BaseConsensus(ABC):

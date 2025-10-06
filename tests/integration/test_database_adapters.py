@@ -1,7 +1,9 @@
 """
 Integration tests for database adapters with core blockchain components
 """
+
 import unittest
+
 from core.blockchain import Blockchain
 from core.block import Block
 

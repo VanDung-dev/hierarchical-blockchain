@@ -3,6 +3,7 @@ Unit tests for the Ordering Service
 """
 
 import time
+
 from hierarchical.ordering.ordering_service import OrderingService
 
 

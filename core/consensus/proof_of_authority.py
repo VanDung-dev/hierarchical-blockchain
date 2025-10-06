@@ -9,8 +9,9 @@ Sub-Chains) have designated roles and permissions for block creation.
 import time
 import hashlib
 from typing import Dict, Any, Optional, Set
-from .base_consensus import BaseConsensus
-from ..block import Block
+
+from core.consensus.base_consensus import BaseConsensus
+from core.block import Block
 
 
 class ProofOfAuthority(BaseConsensus):
