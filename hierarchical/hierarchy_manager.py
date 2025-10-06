@@ -8,11 +8,12 @@ capabilities for the entire hierarchical blockchain system.
 
 import time
 from typing import Dict, Any, List, Optional
-from .main_chain import MainChain
-from .sub_chain import SubChain
-from .multi_org import create_organization, MultiOrgNetwork
-from .channel import Channel, Organization as ChannelOrganization
-from .private_data import PrivateCollection
+
+from hierarchical.main_chain import MainChain
+from hierarchical.sub_chain import SubChain
+from hierarchical.multi_org import create_organization, MultiOrgNetwork
+from hierarchical.channel import Channel, Organization as ChannelOrganization
+from hierarchical.private_data import PrivateCollection
 
 
 class HierarchyManager:
@@ -579,7 +580,24 @@ class HierarchyManager:
         # In a full implementation, this would establish a relationship
         # between the organization and chain for access control
         return True
-    
+
+
+    def get_main_chain(self):
+        """Get the main chain."""
+        pass
+
+    def get_all_sub_chains(self):
+        """Get all sub-chains."""
+        pass
+
+    def set_main_chain(self, main_chain):
+        """Set the main chain."""
+        pass
+
+    def add_sub_chain(self, chain_name, sub_chain):
+        """Add a sub-chain to the hierarchy."""
+        pass
+
     def __str__(self) -> str:
         """String representation of the Hierarchy Manager."""
         return f"HierarchyManager(main_chain={self.main_chain.name}, sub_chains={len(self.sub_chains)})"
