@@ -135,7 +135,8 @@ class ChannelLedger:
             events.extend([event for event in block["events"] if filter_func(event)])
         return events
     
-    def _calculate_block_hash(self, events: List[Dict[str, Any]]) -> str:
+    @staticmethod
+    def _calculate_block_hash(events: List[Dict[str, Any]]) -> str:
         """Calculate hash for block"""
         block_data = json.dumps(events, sort_keys=True, separators=(',', ':'))
         return hashlib.sha256(block_data.encode()).hexdigest()
@@ -272,7 +273,7 @@ class Channel:
             members[org_id] = self.organizations[org_id]
         
         # Import PrivateCollection here to avoid circular imports
-        from .private_data import PrivateCollection
+        from hierarchical.private_data import PrivateCollection
         
         # Create private collection
         self.private_collections[name] = PrivateCollection(name, members, config)
