@@ -458,13 +458,58 @@ class EntityTracer:
         
         return recommendations
 
-    def trace_entity_in_chain(self, entity_id, sub_chain):
-        """Trace an entity through a specific sub-chain."""
-        pass
+    def trace_entity_in_chain(self, entity_id: str, sub_chain: str) -> Dict[str, Any]:
+        """
+        Trace an entity through a specific sub-chain.
 
-    def trace_entity_across_chains(self, entity_id, param):
-        """Trace an entity across all sub-chains."""
-        pass
+        Args:
+            entity_id: Entity identifier to trace
+            sub_chain: Name of the sub-chain to trace the entity in
+
+        Returns:
+            Entity events and information in the specified sub-chain
+        """
+        # Get sub-chain from hierarchy manager
+        chain = self.hierarchy_manager.get_sub_chain(sub_chain)
+        if not chain:
+            return {
+                "entity_id": entity_id,
+                "chain": sub_chain,
+                "found": False,
+                "events": [],
+                "error": f"Sub-chain '{sub_chain}' not found"
+            }
+
+        # Use get_entity_history method to get events for this entity
+        events = chain.get_entity_history(entity_id)
+
+        return {
+            "entity_id": entity_id,
+            "chain": sub_chain,
+            "found": len(events) > 0,
+            "events": events,
+            "total_events": len(events)
+        }
+
+    def trace_entity_across_chains(self, entity_id: str) -> Dict[str, List[Dict[str, Any]]]:
+        """
+        Trace an entity across all sub-chains.
+
+        Args:
+            entity_id: Entity identifier to trace across all chains
+
+        Returns:
+            Dictionary mapping chain names to lists of entity events
+        """
+        result = {}
+
+        # Trace entity in all sub-chains
+        for chain_name, chain in self.hierarchy_manager.sub_chains.items():
+            events = chain.get_entity_history(entity_id)
+            if events:
+                result[chain_name] = events
+
+        return result
 
     def __str__(self) -> str:
         """String representation of the Entity Tracer."""
