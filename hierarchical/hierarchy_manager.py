@@ -581,22 +581,24 @@ class HierarchyManager:
         # between the organization and chain for access control
         return True
 
-
     def get_main_chain(self):
         """Get the main chain."""
-        pass
+        return self.main_chain
 
     def get_all_sub_chains(self):
         """Get all sub-chains."""
-        pass
+        return list(self.sub_chains.values())
 
     def set_main_chain(self, main_chain):
         """Set the main chain."""
-        pass
+        self.main_chain = main_chain
 
     def add_sub_chain(self, chain_name, sub_chain):
         """Add a sub-chain to the hierarchy."""
-        pass
+        if chain_name in self.sub_chains:
+            raise ValueError(f"Sub-chain {chain_name} already exists")
+        self.sub_chains[chain_name] = sub_chain
+        sub_chain.connect_to_main_chain(self.main_chain)
 
     def __str__(self) -> str:
         """String representation of the Hierarchy Manager."""
