@@ -43,6 +43,9 @@ class Certificate:
             current_time <= self.valid_until
         )
 
+    def is_expired(self) -> bool:
+        """Check if certificate has expired"""
+        return time.time() > self.valid_until
 
 class CertificateAuthority:
     """Hierarchical Certificate Authority for enterprise environments"""
