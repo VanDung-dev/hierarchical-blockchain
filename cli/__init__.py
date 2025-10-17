@@ -216,8 +216,7 @@ def add_event(ctx, chain_name, event_type, entity_id, details):
 
 @hbc.command()
 @click.argument('chain_name')
-@click.pass_context
-def submit_proof(ctx, chain_name):
+def submit_proof(chain_name):
     """Submit proof from sub-chain to main chain"""
     try:
         chain = get_sub_chain(chain_name)
@@ -236,7 +235,7 @@ def submit_proof(ctx, chain_name):
         })
         
         # Save to file
-        save_chains_to_file(ctx.obj['config_file'])
+        save_chains_to_file('chains.json')
         
         click.echo(f"Successfully submitted proof from chain '{chain_name}' to main chain")
         
@@ -245,8 +244,7 @@ def submit_proof(ctx, chain_name):
 
 
 @hbc.command()
-@click.pass_context
-def list_chains(ctx):
+def list_chains():
     """List all chains"""
     try:
         if not _chains_storage:
@@ -266,8 +264,7 @@ def list_chains(ctx):
 @hbc.command()
 @click.argument('chain_name')
 @click.option('--entity-id', help='Filter by entity ID')
-@click.pass_context
-def show_events(ctx, chain_name, entity_id):
+def show_events(chain_name, entity_id):
     """Show events in chain"""
     try:
         chain = get_sub_chain(chain_name)
