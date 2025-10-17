@@ -25,7 +25,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(_app: FastAPI):
     """Application lifespan events"""
     # Startup
     logger.info("Starting Hierarchical Blockchain API server...")
@@ -41,7 +41,7 @@ def create_app() -> FastAPI:
     api_config = settings.get_api_config()
     
     # Create FastAPI app
-    app = FastAPI(
+    fast_app = FastAPI(
         title="Hierarchical Blockchain Framework API",
         description="REST API for the Hierarchical Blockchain Framework - A general-purpose blockchain system for enterprise applications",
         version=api_config["version"],
@@ -51,7 +51,7 @@ def create_app() -> FastAPI:
     )
     
     # Add CORS middleware
-    app.add_middleware(
+    fast_app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],  # In production, specify allowed origins
         allow_credentials=True,
@@ -61,20 +61,20 @@ def create_app() -> FastAPI:
     
     # Try to include v1 router
     try:
-        app.include_router(v1_router)
+        fast_app.include_router(v1_router)
         logger.info("API v1 router included successfully")
     except ImportError:
         logger.warning("API v1 router not available")
     
     # Try to include v2 router
     try:
-        app.include_router(v2_router)
+        fast_app.include_router(v2_router)
         logger.info("API v2 router included successfully")
     except ImportError:
         logger.warning("API v2 router not available")
     
     # Root endpoint
-    @app.get("/")
+    @fast_app.get("/")
     async def root():
         """Root endpoint with API information"""
         return {
@@ -97,8 +97,8 @@ def create_app() -> FastAPI:
         }
     
     # Global exception handler
-    @app.exception_handler(Exception)
-    async def global_exception_handler(request, exc):
+    @fast_app.exception_handler(Exception)
+    async def global_exception_handler(_request, exc):
         """Global exception handler"""
         logger.error(f"Unhandled exception: {str(exc)}")
         is_debug = settings.LOG_LEVEL == "DEBUG"
@@ -112,8 +112,8 @@ def create_app() -> FastAPI:
         )
     
     # HTTP exception handler
-    @app.exception_handler(HTTPException)
-    async def http_exception_handler(request, exc):
+    @fast_app.exception_handler(HTTPException)
+    async def http_exception_handler(_request, exc):
         """HTTP exception handler"""
         return JSONResponse(
             status_code=exc.status_code,
@@ -124,7 +124,7 @@ def create_app() -> FastAPI:
             }
         )
     
-    return app
+    return fast_app
 
 # Create app instance
 app = create_app()
