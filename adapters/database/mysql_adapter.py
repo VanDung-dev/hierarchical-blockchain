@@ -213,8 +213,8 @@ class MySQLAdapter:
             
             if limit:
                 query += " LIMIT %s OFFSET %s"
-                params.extend([limit, offset])
-            
+                params.extend([str(limit), str(offset)])
+
             cursor.execute(query, params)
             rows = cursor.fetchall()
             
