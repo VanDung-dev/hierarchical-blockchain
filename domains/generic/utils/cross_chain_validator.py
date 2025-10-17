@@ -255,7 +255,8 @@ class CrossChainValidator:
         
         return validation_results
     
-    def _validate_event_structure(self, event: Dict[str, Any]) -> bool:
+    @staticmethod
+    def _validate_event_structure(event: Dict[str, Any]) -> bool:
         """Validate that event follows framework structure guidelines."""
         # Required fields
         required_fields = ["entity_id", "event", "timestamp"]
@@ -277,7 +278,8 @@ class CrossChainValidator:
         
         return True
     
-    def _check_logical_consistency(self, entity_trace: Dict[str, List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
+    @staticmethod
+    def _check_logical_consistency(entity_trace: Dict[str, List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
         """Check for logical inconsistencies in entity events across chains."""
         inconsistencies = []
         
@@ -454,7 +456,8 @@ class CrossChainValidator:
         
         return violations
     
-    def _generate_system_recommendations(self, validation_results: Dict[str, Any]) -> List[str]:
+    @staticmethod
+    def _generate_system_recommendations(validation_results: Dict[str, Any]) -> List[str]:
         """Generate recommendations based on system validation results."""
         recommendations = []
         
