@@ -56,7 +56,7 @@ def load_chains_from_file(filepath: str) -> bool:
     try:
         if os.path.exists(filepath):
             with open(filepath, 'r') as f:
-                data = json.load(f)
+                _data = json.load(f)
                 # In a real implementation, this would deserialize the chains
                 return True
     except Exception as e:
@@ -198,6 +198,9 @@ def add_event(ctx, chain_name, event_type, entity_id, details):
                     **event_details
                 }
             }
+        else:
+            click.echo(f"Unknown event type: {event_type}")
+            return
         
         # Add event to chain
         chain.add_event(event)
