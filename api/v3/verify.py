@@ -177,7 +177,8 @@ class VerifyAPIKey:
         
         return permission_dependency
     
-    def _log_security_event(self, event_type: str, details: Dict):
+    @staticmethod
+    def _log_security_event(event_type: str, details: Dict):
         """
         Log security events for auditing.
         
@@ -271,17 +272,20 @@ class ResourcePermissionChecker:
             )
         return context
     
-    def _has_event_permission(self, context: Dict) -> bool:
+    @staticmethod
+    def _has_event_permission(context: Dict) -> bool:
         """Check if context has event permissions."""
         # Implementation would check against stored permissions
         return True  # Placeholder
     
-    def _has_chain_permission(self, context: Dict) -> bool:
+    @staticmethod
+    def _has_chain_permission(context: Dict) -> bool:
         """Check if context has chain permissions."""
         # Implementation would check against stored permissions
         return True  # Placeholder
     
-    def _has_proof_permission(self, context: Dict) -> bool:
+    @staticmethod
+    def _has_proof_permission(context: Dict) -> bool:
         """Check if context has proof permissions."""
         # Implementation would check against stored permissions
         return True  # Placeholder
