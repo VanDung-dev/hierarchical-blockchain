@@ -44,8 +44,7 @@ async def list_chains():
                 name="main_chain",
                 type="main",
                 block_count=len(main_chain.chain),
-                latest_block_hash=main_chain.get_latest_block().hash if main_chain.chain else None,
-                parent_chain=None
+                latest_block_hash=main_chain.get_latest_block().hash if main_chain.chain else None
             ))
         
         # Add sub-chains info
@@ -54,8 +53,7 @@ async def list_chains():
                 name=sub_chain_name,
                 type="sub",
                 block_count=len(sub_chain.chain),
-                latest_block_hash=sub_chain.get_latest_block().hash if sub_chain.chain else None,
-                parent_chain="main_chain"
+                latest_block_hash=sub_chain.get_latest_block().hash if sub_chain.chain else None
             ))
         
         return chains
@@ -111,7 +109,7 @@ async def submit_proof(chain_name: str, proof_request: ProofSubmissionRequest):
         return ProofSubmissionResponse(
             success=True,
             message=f"Proof submitted from '{chain_name}' to main chain",
-            proof_hash=sub_chain.get_latest_block().hash if sub_chain.chain else None
+            proof_id=f"{chain_name}_{len(sub_chain.chain)}" if sub_chain.chain else None
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to submit proof: {str(e)}")
@@ -126,15 +124,23 @@ async def trace_entity(entity_id: str, chain_name: Optional[str] = None):
             if not sub_chain:
                 raise HTTPException(status_code=404, detail=f"Sub-chain '{chain_name}' not found")
             
-            events = entity_tracer.trace_entity_in_chain(entity_id, sub_chain)
+            trace_result = entity_tracer.trace_entity_in_chain(entity_id, chain_name)
+            events = trace_result.get("events", [])
         else:
             # Trace across all chains
-            events = entity_tracer.trace_entity_across_chains(entity_id, hierarchy_manager.get_all_sub_chains())
+            trace_result = entity_tracer.trace_entity_across_chains(entity_id)
+            # Flatten events from all chains
+            events = []
+            for chain_events in trace_result.values():
+                events.extend(chain_events)
+        
+        # Extract chain names from the events
+        chain_names = list(set(event.get('chain', 'unknown') for event in events))
         
         return EntityTraceResponse(
             entity_id=entity_id,
-            events=events,
-            total_events=len(events)
+            chains=chain_names,
+            events=events
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to trace entity: {str(e)}")
@@ -163,13 +169,23 @@ async def get_chain_stats(chain_name: str):
                     if 'entity_id' in event:
                         unique_entities.add(event['entity_id'])
         
+        # Determine additional stats based on chain type
+        proof_count = None
+        registered_sub_chains = None
+        
+        if chain_name == "main_chain":
+            # For main chain, provide proof count
+            proof_count = total_blocks - 1 if total_blocks > 0 else 0  # Exclude genesis block
+        else:
+            # For sub-chains, this would be None
+            pass
+        
         return ChainStatsResponse(
             chain_name=chain_name,
             total_blocks=total_blocks,
             total_events=total_events,
-            unique_entities=len(unique_entities),
-            latest_block_hash=chain.get_latest_block().hash if chain.chain else None,
-            created_at=getattr(chain, 'created_at', time.time())
+            proof_count=proof_count,
+            registered_sub_chains=registered_sub_chains
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get chain stats: {str(e)}")
@@ -185,7 +201,7 @@ async def create_sub_chain(chain_name: str, chain_type: str = "generic"):
             hierarchy_manager.set_main_chain(main_chain)
         
         # Create sub-chain
-        sub_chain = SubChain(name=chain_name, parent_chain=main_chain)
+        sub_chain = SubChain(name=chain_name, domain_type=chain_type)
         hierarchy_manager.add_sub_chain(chain_name, sub_chain)
         
         return JSONResponse(
@@ -193,7 +209,7 @@ async def create_sub_chain(chain_name: str, chain_type: str = "generic"):
             content={
                 "success": True,
                 "message": f"Sub-chain '{chain_name}' created successfully",
-                "chain_type": chain_type
+                "chain_name": chain_name
             }
         )
     except Exception as e:
