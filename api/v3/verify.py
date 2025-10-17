@@ -225,7 +225,7 @@ class ResourcePermissionChecker:
         """
         # This would need the original API key for permission checking
         # In practice, you'd modify the VerifyAPIKey to store the key in context
-        if not self._has_event_permission(context):
+        if not self._has_permission(context, 'events'):
             raise HTTPException(
                 status_code=403,
                 detail="Access to event operations requires 'events' permission."
@@ -245,7 +245,7 @@ class ResourcePermissionChecker:
         Raises:
             HTTPException: 403 if insufficient permissions
         """
-        if not self._has_chain_permission(context):
+        if not self._has_permission(context, 'chains'):
             raise HTTPException(
                 status_code=403,
                 detail="Access to chain operations requires 'chains' permission."
@@ -265,7 +265,7 @@ class ResourcePermissionChecker:
         Raises:
             HTTPException: 403 if insufficient permissions
         """
-        if not self._has_proof_permission(context):
+        if not self._has_permission(context, 'proofs'):
             raise HTTPException(
                 status_code=403,
                 detail="Access to proof operations requires 'proofs' permission."
@@ -273,25 +273,39 @@ class ResourcePermissionChecker:
         return context
     
     @staticmethod
+    def _has_permission(context: Dict, permission_type: str) -> bool:
+        """
+        Check if context has specific permission.
+
+        Args:
+            context: The context containing app details
+            permission_type: The permission type to check for (events, chains, proofs)
+
+        Returns:
+            bool: True if context has the required permission, False otherwise
+        """
+        app_details = context.get('app_details', {})
+        permissions = app_details.get('permissions', [])
+        return permission_type in permissions or 'all' in permissions
+    
+    # Deprecated methods for backward compatibility
+    @staticmethod
     def _has_event_permission(context: Dict) -> bool:
         """Check if context has event permissions."""
-        # Implementation would check against stored permissions
-        return True  # Placeholder
+        return ResourcePermissionChecker._has_permission(context, 'events')
     
     @staticmethod
     def _has_chain_permission(context: Dict) -> bool:
         """Check if context has chain permissions."""
-        # Implementation would check against stored permissions
-        return True  # Placeholder
+        return ResourcePermissionChecker._has_permission(context, 'chains')
     
     @staticmethod
     def _has_proof_permission(context: Dict) -> bool:
         """Check if context has proof permissions."""
-        # Implementation would check against stored permissions
-        return True  # Placeholder
+        return ResourcePermissionChecker._has_permission(context, 'proofs')
 
 
-# Factory function for creating configured VerifyAPIKey instances
+#Factoryfunction for creating configured VerifyAPIKey instances
 def create_verify_api_key(config: Dict) -> VerifyAPIKey:
     """
     Factory function to create configured VerifyAPIKey instance.
