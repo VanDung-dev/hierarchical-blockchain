@@ -168,7 +168,7 @@ class AdvancedCache:
         
         elif self.eviction_policy == EvictionPolicy.TTL:
             # Time To Live - evict expired items first
-            current_time = time.time()
+            _current_time = time.time()
             expired_keys = [k for k, entry in self.cache.items() if entry.is_expired]
             
             if expired_keys:
@@ -205,7 +205,7 @@ class AdvancedCache:
     def cleanup_ttl(self):
         """Manual cleanup of expired TTL entries"""
         with self.lock:
-            current_time = time.time()
+            _current_time = time.time()
             expired_keys = [key for key, entry in self.cache.items() if entry.is_expired]
             
             for key in expired_keys:
