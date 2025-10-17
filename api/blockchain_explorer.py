@@ -88,26 +88,38 @@ class BlockchainExplorer:
     
     def _render_dashboard(self, **kwargs) -> Dict[str, Any]:
         """Render the main explorer dashboard"""
+        # Use kwargs to customize the title if provided
+        title = kwargs.get('title', 'Hierarchical Blockchain Explorer')
+
+        # Use kwargs to filter elements if specified
+        included_components = kwargs.get('components', ['chain_overview', 'entity_tracer', 'event_analytics'])
+
         dashboard = {
-            "title": "Hierarchical Blockchain Explorer",
-            "components": [
-                {
-                    "id": "chain_overview",
-                    "title": "Chain Overview",
-                    "content": self.ui_components["chain_overview"].render_summary()
-                },
-                {
-                    "id": "entity_tracer",
-                    "title": "Entity Tracer",
-                    "content": self.ui_components["entity_tracer"].render_input_form()
-                },
-                {
-                    "id": "event_analytics",
-                    "title": "Event Analytics",
-                    "content": self.ui_components["event_analytics"].render_summary()
-                }
-            ]
+            "title": title,
+            "components": []
         }
+
+        if 'chain_overview' in included_components and 'chain_overview' in self.ui_components:
+            dashboard["components"].append({
+                "id": "chain_overview",
+                "title": "Chain Overview",
+                "content": self.ui_components["chain_overview"].render_summary()
+            })
+
+        if 'entity_tracer' in included_components and 'entity_tracer' in self.ui_components:
+            dashboard["components"].append({
+                "id": "entity_tracer",
+                "title": "Entity Tracer",
+                "content": self.ui_components["entity_tracer"].render_input_form()
+            })
+
+        if 'event_analytics' in included_components and 'event_analytics' in self.ui_components:
+            dashboard["components"].append({
+                "id": "event_analytics",
+                "title": "Event Analytics",
+                "content": self.ui_components["event_analytics"].render_summary()
+            })
+
         return dashboard
 
 
