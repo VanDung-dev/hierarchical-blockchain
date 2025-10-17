@@ -201,7 +201,7 @@ class BlockBuilder:
             
         return False
     
-    def _create_block(self) -> Dict[str, Any]:
+    def _create_block(self) -> Optional[Dict[str, Any]]:
         """Create block from current batch"""
         if not self.current_batch:
             return None
