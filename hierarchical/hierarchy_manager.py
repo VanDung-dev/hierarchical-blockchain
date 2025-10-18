@@ -43,7 +43,7 @@ class HierarchyManager:
         self.system_stats = {
             "total_operations": 0,
             "total_proofs": 0,
-            "system_uptime": 0
+            "system_uptime": 0.0
         }
         self.organizations: Dict[str, Any] = {}
         self.network: Optional[MultiOrgNetwork] = None
