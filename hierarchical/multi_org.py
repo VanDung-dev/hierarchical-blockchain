@@ -41,8 +41,8 @@ class HierarchicalMSP:
         # Simplified validation for enterprise use
         required_fields = ["user_id", "org_id", "role"]
         
-        for field in required_fields:
-            if field not in identity:
+        for req_field in required_fields:
+            if req_field not in identity:
                 return False
         
         # Verify organization matches
