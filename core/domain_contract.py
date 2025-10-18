@@ -315,7 +315,7 @@ class DomainContract:
             }
         
         execution_start = time.time()
-        execution_result = {
+        execution_result: Dict[str, Any] = {
             "success": False,
             "contract_id": self.contract_id,
             "version": str(self.version),
@@ -467,14 +467,14 @@ class DomainContract:
         """
         metadata = {"reason": reason}
         if end_of_life_date:
-            metadata["end_of_life_date"] = end_of_life_date
+            metadata["end_of_life_date"] = str(end_of_life_date)
         
         success = self.lifecycle.transition_to(ContractStatus.DEPRECATED, reason, metadata)
         
         if success:
             self._log_contract_event(ContractEventType.DEPRECATED, {
                 "reason": reason,
-                "end_of_life_date": end_of_life_date
+                "end_of_life_date": str(end_of_life_date) if end_of_life_date is not None else None
             })
         
         return success
@@ -566,6 +566,9 @@ class DomainContract:
             # Store in contract storage
             log_key = f"event_log:{time.time()}:{event.get('entity_id', 'unknown')}"
             storage.set(log_key, log_entry, self.contract_id)
+            
+            # Using context to avoid unused parameter warning
+            _ = context
         
         # Register default handler for all event types if no specific handlers exist
         self.default_handler = default_logging_handler
