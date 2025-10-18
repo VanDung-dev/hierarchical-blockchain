@@ -135,7 +135,7 @@ def create_event(entity_id: str, event_type: str, details: Optional[Dict[str, An
     Returns:
         Properly structured event dictionary
     """
-    event = {
+    event: Dict[str, Any] = {
         "entity_id": entity_id,  # Metadata field, not block identifier
         "event": event_type,
         "timestamp": timestamp or time.time()
