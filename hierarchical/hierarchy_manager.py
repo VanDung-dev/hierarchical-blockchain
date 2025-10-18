@@ -71,7 +71,7 @@ class HierarchyManager:
         sub_chain = DomainChain(name, domain_type)
         
         # Connect to Main Chain
-        connection_metadata = {
+        _connection_metadata = {
             "domain_type": domain_type,
             "created_by": "hierarchy_manager",
             "created_at": time.time(),

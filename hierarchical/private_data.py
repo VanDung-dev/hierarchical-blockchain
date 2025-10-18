@@ -218,13 +218,13 @@ class PrivateCollection:
         except (InvalidToken, UnicodeDecodeError, json.JSONDecodeError):
             return None
     
-    def get_data_hash(self, key: str, requester_org_id: str) -> Optional[str]:
+    def get_data_hash(self, key: str, _requester_org_id: str) -> Optional[str]:
         """
         Get hash of private data without revealing the data itself.
         
         Args:
             key: Data key
-            requester_org_id: Organization requesting the hash
+            _requester_org_id: Organization requesting the hash
             
         Returns:
             Hash value if authorized, None otherwise

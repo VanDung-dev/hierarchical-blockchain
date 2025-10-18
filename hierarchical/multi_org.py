@@ -381,7 +381,7 @@ class MultiOrgNetwork:
 
 
 # Factory functions for easy setup
-def create_organization(org_id: str, name: str, admin_users: List[str] = None) -> Organization:
+def create_organization(org_id: str, _name: str, admin_users: List[str] = None) -> Organization:
     """Factory function to create an organization with default MSP config"""
     msp_config = {
         "ca_cert": f"-----BEGIN CERTIFICATE-----\n{org_id}_ca_cert\n-----END CERTIFICATE-----",
