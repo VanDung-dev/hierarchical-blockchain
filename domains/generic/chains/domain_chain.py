@@ -49,11 +49,11 @@ class DomainChain(BaseChain):
     def _setup_default_business_rules(self) -> None:
         """Setup default business rules for the domain chain."""
         
-        def entity_must_be_registered(entity_info: Dict[str, Any], operation: str) -> bool:
+        def entity_must_be_registered(entity_info: Dict[str, Any], _operation: str) -> bool:
             """Rule: Entity must be registered before operations."""
             return entity_info.get("status") != "unregistered"
         
-        def no_concurrent_operations(entity_info: Dict[str, Any], operation: str) -> bool:
+        def no_concurrent_operations(entity_info: Dict[str, Any], _operation: str) -> bool:
             """Rule: No concurrent operations on the same entity."""
             return entity_info.get("current_operation") is None
         
