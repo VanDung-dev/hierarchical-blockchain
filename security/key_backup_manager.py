@@ -61,13 +61,13 @@ class KeyBackupManager:
             configuration: Configuration dictionary containing backup settings
         """
         self.config = configuration
-        self.enabled = config.get('enabled', True)
-        self.frequency = config.get('frequency', 'daily')
-        self.encryption_algorithm = config.get('encryption_algorithm', 'AES-256-GCM')
-        self.locations = config.get('locations', ['primary_vault'])
-        self.integrity_check = config.get('integrity_check', 'sha512')
-        self.retention_period = config.get('retention_period', 365)
-        self.auto_restore_threshold = config.get('auto_restore_threshold', 1)
+        self.enabled = self.config.get('enabled', True)
+        self.frequency = self.config.get('frequency', 'daily')
+        self.encryption_algorithm = self.config.get('encryption_algorithm', 'AES-256-GCM')
+        self.locations = self.config.get('locations', ['primary_vault'])
+        self.integrity_check = self.config.get('integrity_check', 'sha512')
+        self.retention_period = self.config.get('retention_period', 365)
+        self.auto_restore_threshold = self.config.get('auto_restore_threshold', 1)
         
         # Generate or load master encryption key for backup encryption
         self.encryption_key = self._initialize_master_key()
