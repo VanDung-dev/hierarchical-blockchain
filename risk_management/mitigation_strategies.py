@@ -108,7 +108,7 @@ class ConsensusMitigationStrategies:
             network_latency = params.get('network_latency', 1.0)  # seconds
             
             # Calculate optimal timeout based on network conditions
-            optimal_timeout = max(target_timeout, network_latency * 3)
+            optimal_timeout = max(float(target_timeout), network_latency * 3)
             
             logging.info(f"Updating leader timeout to {optimal_timeout}s")
             
@@ -469,101 +469,101 @@ class MitigationManager:
     @staticmethod
     def _initialize_actions() -> Dict[str, MitigationAction]:
         """Initialize available mitigation actions."""
-        actions = {}
-        
-        # Consensus mitigation actions
-        actions['add_validator_nodes'] = MitigationAction(
-            action_id='add_validator_nodes',
-            description='Add validator nodes to meet BFT requirements',
-            execution_function=ConsensusMitigationStrategies.add_validator_nodes,
-            priority=1,
-            estimated_duration=300,  # 5 minutes
-            requires_downtime=False
-        )
-        
-        actions['optimize_leader_timeout'] = MitigationAction(
-            action_id='optimize_leader_timeout',
-            description='Optimize leader timeout settings',
-            execution_function=ConsensusMitigationStrategies.optimize_leader_timeout,
-            priority=3,
-            estimated_duration=60,
-            requires_downtime=False
-        )
-        
-        actions['strengthen_message_verification'] = MitigationAction(
-            action_id='strengthen_message_verification',
-            description='Strengthen message verification mechanisms',
-            execution_function=ConsensusMitigationStrategies.strengthen_message_verification,
-            priority=2,
-            estimated_duration=120,
-            requires_downtime=True
-        )
-        
-        # Security mitigation actions
-        actions['renew_certificates'] = MitigationAction(
-            action_id='renew_certificates',
-            description='Renew expiring or expired certificates',
-            execution_function=SecurityMitigationStrategies.renew_certificates,
-            priority=1,
-            estimated_duration=180,
-            requires_downtime=False
-        )
-        
-        actions['implement_rate_limiting'] = MitigationAction(
-            action_id='implement_rate_limiting',
-            description='Implement authentication rate limiting',
-            execution_function=SecurityMitigationStrategies.implement_rate_limiting,
-            priority=2,
-            estimated_duration=60,
-            requires_downtime=False
-        )
-        
-        actions['upgrade_encryption'] = MitigationAction(
-            action_id='upgrade_encryption',
-            description='Upgrade encryption to stronger standards',
-            execution_function=SecurityMitigationStrategies.upgrade_encryption,
-            priority=2,
-            estimated_duration=240,
-            requires_downtime=True
-        )
-        
-        # Performance mitigation actions
-        actions['scale_processing_capacity'] = MitigationAction(
-            action_id='scale_processing_capacity',
-            description='Scale processing capacity to handle load',
-            execution_function=PerformanceMitigationStrategies.scale_processing_capacity,
-            priority=2,
-            estimated_duration=300,
-            requires_downtime=False
-        )
-        
-        actions['optimize_memory_usage'] = MitigationAction(
-            action_id='optimize_memory_usage',
-            description='Optimize memory usage patterns',
-            execution_function=PerformanceMitigationStrategies.optimize_memory_usage,
-            priority=3,
-            estimated_duration=120,
-            requires_downtime=False
-        )
-        
-        # Storage mitigation actions
-        actions['implement_state_pruning'] = MitigationAction(
-            action_id='implement_state_pruning',
-            description='Implement world state pruning',
-            execution_function=StorageMitigationStrategies.implement_state_pruning,
-            priority=3,
-            estimated_duration=600,  # 10 minutes
-            requires_downtime=False
-        )
-        
-        actions['execute_backup'] = MitigationAction(
-            action_id='execute_backup',
-            description='Execute immediate data backup',
-            execution_function=StorageMitigationStrategies.execute_backup,
-            priority=1,
-            estimated_duration=1800,  # 30 minutes
-            requires_downtime=False
-        )
+        actions: Dict[str, MitigationAction] = {
+            # Consensus mitigation actions
+            'add_validator_nodes': MitigationAction(
+                action_id='add_validator_nodes',
+                description='Add validator nodes to meet BFT requirements',
+                execution_function=ConsensusMitigationStrategies.add_validator_nodes,
+                priority=1,
+                estimated_duration=300,  # 5 minutes
+                requires_downtime=False
+            ),
+            
+            'optimize_leader_timeout': MitigationAction(
+                action_id='optimize_leader_timeout',
+                description='Optimize leader timeout settings',
+                execution_function=ConsensusMitigationStrategies.optimize_leader_timeout,
+                priority=3,
+                estimated_duration=60,
+                requires_downtime=False
+            ),
+            
+            'strengthen_message_verification': MitigationAction(
+                action_id='strengthen_message_verification',
+                description='Strengthen message verification mechanisms',
+                execution_function=ConsensusMitigationStrategies.strengthen_message_verification,
+                priority=2,
+                estimated_duration=120,
+                requires_downtime=True
+            ),
+            
+            # Security mitigation actions
+            'renew_certificates': MitigationAction(
+                action_id='renew_certificates',
+                description='Renew expiring or expired certificates',
+                execution_function=SecurityMitigationStrategies.renew_certificates,
+                priority=1,
+                estimated_duration=180,
+                requires_downtime=False
+            ),
+            
+            'implement_rate_limiting': MitigationAction(
+                action_id='implement_rate_limiting',
+                description='Implement authentication rate limiting',
+                execution_function=SecurityMitigationStrategies.implement_rate_limiting,
+                priority=2,
+                estimated_duration=60,
+                requires_downtime=False
+            ),
+            
+            'upgrade_encryption': MitigationAction(
+                action_id='upgrade_encryption',
+                description='Upgrade encryption to stronger standards',
+                execution_function=SecurityMitigationStrategies.upgrade_encryption,
+                priority=2,
+                estimated_duration=240,
+                requires_downtime=True
+            ),
+            
+            # Performance mitigation actions
+            'scale_processing_capacity': MitigationAction(
+                action_id='scale_processing_capacity',
+                description='Scale processing capacity to handle load',
+                execution_function=PerformanceMitigationStrategies.scale_processing_capacity,
+                priority=2,
+                estimated_duration=300,
+                requires_downtime=False
+            ),
+            
+            'optimize_memory_usage': MitigationAction(
+                action_id='optimize_memory_usage',
+                description='Optimize memory usage patterns',
+                execution_function=PerformanceMitigationStrategies.optimize_memory_usage,
+                priority=3,
+                estimated_duration=120,
+                requires_downtime=False
+            ),
+            
+            # Storage mitigation actions
+            'implement_state_pruning': MitigationAction(
+                action_id='implement_state_pruning',
+                description='Implement world state pruning',
+                execution_function=StorageMitigationStrategies.implement_state_pruning,
+                priority=3,
+                estimated_duration=600,  # 10 minutes
+                requires_downtime=False
+            ),
+            
+            'execute_backup': MitigationAction(
+                action_id='execute_backup',
+                description='Execute immediate data backup',
+                execution_function=StorageMitigationStrategies.execute_backup,
+                priority=1,
+                estimated_duration=1800,  # 30 minutes
+                requires_downtime=False
+            )
+        }
         
         return actions
     
@@ -646,8 +646,8 @@ class MitigationManager:
         
         # Sort by priority and severity
         def priority_key(item):
-            action, _ = item
-            return action.priority
+            act, _ = item
+            return act.priority
             
         planned_actions.sort(key=priority_key)
         
