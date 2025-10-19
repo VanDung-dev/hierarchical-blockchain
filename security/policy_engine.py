@@ -10,7 +10,7 @@ enterprise blockchain applications.
 import time
 import json
 import re
-from typing import Dict, Any, List, Optional, Set, Union, Callable
+from typing import Dict, Any, List, Optional, Union
 from dataclasses import dataclass
 from enum import Enum
 
@@ -241,12 +241,12 @@ class Policy:
         }
         
         # Sort rules by priority (higher priority first)
-        self.rules.sort(key=lambda rule: rule.priority, reverse=True)
+        self.rules.sort(key=lambda r: r.priority, reverse=True)
     
     def add_rule(self, rule: PolicyRule) -> None:
         """Add rule to policy"""
         self.rules.append(rule)
-        self.rules.sort(key=lambda rule: rule.priority, reverse=True)
+        self.rules.sort(key=lambda r: r.priority, reverse=True)
         self.last_modified = time.time()
         self.version += 1
     
@@ -298,9 +298,9 @@ class Policy:
                 
                 # First applicable rule wins (highest priority)
                 if rule_effect != self.default_effect:
-                    evaluation_result["effect"] = rule_effect.value
+                    evaluation_result["effect"] = rule_effect.value if isinstance(rule_effect, PolicyEffect) else str(rule_effect)
                     evaluation_result["decision_path"].append(
-                        f"Rule {rule.rule_id} applied with effect {rule_effect.value}"
+                        f"Rule {rule.rule_id} applied with effect {rule_effect.value if isinstance(rule_effect, PolicyEffect) else str(rule_effect)}"
                     )
                     break
                 else:
@@ -541,7 +541,7 @@ class PolicyEngine:
         
         return combined_result
     
-    def get_applicable_policies(self, context: Dict[str, Any], 
+    def get_applicable_policies(self, _context: Dict[str, Any],
                               policy_type: Optional[PolicyType] = None) -> List[str]:
         """Get list of policies that might apply to context"""
         applicable_policies = []
