@@ -389,7 +389,7 @@ class TestComprehensiveValidation:
         mock_cert_instance = mock_cert()
         mock_cert_instance.is_expired.return_value = True  # Mock phương thức trả về True trực tiếp
 
-        validator = CertificateValidator()
+        _validator = CertificateValidator()
         with pytest.raises(SecurityError, match='Certificate validation failed: Certificate has expired'):
             validate_certificate(mock_cert_instance)
 

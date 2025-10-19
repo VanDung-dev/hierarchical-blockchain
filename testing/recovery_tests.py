@@ -137,7 +137,7 @@ class TestNetworkRecovery:
             "redundancy_factor": 2,
             "partition_detection_threshold": 0.5
         }
-        recovery_engine = NetworkRecoveryEngine(config)
+        _recovery_engine = NetworkRecoveryEngine(config)
         
         # Simulate network partition
         total_nodes = 6
@@ -197,7 +197,7 @@ class TestNetworkRecovery:
         Validates message delivery through alternative routes.
         """
         config = {"redundancy_factor": 3}
-        recovery_engine = NetworkRecoveryEngine(config)
+        _recovery_engine = NetworkRecoveryEngine(config)
         
         # Mock multiple paths with different success rates
         mock_paths = [
@@ -253,10 +253,10 @@ class TestKeyBackupRecovery:
             "enabled": True,
             "locations": ["primary_vault", "secondary_cloud", "tertiary_offsite"]
         }
-        backup_manager = KeyBackupManager(config)
+        _backup_manager = KeyBackupManager(config)
         
         # Simulate backup distribution
-        backup_id = "test_backup_123"
+        _backup_id = "test_backup_123"
         distributed_locations = ["primary_vault", "secondary_cloud"]
         
         # Test recovery priority (primary -> secondary -> tertiary)
@@ -353,7 +353,7 @@ class TestAPIRecovery:
             "key_location": "header",
             "cache_ttl": 300
         }
-        verify_key_enabled = VerifyAPIKey(enabled_config)
+        _verify_key_enabled = VerifyAPIKey(enabled_config)
         
         # Test with verification disabled (fallback mode)
         disabled_config = {
