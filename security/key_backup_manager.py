@@ -53,14 +53,14 @@ class KeyBackupManager:
     cryptocurrency concepts, focusing on event-based security operations.
     """
     
-    def __init__(self, config: Dict):
+    def __init__(self, configuration: Dict):
         """
         Initialize KeyBackupManager with configuration.
         
         Args:
-            config: Configuration dictionary containing backup settings
+            configuration: Configuration dictionary containing backup settings
         """
-        self.config = config
+        self.config = configuration
         self.enabled = config.get('enabled', True)
         self.frequency = config.get('frequency', 'daily')
         self.encryption_algorithm = config.get('encryption_algorithm', 'AES-256-GCM')
@@ -295,7 +295,7 @@ class KeyBackupManager:
             with open(file_path, "rb") as f:
                 actual_hash = self._calculate_integrity_hash(f.read())
             return actual_hash == expected_hash
-        except Exception:
+        except (IOError, OSError, ValueError):
             return False
     
     def _distribute_to_locations(self, file_path: str, backup_id: str) -> List[str]:
@@ -359,14 +359,14 @@ class KeyBackupManager:
         self._save_metadata()
     
     @staticmethod
-    def _validate_keys(public_key: bytes, private_key: bytes, key_type: str) -> bool:
+    def _validate_keys(public_key: bytes, private_key: bytes, _key_type: str) -> bool:
         """
         Validate restored keys to ensure they're valid and properly paired.
         
         Args:
             public_key: Public key bytes
             private_key: Private key bytes
-            key_type: Type of key being validated
+            _key_type: Type of key being validated
             
         Returns:
             bool: True if keys are valid
@@ -393,7 +393,7 @@ class KeyBackupManager:
             return False
     
     @staticmethod
-    def _apply_restored_keys(public_key: bytes, private_key: bytes, key_type: str):
+    def _apply_restored_keys(_public_key: bytes, _private_key: bytes, key_type: str):
         """
         Integrate restored keys into the system.
         
@@ -467,17 +467,17 @@ class KeyBackupManager:
 
 
 # Factory function for creating configured KeyBackupManager
-def create_key_backup_manager(config: Dict) -> KeyBackupManager:
+def create_key_backup_manager(configuration: Dict) -> KeyBackupManager:
     """
     Factory function to create configured KeyBackupManager instance.
     
     Args:
-        config: Configuration dictionary
+        configuration: Configuration dictionary
         
     Returns:
         KeyBackupManager: Configured instance
     """
-    return KeyBackupManager(config)
+    return KeyBackupManager(configuration)
 
 
 if __name__ == "__main__":
