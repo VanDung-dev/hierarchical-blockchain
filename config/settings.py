@@ -18,7 +18,7 @@ class Settings:
     """Framework configuration settings"""
     
     # Framework version
-    VERSION = "0.dev4"
+    VERSION = "0.dev5"
     FRAMEWORK_NAME = "hierarchical-blockchain"
     
     # Blockchain settings
@@ -36,7 +36,7 @@ class Settings:
     DEFAULT_STORAGE_BACKEND = "memory"  # memory, redis, sqlite
     WORLD_STATE_CACHE_SIZE = 1000
     
-    # Advanced Caching settings (0.dev3)
+    # Advanced Caching settings
     ADVANCED_CACHING_ENABLED = True
     BLOCK_CACHE_SIZE = 5000
     EVENT_CACHE_SIZE = 20000
@@ -46,7 +46,7 @@ class Settings:
     ENTITY_CACHE_POLICY = "lfu"
     ENTITY_TTL = 3600  # 1 hour in seconds
     
-    # Parallel Processing settings (0.dev3)
+    # Parallel Processing settings
     PARALLEL_PROCESSING_ENABLED = True
     MAX_WORKER_THREADS = None  # Auto-detect based on CPU count
     PROCESSING_CHUNK_SIZE = 100
@@ -55,7 +55,7 @@ class Settings:
     IDENTITY_MANAGER_ENABLED = True
     REQUIRE_ORGANIZATION_VALIDATION = True
     
-    # Multi-Organization settings (0.dev3)
+    # Multi-Organization settings
     MULTI_ORG_ENABLED = True
     MSP_ENABLED = True  # Membership Service Provider
     ORGANIZATION_ADMIN_THRESHOLD = 1  # Minimum admins required per org

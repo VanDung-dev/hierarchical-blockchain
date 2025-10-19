@@ -1,5 +1,5 @@
 """
-Unit tests for MSP (Membership Service Provider) - Hierarchical Blockchain Framework 0.dev3.
+Unit tests for MSP (Membership Service Provider).
 
 Tests the advanced MSP implementation including certificate management, 
 role-based access control, and hierarchical identity management for enterprise applications.
