@@ -169,7 +169,7 @@ class SecurityMitigationStrategies:
         """
         try:
             cert_ids = params.get('certificate_ids', [])
-            ca_config = params.get('ca_config', {})
+            _ca_config = params.get('ca_config', {})
             
             logging.info(f"Renewing {len(cert_ids)} certificates")
             

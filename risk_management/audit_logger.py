@@ -186,8 +186,8 @@ class FileAuditStorage(AuditStorage):
             # Determine which files to search
             if filter_criteria.time_range:
                 start_time, end_time = filter_criteria.time_range
-                start_date = time.strftime("%Y-%m-%d", time.localtime(start_time))
-                end_date = time.strftime("%Y-%m-%d", time.localtime(end_time))
+                _start_date = time.strftime("%Y-%m-%d", time.localtime(start_time))
+                _end_date = time.strftime("%Y-%m-%d", time.localtime(end_time))
                 
                 # Get all dates in range
                 current = start_time

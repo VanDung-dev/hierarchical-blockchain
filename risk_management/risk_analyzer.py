@@ -453,7 +453,7 @@ class RiskAnalyzer:
             True if risk was found and resolved
         """
         if risk_id in self.active_risks:
-            risk = self.active_risks.pop(risk_id)
+            _risk = self.active_risks.pop(risk_id)
             self.logger.info(f"Risk {risk_id} resolved: {resolution_notes}")
             return True
         return False
