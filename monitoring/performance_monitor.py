@@ -158,9 +158,9 @@ class SystemMetricsCollector:
                     if hasattr(os, 'getloadavg'):
                         load_avg = os.getloadavg()[0]
                     elif os.path.exists('/proc/loadavg'):
-                        with open('/proc/loadavg', 'r') as f:
-                            load_avg = float(f.read().split()[0])
-                except:
+                        with open('/proc/loadavg', 'r') as load_file:
+                            load_avg = float(load_file.read().split()[0])
+                except (IOError, OSError):
                     pass
                 
                 return {
@@ -193,8 +193,8 @@ class SystemMetricsCollector:
                 memory_info = {}
                 try:
                     if os.path.exists('/proc/meminfo'):
-                        with open('/proc/meminfo', 'r') as f:
-                            for line in f:
+                        with open('/proc/meminfo', 'r') as mem_file:
+                            for line in mem_file:
                                 if ':' in line:
                                     key, value = line.split(':', 1)
                                     memory_info[key.strip()] = int(value.strip().split()[0]) * 1024  # Convert KB to bytes
@@ -212,7 +212,7 @@ class SystemMetricsCollector:
                         'process_memory_rss': 0,  # Cannot determine without psutil
                         'process_memory_vms': 0   # Cannot determine without psutil
                     }
-                except:
+                except (IOError, OSError, ValueError):
                     return {
                         'memory_usage_percent': 0,
                         'memory_total': 0,
@@ -269,10 +269,10 @@ class SystemMetricsCollector:
                     
                     # Try to get disk I/O stats from /proc/diskstats (Linux only)
                     if os.path.exists('/proc/diskstats'):
-                        with open('/proc/diskstats', 'r') as f:
+                        with open('/proc/diskstats', 'r') as disk_file:
                             total_read_bytes = 0
                             total_write_bytes = 0
-                            for line in f:
+                            for line in disk_file:
                                 fields = line.split()
                                 if len(fields) >= 10:
                                     # Fields: read_sectors, write_sectors (sectors are typically 512 bytes)
@@ -289,7 +289,7 @@ class SystemMetricsCollector:
                             })
                     
                     return metrics
-                except:
+                except (IOError, OSError, ValueError):
                     return {
                         'disk_usage_percent': 0,
                         'disk_total': 0,
@@ -331,8 +331,8 @@ class SystemMetricsCollector:
                 try:
                     # Get network I/O stats from /proc/net/dev (Linux)
                     if os.path.exists('/proc/net/dev'):
-                        with open('/proc/net/dev', 'r') as f:
-                            lines = f.readlines()[2:]  # Skip header lines
+                        with open('/proc/net/dev', 'r') as net_file:
+                            lines = net_file.readlines()[2:]  # Skip header lines
                             for line in lines:
                                 if ':' in line:
                                     fields = line.split()
@@ -349,13 +349,13 @@ class SystemMetricsCollector:
                     for protocol in ['tcp', 'udp', 'tcp6', 'udp6']:
                         proc_file = f'/proc/net/{protocol}'
                         if os.path.exists(proc_file):
-                            with open(proc_file, 'r') as f:
-                                lines = f.readlines()[1:]  # Skip header
+                            with open(proc_file, 'r') as conn_file:
+                                lines = conn_file.readlines()[1:]  # Skip header
                                 connection_count += len(lines)
                     
                     metrics['network_connections_count'] = connection_count
                     
-                except:
+                except (IOError, OSError):
                     pass  # Keep default values
                 
                 return metrics
@@ -650,8 +650,8 @@ class PerformanceMonitor:
             try:
                 self._collect_all_metrics()
                 self._check_thresholds()
-            except Exception as e:
-                self.logger.error(f"Error in monitoring loop: {str(e)}")
+            except Exception as loop_error:
+                self.logger.error(f"Error in monitoring loop: {str(loop_error)}")
             
             # Wait for next collection interval
             if not self.shutdown_event.wait(self.collection_interval):
@@ -701,11 +701,11 @@ class PerformanceMonitor:
                     for metric_name, value in custom_values.items():
                         if metric_name in self.metrics:
                             self.metrics[metric_name].add_value(value)
-                except Exception as e:
-                    self.logger.error(f"Error collecting custom metric {callback_name}: {str(e)}")
+                except Exception as callback_error:
+                    self.logger.error(f"Error collecting custom metric {callback_name}: {str(callback_error)}")
             
-        except Exception as e:
-            self.logger.error(f"Error collecting metrics: {str(e)}")
+        except Exception as collect_error:
+            self.logger.error(f"Error collecting metrics: {str(collect_error)}")
     
     def _check_thresholds(self):
         """Check metric thresholds and trigger alerts"""
@@ -723,8 +723,8 @@ class PerformanceMonitor:
                     for handler in self.alert_handlers:
                         try:
                             handler(level, metric, current_value)
-                        except Exception as e:
-                            self.logger.error(f"Alert handler error: {str(e)}")
+                        except Exception as handler_error:
+                            self.logger.error(f"Alert handler error: {str(handler_error)}")
                     
                     # Log the alert
                     threshold = (metric.threshold_critical if level == 'critical' 
@@ -734,8 +734,8 @@ class PerformanceMonitor:
                         f"({level} threshold: {threshold})"
                     )
                     
-            except Exception as e:
-                self.logger.error(f"Error checking threshold for {metric_name}: {str(e)}")
+            except Exception as check_error:
+                self.logger.error(f"Error checking threshold for {metric_name}: {str(check_error)}")
     
     def get_current_metrics(self) -> Dict[str, Dict[str, Any]]:
         """Get current metric values and statistics"""
@@ -902,12 +902,12 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     
     # Create and configure monitor
-    config = {
+    monitor_config = {
         'collection_interval': args.interval,
         'enable_alerts': True
     }
     
-    monitor = PerformanceMonitor(config)
+    monitor = PerformanceMonitor(monitor_config)
     monitor.add_alert_handler(create_default_alert_handler())
     
     # Start monitoring
@@ -921,8 +921,8 @@ if __name__ == "__main__":
         report = monitor.generate_report("text")
         
         if args.output:
-            with open(args.output, 'w') as f:
-                f.write(report)
+            with open(args.output, 'w') as report_file:
+                report_file.write(report)
             print(f"Report saved to {args.output}")
         else:
             print("\n" + report)
