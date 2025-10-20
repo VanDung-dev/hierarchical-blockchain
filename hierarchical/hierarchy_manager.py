@@ -10,10 +10,11 @@ import time
 from typing import Dict, Any, List, Optional
 
 from hierarchical.main_chain import MainChain
-from hierarchical.sub_chain import SubChain
 from hierarchical.multi_org import create_organization, MultiOrgNetwork
 from hierarchical.channel import Channel, Organization as ChannelOrganization
 from hierarchical.private_data import PrivateCollection
+
+from domains.generic.chains.domain_chain import DomainChain
 
 
 class HierarchyManager:
@@ -25,7 +26,7 @@ class HierarchyManager:
     - Coordinates proof submissions between chains
     - Provides system-wide monitoring and integrity checks
     - Handles cross-chain communication and validation
-    - Manages organizations, channels and private data collections (0.dev3 features)
+    - Manages organizations, channels and private data collections
     """
     
     def __init__(self, main_chain_name: str = "MainChain"):
@@ -36,7 +37,7 @@ class HierarchyManager:
             main_chain_name: Name for the Main Chain
         """
         self.main_chain = MainChain(main_chain_name)
-        self.sub_chains: Dict[str, SubChain] = {}
+        self.sub_chains: Dict[str, DomainChain] = {}
         self.system_started_at = time.time()
         self.auto_proof_submission = True
         self.proof_submission_interval = 60.0  # Default 60 seconds
@@ -89,7 +90,7 @@ class HierarchyManager:
         
         return False
     
-    def get_sub_chain(self, name: str) -> Optional[SubChain]:
+    def get_sub_chain(self, name: str) -> Optional[DomainChain]:
         """
         Get a Sub-Chain by name.
         
