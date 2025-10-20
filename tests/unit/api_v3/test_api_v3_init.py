@@ -31,7 +31,8 @@ def test_create_verify_api_key_export():
 
 def test_all_exports():
     """Test that __all__ contains all expected exports"""
-    from api.v3 import __all__
+    import api.v3
+    __all__ = api.v3.__all__
     
     expected_exports = [
         'VerifyAPIKey',

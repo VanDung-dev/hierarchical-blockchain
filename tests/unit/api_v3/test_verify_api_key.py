@@ -213,7 +213,7 @@ async def test_log_security_event(mock_key_manager, default_config):
         verify_key.key_manager = mock_key_manager
         
         # Call the method that logs security events
-        context = await verify_key("valid_api_key")
+        _context = await verify_key("valid_api_key")
         
         # Check if logger was called
         assert mock_logger.info.called
