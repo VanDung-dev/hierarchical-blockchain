@@ -692,3 +692,4 @@ cython_debug/
 .lingma/
 *.db
 *.key
+backups/
