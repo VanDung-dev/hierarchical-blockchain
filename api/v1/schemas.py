@@ -82,9 +82,9 @@ class ProofSubmissionRequest(BaseModel):
         }
     )
     
-    sub_chain_name: str = Field(..., description="Name of the Sub-Chain submitting the proof")
-    proof_hash: str = Field(..., description="Cryptographic hash of the Sub-Chain's latest block")
-    metadata: Dict[str, Any] = Field(..., description="Summary metadata about the Sub-Chain's operations")
+    sub_chain_name: Optional[str] = Field(None, description="Name of the Sub-Chain submitting the proof")
+    proof_hash: Optional[str] = Field(None, description="Cryptographic hash of the Sub-Chain's latest block")
+    metadata: Optional[Dict[str, Any]] = Field(None, description="Summary metadata about the Sub-Chain's operations")
 
 
 class ProofSubmissionResponse(BaseModel):
