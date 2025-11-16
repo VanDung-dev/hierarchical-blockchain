@@ -796,8 +796,10 @@ def demonstrate_hierarchical_blockchain():
 def main():
     """Main entry point for the demonstration."""
     try:
+        from hierarchical_blockchain import __version__
+
         # Add framework version information
-        print("Framework Version: 0.dev5")
+        print(f"Framework Version: {__version__}")
         print("Architecture: Hierarchical Blockchain with Main Chain/Sub-Chains")
         print("Compliance: Non-cryptocurrency, Event-based, Hierarchical Structure")
         print()

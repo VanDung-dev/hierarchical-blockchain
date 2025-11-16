@@ -12,15 +12,16 @@ provides validation mechanisms to ensure system integrity.
 
 import os
 from typing import Dict, Any, List
+from hierarchical_blockchain import __version__
 
 
 class Settings:
     """Framework configuration settings"""
     
     # Framework version
-    VERSION = "0.dev5"
+    VERSION = __version__
     FRAMEWORK_NAME = "hierarchical-blockchain"
-    
+
     # Blockchain settings
     BLOCK_SIZE_LIMIT = 1000  # Maximum events per block
     PROOF_SUBMISSION_INTERVAL = 300  # 5 minutes in seconds
