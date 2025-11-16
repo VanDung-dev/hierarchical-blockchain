@@ -1,8 +1,9 @@
 # Risk Management Configuration for Hierarchical Blockchain Framework
 # This file defines comprehensive risk thresholds, mitigation strategies, and monitoring
 
-# Framework version
-version: "0.dev5"
+# Framework Information
+framework:
+  description: "Risk management configuration defining risk thresholds, mitigation strategies, and monitoring for the hierarchical blockchain framework"
 
 # Risk Management Configuration
 risk_management:

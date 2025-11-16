@@ -1,8 +1,9 @@
 # API Configuration for Hierarchical Blockchain Framework
 # This configuration defines API key verification settings
 
-# Framework version
-version: "0.dev5"
+# Framework Information
+framework:
+  description: "API security configuration with key verification and access control policies for the hierarchical blockchain framework"
 
 # API Security Configuration
 api_security:

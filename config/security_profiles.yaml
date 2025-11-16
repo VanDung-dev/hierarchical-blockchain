@@ -7,8 +7,7 @@
 
 # Framework Information
 framework:
-  version: "0.dev5"
-  name: "hierarchical-blockchain"
+  description: "Enterprise-grade security profiles configuration for MSP, channels, private data collections, ordering service, and contracts"
   security_level: "enterprise"
   compliance_standards:
     - "SOC2"

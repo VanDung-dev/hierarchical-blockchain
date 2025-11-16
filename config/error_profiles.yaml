@@ -6,8 +6,9 @@
 # - No cryptocurrency terminology
 # - Hierarchical proof submission integrity maintained
 
-# Framework version
-version: "0.dev5"
+# Framework Information
+framework:
+  description: "Error mitigation configuration with settings, risk profiles, and recovery strategies for the hierarchical blockchain framework"
 
 # Error Mitigation Core Configuration
 error_mitigation:
