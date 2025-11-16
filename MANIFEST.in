@@ -1,0 +1,6 @@
+include README.md
+include LICENSE
+include requirements.txt
+recursive-include hierarchical_blockchain *.py
+recursive-exclude tests *
+recursive-exclude testing *

@@ -8,14 +8,37 @@ This project is licensed under the Apache License, Version 2.0 - see the [LICENS
 
 ## Installation
 
+### Install from source
+
 ```bash
-pip install -r requirements.txt
+pip install .
+```
+
+### Install in development mode
+
+```bash
+pip install -e .
+```
+
+### Install from PyPI (when available)
+
+```bash
+pip install hierarchical-blockchain
 ```
 
 ## Running server
 
 ```bash
-python api/server.py
+python -m hierarchical_blockchain.api.server
+```
+
+## Using the package
+
+After installation, you can import components from the package:
+
+```python
+from hierarchical_blockchain.core.block import Block
+from hierarchical_blockchain.core.blockchain import Blockchain
 ```
 
 ## Running Demos
@@ -56,38 +79,38 @@ python api/server.py
 
 - To run static code analysis:
     ```bash
-    python testing/static_analysis.py
+    python -m hierarchical_blockchain.testing.static_analysis
     ```
 
 - To run static code analysis with text output:
     ```bash
-    python testing/static_analysis.py --format text
+    python -m hierarchical_blockchain.testing.static_analysis --format text
     ```
 
 - To run static code analysis and save results to a file:
     ```bash
-    python testing/static_analysis.py --output analysis_report.json
-    python testing/static_analysis.py --format text --output analysis_report.txt
+    python -m hierarchical_blockchain.testing.static_analysis --output analysis_report.json
+    python -m hierarchical_blockchain.testing.static_analysis --format text --output analysis_report.txt
     ```
 
 ## Automated Tests
 
 - To run automated risk management tests:
     ```bash
-    python testing/automated_tests.py
+    python -m hierarchical_blockchain.testing.automated_tests
     ```
 
   - To run with verbose output:
       ```bash
-      python testing/automated_tests.py -v
+      python -m hierarchical_blockchain.testing.automated_tests -v
       ```
 
 - To run automated recovery tests:
     ```bash
-    python testing/recovery_tests.py
+    python -m hierarchical_blockchain.testing.recovery_tests
     ```
 
 - To run priority-based validation tests:
     ```bash
-    python testing/validation_suites.py
+    python -m hierarchical_blockchain.testing.validation_suites
     ```
