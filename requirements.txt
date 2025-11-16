@@ -21,6 +21,7 @@ requests==2.32.5
 
 # Testing and development tools
 tox==4.32.0
+virtualenv-pyenv==0.6.0
 black==25.11.0
 flake8==7.3.0
 mypy==1.18.2
