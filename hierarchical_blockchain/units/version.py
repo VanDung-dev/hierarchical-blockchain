@@ -6,7 +6,6 @@ This module provides functions for managing and retrieving version information.
 
 from typing import Tuple, Union, Optional
 
-VERSION: Tuple[int, int, int, str, int] = (0, 0, 0, "dev", 5)
 
 # Regular expression to match PEP 440 version format
 _VERSION_PATTERN = r"(?P<major>\d+)\.(?P<minor>\d+)(?:\.(?P<micro>\d+))?(?:\.(?P<releaselevel>[a-z]+)(?P<serial>\d+)?)?"
@@ -23,7 +22,6 @@ def get_version(version: Optional[Tuple[int, int, int, str, int]] = None) -> str
     Returns:
         PEP 440-compliant version string
     """
-    version = version or VERSION
     major, minor, micro, releaselevel, serial = version
     
     # Build the base version string
@@ -54,7 +52,7 @@ def get_complete_version(version: Optional[Tuple[int, int, int, str, int]] = Non
     Returns:
         Version tuple
     """
-    return version or VERSION
+    return version
 
 
 def get_major_version(version: Optional[Tuple[int, int, int, str, int]] = None) -> str:
@@ -68,7 +66,6 @@ def get_major_version(version: Optional[Tuple[int, int, int, str, int]] = None) 
     Returns:
         Major version string (e.g., "5.2")
     """
-    version = version or VERSION
     major, minor, _, _, _ = version
     return f"{major}.{minor}"
 
@@ -84,7 +81,6 @@ def get_documentation_status(version: Optional[Tuple[int, int, int, str, int]] =
     Returns:
         Documentation status string
     """
-    version = version or VERSION
     _, _, _, releaselevel, _ = version
     
     if releaselevel == "alpha":
@@ -110,8 +106,8 @@ def compare_versions(version1: Union[str, Tuple[int, int, int, str, int]],
         
     Returns:
         -1 if version1 < version2
-         0 if version1 == version2
-         1 if version1 > version2
+        0 if version1 == version2
+        1 if version1 > version2
     """
     def _version_tuple(v: Union[str, Tuple[int, int, int, str, int]]) -> Tuple[int, int, int, str, int]:
         if isinstance(v, str):
