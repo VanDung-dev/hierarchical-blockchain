@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "hierarchical-blockchain"
-description = "A hierarchical blockchain framework inspired by Hyperledger Fabric"
+description = "A hierarchical blockchain framework for enterprise applications"
 readme = "README.md"
 authors = [{name = "Nguyễn Lê Văn Dũng"}]
 license = {text = "Apache-2.0"}
@@ -17,7 +17,7 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
+   "Programming Language :: Python :: 3.13",
 ]
 requires-python = ">=3.10"
 dependencies = [
