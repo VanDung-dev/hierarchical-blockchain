@@ -1,5 +1,5 @@
 """
-Ordering Service for Hierarchical Blockchain Framework
+Ordering Service Simple for Hierarchical Blockchain Framework
 
 This service implements a decoupled event ordering mechanism designed for the
 hierarchical blockchain architecture. It provides event certification, ordering,
