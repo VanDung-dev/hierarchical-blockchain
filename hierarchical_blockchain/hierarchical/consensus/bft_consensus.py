@@ -493,7 +493,7 @@ class BFTConsensus:
         # Ensure timer won't keep process alive at exit
         try:
             self.view_change_timer.daemon = True  # type: ignore[attr-defined]
-        except Exception:
+        except AttributeError:
             pass
         self.view_change_timer.start()
         self.last_heartbeat = time.time()
