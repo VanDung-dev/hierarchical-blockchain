@@ -138,7 +138,7 @@ def run_server():
     uvicorn.run(
         "hierarchical_blockchain.api.server:app",
         host=api_config["host"],
-        port=2661,
+        port=api_config["port"],
         reload=is_debug,
         log_level="info" if not is_debug else "debug"
     )

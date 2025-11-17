@@ -71,7 +71,7 @@ class Settings:
     # API settings
     API_VERSION = "v1"
     API_HOST = "localhost"
-    API_PORT = 8000
+    API_PORT = 2661
     
     # CLI settings
     CLI_CONFIG_FILE = "chains.json"
@@ -178,11 +178,11 @@ class TestingSettings(Settings):
 # Get settings based on environment
 def get_settings() -> Settings:
     """Get settings based on environment variable"""
-    env = os.getenv("HBC_ENV", "development").lower()
+    env = os.getenv("HBC_ENV", "dev").lower()
     
-    if env == "production":
+    if env == "product":
         return ProductionSettings()
-    elif env == "testing":
+    elif env == "test":
         return TestingSettings()
     else:
         return DevelopmentSettings()

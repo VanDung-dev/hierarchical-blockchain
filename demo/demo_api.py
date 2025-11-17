@@ -24,7 +24,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Base URL for the API server
-BASE_URL = "http://localhost:8000"
+BASE_URL = "http://localhost:2661"
 
 # API endpoints
 V1_BASE = f"{BASE_URL}/api/v1"
