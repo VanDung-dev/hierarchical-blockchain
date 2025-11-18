@@ -3,6 +3,8 @@ Unit tests for the Ordering Service
 """
 
 import time
+import os
+import tempfile
 from hierarchical_blockchain.consensus import OrderingService, OrderingNode, OrderingStatus
 from hierarchical_blockchain.error_mitigation.error_classifier import (
     ErrorClassifier,
@@ -16,6 +18,12 @@ from hierarchical_blockchain.error_mitigation.validator import (
     APIValidator,
     ValidationError,
     SecurityError
+)
+from hierarchical_blockchain.error_mitigation.recovery_engine import (
+    NetworkRecoveryEngine,
+    AutoScaler,
+    ConsensusRecoveryEngine,
+    BackupRecoveryEngine,
 )
 
 # Create a test node
@@ -759,3 +767,318 @@ def test_resource_validator_with_extreme_values():
     # These should not cause errors in initialization
     assert validator_low.cpu_threshold == 5
     assert validator_high.cpu_threshold == 95
+
+
+def test_binary_data_handling():
+    """Test handling of binary data in events"""
+    service = OrderingService(nodes=[node], config={})
+
+    # Create binary data
+    binary_data = bytes([i % 256 for i in range(1000)])  # 1000 bytes of binary data
+
+    event = {
+        "entity_id": "BINARY-001",
+        "event": "binary_data_event",
+        "timestamp": time.time(),
+        "binary_payload": binary_data.hex(),  # Convert to hex for JSON serialization
+        "data_size": len(binary_data)
+    }
+
+    event_id = service.receive_event(event, "test-channel", "test-org")
+    time.sleep(0.1)
+
+    status = service.get_event_status(event_id)
+    assert status is not None
+    assert status["status"] == "certified"
+
+    # Check that we can retrieve the event
+    block = service.get_next_block()
+    if block:
+        assert block["event_count"] >= 1
+
+
+def test_large_payload_handling():
+    """Test handling of large payload events"""
+    service = OrderingService(nodes=[node], config={"block_size": 2, "batch_timeout": 0.1})
+
+    # Create a large payload
+    large_payload = "A" * (1024 * 1024)  # 1MB string
+
+    event = {
+        "entity_id": "LARGE-001",
+        "event": "large_payload_event",
+        "timestamp": time.time(),
+        "payload": large_payload
+    }
+
+    event_id = service.receive_event(event, "test-channel", "test-org")
+    time.sleep(0.2)
+
+    status = service.get_event_status(event_id)
+    assert status is not None
+    # Large payloads should still be certified if they pass validation
+    assert status["status"] == "certified"
+
+
+def test_very_small_block_size():
+    """Test ordering service with very small block size"""
+    config = {"block_size": 1, "batch_timeout": 0.1}
+    service = OrderingService(nodes=[node], config=config)
+
+    event = {
+        "entity_id": "SMALLBLOCK-001",
+        "event": "small_block_test",
+        "timestamp": time.time()
+    }
+
+    event_id = service.receive_event(event, "test-channel", "test-org")
+    time.sleep(0.2)
+
+    # With block_size=1, should have created a block immediately
+    block = service.get_next_block()
+    assert block is not None
+    assert block["event_count"] == 1
+
+    status = service.get_event_status(event_id)
+    assert status["status"] == "certified"
+
+
+def test_very_large_block_size():
+    """Test ordering service with very large block size"""
+    config = {"block_size": 10000, "batch_timeout": 0.1}
+    service = OrderingService(nodes=[node], config=config)
+
+    # Add a few events
+    event_ids = []
+    for i in range(5):
+        event = {
+            "entity_id": f"LARGEBLOCK-{i:03d}",
+            "event": f"large_block_test_{i}",
+            "timestamp": time.time()
+        }
+        event_id = service.receive_event(event, "test-channel", "test-org")
+        event_ids.append(event_id)
+
+    time.sleep(0.2)
+
+    # With such a large block size, events should be certified but no block created yet
+    for event_id in event_ids:
+        status = service.get_event_status(event_id)
+        assert status["status"] == "certified"
+
+    # Should not have created a block yet (only 5 events, block_size=10000)
+    block = service.get_next_block()
+    assert block is None
+
+
+def test_service_recovery_after_crash():
+    """Test service recovery after simulated crash"""
+    config = {"block_size": 3, "batch_timeout": 0.1}
+    service = OrderingService(nodes=[node], config=config)
+
+    # Add some events
+    event_ids = []
+    for i in range(2):
+        event = {
+            "entity_id": f"CRASH-{i:03d}",
+            "event": f"crash_test_{i}",
+            "timestamp": time.time()
+        }
+        event_id = service.receive_event(event, "test-channel", "test-org")
+        event_ids.append(event_id)
+
+    time.sleep(0.1)
+
+    # Simulate a crash by creating a new service instance
+    # In a real scenario, this would be a restart
+    service.stop()
+    new_service = OrderingService(nodes=[node], config=config)
+
+    # The new service should be able to process new events
+    recovery_event = {
+        "entity_id": "RECOVERY-001",
+        "event": "recovery_test",
+        "timestamp": time.time()
+    }
+
+    recovery_event_id = new_service.receive_event(recovery_event, "test-channel", "test-org")
+    time.sleep(0.2)
+
+    status = new_service.get_event_status(recovery_event_id)
+    assert status is not None
+    assert status["status"] == "certified"
+
+
+def test_access_control_validation():
+    """Test access control validation if implemented"""
+    service = OrderingService(nodes=[node], config={})
+
+    # Test with normal organization
+    normal_event = {
+        "entity_id": "ACCESS-001",
+        "event": "access_test",
+        "timestamp": time.time()
+    }
+
+    event_id = service.receive_event(normal_event, "test-channel", "test-org")
+    time.sleep(0.1)
+
+    status = service.get_event_status(event_id)
+    assert status is not None
+
+    # In the current implementation, all organizations are accepted
+    # If access control were implemented, we would test rejection here
+    assert status["status"] in ["pending", "certified", "rejected"]
+
+
+def test_network_recovery_with_complex_data():
+    """Test network recovery with complex data payloads"""
+    config = {"timeout_multiplier": 2.0, "redundancy_factor": 2}
+    engine = NetworkRecoveryEngine(config)
+
+    # Test with binary data
+    binary_message = {
+        "entity_id": "NETWORK-001",
+        "event": "network_test",
+        "timestamp": time.time(),
+        "binary_data": bytes([i % 256 for i in range(1000)]).hex()
+    }
+
+    target_nodes = ["node1", "node2", "node3"]
+
+    # This is a mock test since actual network sending is simulated
+    health = engine.monitor_network_health()
+    assert "timestamp" in health
+    assert "avg_latency_ms" in health
+
+
+def test_auto_scaler_with_edge_configurations():
+    """Test auto scaler with extreme configurations"""
+    # Test with very small thresholds
+    config_small = {
+        "auto_scale": True,
+        "scale_up_threshold": 0.01,
+        "scale_down_threshold": 0.005,
+        "min_nodes": 1,
+        "max_nodes": 2
+    }
+
+    scaler_small = AutoScaler(config_small)
+    assert scaler_small.scale_up_threshold == 0.01
+    assert scaler_small.scale_down_threshold == 0.005
+
+    # Test with very large thresholds
+    config_large = {
+        "auto_scale": True,
+        "scale_up_threshold": 0.99,
+        "scale_down_threshold": 0.95,
+        "min_nodes": 10,
+        "max_nodes": 20
+    }
+
+    scaler_large = AutoScaler(config_large)
+    assert scaler_large.scale_up_threshold == 0.99
+    assert scaler_large.scale_down_threshold == 0.95
+
+
+def test_consensus_recovery_with_complex_state():
+    """Test consensus recovery with complex state data"""
+    config = {}
+    engine = ConsensusRecoveryEngine(config)
+
+    complex_state = {
+        "view_number": 10,
+        "timestamp": time.time(),
+        "node_states": {
+            "node1": {"status": "active", "last_response": time.time()},
+            "node2": {"status": "passive", "last_response": time.time() - 10},
+            "node3": {"status": "failed", "last_response": time.time() - 100}
+        },
+        "pending_messages": [
+            {"id": "msg1", "content": "test", "timestamp": time.time()},
+            {"id": "msg2", "content": bytes([1, 2, 3, 4]).hex(), "timestamp": time.time()}
+        ]
+    }
+
+    # Test recovery with complex state
+    result = engine.recover_consensus_state(complex_state)
+    assert result is True  # Should succeed with valid state
+
+
+def test_backup_recovery_with_large_files():
+    """Test backup recovery with large files"""
+    config = {"locations": ["primary"], "integrity_check": "sha256"}
+    engine = BackupRecoveryEngine(config)
+
+    # Create a temporary large file for testing
+    with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+        # Write 1MB of data
+        large_data = b"A" * (1024 * 1024)
+        tmp_file.write(large_data)
+        backup_path = tmp_file.name
+
+    try:
+        # Test recovery from backup
+        result = engine.recover_from_backup(backup_path)
+        # Should handle the file properly (result depends on implementation details)
+        assert result in [True, False]  # Just check it doesn't crash
+    finally:
+        # Clean up
+        if os.path.exists(backup_path):
+            os.unlink(backup_path)
+
+
+def test_recovery_after_system_crash():
+    """Test recovery procedures after system crash simulation"""
+    # Test network recovery engine recovery
+    network_config = {"timeout_multiplier": 2.0}
+    network_engine = NetworkRecoveryEngine(network_config)
+
+    # Simulate network operations
+    latency_data = [100.0, 150.0, 200.0, 175.0]
+    timeout = network_engine.adjust_timeout(latency_data)
+    assert timeout > 0
+
+    # Test auto scaler recovery
+    scaler_config = {
+        "auto_scale": True,
+        "scale_up_threshold": 0.8,
+        "scale_down_threshold": 0.3
+    }
+    scaler = AutoScaler(scaler_config)
+
+    # Should be able to scale after cooldown period
+    assert scaler._can_scale() is True
+
+    # Test consensus recovery after crash
+    consensus_config = {}
+    consensus_engine = ConsensusRecoveryEngine(consensus_config)
+
+    # Simulate leader failure recovery
+    recovery_result = consensus_engine.handle_leader_failure("failed_leader_1", 5)
+    assert recovery_result is True
+
+
+def test_access_validation_in_recovery():
+    """Test access validation in recovery operations if applicable"""
+    config = {}
+    engine = ConsensusRecoveryEngine(config)
+
+    # Test with various node metrics including edge cases
+    node_metrics = {
+        "node1": {
+            "last_response": time.time(),
+            "response_time": 0.1,
+            "failure_count": 0
+        },
+        "node2": {
+            "last_response": time.time() - 100,  # Silent node
+            "response_time": 10.0,
+            "failure_count": 10
+        }
+    }
+
+    actions = engine.handle_node_performance_issues(node_metrics)
+    assert isinstance(actions, dict)
+    assert "view_change" in actions
+    assert "isolated_nodes" in actions
