@@ -6,25 +6,46 @@ including message handling, consensus phases, and node communication.
 """
 
 import time
+import hashlib
 
-from hierarchical_blockchain.hierarchical.consensus.bft_consensus import BFTConsensus, create_bft_network, ConsensusError
+from hierarchical_blockchain.hierarchical.consensus.bft_consensus import (
+    BFTConsensus,
+    create_bft_network,
+    ConsensusError,
+    BFTMessage,
+    MessageType
+)
 from hierarchical_blockchain.error_mitigation.validator import ConsensusValidator
 from hierarchical_blockchain.error_mitigation.error_classifier import ErrorClassifier
-from hierarchical_blockchain.error_mitigation.recovery_engine import ConsensusRecoveryEngine
+from hierarchical_blockchain.error_mitigation.recovery_engine import (
+    ConsensusRecoveryEngine,
+    NetworkRecoveryEngine
+)
 
+
+# Create a BFT network
+node_configs = [
+    {"node_id": "node_1"},
+    {"node_id": "node_2"},
+    {"node_id": "node_3"},
+    {"node_id": "node_4"}
+]
+
+network = create_bft_network(node_configs, fault_tolerance=1)
+
+# Create a mock message
+test_message = BFTMessage(
+    message_type=MessageType.PREPARE,
+    view=0,
+    sequence_number=1,
+    sender_id="node_1",
+    timestamp=time.time(),
+    signature=hashlib.sha256(b"test").hexdigest(),
+    data={"test": "data"}
+)
 
 def test_bft_network_creation():
     """Test creation of BFT network"""
-    # Valid configuration
-    node_configs = [
-        {"node_id": "node_1"},
-        {"node_id": "node_2"},
-        {"node_id": "node_3"},
-        {"node_id": "node_4"}
-    ]
-    
-    # Should work with enough nodes for f=1
-    network = create_bft_network(node_configs, fault_tolerance=1)
     assert len(network) == 4
     assert "node_1" in network
     assert isinstance(network["node_1"], BFTConsensus)
@@ -149,14 +170,6 @@ def test_consensus_recovery_engine_integration():
 
 def test_error_mitigation_with_node_failures():
     """Test error mitigation mechanisms with various node failures"""
-    # Create a BFT network with error mitigation config
-    node_configs = [
-        {"node_id": "node_1"},
-        {"node_id": "node_2"},
-        {"node_id": "node_3"},
-        {"node_id": "node_4"}
-    ]
-
     error_config = {
         "consensus": {
             "bft": {
@@ -172,8 +185,6 @@ def test_error_mitigation_with_node_failures():
         }
     }
 
-    network = create_bft_network(node_configs, fault_tolerance=1)
-
     # Apply error config to nodes
     for node in network.values():
         node.error_config = error_config
@@ -188,7 +199,6 @@ def test_error_mitigation_with_node_failures():
     assert primary.auto_recovery_enabled is True
 
     # Test error classification
-    from hierarchical_blockchain.error_mitigation.error_classifier import ErrorClassifier
     classifier = ErrorClassifier({})
 
     # Test classifying a node failure
@@ -211,7 +221,6 @@ def test_error_mitigation_with_node_failures():
     assert "node_2" in primary.node_failure_counts
 
     # Test that recovery engine can be created
-    from hierarchical_blockchain.error_mitigation.recovery_engine import ConsensusRecoveryEngine
     recovery_config = {
         "max_recovery_attempts": 3,
         "view_change_timeout": 10
@@ -235,32 +244,8 @@ def test_error_mitigation_with_node_failures():
 
 def test_bft_with_slow_nodes():
     """Test BFT consensus behavior with slow nodes"""
-    # Create a BFT network
-    node_configs = [
-        {"node_id": "node_1"},
-        {"node_id": "node_2"},
-        {"node_id": "node_3"},
-        {"node_id": "node_4"}
-    ]
-
-    network = create_bft_network(node_configs, fault_tolerance=1)
-
     # Create a simple test without triggering full consensus
     # Just test that the slow node detection mechanism works
-
-    # Create a mock message
-    from hierarchical_blockchain.hierarchical.consensus.bft_consensus import BFTMessage, MessageType
-    import hashlib
-
-    test_message = BFTMessage(
-        message_type=MessageType.PREPARE,
-        view=0,
-        sequence_number=1,
-        sender_id="node_1",
-        timestamp=time.time(),
-        signature=hashlib.sha256(b"test").hexdigest(),
-        data={"test": "data"}
-    )
 
     # Test that normal node processes message correctly
     normal_node = network["node_3"]
@@ -281,32 +266,8 @@ def test_bft_with_slow_nodes():
 
 def test_bft_with_silent_nodes():
     """Test BFT consensus behavior with silent nodes"""
-    # Create a BFT network
-    node_configs = [
-        {"node_id": "node_1"},
-        {"node_id": "node_2"},
-        {"node_id": "node_3"},
-        {"node_id": "node_4"}
-    ]
-
-    network = create_bft_network(node_configs, fault_tolerance=1)
-
     # Similar to slow nodes test, focus on component-level testing
     # rather than full consensus flow
-
-    # Create a mock message
-    from hierarchical_blockchain.hierarchical.consensus.bft_consensus import BFTMessage, MessageType
-    import hashlib
-
-    test_message = BFTMessage(
-        message_type=MessageType.PREPARE,
-        view=0,
-        sequence_number=1,
-        sender_id="node_1",
-        timestamp=time.time(),
-        signature=hashlib.sha256(b"test").hexdigest(),
-        data={"test": "data"}
-    )
 
     # Test that normal node processes message correctly
     normal_node = network["node_3"]
@@ -332,20 +293,6 @@ def test_bft_with_silent_nodes():
 
 def test_bft_with_malicious_nodes():
     """Test BFT consensus behavior with malicious nodes"""
-    # Create a BFT network
-    node_configs = [
-        {"node_id": "node_1"},
-        {"node_id": "node_2"},
-        {"node_id": "node_3"},
-        {"node_id": "node_4"}
-    ]
-
-    network = create_bft_network(node_configs, fault_tolerance=1)
-
-    # Focus on component-level testing rather than full consensus flow
-    from hierarchical_blockchain.hierarchical.consensus.bft_consensus import BFTMessage, MessageType
-    import hashlib
-
     # Test normal message
     normal_message = BFTMessage(
         message_type=MessageType.PREPARE,
@@ -397,18 +344,7 @@ def test_bft_with_malicious_nodes():
 
 def test_bft_with_split_brain_scenario():
     """Test BFT consensus behavior with split brain scenario"""
-    # Create a BFT network
-    node_configs = [
-        {"node_id": "node_1"},
-        {"node_id": "node_2"},
-        {"node_id": "node_3"},
-        {"node_id": "node_4"}
-    ]
-
-    network = create_bft_network(node_configs, fault_tolerance=1)
-
     # Test split brain detection and recovery mechanisms
-    from hierarchical_blockchain.error_mitigation.recovery_engine import ConsensusRecoveryEngine
     recovery_config = {
         "max_recovery_attempts": 3,
         "view_change_timeout": 10
@@ -448,33 +384,8 @@ def test_bft_with_split_brain_scenario():
 
 def test_bft_with_temporary_network_partition():
     """Test BFT consensus behavior with temporary network partition"""
-    # Create a BFT network
-    node_configs = [
-        {"node_id": "node_1"},
-        {"node_id": "node_2"},
-        {"node_id": "node_3"},
-        {"node_id": "node_4"}
-    ]
-
-    network = create_bft_network(node_configs, fault_tolerance=1)
-
     # Focus on component-level testing rather than full consensus flow
-    from hierarchical_blockchain.hierarchical.consensus.bft_consensus import BFTMessage, MessageType
-    import hashlib
-
-    # Test message that would be sent during network partition
-    test_message = BFTMessage(
-        message_type=MessageType.PREPARE,
-        view=0,
-        sequence_number=1,
-        sender_id="node_1",
-        timestamp=time.time(),
-        signature=hashlib.sha256(b"test").hexdigest(),
-        data={"test": "data"}
-    )
-
     # Test network recovery engine handling of partitions
-    from hierarchical_blockchain.error_mitigation.recovery_engine import NetworkRecoveryEngine
     recovery_config = {
         "timeout_multiplier": 2.0,
         "redundancy_factor": 2,
@@ -518,20 +429,6 @@ def test_bft_with_temporary_network_partition():
 
 def test_bft_with_complex_byzantine_attacks():
     """Test BFT consensus behavior with complex Byzantine attacks"""
-    # Create a BFT network
-    node_configs = [
-        {"node_id": "node_1"},
-        {"node_id": "node_2"},
-        {"node_id": "node_3"},
-        {"node_id": "node_4"}
-    ]
-
-    network = create_bft_network(node_configs, fault_tolerance=1)
-
-    # Test complex Byzantine attack scenarios
-    from hierarchical_blockchain.error_mitigation.error_classifier import ErrorClassifier
-    from hierarchical_blockchain.error_mitigation.recovery_engine import ConsensusRecoveryEngine
-
     # Create error classifier
     classifier = ErrorClassifier({})
 
@@ -565,9 +462,6 @@ def test_bft_with_complex_byzantine_attacks():
     # Test that BFT nodes can handle complex attacks by checking internal mechanisms
     normal_node = network["node_1"]
 
-    # Test that normal nodes can detect malicious behavior through internal mechanisms
-    from hierarchical_blockchain.hierarchical.consensus.bft_consensus import BFTMessage, MessageType
-
     # Create a message with invalid signature to simulate malicious behavior
     malicious_message = BFTMessage(
         message_type=MessageType.PREPARE,
@@ -594,4 +488,3 @@ def test_bft_with_complex_byzantine_attacks():
     # Test node failure tracking for malicious behavior
     normal_node._log_node_behavior("node_2", "invalid_signature")
     assert "node_2" in normal_node.node_failure_counts
-
