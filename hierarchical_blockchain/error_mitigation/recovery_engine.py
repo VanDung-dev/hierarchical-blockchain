@@ -468,6 +468,11 @@ class ConsensusRecoveryEngine:
         self.max_recovery_attempts = config.get("max_recovery_attempts", 3)
         self.view_change_timeout = config.get("view_change_timeout", 10)
 
+        # Node behavior tracking
+        self.node_performance = {}  # Track node response times and failures
+        self.slow_node_threshold = config.get("slow_node_threshold", 5.0)  # seconds
+        self.silent_node_threshold = config.get("silent_node_threshold", 30.0)  # seconds
+
         logger.info("Initialized ConsensusRecoveryEngine")
 
     def handle_leader_failure(self, failed_leader_id: str, current_view: int) -> bool:
@@ -533,6 +538,87 @@ class ConsensusRecoveryEngine:
         except Exception as e:
             logger.error(f"Message ordering recovery failed: {e}")
             return False
+
+    def handle_node_performance_issues(self, node_metrics: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Handle node performance issues based on metrics
+
+        Args:
+            node_metrics: Dictionary of node performance metrics
+
+        Returns:
+            Dict: Recovery actions to take
+        """
+        actions = {
+            "view_change": False,
+            "isolated_nodes": [],
+            "scaling_actions": []
+        }
+
+        current_time = time.time()
+
+        for node_id, metrics in node_metrics.items():
+            last_response = metrics.get("last_response", 0)
+            response_time = metrics.get("response_time", 0)
+            failure_count = metrics.get("failure_count", 0)
+
+            # Check for silent nodes
+            if (current_time - last_response) > self.silent_node_threshold:
+                logger.warning(f"Silent node detected: {node_id}")
+                actions["isolated_nodes"].append(node_id)
+                actions["view_change"] = True
+
+            # Check for slow nodes
+            elif response_time > self.slow_node_threshold:
+                logger.warning(f"Slow node detected: {node_id} (response time: {response_time}s)")
+                # Track slow nodes but don't necessarily trigger view change unless multiple
+                self.node_performance.setdefault(node_id, []).append(response_time)
+
+            # Check for high failure count
+            if failure_count > 3:
+                logger.warning(f"High failure count for node: {node_id} ({failure_count} failures)")
+                actions["isolated_nodes"].append(node_id)
+                actions["view_change"] = True
+
+        return actions
+
+    @staticmethod
+    def adapt_consensus_parameters(network_conditions: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Adapt consensus parameters based on network conditions
+
+        Args:
+            network_conditions: Current network conditions
+
+        Returns:
+            Dict: Updated consensus parameters
+        """
+        adapted_params = {}
+
+        avg_latency = network_conditions.get("avg_latency_ms", 100)
+        packet_loss = network_conditions.get("packet_loss", 0)
+
+        # Adjust timeouts based on network conditions
+        if avg_latency > 1000:  # 1 second
+            adapted_params["view_change_timeout"] = 60.0
+            adapted_params["message_timeout"] = 10.0
+        elif avg_latency > 500:  # 0.5 second
+            adapted_params["view_change_timeout"] = 45.0
+            adapted_params["message_timeout"] = 7.5
+        else:
+            adapted_params["view_change_timeout"] = 30.0
+            adapted_params["message_timeout"] = 5.0
+
+        # Adjust for packet loss
+        if packet_loss > 0.1:  # 10% packet loss
+            adapted_params["redundancy_factor"] = 3
+        elif packet_loss > 0.05:  # 5% packet loss
+            adapted_params["redundancy_factor"] = 2
+        else:
+            adapted_params["redundancy_factor"] = 1
+
+        logger.info(f"Adapted consensus parameters: {adapted_params}")
+        return adapted_params
 
     def recover_consensus_state(self, last_known_state: Dict[str, Any]) -> bool:
         """
