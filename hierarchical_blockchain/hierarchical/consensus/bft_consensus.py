@@ -484,7 +484,7 @@ class BFTConsensus:
         }
 
         # Classify the error
-        error_info = self.error_classifier.classify_error(error_data)
+        _error_info = self.error_classifier.classify_error(error_data)
 
         # Update node tracking
         if node_id not in self.node_failure_counts:
