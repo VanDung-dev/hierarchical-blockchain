@@ -1,15 +1,18 @@
 [build-system]
-requires = ["setuptools>=80.9.0", "setuptools_scm[toml]>=9.2.2", "wheel>=0.46.1"]
+requires = [
+    "setuptools>=80.9.0",
+    "setuptools_scm[toml]>=9.2.2",
+    "wheel>=0.45.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "hierarchical-blockchain"
 description = "A hierarchical blockchain framework for enterprise applications"
 readme = "README.md"
-authors = [{name = "Nguyễn Lê Văn Dũng"}]
+authors = [{name = "Nguyễn Lê Văn Dũng", email = "dungnguyen2661@gmail.com"}]
 license = {text = "Apache-2.0"}
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "License :: OSI Approved :: Apache Software License",
@@ -55,9 +58,12 @@ dev = [
 hbc = "hierarchical_blockchain.cli.__init__:hbc"
 
 [project.urls]
-Homepage = "https://github.com/VanDung-dev/hierarchical-blockchain"
+"Homepage" = "https://github.com/VanDung-dev/hierarchical-blockchain"
 "Bug Reports" = "https://github.com/VanDung-dev/hierarchical-blockchain/issues"
-Source = "https://github.com/VanDung-dev/hierarchical-blockchain"
+"Source" = "https://github.com/VanDung-dev/hierarchical-blockchain"
+"Documentation" = "https://github.com/VanDung-dev/hierarchical-blockchain/blob/main/README.md"
+"License" = "https://github.com/VanDung-dev/hierarchical-blockchain/blob/main/LICENSE"
+"Security Policy" = "https://github.com/VanDung-dev/hierarchical-blockchain/blob/main/SECURITY.md"
 
 [tool.setuptools_scm]
 version_scheme = "guess-next-dev"
