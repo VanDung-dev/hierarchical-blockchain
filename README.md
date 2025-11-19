@@ -1,4 +1,4 @@
-# Hierarchical Blockchain Framework
+# Hierarchical Blockchain Framework (Hiera)
 
 ![Python Versions](https://img.shields.io/badge/python-3.10%20|%203.11%20|%203.12%20|%203.13-blue)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
