@@ -334,7 +334,7 @@ def test_nested_hierarchy():
     assert len(level3_a1a_proofs) == 1
     
     # Test hierarchical integrity report includes all chains
-    integrity_report =main_chain.get_hierarchical_integrity_report()
+    integrity_report = main_chain.get_hierarchical_integrity_report()
     assert integrity_report["registered_sub_chains"] == 5
     assert "Level1ChainA" in integrity_report["sub_chains"]
     assert "Level1ChainB" in integrity_report["sub_chains"]
@@ -360,7 +360,7 @@ def test_rollback_on_error():
     }
     rollback_manager = RollbackManager(rollback_config)
     
-    #Create Main Chain and Sub-Chains
+    # Create Main Chain and Sub-Chains
     main_chain = MainChain(name="RollbackTestMainChain")
     sub_chain = SubChain(name="RollbackTestSubChain", domain_type="testing")
     sub_chain.connect_to_main_chain(main_chain)
@@ -390,11 +390,11 @@ def test_rollback_on_error():
         [main_chain, sub_chain]
     )
     
-    # Perform more operationsthat might cause issues
+    # Perform more operations that might cause issues
     sub_chain.start_operation("PRODUCT-ROLLBACK-002", "test_operation_2", {"param": "value2"})
     sub_chain.update_entity_status("PRODUCT-ROLLBACK-002", "processing", {"step": 1})
     
-    # Simulate an errorcondition
+    # Simulate an error condition
     # (In a real scenario, this could be a consensus failure, invalid transaction, etc.)
     
     # Create snapshot before "error"
@@ -408,7 +408,7 @@ def test_rollback_on_error():
     sub_chain.finalize_sub_chain_block()
     
     # Check current state
-    assert len(sub_chain.chain) == 3 # Genesis + 2 blocks
+    assert len(sub_chain.chain) == 3  # Genesis + 2 blocks
     assert main_chain.proof_count == 1
     
     # Now perform rollback to mid_snapshot (before the error)
@@ -434,10 +434,106 @@ def test_rollback_on_error():
     sub_chain.complete_operation("PRODUCT-ROLLBACK-003", "test_operation_3", {"result": "success"})
     sub_chain.finalize_sub_chain_block()
     
-    # Clean uptest snapshots directory
+    # Clean up test snapshots directory
     import shutil
     import os
     if os.path.exists("test_snapshots"):
         shutil.rmtree("test_snapshots")
     if os.path.exists("rollback_operations.log"):
         os.remove("rollback_operations.log")
+
+
+def test_basic_hierarchical_system_functionality():
+    """Test basic functionality of the hierarchical system including core components initialization and interaction"""
+    # Test Main Chain creation
+    main_chain = MainChain(name="BasicFunctionalityMainChain")
+    assert main_chain is not None
+    assert main_chain.name == "BasicFunctionalityMainChain"
+    assert len(main_chain.chain) == 1  # Genesis block
+    assert len(main_chain.registered_sub_chains) == 0
+
+    # Test Sub-Chain creation
+    sub_chain = SubChain(name="BasicFunctionalitySubChain", domain_type="testing")
+    assert sub_chain is not None
+    assert sub_chain.name == "BasicFunctionalitySubChain"
+    assert sub_chain.domain_type == "testing"
+    assert len(sub_chain.chain) == 1  # Genesis block
+    assert sub_chain.main_chain_connection is None
+
+    # Test connecting Sub-Chain to Main Chain
+    connection_result = sub_chain.connect_to_main_chain(main_chain)
+    assert connection_result is True
+    assert sub_chain.main_chain_connection is not None
+    assert "BasicFunctionalitySubChain" in main_chain.registered_sub_chains
+    # After connection, there should be 1 pending event (connection event)
+    assert len(sub_chain.pending_events) == 1
+
+    # Test basic operation in Sub-Chain
+    operation_result = sub_chain.start_operation("TEST-ENTITY-001", "basic_test", {"test_param": "value"})
+    assert operation_result is True
+    # Now there should be 2 pending events (connection event + operation event)
+    assert len(sub_chain.pending_events) == 2
+
+    # Test finalizing Sub-Chain block
+    finalize_result = sub_chain.finalize_sub_chain_block()
+    assert finalize_result is not None
+    assert "block_index" in finalize_result
+    # This block contains 3 events:
+    # 1. Genesis event (automatically created)
+    # 2. Connection event (created during connection to main chain)
+    # 3. Operation event (created when starting operation)
+    assert finalize_result["events_count"] == 3
+    assert len(sub_chain.chain) == 2  # Genesis block + new block
+    assert len(sub_chain.pending_events) == 0
+
+    # Add another operation for testing
+    operation_result2 = sub_chain.start_operation("TEST-ENTITY-002", "basic_test_2", {"test_param": "value2"})
+    assert operation_result2 is True
+    assert len(sub_chain.pending_events) == 1
+
+    finalize_result2 = sub_chain.finalize_sub_chain_block()
+    assert finalize_result2 is not None
+    # After the first finalize_sub_chain_block(), a proof_submitted event is automatically added
+    # So the second block contains 2 events: operation event + proof_submitted event
+    assert finalize_result2["events_count"] == 2  # was previously 1
+    assert len(sub_chain.chain) == 3  # Genesis block + 2 new blocks
+    assert len(sub_chain.pending_events) == 0
+
+    # Test proof submission to Main Chain
+    proof_result = sub_chain.submit_proof_to_main(main_chain)
+    assert proof_result is True
+    assert main_chain.proof_count == 1
+
+    # Test Main Chain block finalization
+    main_finalize_result = main_chain.finalize_main_chain_block()
+    assert main_finalize_result is not None
+    assert len(main_chain.chain) == 2  # Genesis block + new block
+    assert len(main_chain.pending_events) == 0
+
+    # Test chain validity
+    assert main_chain.is_chain_valid() is True
+    assert sub_chain.is_chain_valid() is True
+
+    # Test getting chain statistics
+    main_stats = main_chain.get_main_chain_stats()
+    assert main_stats is not None
+    assert main_stats["total_blocks"] == 2
+    assert main_stats["registered_sub_chains"] == 1
+
+    sub_stats = sub_chain.get_domain_statistics()
+    assert sub_stats is not None
+    assert sub_stats["total_blocks"] == 3
+    assert sub_stats["domain_type"] == "testing"
+
+    # Test hierarchical integrity report
+    integrity_report = main_chain.get_hierarchical_integrity_report()
+    assert integrity_report is not None
+    assert integrity_report["main_chain"]["valid"] is True
+    assert integrity_report["registered_sub_chains"] == 1
+    assert "BasicFunctionalitySubChain" in integrity_report["sub_chains"]
+
+    # Test entity history tracking
+    entity_history = sub_chain.get_entity_history("TEST-ENTITY-001")
+    assert len(entity_history) == 1
+    assert entity_history[0]["event"] == "operation_start"
+    assert entity_history[0]["entity_id"] == "TEST-ENTITY-001"
