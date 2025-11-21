@@ -8,4 +8,6 @@ This module provides REST API endpoints for blockchain interaction:
 - server: API server implementation
 """
 
-__all__ = []
+from . import v1, v2, v3, server
+
+__all__ = ['v1', 'v2', 'v3', 'server']
