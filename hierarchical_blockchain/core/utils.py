@@ -113,7 +113,10 @@ def validate_proof_metadata(metadata: Dict[str, Any]) -> bool:
         return False
     
     # Should contain summary information, not detailed domain data
-    forbidden_detailed_fields = ["full_details", "raw_data", "complete_record"]
+    forbidden_detailed_fields = [
+        "full_details", "raw_data", "complete_record",
+        "internal_data", "complete_log"
+    ]
     for field in forbidden_detailed_fields:
         if field in metadata:
             return False
