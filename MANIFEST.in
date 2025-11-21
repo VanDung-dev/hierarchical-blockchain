@@ -7,3 +7,4 @@ recursive-exclude tests *
 recursive-exclude testing *
 recursive-exclude demo *
 recursive-exclude docs *
+recursive-exclude .github *
