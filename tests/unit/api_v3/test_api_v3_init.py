@@ -5,6 +5,7 @@ This module contains unit tests for the API v3 package exports,
 ensuring all expected classes and functions are properly exported.
 """
 
+import pytest
 from hierarchical_blockchain import api
 
 
@@ -44,3 +45,33 @@ def test_all_exports():
         assert export in api.v3.__all__
         # Try to get the attribute to make sure it exists
         assert getattr(api.v3, export) is not None
+
+
+def test_import_exception_handling(monkeypatch):
+    """Test exception handling when imports fail"""
+    # Mock the verify module to raise ImportError
+    with pytest.raises(ImportError):
+        monkeypatch.setattr('sys.modules', {
+            'hierarchical_blockchain.api.v3.verify': None
+        })
+        # Re-import the module to trigger the import error
+        from importlib import reload
+        import hierarchical_blockchain.api.v3
+        reload(hierarchical_blockchain.api.v3)
+
+
+def test_function_signatures():
+    """Test signatures of exported functions"""
+    import inspect
+    
+    # Check VerifyAPIKey class signature
+    verify_api_key_signature = inspect.signature(api.v3.VerifyAPIKey.__init__)
+    assert 'config' in verify_api_key_signature.parameters
+    
+    # Check ResourcePermissionChecker class signature
+    resource_checker_signature = inspect.signature(api.v3.ResourcePermissionChecker.__init__)
+    assert 'verify_api_key' in resource_checker_signature.parameters
+    
+    # Check create_verify_api_key function signature
+    create_func_signature = inspect.signature(api.v3.create_verify_api_key)
+    assert 'config' in create_func_signature.parameters
