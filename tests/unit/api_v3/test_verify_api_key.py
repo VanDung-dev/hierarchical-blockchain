@@ -7,7 +7,10 @@ permission checking, and security event logging.
 """
 
 import pytest
+import asyncio
+import time
 from unittest.mock import Mock, patch
+from unittest import mock
 from fastapi import HTTPException
 
 from hierarchical_blockchain.api.v3.verify import VerifyAPIKey, ResourcePermissionChecker, create_verify_api_key
@@ -203,3 +206,118 @@ async def test_create_verify_api_key_factory(default_config):
     assert verify_key.enabled == True
     assert verify_key.key_location == "header"
     assert verify_key.key_name == "x-api-key"
+
+
+# New test cases as requested
+
+@pytest.mark.asyncio
+async def test_verify_api_key_cache_zero_ttl(mock_key_manager):
+    """Test cache behavior with TTL=0"""
+    config = {
+        "enabled": True,
+        "key_location": "header",
+        "key_name": "x-api-key",
+        "cache_ttl": 0,
+        "revocation_check": "daily"
+    }
+    verify_key = VerifyAPIKey(config)
+    verify_key.key_manager = mock_key_manager
+    
+    await verify_key("valid_api_key")
+    
+    # With TTL=0, cache_key should not be called
+    mock_key_manager.cache_key.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_verify_api_key_cache_disabled(mock_key_manager):
+    """Test cache behavior when cache is disabled (negative TTL)"""
+    config = {
+        "enabled": True,
+        "key_location": "header",
+        "key_name": "x-api-key",
+        "cache_ttl": -1,
+        "revocation_check": "daily"
+    }
+    verify_key = VerifyAPIKey(config)
+    verify_key.key_manager = mock_key_manager
+    
+    await verify_key("valid_api_key")
+    
+    # With negative TTL, cache_key should not be called
+    mock_key_manager.cache_key.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_verify_api_key_complex_permissions(mock_key_manager, default_config):
+    """Test complex permission scenarios with multiple resources and nested permissions"""
+    mock_key_manager.has_permission.side_effect = lambda key, resource: resource in ["read", "write", "admin"]
+    verify_key = VerifyAPIKey(default_config)
+    verify_key.key_manager = mock_key_manager
+    
+    # Test multiple resource permissions
+    assert verify_key.check_resource_permission("test_api_key", "read") is True
+    assert verify_key.check_resource_permission("test_api_key", "write") is True
+    assert verify_key.check_resource_permission("test_api_key", "admin") is True
+    assert verify_key.check_resource_permission("test_api_key", "delete") is False
+    
+    # Verify calls were made correctly
+    mock_key_manager.has_permission.assert_any_call("test_api_key", "read")
+    mock_key_manager.has_permission.assert_any_call("test_api_key", "write")
+    mock_key_manager.has_permission.assert_any_call("test_api_key", "admin")
+    mock_key_manager.has_permission.assert_any_call("test_api_key", "delete")
+
+
+@pytest.mark.asyncio
+async def test_verify_api_key_security_logging(mock_key_manager, default_config):
+    """Test security event logging"""
+    verify_key = VerifyAPIKey(default_config)
+    verify_key.key_manager = mock_key_manager
+    
+    # Mock the _log_security_event method to track calls
+    with patch.object(VerifyAPIKey, '_log_security_event') as mock_log:
+        # Test successful verification logs
+        await verify_key("valid_api_key")
+        mock_log.assert_called_with("successful_verification", {
+            "user_id": "test_user",
+            "app_name": "Test App",
+            "timestamp": mock.ANY
+        })
+        
+        # Reset mock
+        mock_log.reset_mock()
+        
+        # Test invalid key logs
+        mock_key_manager.is_valid.return_value = False
+        try:
+            await verify_key("invalid_api_key")
+        except HTTPException:
+            pass
+        
+        mock_log.assert_called_with("invalid_api_key", {
+            "key_prefix": "invalid_",
+            "timestamp": mock.ANY
+        })
+
+
+@pytest.mark.asyncio
+async def test_verify_api_key_performance_many_requests(mock_key_manager, default_config):
+    """Test performance with many concurrent requests"""
+    verify_key = VerifyAPIKey(default_config)
+    verify_key.key_manager = mock_key_manager
+    
+    # Measure time for 100 concurrent requests
+    start_time = time.time()
+    
+    # Create 100 concurrent requests
+    tasks = [verify_key(f"api_key_{i}") for i in range(100)]
+    results = await asyncio.gather(*tasks)
+    
+    end_time = time.time()
+    
+    # All requests should succeed
+    assert len(results) == 100
+    assert all("user_id" in result for result in results)
+    
+    # Should complete within reasonable time (less than 2 seconds for 100 requests)
+    assert end_time - start_time < 2.0
