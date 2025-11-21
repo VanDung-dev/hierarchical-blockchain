@@ -689,6 +689,7 @@ cython_debug/
 .idea/
 .junie/
 .ai/
+.aiassistant/
 .lingma/
 *.db
 *.key
