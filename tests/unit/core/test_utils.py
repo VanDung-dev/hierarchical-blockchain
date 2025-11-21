@@ -87,3 +87,116 @@ def test_validate_proof_metadata():
         "operations_count": 5
     }
     assert validate_proof_metadata(valid_metadata2) is True
+
+
+def test_generate_hash_edge_cases():
+    """Test hash generation with edge cases"""
+    # Test with None input - should handle gracefully
+    try:
+        hash_none = generate_hash(None)
+        # If it doesn't raise exception, it should produce consistent result
+        assert isinstance(hash_none, str)
+        assert len(hash_none) == 64
+    except (TypeError, ValueError):
+        # Acceptable if function raises appropriate exception
+        pass
+    
+    # Test with empty string
+    hash_empty = generate_hash("")
+    assert isinstance(hash_empty, str)
+    assert len(hash_empty) == 64
+    
+    # Test with empty dict
+    hash_empty_dict = generate_hash({})
+    assert isinstance(hash_empty_dict, str)
+    assert len(hash_empty_dict) == 64
+    
+    # Two empty inputs should produce same hash
+    assert generate_hash("") == generate_hash("")
+
+
+def test_generate_hash_performance():
+    """Test hash generation performance with large input"""
+    # Create large data structure
+    large_dict = {f"key_{i}": f"value_{i}" for i in range(10000)}  # 10k entries
+    
+    # Measure time to hash
+    start_time = time.time()
+    hash_result = generate_hash(large_dict)
+    end_time = time.time()
+    
+    # Verify result
+    assert isinstance(hash_result, str)
+    assert len(hash_result) == 64  # SHA-256 hash length
+    
+    # Performance check - should complete within reasonable time (less than 2 seconds)
+    assert (end_time - start_time) < 2.0
+
+
+def test_generate_proof_hash_edge_cases():
+    """Test proof hash generation edge cases"""
+    # Normal case
+    block_hash = "a1b2c3d4e5f6" * 4  # 64 chars
+    metadata ={
+        "domain_type": "manufacturing",
+        "operations_count": 5
+    }
+    
+    proof_hash =generate_proof_hash(block_hash, metadata)
+    assert isinstance(proof_hash, str)
+    assert len(proof_hash) == 64
+    
+    # Edge case: Empty metadata
+    empty_metadata_proof = generate_proof_hash(block_hash, {})
+    assert isinstance(empty_metadata_proof, str)
+    assert len(empty_metadata_proof)== 64
+    
+    # Edge case: None metadata (if supported)
+    try:
+        none_metadata_proof = generate_proof_hash(block_hash, None)
+        assert isinstance(none_metadata_proof, str)
+        assert len(none_metadata_proof) == 64
+    except (TypeError, ValueError):
+        # Acceptable if function raises appropriate exception
+        pass
+    
+    # Edge case: Very long block hash (should still work)
+    long_block_hash = "a" * 128  # 128 chars
+    long_hash_proof = generate_proof_hash(long_block_hash, metadata)
+    assert isinstance(long_hash_proof, str)
+    assert len(long_hash_proof) == 64
+
+
+def test_validate_proof_metadata_edge_cases():
+    """Test proof metadata validation edge cases"""
+    # Edge case: Empty metadata
+    assert validate_proof_metadata({}) is True
+    
+    # Edge case: None metadata
+    try:
+        result = validate_proof_metadata(None)
+        # If it doesn't raise exception, should return boolean
+        assert isinstance(result, bool)
+    except (TypeError, ValueError):
+        # Acceptable if function raises appropriate exception
+        pass
+    
+    # Edge case: Metadata with various valid and invalid combinations
+    valid_combinations = [
+        {"domain_type": "test"},
+        {"operations_count": 0},  # Zero count should be valid
+        {"timestamp": time.time()},
+        {"domain_type": "test", "operations_count": 10},
+    ]
+    
+    for metadata in valid_combinations:
+        assert validate_proof_metadata(metadata) is True # Invalid combinations with forbidden fields
+    invalid_combinations = [
+        {"full_details": {}},
+        {"internal_data": "secret"},
+        {"complete_log": []},
+        {"domain_type": "test", "full_details": {}},  # Mixed valid/invalid
+    ]
+    
+    for metadata in invalid_combinations:
+        assert validate_proof_metadata(metadata) is False
