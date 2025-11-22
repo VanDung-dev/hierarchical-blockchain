@@ -6,6 +6,10 @@ including cache operations, eviction policies, and TTL handling.
 """
 
 import time
+import pytest
+import threading
+import random
+import string
 
 from hierarchical_blockchain.core.caching import AdvancedCache
 
@@ -193,3 +197,129 @@ def test_cache_edge_cases_ttl():
     # Test with very large TTL
     cache.set("large_ttl_key", "large_ttl_value", ttl=1000000)  # ~11 days
     assert cache.get("large_ttl_key") == "large_ttl_value"
+
+
+# Performance/load testing
+def test_cache_performance_under_load():
+    """Test cache performance under high load"""
+    cache = AdvancedCache(max_size=5000, eviction_policy="lru")
+    
+    # Generate test data
+    test_data = {}
+    for i in range(1000):
+        key = f"test_key_{i}"
+        value = {"data": f"test_value_{i}", "index": i, "timestamp": time.time()}
+        test_data[key] = value
+    
+    # Measure insertion performance
+    start_time = time.time()
+    for key, value in test_data.items():
+        cache.set(key, value)
+    insert_time = time.time() - start_time
+    
+    # Verify all data was inserted
+    assert len(cache.cache) == 1000
+    
+    # Measure retrieval performance
+    start_time = time.time()
+    for key in test_data.keys():
+        value = cache.get(key)
+        assert value is not None
+        assert value["data"].startswith("test_value_")
+    retrieve_time = time.time() - start_time
+    
+    # Performance checks (these times might vary based on system)
+    assert insert_time < 1.0  # Should insert 1000 items in less than 1 second
+    assert retrieve_time < 0.5  # Should retrieve 1000 items in less than 0.5 seconds
+
+
+# Property-based testing with Hypothesis
+@pytest.mark.parametrize("policy", ["lru", "fifo", "ttl"])
+def test_cache_eviction_policies_property(policy):
+    """Property-based test for different cache eviction policies"""
+    cache = AdvancedCache(max_size=5, eviction_policy=policy)
+    
+    # Add more items than cache can hold
+    for i in range(10):
+        cache.set(f"key_{i}", f"value_{i}")
+    
+    # Cache should never exceed max_size
+    assert len(cache.cache) <= 5
+
+
+# Fuzz testing
+def test_cache_with_fuzzed_inputs():
+    """Fuzz testing with randomized cache operations"""
+    cache = AdvancedCache(max_size=100, eviction_policy="lru")
+    
+    # Perform random operations
+    for _ in range(1000):
+        operation = random.choice(["set", "get", "delete"])
+        
+        # Generate random key
+        key = ''.join(random.choices(string.ascii_letters + string.digits, k=random.randint(1, 50)))
+        
+        if operation == "set":
+            # Generate random value
+            value_type = random.choice(["string", "dict", "list", "int", "float"])
+            if value_type == "string":
+                value = ''.join(random.choices(string.printable, k=random.randint(0, 1000)))
+            elif value_type == "dict":
+                value = {f"key_{i}": random.random() for i in range(random.randint(0, 100))}
+            elif value_type == "list":
+                value = [random.random() for _ in range(random.randint(0, 100))]
+            elif value_type == "int":
+                value = random.randint(-1000000, 1000000)
+            else:  # float
+                value = random.uniform(-1000000.0, 1000000.0)
+            
+            # Random TTL
+            ttl = random.choice([None, random.uniform(0, 10)])
+            
+            cache.set(key, value, ttl=ttl)
+        elif operation == "get":
+            # Just try to get the key
+            cache.get(key)
+        else:  # delete
+            cache.delete(key)
+    
+    # Cache should still be functional
+    assert len(cache.cache) <= 100
+    # Stats should be consistent
+    stats = cache.get_stats()
+    assert stats["size"] == len(cache.cache)
+    assert stats["max_size"] == 100
+
+
+# Integration testing between cache and other modules
+def test_cache_integration_with_multithreading():
+    """Integration test for cache with multithreading operations"""
+    cache = AdvancedCache(max_size=1000, eviction_policy="lru")
+    
+    def cache_worker(worker_id):
+        for a in range(100):
+            key = f"worker_{worker_id}_key_{a}"
+            value = {"worker_id": worker_id, "iteration": a, "data": f"data_{a}"}
+            cache.set(key, value)
+            
+            # Try to get some keys
+            for j in range(5):
+                get_key = f"worker_{random.randint(0, 9)}_key_{random.randint(0, 99)}"
+                cache.get(get_key)
+    
+    # Create and start multiple worker threads
+    threads = []
+    for i in range(10):
+        t = threading.Thread(target=cache_worker, args=(i,))
+        threads.append(t)
+        t.start()
+    
+    # Wait for all threads to complete
+    for t in threads:
+        t.join()
+    
+    # Verify cache state
+    assert len(cache.cache) <= 1000
+    assert cache.hits >= 0
+    assert cache.misses >= 0
+    assert cache.evictions >= 0
