@@ -6,6 +6,9 @@ including hash generation, entity ID generation, and proof hash generation.
 """
 
 import time
+import random
+import string
+from hypothesis import given, strategies as st
 
 from hierarchical_blockchain.core.utils import generate_hash, generate_entity_id, generate_proof_hash, validate_proof_metadata
 
@@ -100,17 +103,17 @@ def test_generate_hash_edge_cases():
     except (TypeError, ValueError):
         # Acceptable if function raises appropriate exception
         pass
-    
+
     # Test with empty string
     hash_empty = generate_hash("")
     assert isinstance(hash_empty, str)
     assert len(hash_empty) == 64
-    
+
     # Test with empty dict
     hash_empty_dict = generate_hash({})
     assert isinstance(hash_empty_dict, str)
     assert len(hash_empty_dict) == 64
-    
+
     # Two empty inputs should produce same hash
     assert generate_hash("") == generate_hash("")
 
@@ -200,3 +203,158 @@ def test_validate_proof_metadata_edge_cases():
     
     for metadata in invalid_combinations:
         assert validate_proof_metadata(metadata) is False
+
+
+# Property-based testing with Hypothesis
+@given(st.text())
+def test_generate_hash_property(text):
+    """Property-based test: same input should always produce same hash"""
+    hash1 = generate_hash(text)
+    hash2 = generate_hash(text)
+    assert hash1 == hash2
+    assert len(hash1) == 64
+    assert isinstance(hash1, str)
+
+
+@given(st.dictionaries(st.text(), st.text()))
+def test_generate_hash_dict_property(dictionary):
+    """Property-based test for dictionary hashing consistency"""
+    hash1 = generate_hash(dictionary)
+    hash2 = generate_hash(dictionary)
+    assert hash1 == hash2
+    assert len(hash1) == 64
+    assert isinstance(hash1, str)
+
+
+@given(st.text())
+def test_entity_id_uniqueness_property(prefix):
+    """Property-based test: entity IDs should be unique"""
+    # Limit prefix length to prevent overly long IDs
+    if len(prefix) > 50:
+        prefix = prefix[:50]
+    
+    id1 = generate_entity_id(prefix)
+    id2 = generate_entity_id(prefix)
+    assert id1 != id2  # Should be unique
+    expected_prefix = prefix if prefix else "ENTITY"
+    if prefix == "":
+        assert id1.startswith("-")  # Empty prefix results in IDs starting with "-"
+    else:
+        assert id1.startswith(expected_prefix)
+
+
+# Performance/load testing
+def test_utils_performance_under_load():
+    """Test utility functions performance under load"""
+    # Test generate_hash with many iterations
+    start_time = time.time()
+    for i in range(10000):
+        data = {"key": f"value_{i}", "index": i, "timestamp": time.time()}
+        hash_result = generate_hash(data)
+        assert len(hash_result) == 64
+    hash_time = time.time() - start_time
+    
+    # Test generate_entity_id with many iterations
+    start_time = time.time()
+    for i in range(10000):
+        entity_id = generate_entity_id("LOAD")
+        assert entity_id.startswith("LOAD-")
+    entity_id_time = time.time() - start_time
+    
+    # Test generate_proof_hash with many iterations
+    start_time = time.time()
+    block_hash = "a1b2c3d4e5f6" * 4
+    for i in range(10000):
+        metadata = {"index": i, "count": i % 100}
+        proof_hash = generate_proof_hash(block_hash, metadata)
+        assert len(proof_hash) == 64
+    proof_hash_time = time.time() - start_time
+    
+    # Performance assertions (times may vary based on system)
+    assert hash_time < 2.0  # Should hash 10k items in < 2 seconds
+    assert entity_id_time < 1.0  # Should generate 10k IDs in < 1 second
+    assert proof_hash_time < 1.0  # Should generate 10k proof hashes in < 1 second
+
+
+# Fuzz testing
+def test_utils_with_fuzzed_inputs():
+    """Fuzz testing utility functions with random inputs"""
+    for _ in range(1000):
+        # Generate random data types for testing
+        data_type = random.choice(["string", "dict", "list", "int", "float", "none"])
+
+        if data_type == "string":
+            data = ''.join(random.choices(string.printable, k=random.randint(0, 1000)))
+        elif data_type == "dict":
+            data = {f"key_{i}": random.random() for i in range(random.randint(0, 100))}
+        elif data_type == "list":
+            data = [random.random() for _ in range(random.randint(0, 100))]
+        elif data_type == "int":
+            data = random.randint(-1000000, 1000000)
+        elif data_type == "float":
+            data = random.uniform(-1000000.0, 1000000.0)
+        else:  # none
+            data = {}
+
+        # Test generate_hash with fuzzed input
+        try:
+            hash_result = generate_hash(data)
+            assert isinstance(hash_result, str)
+            assert len(hash_result) == 64
+        except (TypeError, ValueError):
+            # Some inputs might cause exceptions, which is acceptable
+            pass
+
+        # Test generate_proof_hash with fuzzed inputs
+        block_hash = ''.join(random.choices('0123456789abcdef', k=64))
+        try:
+            proof_hash = generate_proof_hash(block_hash, data if isinstance(data, dict) else {})
+            assert isinstance(proof_hash, str)
+            assert len(proof_hash) == 64
+        except (TypeError, ValueError):
+            # Some inputs might cause exceptions, which is acceptable
+            pass
+
+
+# Integration testing between utility functions
+def test_utils_integration():
+    """Integration test between different utility functions"""
+    # Generate entity ID
+    entity_id = generate_entity_id("INTEGRATION")
+    assert entity_id.startswith("INTEGRATION-")
+    
+    # Create event data using the entity ID
+    event_data = {
+        "entity_id": entity_id,
+        "event": "integration_test",
+        "timestamp": time.time(),
+        "details": {
+            "test_type": "integration",
+            "entity_reference": entity_id
+        }
+    }
+    
+    # Generate hash of the event data
+    event_hash = generate_hash(event_data)
+    assert len(event_hash) == 64
+    
+    # Create proof metadata
+    proof_metadata = {
+        "domain_type": "integration_testing",
+        "operations_count": 1,
+        "entity_summary": {
+            "entity_id": entity_id,
+            "event_count": 1
+        }
+    }
+    
+    # Validate proof metadata
+    assert validate_proof_metadata(proof_metadata) is True
+    
+    # Generate proof hash
+    proof_hash = generate_proof_hash(event_hash, proof_metadata)
+    assert len(proof_hash) == 64
+    
+    # Verify consistency - same inputs should produce same outputs
+    proof_hash2 = generate_proof_hash(event_hash, proof_metadata)
+    assert proof_hash == proof_hash2
