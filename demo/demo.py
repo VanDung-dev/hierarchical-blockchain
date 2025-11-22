@@ -18,6 +18,7 @@ This serves as both a demonstration and a basic test of the framework.
 import sys
 import datetime
 import atexit
+import os
 
 # Import framework components
 from hierarchical_blockchain.hierarchical.hierarchy_manager import HierarchyManager
@@ -49,8 +50,9 @@ class Logger:
             self.log.close()
 
 # Start logging from the beginning
+os.makedirs("log/error_mitigation", exist_ok=True)
 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-log_filename = f"demo_log_{timestamp}.log"
+log_filename = f"log/demo_log_{timestamp}.log"
 logger_instance = Logger(log_filename)
 sys.stdout = logger_instance
 
