@@ -5,6 +5,9 @@ The tests validate the core functionality of the hierarchical blockchain archite
 where the main chain stores proofs from registered sub-chains.
 """
 
+import time
+from unittest.mock import Mock
+
 from hierarchical_blockchain.hierarchical.main_chain import MainChain
 
 
@@ -157,3 +160,120 @@ def test_main_chain_stats():
     assert stats["registered_sub_chains"] == 1
     assert stats["total_proofs"] == 1
     assert "StatsSubChain" in stats["sub_chains"]
+
+
+# New tests for invalid inputs
+def test_main_chain_creation_with_invalid_name():
+    """Test MainChain creation with invalid name"""
+    # Test with empty string
+    main_chain = MainChain(name="")
+    assert main_chain.name == ""
+    
+    # Test with special characters
+    main_chain = MainChain(name="Test@#$%^&*()")
+    assert main_chain.name == "Test@#$%^&*()"
+
+
+def test_register_sub_chain_with_invalid_inputs():
+    """Test registering Sub-Chains with invalid inputs"""
+    main_chain = MainChain(name="InvalidInputTestMainChain")
+    
+    # Test with empty sub-chain name
+    result = main_chain.register_sub_chain("", {"domain": "testing"})
+    assert result is True  # Empty string is still a valid name
+    
+    # Test with None metadata
+    result = main_chain.register_sub_chain("TestChain2", None)
+    assert result is True
+    assert main_chain.sub_chain_metadata["TestChain2"] == {}
+
+
+def test_add_proof_with_invalid_inputs():
+    """Test adding proofs with invalid inputs"""
+    main_chain = MainChain(name="InvalidProofInputsTestMainChain")
+    
+    # Register a sub-chain first
+    main_chain.register_sub_chain("TestSubChain", {"domain": "testing"})
+    
+    # Test with empty proof hash
+    result = main_chain.add_proof("TestSubChain", "", {"count": 1})
+    assert result is True  # Empty string is accepted as hash
+    
+    # Test with None metadata
+    result = main_chain.add_proof("TestSubChain", "hash123", None)
+    assert result is False  # None metadata should be rejected
+    
+    # Test with invalid metadata (detailed data)
+    result = main_chain.add_proof("TestSubChain", "hash456", {"detailed_data": {"user_info": "private"}})
+    assert result is False  # Detailed data should be rejected
+
+
+def test_verify_proof_with_invalid_inputs():
+    """Test verifying proofs with invalid inputs"""
+    main_chain = MainChain(name="InvalidVerifyTestMainChain")
+    
+    # Test with empty proof hash
+    result = main_chain.verify_proof("", "NonExistentChain")
+    assert result is False
+    
+    # Test with empty sub-chain name
+    result = main_chain.verify_proof("hash123", "")
+    assert result is False
+
+
+# Performance benchmark test
+def test_main_chain_performance(benchmark):
+    """Benchmark MainChain performance with multiple operations"""
+    def run_performance_test():
+        main_chain = MainChain(name="PerformanceTestMainChain")
+        
+        # Register multiple sub-chains
+        for i in range(100):
+            main_chain.register_sub_chain(f"SubChain{i}", {"domain": "testing", "id": i})
+        
+        # Add multiple proofs
+        for i in range(1000):
+            proof_hash = f"hash{i:06d}abcdef1234567890abcdef1234567890abcdef1234567890"
+            main_chain.add_proof(f"SubChain{i % 100}", proof_hash, {"count": i})
+        
+        # Finalize blocks
+        for _ in range(10):
+            main_chain.finalize_block()
+        
+        return main_chain
+    
+    if 'benchmark' in globals():
+        benchmark(run_performance_test)
+    else:
+        # Simple timing if benchmark fixture not available
+        start_time = time.time()
+        chain = run_performance_test()
+        end_time = time.time()
+        
+        # Basic assertions to ensure it worked
+        assert len(chain.registered_sub_chains) == 100
+        assert chain.proof_count == 1000
+        assert end_time - start_time < 5.0  # Should complete within 5 seconds
+
+
+# Mock dependency tests
+def test_main_chain_with_mock_consensus():
+    """Test MainChain with mocked consensus"""
+    main_chain = MainChain(name="MockConsensusTestMainChain")
+    
+    # Mock the consensus object
+    mock_consensus = Mock()
+    mock_consensus.name = "MockPoA"
+    mock_consensus.authorities = {"mock_authority"}
+    main_chain.consensus = mock_consensus
+    
+    # Register a sub-chain
+    main_chain.register_sub_chain("TestSubChain", {"domain": "testing"})
+    
+    # Verify mock was called
+    mock_consensus.add_authority.assert_called()
+    
+    # Add a proof
+    proof_hash = "test_hash"
+    result = main_chain.add_proof("TestSubChain", proof_hash, {"count": 1})
+    assert result is True
