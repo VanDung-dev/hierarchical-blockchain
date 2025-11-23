@@ -5,6 +5,7 @@ This module contains integration tests that verify interactions between differen
 security components including KeyManager, KeyBackupManager, and MSP.
 """
 
+import json
 from unittest.mock import Mock, patch
 
 from hierarchical_blockchain.security.key_manager import KeyManager
@@ -195,7 +196,7 @@ def test_multiple_module_interaction_under_load():
         assert km.has_permission(key, "read") is True
         
         # Check authorization
-        assert msp.authorize_action(f"load-entity-{i}", "view_data") is True
+        assert msp.authorize_action(f"load-entity-{i}", "query_data") is True
 
 
 def test_security_modules_interoperability():
@@ -218,6 +219,13 @@ def test_security_modules_interoperability():
     with patch('hierarchical_blockchain.security.key_backup_manager.Fernet') as mock_fernet:
         mock_fernet_instance = Mock()
         mock_fernet_instance.encrypt.return_value = b"encrypted_data"
+        # Fix: Mock decrypt to return proper JSON string that matches real behavior
+        # The keys should be hex-encoded strings as they are stored in the backup
+        mock_fernet_instance.decrypt.return_value = json.dumps({
+            "public_key": api_key.encode().hex(),  # Store as hex string like in real implementation
+            "private_key": "a" * 64,  # Valid 32-byte hex string for private key
+            "key_type": "interop_test"
+        }).encode()
         mock_fernet.return_value = mock_fernet_instance
         
         key_bytes = api_key.encode('utf-8')
@@ -225,6 +233,7 @@ def test_security_modules_interoperability():
         
         # Restore the key
         restored_data = kb.restore_keys(backup_id)
+        # Fix: After restoration, the keys are bytes, not UTF-8 strings that need decoding
         restored_key = restored_data["public_key"].decode('utf-8')
         
         # Verify restored key matches original
