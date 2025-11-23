@@ -6,7 +6,6 @@ including key validation, revocation checks, permissions, and key creation.
 """
 
 import time
-import pytest
 from unittest.mock import Mock
 
 from hierarchical_blockchain.security.key_manager import KeyManager, initialize_default_keys
@@ -220,3 +219,196 @@ def test_initialize_default_keys():
     assert isinstance(result["key_manager"], KeyManager)
     assert len(result["demo_key"]) > 16
     assert len(result["admin_key"]) > 16
+
+
+def test_is_valid_with_edge_cases():
+    """Test is_valid method with edge cases"""
+    km = KeyManager()
+    
+    # Test with None key
+    assert km.is_valid(None) is False
+    
+    # Test with empty string
+    assert km.is_valid("") is False
+    
+    # Test with very short keyassert km.is_valid("abc") is False
+    
+    # Test with very long key (should be valid if properly formatted)
+    long_key = "hbc_" + "a" * 100
+    # Add the key to storage first
+    km.storage[long_key] = {
+        'user_id': 'test_user',
+        'permissions': ['events'],
+        'created_at': time.time()
+    }
+    assert km.is_valid(long_key) is True
+
+
+def test_has_permission_with_special_characters():
+    """Test has_permission with special characters in resource names"""
+    # Mock storage backend
+    mock_storage =Mock()
+    mock_storage.get.return_value = '{"user_id": "test_user", "permissions": ["event.read", "data/write", "sys_admin"], "created_at": 1000}'
+    km =KeyManager(storage_backend=mock_storage)
+    test_key = "special_chars_key_123456789012345"
+    
+    assert km.has_permission(test_key, 'event.read') is True
+    assert km.has_permission(test_key, 'data/write') is True
+    assert km.has_permission(test_key, 'sys_admin') is True
+    assert km.has_permission(test_key, 'nonexistent_perm') is False
+
+
+def test_create_key_with_various_inputs():
+    """Test create_key with various inputs including edge cases"""
+    km = KeyManager()
+    
+    # Normal case
+    key1 = km.create_key("normal_user", ["read", "write"])
+    assert key1.startswith("hbc_")
+    assert len(key1) > 16
+    
+    # User ID with special characters
+    key2 = km.create_key("user@domain.com", ["read"])
+    assert key2.startswith("hbc_")
+    
+    # Empty permissions
+    key3 =km.create_key("user_no_perms", [])
+    assert key3.startswith("hbc_")
+
+
+def test_revoke_key_nonexistent():
+    """Test revoke_key with nonexistent key"""
+    km = KeyManager()
+    # Should not throw exception
+    km.revoke_key("nonexistent_key")
+    assert km.is_revoked("nonexistent_key") is True
+
+
+def test_key_creation_performance():
+    """Test performance of key creation operations"""
+    km = KeyManager()
+
+    start_time = time.perf_counter()
+    
+    # Create 100keys to test performance
+    keys = []
+    for i in range(100):
+        key = km.create_key(f"user_{i}", ["read", "write"], {"name": f"App {i}"})
+        keys.append(key)
+    
+    end_time = time.perf_counter()
+    
+    # Creating100 keys should take less than 2 seconds
+    assert (end_time - start_time) < 2.0
+    assert len(keys) == 100
+
+
+def test_key_validation_performance():
+    """Test performance of key validation operations"""
+    km = KeyManager()
+    
+    # Create testkeys
+    keys = []
+    for i in range(100):
+        key = km.create_key(f"user_{i}", ["read", "write"], {"name": f"App {i}"})
+        keys.append(key)
+
+    start_time = time.perf_counter()
+    
+    #Validate 100 keys
+    for key in keys:
+        assert km.is_valid(key) is True
+    
+    end_time = time.perf_counter()
+    
+    # Validating 100 keys should take less than 1 second
+    assert (end_time - start_time) < 1.0
+
+
+def test_permission_check_performance():
+    """Test performance of permission checking operations"""
+    # Mock storage backend with get method (like Redis)
+    mock_storage = Mock()
+    mock_storage.get.return_value = '{"user_id": "perf_test_user", "permissions": ["events", "chains", "admin_panel"], "created_at": 1000}'
+    km = KeyManager(storage_backend=mock_storage)
+    test_key = "perf_test_key_123456789012345"
+    
+    import time
+    start_time =time.perf_counter()
+    
+    # Check permissions 1000 times
+    for _ in range(1000):
+        assert km.has_permission(test_key, 'events') is True
+        assert km.has_permission(test_key, 'chains') is True
+        assert km.has_permission(test_key, 'admin_panel') is True
+    
+    end_time = time.perf_counter()
+    
+    # Checking permissions 1000 times should take less than 1 second
+    assert (end_time - start_time) < 1.0
+
+
+def test_security_injection_attacks():
+    """Test resistance to injection attacks"""
+    km = KeyManager()
+    
+    # Test SQL injection attempts in user_id
+    sql_injection_attempts = [
+        "'; DROP TABLE users; --",
+        "1'; WAITFOR DELAY '00:00:05'--",
+        "admin'--",
+        "' OR '1'='1",
+        "\"; alert('XSS'); //",
+        "<script>alert('XSS')</script>"
+    ]
+    
+    for attempt in sql_injection_attempts:
+        # These should be treated as regular user_ids, not cause errors
+        key = km.create_key(attempt, ["read"], {"name":"Injection Test"})
+        assert key is not None
+        assert km.is_valid(key) is True
+        # Keys should not have special interpretation of these characters
+        assert "'" not in key or "\"" not in key  # Our key generation should not include these
+
+
+def test_security_xss_attacks():
+    """Testresistance to XSS attacks in app details"""
+    km = KeyManager()
+    
+    # Test XSS attempts in app details
+    xss_attempts = [
+        {"name": "<script>alert('XSS')</script>", "version": "1.0"},
+        {"name": "Test App", "description": "javascript:alert('XSS')"},
+        {"name": "Test App", "callback": "javascript:eval('alert(1)')"},
+        {"name": "Test<img src=x onerror=alert(1)>App", "version": "1.0"}
+    ]
+    
+    for attempt in xss_attempts:
+    # These should be treated as regular app details, not cause errors
+        key = km.create_key("xss_test_user", ["read"], attempt)
+        assert key is not None
+        assert km.is_valid(key) is True
+        # When we retrieve app details, they should be preserved as-is
+        details = km.get_app_details(key)
+        assert details is not None
+
+
+def test_security_directory_traversal():
+    """Test resistance to directory traversal attacks"""
+    km = KeyManager()
+    
+    # Test directory traversal attempts in user_id
+    traversal_attempts = [
+        "../../../etc/passwd",
+        "..\\..\\..\\windows\\system32\\cmd.exe",
+        "/etc/passwd",
+        "../../config/database.yml",
+        "..\\\\..\\\\..\\\\boot.ini"
+    ]
+    
+    for attempt in traversal_attempts:
+        # These should be treated as regular user_ids, not cause filesystem access
+        key = km.create_key(attempt, ["read"], {"name": "Traversal Test"})
+        assert key is not None
+        assert km.is_valid(key) is True
+
