@@ -12,7 +12,11 @@ import shutil
 import pytest
 from unittest.mock import Mock, patch
 
-from hierarchical_blockchain.security.key_backup_manager import KeyBackupManager, create_key_backup_manager
+from hierarchical_blockchain.security.key_backup_manager import (
+    KeyBackupManager,
+    create_key_backup_manager,
+    RestoreError
+)
 
 # Global variables for setup and teardown
 backup_dir = "backups/keys"
@@ -173,7 +177,7 @@ def test_verify_backup_integrity_valid(mock_fernet):
     mock_fernet_instance = Mock()
     mock_fernet_instance.encrypt.return_value = b"encrypted_data"
     mock_fernet.return_value = mock_fernet_instance
-    
+
     # Create backup
     backup_id = km.backup_keys(b"pub", b"priv", "test")
     
@@ -197,3 +201,164 @@ def test_create_key_backup_manager_factory():
     
     assert isinstance(km, KeyBackupManager)
     assert km.enabled is True
+
+
+def test_backup_keys_with_invalid_input():
+    """Test backup_keys with invalid inputs"""
+    config = {"enabled": True}
+    km = KeyBackupManager(config)
+    
+    # Test with empty keys
+    backup_id = km.backup_keys(b"", b"", "test")
+    assert backup_id.startswith("test_")
+    
+    # Test with extremely long keys
+    long_key = b"x" * 10000
+    backup_id = km.backup_keys(long_key, long_key, "long_test")
+    assert backup_id.startswith("long_test_")
+
+
+def test_restore_keys_with_invalid_backup_id():
+    """Test restore_keys with invalid/non-existent backup ID"""
+    config = {"enabled": True}
+    km = KeyBackupManager(config)
+
+    # Try to restore with non-existent backup ID
+    with pytest.raises(RestoreError):
+        km.restore_keys("non_existent_backup")
+
+
+def test_verify_backup_integrity_with_invalid_inputs():
+    """Test verify_backup_integrity with invalid inputs"""
+    config = {"enabled": True}
+    km = KeyBackupManager(config)
+    
+    # Test with empty backup ID
+    assert km.verify_backup_integrity("") is False
+    
+    # Test with non-existent backup ID
+    assert km.verify_backup_integrity("non_existent") is False
+
+
+def test_backup_keys_performance():
+    """Test performance of key backup operations"""
+    config = {"enabled": True}
+    km = KeyBackupManager(config)
+    
+    # Mock en cryption to avoid performance overhead of actual encryption
+    with patch('hierarchical_blockchain.security.key_backup_manager.Fernet') as mock_fernet:
+        mock_fernet_instance = Mock()
+        mock_fernet_instance.encrypt.return_value = b"encrypted_data"
+        mock_fernet.return_value = mock_fernet_instance
+        
+        # Test with normal size keys
+        public_key = b"test_public_key_data_for_performance_testing"
+        private_key = b"test_private_key_data_for_performance_testing"
+        
+        import time
+        start_time = time.perf_counter()
+        for i in range(10):  # Test with 10 iterations
+            km.backup_keys(public_key, private_key, f"perf_test_{i}")
+        end_time = time.perf_counter()
+        
+        # Each backup operation should take less than 0.1 seconds
+        assert (end_time - start_time) < 1.0  # 1 second for 10 operations
+
+
+def test_restore_keys_performance():
+    """Test performance of key restore operations"""
+    config = {"enabled": True}
+    km = KeyBackupManager(config)
+    
+    # Mock encryption/decryption
+    with patch('hierarchical_blockchain.security.key_backup_manager.Fernet') as mock_fernet:
+        mock_fernet_instance = Mock()
+        mock_fernet_instance.encrypt.return_value = b"encrypted_data"
+        mock_fernet_instance.decrypt.return_value = json.dumps({
+            "public_key": "746573745f7075626c69635f6b65795f646174615f666f725f706572666f726d616e63655f74657374696e67",  # hex string
+            "private_key": "746573745f707269766174655f6b65795f646174615f666f725f706572666f726d616e63655f74657374696e67",  # hex string
+            "key_type":"perf_test"
+        }).encode('utf-8')
+        mock_fernet.return_value = mock_fernet_instance
+        
+        # Create multiple backups first
+        backup_ids = []
+        for i in range(10):
+            backup_id = km.backup_keys(b"pub_key_" + str(i).encode(), b"priv_key_" + str(i).encode(), "perf_test")
+            backup_ids.append(backup_id)
+        
+        # Measure restore performance
+        import time
+        start_time = time.perf_counter()
+        for backup_id in backup_ids:
+            km.restore_keys(backup_id)
+        end_time = time.perf_counter()
+        # Each restore operation should take less than 0.1 seconds
+        assert (end_time - start_time) < 1.0  # 1 second for 10 operations
+
+
+def test_backup_security_injection_attacks():
+    """Test KeyBackupManager resistance to injection attacks"""
+    config = {"enabled": True}
+    km = KeyBackupManager(config)
+
+    # Mock encryption
+    with patch('hierarchical_blockchain.security.key_backup_manager.Fernet') as mock_fernet:
+        mock_fernet_instance = Mock()
+        mock_fernet_instance.encrypt.return_value = b"encrypted_data"
+        mock_fernet.return_value = mock_fernet_instance
+
+        # Test injection attempts in key_type
+        injection_attempts = [
+            "'; DROP TABLE backups; --",
+            "1'; WAIT FOR DELAY '00:00:05'--",
+            "test'--",
+            "' OR '1'='1"
+        ]
+
+        for attempt in injection_attempts:
+            backup_id = km.backup_keys(b"pub_key", b"priv_key", attempt)
+            # After sanitization, the backup_id should start with a cleaned version of the key_type
+            # Special characters should be removed or replaced
+            sanitized_attempt = "".join(c for c in attempt if c.isalnum() or c in (' ', '-', '_')).rstrip()
+            sanitized_attempt = sanitized_attempt.replace(' ', '_')
+            assert backup_id.startswith(sanitized_attempt)
+
+            # Verify we can list backups with the original key_type
+            backups = km.list_backups(attempt)
+            assert len(backups) >= 1
+
+            # Verify integrity check works
+            is_valid = km.verify_backup_integrity(backup_id)
+            assert is_valid is True
+
+
+def test_backup_security_xss_attacks():
+    """Test KeyBackupManager resistance to XSS attacks"""
+    config = {"enabled": True}
+    km = KeyBackupManager(config)
+
+    # Mock encryption
+    with patch('hierarchical_blockchain.security.key_backup_manager.Fernet') as mock_fernet:
+        mock_fernet_instance = Mock()
+        mock_fernet_instance.encrypt.return_value = b"encrypted_data"
+        mock_fernet.return_value = mock_fernet_instance
+
+        # Test XSS attempts in key_type
+        xss_attempts = [
+            "<script>alert('XSS')</script>",
+            "test<img src=x onerror=alert(1)>backup",
+            "backup\" onmouseover=\"alert('XSS')\"",
+        ]
+
+        for attempt in xss_attempts:
+            backup_id = km.backup_keys(b"pub_key", b"priv_key", attempt)
+            # After sanitization, the backup_id should start with a cleaned version of the key_type
+            # Special characters should be removed or replaced
+            sanitized_attempt = "".join(c for c in attempt if c.isalnum() or c in (' ', '-', '_')).rstrip()
+            sanitized_attempt = sanitized_attempt.replace(' ', '_')
+            assert backup_id.startswith(sanitized_attempt)
+
+            # Verify we can list backups with the original key_type
+            backups = km.list_backups(attempt)
+            assert len(backups) >= 1
