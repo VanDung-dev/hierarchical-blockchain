@@ -295,13 +295,13 @@ def test_blockchain_performance_with_large_number_of_events(benchmark=None):
     """Test blockchain performance with large number of events"""
 
     def create_and_process_events():
-        _chain = Blockchain(name="PerformanceTestChain")
+        chain = Blockchain(name="PerformanceTestChain")
 
         # Add a large number of events
         num_events = 5000
 
         for i in range(num_events):
-            _chain.add_event({
+            chain.add_event({
                 "entity_id": f"PERF-{i}",
                 "event": f"perf_event_{i % 100}",
                 "timestamp": time.time(),
@@ -313,13 +313,13 @@ def test_blockchain_performance_with_large_number_of_events(benchmark=None):
             })
 
         # Finalize multiple blocks
-        _blocks_created = 0
+        blocks_created = 0
         while chain.pending_events:
             block = chain.finalize_block()
             if block:
-                _blocks_created += 1
+                blocks_created += 1
 
-        return _chain, _blocks_created
+        return chain, blocks_created
 
     # Benchmark the whole process
     if benchmark:
