@@ -44,11 +44,9 @@ test_message = BFTMessage(
     data={"test": "data"}
 )
 
-def test_bft_network_creation(benchmark):
+def test_bft_network_creation(benchmark=None):
     """Test creation of BFT network"""
     def execute():
-        network = create_bft_network(node_configs, fault_tolerance=1)
-
         assert len(network) == 4
         assert "node_1" in network
         assert isinstance(network["node_1"], BFTConsensus)
@@ -63,10 +61,13 @@ def test_bft_network_creation(benchmark):
 
         return network
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_bft_consensus_initialization(benchmark):
+def test_bft_consensus_initialization(benchmark=None):
     """Test BFT consensus initialization"""
     def execute():
         node_ids = ["node_1", "node_2", "node_3", "node_4"]
@@ -82,10 +83,13 @@ def test_bft_consensus_initialization(benchmark):
 
         return bft
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_bft_primary_determination(benchmark):
+def test_bft_primary_determination(benchmark=None):
     """Test primary node determination"""
     def execute():
         node_ids = ["node_1", "node_2", "node_3", "node_4"]
@@ -102,10 +106,13 @@ def test_bft_primary_determination(benchmark):
 
         return bft, bft2
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_consensus_validator_integration(benchmark):
+def test_consensus_validator_integration(benchmark=None):
     """Test integration with ConsensusValidator from error_mitigation module"""
     def execute():
         # Create a consensus validator directly
@@ -133,10 +140,13 @@ def test_consensus_validator_integration(benchmark):
 
         return validator, healthy_nodes, monitored_nodes
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_error_classifier_integration(benchmark):
+def test_error_classifier_integration(benchmark=None):
     """Test integration with ErrorClassifier from error_mitigation module"""
     def execute():
         # Create an error classifier
@@ -162,10 +172,13 @@ def test_error_classifier_integration(benchmark):
 
         return classifier, error_info, summary
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_consensus_recovery_engine_integration(benchmark):
+def test_consensus_recovery_engine_integration(benchmark=None):
     """Test integration with ConsensusRecoveryEngine from error_mitigation module"""
     def execute():
         # Create a recovery engine
@@ -197,10 +210,13 @@ def test_consensus_recovery_engine_integration(benchmark):
 
         return recovery_engine, result
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_error_mitigation_with_node_failures(benchmark):
+def test_error_mitigation_with_node_failures(benchmark=None):
     """Test error mitigation mechanisms with various node failures"""
     def execute():
         error_config = {
@@ -276,10 +292,13 @@ def test_error_mitigation_with_node_failures(benchmark):
 
         return primary, classifier, error_info, recovery_engine, actions
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_bft_with_slow_nodes(benchmark):
+def test_bft_with_slow_nodes(benchmark=None):
     """Test BFT consensus behavior with slow nodes"""
     def execute():
         # Create a simple test without triggering full consensus
@@ -303,10 +322,13 @@ def test_bft_with_slow_nodes(benchmark):
 
         return normal_node, slow_node
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_bft_with_silent_nodes(benchmark):
+def test_bft_with_silent_nodes(benchmark=None):
     """Test BFT consensus behavior with silent nodes"""
     def execute():
         # Similar to slow nodes test, focus on component-level testing
@@ -335,10 +357,13 @@ def test_bft_with_silent_nodes(benchmark):
 
         return normal_node, silent_node
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_bft_with_malicious_nodes(benchmark):
+def test_bft_with_malicious_nodes(benchmark=None):
     """Test BFT consensus behavior with malicious nodes"""
     def execute():
         # Test normal message
@@ -391,10 +416,13 @@ def test_bft_with_malicious_nodes(benchmark):
 
         return normal_node, malicious_node, valid_signature_result, is_valid
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_bft_with_split_brain_scenario(benchmark):
+def test_bft_with_split_brain_scenario(benchmark=None):
     """Test BFT consensus behavior with split brain scenario"""
     def execute():
         # Test split brain detection and recovery mechanisms
@@ -436,10 +464,13 @@ def test_bft_with_split_brain_scenario(benchmark):
 
         return consensus_recovery, actions, node
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_bft_with_temporary_network_partition(benchmark):
+def test_bft_with_temporary_network_partition(benchmark=None):
     """Test BFT consensus behavior with temporary network partition"""
     def execute():
         # Focus on component-level testing rather than full consensus flow
@@ -486,10 +517,13 @@ def test_bft_with_temporary_network_partition(benchmark):
 
         return network_recovery, health_status, adjusted_timeout, node
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_bft_with_complex_byzantine_attacks(benchmark):
+def test_bft_with_complex_byzantine_attacks(benchmark=None):
     """Test BFT consensus behavior with complex Byzantine attacks"""
     def execute():
         # Create error classifier
@@ -554,4 +588,7 @@ def test_bft_with_complex_byzantine_attacks(benchmark):
 
         return classifier, error_info, consensus_recovery, normal_node, is_valid, summary
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()

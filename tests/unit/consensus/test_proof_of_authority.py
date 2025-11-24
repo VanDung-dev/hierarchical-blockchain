@@ -12,7 +12,7 @@ from hierarchical_blockchain.core.consensus.proof_of_authority import ProofOfAut
 from hierarchical_blockchain.core.block import Block
 
 
-def test_poa_authority_management(benchmark):
+def test_poa_authority_management(benchmark=None):
     """Test adding and removing authorities in PoA consensus"""
 
     def execute():
@@ -42,10 +42,13 @@ def test_poa_authority_management(benchmark):
         assert poa.remove_authority("non_existent") is False
         return poa
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_poa_block_validation(benchmark):
+def test_poa_block_validation(benchmark=None):
     """Test PoA block validation"""
 
     def execute():
@@ -103,10 +106,13 @@ def test_poa_block_validation(benchmark):
         assert poa.validate_block(fast_block, block) is False
         return poa, block, previous_block, fast_block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_poa_event_validation(benchmark):
+def test_poa_event_validation(benchmark=None):
     """Test PoA event validation"""
 
     def execute():
@@ -148,10 +154,13 @@ def test_poa_event_validation(benchmark):
         assert poa.validate_event_for_consensus(valid_custom_event) is True
         return poa
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_multiple_authorities_concurrent_operations(benchmark):
+def test_multiple_authorities_concurrent_operations(benchmark=None):
     """Test handling multiple authorities operating concurrently"""
 
     def execute():
@@ -187,10 +196,13 @@ def test_multiple_authorities_concurrent_operations(benchmark):
             blocks.append(block)
         return poa, genesis_block, blocks
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_network_unstable_conditions(benchmark):
+def test_network_unstable_conditions(benchmark=None):
     """Test behavior under unstable network conditions"""
 
     def execute():
@@ -249,10 +261,13 @@ def test_network_unstable_conditions(benchmark):
         assert poa.validate_block(block3, block2) is False
         return poa, block1, block2, block3
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_spoofed_authority_attack(benchmark):
+def test_spoofed_authority_attack(benchmark=None):
     """Test resistance against spoofed authority attacks"""
 
     def execute():
@@ -324,10 +339,13 @@ def test_spoofed_authority_attack(benchmark):
         assert poa.validate_block(malicious_block, genesis_block) is False
         return poa, block, malicious_block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_performance_with_many_authorities(benchmark):
+def test_performance_with_many_authorities(benchmark=None):
     """Test performance with a large number of authorities"""
 
     def execute():
@@ -363,10 +381,13 @@ def test_performance_with_many_authorities(benchmark):
         assert (end_time - start_time) < 1.0
         return poa
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_realistic_environment_simulation(benchmark):
+def test_realistic_environment_simulation(benchmark=None):
     """Test with more realistic environment simulation"""
 
     def execute():
@@ -455,10 +476,13 @@ def test_realistic_environment_simulation(benchmark):
         # No authority should be used significantly more than others
         return poa, blocks
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_security_and_fault_tolerance(benchmark):
+def test_security_and_fault_tolerance(benchmark=None):
     """Test security features and fault tolerance"""
 
     def execute():
@@ -539,10 +563,13 @@ def test_security_and_fault_tolerance(benchmark):
         assert poa.validate_block(recovery_block, genesis_block) is True
         return poa, block, corrupted_block, recovery_block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_performance_with_large_data(benchmark):
+def test_performance_with_large_data(benchmark=None):
     """Test performance with large amounts of data in blocks"""
 
     def execute():
@@ -618,4 +645,7 @@ def test_performance_with_large_data(benchmark):
         assert block.validate_structure() is True  # Structure should be valid
         return poa, block, block_creation_time, finalization_time, validation_time
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()

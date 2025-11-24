@@ -37,7 +37,7 @@ node = OrderingNode(
 )
 
 
-def test_init_with_defaults(benchmark):
+def test_init_with_defaults(benchmark=None):
     """Test initialization with default parameters"""
     def execute():
         service = OrderingService(nodes=[node], config={})
@@ -45,10 +45,13 @@ def test_init_with_defaults(benchmark):
         assert service.get_service_status()["status"] == "active"
         return service
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_init_with_params(benchmark):
+def test_init_with_params(benchmark=None):
     """Test initialization with custom parameters"""
     def execute():
         config = {"block_size": 1000, "batch_timeout": 5.0}
@@ -59,10 +62,13 @@ def test_init_with_params(benchmark):
         assert status["configuration"]["batch_timeout"] == 5.0
         return service
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_receive_valid_event(benchmark):
+def test_receive_valid_event(benchmark=None):
     """Test receiving a valid event"""
     def execute():
         service = OrderingService(nodes=[node], config={})
@@ -81,10 +87,13 @@ def test_receive_valid_event(benchmark):
         assert status["status"] in ["pending", "certified"]
         return service, event_id
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_block_creation(benchmark):
+def test_block_creation(benchmark=None):
     """Test block creation when batch size is reached"""
     def execute():
         config = {"block_size": 3, "batch_timeout": 0.1}
@@ -110,10 +119,13 @@ def test_block_creation(benchmark):
         assert block["event_count"] == 3
         return service, block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_invalid_event_handling(benchmark):
+def test_invalid_event_handling(benchmark=None):
     """"""
     def execute():
         service = OrderingService(nodes=[node], config={})
@@ -129,10 +141,13 @@ def test_invalid_event_handling(benchmark):
         assert status["status"] == "rejected"
         return service, event_id
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_timeout_block_creation(benchmark):
+def test_timeout_block_creation(benchmark=None):
     """"""
     def execute():
         config = {"block_size": 10, "batch_timeout": 0.1}
@@ -155,10 +170,13 @@ def test_timeout_block_creation(benchmark):
         assert block["event_count"] == 1
         return service, block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_service_status(benchmark):
+def test_service_status(benchmark=None):
     """"""
     def execute():
         service = OrderingService(nodes=[node], config={})
@@ -168,10 +186,13 @@ def test_service_status(benchmark):
         assert status["queues"]["pending_events"] == 0
         return service, status
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_custom_validation_rule(benchmark):
+def test_custom_validation_rule(benchmark=None):
     """"""
     def execute():
         service = OrderingService(nodes=[node], config={})
@@ -196,10 +217,13 @@ def test_custom_validation_rule(benchmark):
         assert status["status"] == "rejected"
         return service, event_id
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_concurrent_event_processing(benchmark):
+def test_concurrent_event_processing(benchmark=None):
     """Test concurrent event processing"""
     def execute():
         service = OrderingService(nodes=[node], config={"worker_threads": 4})
@@ -228,10 +252,13 @@ def test_concurrent_event_processing(benchmark):
         assert certified_count == 10
         return service, certified_count
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_unhealthy_node(benchmark):
+def test_unhealthy_node(benchmark=None):
     """Test handling of unhealthy nodes"""
     def execute():
         # Create an unhealthy node (last heartbeat is old)
@@ -262,10 +289,13 @@ def test_unhealthy_node(benchmark):
         assert status["nodes"]["healthy"] == 1  # Only one node should be healthy
         return service, status
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_service_start_stop(benchmark):
+def test_service_start_stop(benchmark=None):
     """Test service start and stop functionality"""
     def execute():
         # Create service with minimal config
@@ -283,10 +313,13 @@ def test_service_start_stop(benchmark):
         assert service.status == OrderingStatus.ACTIVE
         return service
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_system_error_handling(benchmark):
+def test_system_error_handling(benchmark=None):
     """Test handling of system errors during event processing"""
     def execute():
         service = OrderingService(nodes=[node], config={})
@@ -327,10 +360,13 @@ def test_system_error_handling(benchmark):
         assert faulty_status["status"] == "rejected"
         return service, normal_status, faulty_status
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_large_volume_performance(benchmark):
+def test_large_volume_performance(benchmark=None):
     """Test performance with large volume of events"""
     def execute():
         config = {"block_size": 100, "batch_timeout": 0.5}
@@ -378,10 +414,13 @@ def test_large_volume_performance(benchmark):
         assert len(blocks) > 0
         return service, certified_count, blocks
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_malformed_event_data(benchmark):
+def test_malformed_event_data(benchmark=None):
     """Test handling of malformed event data"""
     def execute():
         service = OrderingService(nodes=[node], config={})
@@ -415,10 +454,13 @@ def test_malformed_event_data(benchmark):
         assert status["status"] == "rejected"
         return service
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_concurrent_edge_cases(benchmark):
+def test_concurrent_edge_cases(benchmark=None):
     """Test concurrent processing edge cases"""
     def execute():
         config = {"block_size": 5, "batch_timeout": 0.1}
@@ -449,10 +491,13 @@ def test_concurrent_edge_cases(benchmark):
         assert certified_count == 10
         return service, certified_count
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_leader_election_scenarios(benchmark):
+def test_leader_election_scenarios(benchmark=None):
     """Test leader election scenarios"""
     def execute():
         # Create multiple nodes with one leader
@@ -483,10 +528,13 @@ def test_leader_election_scenarios(benchmark):
         assert status["nodes"]["healthy"] == 2
         return service, status
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_cleanup_on_service_stop(benchmark):
+def test_cleanup_on_service_stop(benchmark=None):
     """Test proper cleanup when service is stopped"""
     def execute():
         service = OrderingService(nodes=[node], config={})
@@ -514,10 +562,13 @@ def test_cleanup_on_service_stop(benchmark):
             assert not service.processing_thread.is_alive()
         return service
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_network_failure_scenarios(benchmark):
+def test_network_failure_scenarios(benchmark=None):
     """Test handling of network failure scenarios"""
     def execute():
         # Create nodes with different network conditions
@@ -548,10 +599,13 @@ def test_network_failure_scenarios(benchmark):
         assert status["nodes"]["healthy"] == 1
         return service, status
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_network_partition_handling(benchmark):
+def test_network_partition_handling(benchmark=None):
     """Test handling of network partition scenarios"""
     def execute():
         # Create multiple nodes
@@ -602,10 +656,13 @@ def test_network_partition_handling(benchmark):
         assert status["nodes"]["leader"] == "leader-node"
         return service, status
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_leader_failover(benchmark):
+def test_leader_failover(benchmark=None):
     """Test leader failover when leader node goes down"""
     def execute():
         # Create nodes with one leader
@@ -647,10 +704,13 @@ def test_leader_failover(benchmark):
         assert status["nodes"]["healthy"] == 2
         return service, status
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_complex_event_data(benchmark):
+def test_complex_event_data(benchmark=None):
     """Test handling of complex event data structures"""
     def execute():
         service = OrderingService(nodes=[node], config={})
@@ -698,10 +758,13 @@ def test_complex_event_data(benchmark):
         # is properly handled through the certification process
         return service, event_id
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_error_classification_with_complex_data(benchmark):
+def test_error_classification_with_complex_data(benchmark=None):
     """Test error classification with complex data structures"""
     def execute():
         config = {}
@@ -748,10 +811,13 @@ def test_error_classification_with_complex_data(benchmark):
         assert complex_error_info.priority in PriorityLevel
         return classifier, error_info, complex_error_info
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_consensus_validator_with_edge_cases(benchmark):
+def test_consensus_validator_with_edge_cases(benchmark=None):
     """Test consensus validator with edge case configurations"""
     def execute():
         # Test with f=0 (no fault tolerance)
@@ -785,10 +851,13 @@ def test_consensus_validator_with_edge_cases(benchmark):
         assert validator_large_f.validate_node_count(nodes_301)
         return validator_no_fault, validator_large_f
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_encryption_validator_with_large_keys(benchmark):
+def test_encryption_validator_with_large_keys(benchmark=None):
     """Test encryption validator with large key sizes"""
     def execute():
         config = {"algorithm": "AES-256-GCM"}
@@ -810,10 +879,13 @@ def test_encryption_validator_with_large_keys(benchmark):
             pass  # Acceptable for this test
         return validator
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_api_validator_with_complex_forbidden_content(benchmark):
+def test_api_validator_with_complex_forbidden_content(benchmark=None):
     """Test API validator with complex forbidden content"""
     def execute():
         config = {}
@@ -843,10 +915,13 @@ def test_api_validator_with_complex_forbidden_content(benchmark):
             pass
         return validator
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_resource_validator_with_extreme_values(benchmark):
+def test_resource_validator_with_extreme_values(benchmark=None):
     """Test resource validator with extreme threshold values"""
     def execute():
         # Test with very low thresholds
@@ -870,10 +945,13 @@ def test_resource_validator_with_extreme_values(benchmark):
         assert validator_high.cpu_threshold == 95
         return validator_low, validator_high
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_binary_data_handling(benchmark):
+def test_binary_data_handling(benchmark=None):
     """Test handling of binary data in events"""
     def execute():
         service = OrderingService(nodes=[node], config={})
@@ -902,10 +980,13 @@ def test_binary_data_handling(benchmark):
             assert block["event_count"] >= 1
         return service, event_id
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_large_payload_handling(benchmark):
+def test_large_payload_handling(benchmark=None):
     """Test handling of large payload events"""
     def execute():
         service = OrderingService(nodes=[node], config={"block_size": 2, "batch_timeout": 0.1})
@@ -929,10 +1010,13 @@ def test_large_payload_handling(benchmark):
         assert status["status"] == "certified"
         return service, event_id
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_very_small_block_size(benchmark):
+def test_very_small_block_size(benchmark=None):
     """Test ordering service with very small block size"""
     def execute():
         config = {"block_size": 1, "batch_timeout": 0.1}
@@ -956,10 +1040,13 @@ def test_very_small_block_size(benchmark):
         assert status["status"] == "certified"
         return service, block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_very_large_block_size(benchmark):
+def test_very_large_block_size(benchmark=None):
     """Test ordering service with very large block size"""
     def execute():
         config = {"block_size": 10000, "batch_timeout": 0.1}
@@ -988,10 +1075,13 @@ def test_very_large_block_size(benchmark):
         assert block is None
         return service
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_service_recovery_after_crash(benchmark):
+def test_service_recovery_after_crash(benchmark=None):
     """Test service recovery after simulated crash"""
     def execute():
         config = {"block_size": 3, "batch_timeout": 0.1}
@@ -1030,10 +1120,13 @@ def test_service_recovery_after_crash(benchmark):
         assert status["status"] == "certified"
         return new_service, recovery_event_id
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_access_control_validation(benchmark):
+def test_access_control_validation(benchmark=None):
     """Test access control validation if implemented"""
     def execute():
         service = OrderingService(nodes=[node], config={})
@@ -1056,10 +1149,13 @@ def test_access_control_validation(benchmark):
         assert status["status"] in ["pending", "certified", "rejected"]
         return service, event_id
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_network_recovery_with_complex_data(benchmark):
+def test_network_recovery_with_complex_data(benchmark=None):
     """Test network recovery with complex data payloads"""
     def execute():
         config = {"timeout_multiplier": 2.0, "redundancy_factor": 2}
@@ -1081,10 +1177,13 @@ def test_network_recovery_with_complex_data(benchmark):
         assert "avg_latency_ms" in health
         return engine, health
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_auto_scaler_with_edge_configurations(benchmark):
+def test_auto_scaler_with_edge_configurations(benchmark=None):
     """Test auto scaler with extreme configurations"""
     def execute():
         # Test with very small thresholds
@@ -1114,10 +1213,13 @@ def test_auto_scaler_with_edge_configurations(benchmark):
         assert scaler_large.scale_down_threshold == 0.95
         return scaler_small, scaler_large
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_consensus_recovery_with_complex_state(benchmark):
+def test_consensus_recovery_with_complex_state(benchmark=None):
     """Test consensus recovery with complex state data"""
     def execute():
         config = {}
@@ -1142,10 +1244,13 @@ def test_consensus_recovery_with_complex_state(benchmark):
         assert result is True  # Should succeed with valid state
         return engine, result
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_backup_recovery_with_large_files(benchmark):
+def test_backup_recovery_with_large_files(benchmark=None):
     """Test backup recovery with large files"""
     def execute():
         config = {"locations": ["primary"], "integrity_check": "sha256"}
@@ -1169,10 +1274,13 @@ def test_backup_recovery_with_large_files(benchmark):
                 os.unlink(backup_path)
         return engine, result
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_recovery_after_system_crash(benchmark):
+def test_recovery_after_system_crash(benchmark=None):
     """Test recovery procedures after system crash simulation"""
     def execute():
         # Test network recovery engine recovery
@@ -1204,10 +1312,13 @@ def test_recovery_after_system_crash(benchmark):
         assert recovery_result is True
         return network_engine, scaler, consensus_engine
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_access_validation_in_recovery(benchmark):
+def test_access_validation_in_recovery(benchmark=None):
     """Test access validation in recovery operations if applicable"""
     def execute():
         config = {}
@@ -1233,4 +1344,7 @@ def test_access_validation_in_recovery(benchmark):
         assert "isolated_nodes" in actions
         return engine, actions
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()

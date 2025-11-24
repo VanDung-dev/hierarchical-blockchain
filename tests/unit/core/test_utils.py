@@ -13,7 +13,7 @@ from hypothesis import given, strategies as st
 from hierarchical_blockchain.core.utils import generate_hash, generate_entity_id, generate_proof_hash, validate_proof_metadata
 
 
-def test_generate_hash(benchmark):
+def test_generate_hash(benchmark=None):
     """Test hash generation function"""
     def execute():
         # Test string hashing
@@ -35,10 +35,13 @@ def test_generate_hash(benchmark):
 
         return hash1, hash2, hash3, hash4, hash5
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_generate_entity_id(benchmark):
+def test_generate_entity_id(benchmark=None):
     """Test entity ID generation"""
     def execute():
         # Test default prefix
@@ -54,10 +57,13 @@ def test_generate_entity_id(benchmark):
 
         return entity_id1, entity_id2, custom_id
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_generate_proof_hash(benchmark):
+def test_generate_proof_hash(benchmark=None):
     """Test proof hash generation"""
     def execute():
         block_hash = "a1b2c3d4e5f6" * 4  # 64 chars
@@ -80,10 +86,13 @@ def test_generate_proof_hash(benchmark):
 
         return proof_hash1, proof_hash2, proof_hash3
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_validate_proof_metadata(benchmark):
+def test_validate_proof_metadata(benchmark=None):
     """Test proof metadata validation"""
     def execute():
         # Valid metadata
@@ -109,10 +118,13 @@ def test_validate_proof_metadata(benchmark):
 
         return valid_metadata, invalid_metadata, valid_metadata2
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_generate_hash_edge_cases(benchmark):
+def test_generate_hash_edge_cases(benchmark=None):
     """Test hash generation with edge cases"""
     def execute():
         # Test with None input - should handle gracefully
@@ -140,10 +152,13 @@ def test_generate_hash_edge_cases(benchmark):
 
         return hash_empty, hash_empty_dict
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_generate_hash_performance(benchmark):
+def test_generate_hash_performance(benchmark=None):
     """Test hash generation performance with large input"""
     def execute():
         # Create large data structure
@@ -163,10 +178,13 @@ def test_generate_hash_performance(benchmark):
 
         return hash_result, (end_time - start_time)
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_generate_proof_hash_edge_cases(benchmark):
+def test_generate_proof_hash_edge_cases(benchmark=None):
     """Test proof hash generation edge cases"""
     def execute():
         # Normal case
@@ -202,10 +220,13 @@ def test_generate_proof_hash_edge_cases(benchmark):
 
         return proof_hash, empty_metadata_proof, long_hash_proof
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_validate_proof_metadata_edge_cases(benchmark):
+def test_validate_proof_metadata_edge_cases(benchmark=None):
     """Test proof metadata validation edge cases"""
     def execute():
         # Edge case: Empty metadata
@@ -242,7 +263,10 @@ def test_validate_proof_metadata_edge_cases(benchmark):
 
         return valid_combinations, invalid_combinations
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
 # Property-based testing with Hypothesis
@@ -284,7 +308,7 @@ def test_entity_id_uniqueness_property(prefix):
 
 
 # Performance/load testing
-def test_utils_performance_under_load(benchmark):
+def test_utils_performance_under_load(benchmark=None):
     """Test utility functions performance under load"""
     def execute():
         # Test generate_hash with many iterations
@@ -318,11 +342,14 @@ def test_utils_performance_under_load(benchmark):
 
         return hash_time, entity_id_time, proof_hash_time
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
 # Fuzz testing
-def test_utils_with_fuzzed_inputs(benchmark):
+def test_utils_with_fuzzed_inputs(benchmark=None):
     """Fuzz testing utility functions with random inputs"""
     def execute():
         for _ in range(1000):
@@ -363,11 +390,14 @@ def test_utils_with_fuzzed_inputs(benchmark):
 
         return "completed"
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
 # Integration testing between utility functions
-def test_utils_integration(benchmark):
+def test_utils_integration(benchmark=None):
     """Integration test between different utility functions"""
     def execute():
         # Generate entity ID
@@ -412,4 +442,7 @@ def test_utils_integration(benchmark):
 
         return entity_id, event_hash, proof_hash, proof_hash2
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()

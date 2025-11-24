@@ -14,7 +14,7 @@ import string
 from hierarchical_blockchain.core.caching import AdvancedCache
 
 
-def test_cache_basic_operations(benchmark):
+def test_cache_basic_operations(benchmark=None):
     """Test basic cache operations: set, get, and delete"""
     def execute():
         cache = AdvancedCache(max_size=100, eviction_policy="lru")
@@ -39,10 +39,13 @@ def test_cache_basic_operations(benchmark):
 
         return cache
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_cache_eviction_lru(benchmark):
+def test_cache_eviction_lru(benchmark=None):
     """Test LRU eviction policy"""
     def execute():
         cache = AdvancedCache(max_size=3, eviction_policy="lru")
@@ -70,10 +73,13 @@ def test_cache_eviction_lru(benchmark):
 
         return cache
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_cache_eviction_fifo(benchmark):
+def test_cache_eviction_fifo(benchmark=None):
     """Test FIFO eviction policy"""
     def execute():
         cache = AdvancedCache(max_size=3, eviction_policy="fifo")
@@ -96,10 +102,13 @@ def test_cache_eviction_fifo(benchmark):
 
         return cache
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_cache_ttl_expiration(benchmark):
+def test_cache_ttl_expiration(benchmark=None):
     """Test TTL expiration functionality"""
     def execute():
         cache = AdvancedCache(max_size=100, eviction_policy="ttl")
@@ -130,10 +139,13 @@ def test_cache_ttl_expiration(benchmark):
 
         return cache
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_cache_multithreading_race_conditions(benchmark):
+def test_cache_multithreading_race_conditions(benchmark=None):
     """Test cache behavior under multithreading race conditions"""
     import threading
 
@@ -175,10 +187,13 @@ def test_cache_multithreading_race_conditions(benchmark):
 
         return cache
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_cache_large_memory_usage(benchmark):
+def test_cache_large_memory_usage(benchmark=None):
     """Test cache behavior with large memory usage"""
     def execute():
         cache = AdvancedCache(max_size=1000, eviction_policy="lru")
@@ -203,10 +218,13 @@ def test_cache_large_memory_usage(benchmark):
 
         return cache, large_data
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_cache_edge_cases_ttl(benchmark):
+def test_cache_edge_cases_ttl(benchmark=None):
     """Test edge cases for TTL functionality"""
     def execute():
         cache = AdvancedCache(max_size=100, eviction_policy="ttl")
@@ -231,11 +249,14 @@ def test_cache_edge_cases_ttl(benchmark):
 
         return cache
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
 # Performance/load testing
-def test_cache_performance_under_load(benchmark):
+def test_cache_performance_under_load(benchmark=None):
     """Test cache performance under high load"""
     def execute():
         cache = AdvancedCache(max_size=5000, eviction_policy="lru")
@@ -270,7 +291,10 @@ def test_cache_performance_under_load(benchmark):
 
         return cache, test_data, insert_time, retrieve_time
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
 # Property-based testing with Hypothesis
@@ -288,7 +312,7 @@ def test_cache_eviction_policies_property(policy):
 
 
 # Fuzz testing
-def test_cache_with_fuzzed_inputs(benchmark):
+def test_cache_with_fuzzed_inputs(benchmark=None):
     """Fuzz testing with randomized cache operations"""
     def execute():
         cache = AdvancedCache(max_size=100, eviction_policy="lru")
@@ -333,11 +357,14 @@ def test_cache_with_fuzzed_inputs(benchmark):
 
         return cache
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
 # Integration testing between cache and other modules
-def test_cache_integration_with_multithreading(benchmark):
+def test_cache_integration_with_multithreading(benchmark=None):
     """Integration test for cache with multithreading operations"""
     def execute():
         cache = AdvancedCache(max_size=1000, eviction_policy="lru")
@@ -372,4 +399,7 @@ def test_cache_integration_with_multithreading(benchmark):
 
         return cache
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()

@@ -12,7 +12,7 @@ from hierarchical_blockchain.core.block import Block
 from hierarchical_blockchain.core.blockchain import Blockchain
 
 
-def test_block_with_multiple_events(benchmark):
+def test_block_with_multiple_events(benchmark=None):
     def execute():
         chain = Blockchain(name="UnitTestChain")
 
@@ -39,10 +39,13 @@ def test_block_with_multiple_events(benchmark):
 
         return new_block, chain
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_block_creation_and_hashing(benchmark):
+def test_block_creation_and_hashing(benchmark=None):
     """Test basic block creation and hashing functionality"""
     def execute():
         events = [
@@ -69,10 +72,13 @@ def test_block_creation_and_hashing(benchmark):
 
         return block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_block_hash_consistency(benchmark):
+def test_block_hash_consistency(benchmark=None):
     """Test that block hash is consistent when recalculated"""
     def execute():
         events = [
@@ -96,10 +102,13 @@ def test_block_hash_consistency(benchmark):
         assert original_hash == recalculated_hash
         return block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_block_event_operations(benchmark):
+def test_block_event_operations(benchmark=None):
     """Test adding events to block and querying by entity or type"""
     def execute():
         events = [
@@ -145,10 +154,13 @@ def test_block_event_operations(benchmark):
 
         return block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_block_structure_validation(benchmark):
+def test_block_structure_validation(benchmark=None):
     """Test block structure validation"""
     def execute():
         # Valid block
@@ -182,10 +194,13 @@ def test_block_structure_validation(benchmark):
 
         return valid_block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_block_with_zero_events(benchmark):
+def test_block_with_zero_events(benchmark=None):
     """Test block creation with zero events"""
     def execute():
         block = Block(
@@ -206,10 +221,13 @@ def test_block_with_zero_events(benchmark):
 
         return block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_block_performance_with_large_number_of_events(benchmark):
+def test_block_performance_with_large_number_of_events(benchmark=None):
     """Test block performance with large number of events"""
     def execute():
         # Create a large number of events
@@ -242,10 +260,13 @@ def test_block_performance_with_large_number_of_events(benchmark):
 
         return block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_block_invalid_hash(benchmark):
+def test_block_invalid_hash(benchmark=None):
     """Test block with invalid hash scenarios"""
     def execute():
         events = [
@@ -278,7 +299,10 @@ def test_block_invalid_hash(benchmark):
 
         return block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
 # Property-based testing with Hypothesis
@@ -314,7 +338,7 @@ def test_block_event_operations_property(events):
 
 
 # Fuzz testing
-def test_block_with_fuzzed_data(benchmark):
+def test_block_with_fuzzed_data(benchmark=None):
     """Fuzz testing with randomized inputs"""
     def execute():
         import random
@@ -364,4 +388,7 @@ def test_block_with_fuzzed_data(benchmark):
 
         return block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()

@@ -16,7 +16,7 @@ from hierarchical_blockchain.core.blockchain import Blockchain
 from hierarchical_blockchain.core.block import Block
 
 
-def test_blockchain_creation(benchmark):
+def test_blockchain_creation(benchmark=None):
     """Test basic blockchain creation and genesis block"""
     def execute():
         chain = Blockchain(name="TestChain")
@@ -29,10 +29,13 @@ def test_blockchain_creation(benchmark):
 
         return chain
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_event_adding(benchmark):
+def test_event_adding(benchmark=None):
     """Test adding events to pending list"""
     def execute():
         chain = Blockchain(name="EventTestChain")
@@ -52,10 +55,13 @@ def test_event_adding(benchmark):
 
         return chain
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_block_creation(benchmark):
+def test_block_creation(benchmark=None):
     """Test creating blocks from pending events"""
     def execute():
         chain = Blockchain(name="BlockCreationChain")
@@ -87,10 +93,13 @@ def test_block_creation(benchmark):
 
         return chain, block
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_block_adding_and_validation(benchmark):
+def test_block_adding_and_validation(benchmark=None):
     """Test adding blocks to chain and chain validation"""
     def execute():
         chain = Blockchain(name="BlockAddTestChain")
@@ -111,10 +120,13 @@ def test_block_adding_and_validation(benchmark):
 
         return chain, result
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_entity_event_retrieval(benchmark):
+def test_entity_event_retrieval(benchmark=None):
     """Test retrieving events by entity ID"""
     def execute():
         chain = Blockchain(name="EntityRetrievalChain")
@@ -153,10 +165,13 @@ def test_entity_event_retrieval(benchmark):
 
         return chain, entity_a_events, entity_b_events
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_chain_statistics(benchmark):
+def test_chain_statistics(benchmark=None):
     """Test chain statistics functionality"""
     def execute():
         chain = Blockchain(name="StatsTestChain")
@@ -182,10 +197,13 @@ def test_chain_statistics(benchmark):
 
         return chain, stats
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_blockchain_fork_and_reorganization(benchmark):
+def test_blockchain_fork_and_reorganization(benchmark=None):
     """Test blockchain fork and chain reorganization"""
     def execute():
         # Create main chain
@@ -223,10 +241,13 @@ def test_blockchain_fork_and_reorganization(benchmark):
 
         return main_chain, fork_chain
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
-def test_blockchain_with_malicious_blocks(benchmark):
+def test_blockchain_with_malicious_blocks(benchmark=None):
     """Test blockchain behavior with malicious blocks"""
     def execute():
         chain = Blockchain(name="MaliciousTestChain")
@@ -263,21 +284,24 @@ def test_blockchain_with_malicious_blocks(benchmark):
 
         return chain, result
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
 # Performance/load testing
-def test_blockchain_performance_with_large_number_of_events(benchmark):
+def test_blockchain_performance_with_large_number_of_events(benchmark=None):
     """Test blockchain performance with large number of events"""
 
     def create_and_process_events():
-        chain = Blockchain(name="PerformanceTestChain")
+        _chain = Blockchain(name="PerformanceTestChain")
 
         # Add a large number of events
         num_events = 5000
 
         for i in range(num_events):
-            chain.add_event({
+            _chain.add_event({
                 "entity_id": f"PERF-{i}",
                 "event": f"perf_event_{i % 100}",
                 "timestamp": time.time(),
@@ -289,16 +313,19 @@ def test_blockchain_performance_with_large_number_of_events(benchmark):
             })
 
         # Finalize multiple blocks
-        blocks_created = 0
+        _blocks_created = 0
         while chain.pending_events:
             block = chain.finalize_block()
             if block:
-                blocks_created += 1
+                _blocks_created += 1
 
-        return chain, blocks_created
+        return _chain, _blocks_created
 
     # Benchmark the whole process
-    chain, blocks_created = benchmark(create_and_process_events)
+    if benchmark:
+        chain, blocks_created = benchmark(create_and_process_events)
+    else:
+        chain, blocks_created = create_and_process_events()
 
     # Verify chain integrity
     assert chain.is_chain_valid() is True
@@ -341,7 +368,7 @@ def test_blockchain_event_processing_property(num_events):
 
 
 # Fuzz testing
-def test_blockchain_with_fuzzed_events(benchmark):
+def test_blockchain_with_fuzzed_events(benchmark=None):
     """Fuzz testing with randomized event data"""
     def execute():
         chain = Blockchain(name="FuzzTestChain")
@@ -405,11 +432,14 @@ def test_blockchain_with_fuzzed_events(benchmark):
 
         return chain
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
 
 
 # Integration testing between modules
-def test_blockchain_block_cache_integration(benchmark):
+def test_blockchain_block_cache_integration(benchmark=None):
     """Integration test between blockchain and block modules"""
     def execute():
         chain = Blockchain(name="IntegrationTestChain")
@@ -454,4 +484,7 @@ def test_blockchain_block_cache_integration(benchmark):
 
         return chain, events, type_events, stats
 
-    benchmark(execute)
+    if benchmark:
+        benchmark(execute)
+    else:
+        execute()
