@@ -5,7 +5,6 @@ The tests validate the core functionality of the hierarchical blockchain archite
 where the main chain stores proofs from registered sub-chains.
 """
 
-import time
 from unittest.mock import Mock
 
 from hierarchical_blockchain.hierarchical.main_chain import MainChain
@@ -222,7 +221,7 @@ def test_verify_proof_with_invalid_inputs():
 
 
 # Performance benchmark test
-def test_main_chain_performance(benchmark):
+def test_main_chain_performance(benchmark=None):
     """Benchmark MainChain performance with multiple operations"""
     def run_performance_test():
         main_chain = MainChain(name="PerformanceTestMainChain")
@@ -241,9 +240,11 @@ def test_main_chain_performance(benchmark):
             main_chain.finalize_block()
         
         return main_chain
-    
-    # Run benchmark
-    chain = benchmark(run_performance_test)
+
+    if benchmark:
+        chain = benchmark(run_performance_test)
+    else:
+        chain = run_performance_test()
     
     # Basic assertions to ensure it worked
     assert len(chain.registered_sub_chains) == 100

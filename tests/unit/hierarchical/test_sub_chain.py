@@ -6,7 +6,6 @@ including operation events, entity status updates, main chain connections,
 proof generation, entity history tracking, and domain statistics.
 """
 
-import time
 from unittest.mock import Mock, patch
 
 from hierarchical_blockchain.hierarchical.sub_chain import SubChain
@@ -215,7 +214,7 @@ def test_proof_submission_with_invalid_inputs():
 
 
 # Performance benchmark test
-def test_sub_chain_performance(benchmark):
+def test_sub_chain_performance(benchmark=None):
     """Benchmark SubChain performance with multiple operations"""
     def run_performance_test():
         sub_chain = SubChain(name="PerformanceTestChain", domain_type="testing")
@@ -233,9 +232,11 @@ def test_sub_chain_performance(benchmark):
             sub_chain.finalize_sub_chain_block()
         
         return sub_chain
-    
-    # Run benchmark
-    chain = benchmark(run_performance_test)
+
+    if benchmark:
+        chain = benchmark(run_performance_test)
+    else:
+        chain = run_performance_test()
     
     # Basic assertions to ensure it worked
     assert chain.completed_operations == 500
