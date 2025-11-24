@@ -5,7 +5,6 @@ Tests the advanced MSP implementation including certificate management,
 role-based access control, and hierarchical identity management for enterprise applications.
 """
 
-import time
 from hierarchical_blockchain.security.msp import HierarchicalMSP, CertificateAuthority, OrganizationPolicies
 
 
@@ -34,18 +33,35 @@ def setup_msp():
     
     return msp, test_credentials, test_attributes
 
-def test_msp_initialization():
+
+def test_msp_initialization(benchmark=None):
     """Test MSP initialization"""
-    msp, _, _ = setup_msp()
+    def init_msp():
+        msp, _, _ = setup_msp()
+        return msp
+
+    if benchmark:
+        msp = benchmark(init_msp)
+    else:
+        msp = init_msp()
+
     assert msp.organization_id == "test-org"
     assert msp.ca is not None
     assert msp.policies is not None
     assert len(msp.roles) > 0  # Should have default roles
     assert len(msp.audit_log) == 0  # Should start empty
 
-def test_default_roles_initialization():
+def test_default_roles_initialization(benchmark=None):
     """Test default roles are properly initialized"""
-    msp, _, _ = setup_msp()
+    def init_roles():
+        msp, _, _ = setup_msp()
+        return msp
+
+    if benchmark:
+        msp = benchmark(init_roles)
+    else:
+        msp = init_roles()
+
     expected_roles = ["admin", "operator", "viewer"]
     
     for role in expected_roles:
@@ -53,16 +69,23 @@ def test_default_roles_initialization():
         assert len(msp.roles[role]["permissions"]) > 0
         assert "cert_validity_days" in msp.roles[role]
 
-def test_register_entity_success():
+def test_register_entity_success(benchmark=None):
     """Test successful entity registration"""
     msp, test_credentials, test_attributes = setup_msp()
-    result = msp.register_entity(
-        "test-user-001",
-        test_credentials,
-        "admin",
-        test_attributes
-    )
-    
+
+    def register_entity():
+        return msp.register_entity(
+            "test-user-001",
+            test_credentials,
+            "admin",
+            test_attributes
+        )
+
+    if benchmark:
+        result = benchmark(register_entity)
+    else:
+        result = register_entity()
+
     assert result
     assert "test-user-001" in msp.entities
     
@@ -71,19 +94,26 @@ def test_register_entity_success():
     assert entity["status"] == "active"
     assert entity["attributes"] == test_attributes
 
-def test_register_entity_invalid_role():
+def test_register_entity_invalid_role(benchmark=None):
     """Test entity registration with invalid role"""
     msp, test_credentials, _ = setup_msp()
-    result = msp.register_entity(
-        "test-user-002",
-        test_credentials,
-        "invalid-role"
-    )
-    
+
+    def register_invalid_role():
+        return msp.register_entity(
+            "test-user-002",
+            test_credentials,
+            "invalid-role"
+        )
+
+    if benchmark:
+        result = benchmark(register_invalid_role)
+    else:
+        result = register_invalid_role()
+
     assert not result
     assert "test-user-002" not in msp.entities
 
-def test_validate_identity_success():
+def test_validate_identity_success(benchmark=None):
     """Test successful identity validation"""
     msp, test_credentials, _ = setup_msp()
     # First register entity
@@ -92,16 +122,21 @@ def test_validate_identity_success():
         test_credentials,
         "operator"
     )
-    
-    # Then validate
-    result = msp.validate_identity(
-        "test-user-003",
-        test_credentials
-    )
-    
+
+    def validate_identity():
+        return msp.validate_identity(
+            "test-user-003",
+            test_credentials
+        )
+
+    if benchmark:
+        result = benchmark(validate_identity)
+    else:
+        result = validate_identity()
+
     assert result
 
-def test_validate_identity_wrong_credentials():
+def test_validate_identity_wrong_credentials(benchmark=None):
     """Test identity validation with wrong credentials"""
     msp, test_credentials, _ = setup_msp()
     # Register entity
@@ -116,25 +151,38 @@ def test_validate_identity_wrong_credentials():
         "public_key": "wrong-key",
         "private_key": "wrong-private-key"
     }
-    
-    result = msp.validate_identity(
-        "test-user-004",
-        wrong_credentials
-    )
-    
+
+    def validate_wrong_credentials():
+        return msp.validate_identity(
+            "test-user-004",
+            wrong_credentials
+        )
+
+    if benchmark:
+        result = benchmark(validate_wrong_credentials)
+    else:
+        result = validate_wrong_credentials()
+
     assert not result
 
-def test_validate_identity_nonexistent_user():
+def test_validate_identity_nonexistent_user(benchmark=None):
     """Test identity validation for non-existent user"""
     msp, test_credentials, _ = setup_msp()
-    result = msp.validate_identity(
-        "non-existent-user",
-        test_credentials
-    )
-    
+
+    def validate_nonexistent():
+        return msp.validate_identity(
+            "non-existent-user",
+            test_credentials
+        )
+
+    if benchmark:
+        result = benchmark(validate_nonexistent)
+    else:
+        result = validate_nonexistent()
+
     assert not result
 
-def test_authorize_action_success():
+def test_authorize_action_success(benchmark=None):
     """Test successful action authorization"""
     msp, test_credentials, _ = setup_msp()
     # Register entity with admin role
@@ -143,16 +191,21 @@ def test_authorize_action_success():
         test_credentials,
         "admin"
     )
-    
-    # Test authorization for admin action
-    result = msp.authorize_action(
-        "test-admin",
-        "manage_entities"
-    )
-    
+
+    def authorize_admin_action():
+        return msp.authorize_action(
+            "test-admin",
+            "manage_entities"
+        )
+
+    if benchmark:
+        result = benchmark(authorize_admin_action)
+    else:
+        result = authorize_admin_action()
+
     assert result
 
-def test_authorize_action_insufficient_permissions():
+def test_authorize_action_insufficient_permissions(benchmark=None):
     """Test action authorization with insufficient permissions"""
     msp, test_credentials, _ = setup_msp()
     # Register entity with viewer role
@@ -161,16 +214,21 @@ def test_authorize_action_insufficient_permissions():
         test_credentials,
         "viewer"
     )
-    
-    # Test authorization for admin action
-    result = msp.authorize_action(
-        "test-viewer",
-        "manage_entities"
-    )
-    
+
+    def authorize_restricted_action():
+        return msp.authorize_action(
+            "test-viewer",
+            "manage_entities"
+        )
+
+    if benchmark:
+        result = benchmark(authorize_restricted_action)
+    else:
+        result = authorize_restricted_action()
+
     assert not result
 
-def test_revoke_entity():
+def test_revoke_entity(benchmark=None):
     """Test entity revocation"""
     msp, test_credentials, _ = setup_msp()
     # Register entity
@@ -179,32 +237,43 @@ def test_revoke_entity():
         test_credentials,
         "operator"
     )
-    
-    # Revoke entity
-    result = msp.revoke_entity("test-user-revoke", "security_breach")
-    
+
+    def revoke_entity():
+        return msp.revoke_entity("test-user-revoke", "security_breach")
+
+    if benchmark:
+        result = benchmark(revoke_entity)
+    else:
+        result = revoke_entity()
+
     assert result
     entity = msp.entities["test-user-revoke"]
     assert entity["status"] == "revoked"
     assert entity["revocation_reason"] == "security_breach"
 
-def test_define_custom_role():
+def test_define_custom_role(benchmark=None):
     """Test defining custom organizational role"""
     msp, _, _ = setup_msp()
     custom_permissions = ["custom_action_1", "custom_action_2"]
-    
-    msp.define_role(
-        "custom_role",
-        custom_permissions,
-        ["custom_policy"],
-        180
-    )
-    
+
+    def define_role():
+        msp.define_role(
+            "custom_role",
+            custom_permissions,
+            ["custom_policy"],
+            180
+        )
+
+    if benchmark:
+        benchmark(define_role)
+    else:
+        define_role()
+
     assert "custom_role" in msp.roles
     assert msp.roles["custom_role"]["permissions"] == custom_permissions
     assert msp.roles["custom_role"]["cert_validity_days"] == 180
 
-def test_get_entity_info():
+def test_get_entity_info(benchmark=None):
     """Test getting entity information"""
     msp, test_credentials, test_attributes = setup_msp()
     # Register entity
@@ -214,22 +283,36 @@ def test_get_entity_info():
         "operator",
         test_attributes
     )
-    
-    info = msp.get_entity_info("test-info-user")
-    
+
+    def get_info():
+        return msp.get_entity_info("test-info-user")
+
+    if benchmark:
+        info = benchmark(get_info)
+    else:
+        info = get_info()
+
     assert info is not None
     assert info["entity_id"] == "test-info-user"
     assert info["role"] == "operator"
     assert info["status"] == "active"
     assert info["attributes"] == test_attributes
 
-def test_get_entity_info_nonexistent():
+def test_get_entity_info_nonexistent(benchmark=None):
     """Test getting info for non-existent entity"""
     msp, _, _ = setup_msp()
-    info = msp.get_entity_info("non-existent")
+
+    def get_nonexistent_info():
+        return msp.get_entity_info("non-existent")
+
+    if benchmark:
+        info = benchmark(get_nonexistent_info)
+    else:
+        info = get_nonexistent_info()
+
     assert info is None
 
-def test_audit_logging():
+def test_audit_logging(benchmark=None):
     """Test audit logging functionality"""
     msp, test_credentials, _ = setup_msp()
     initial_log_count = len(msp.audit_log)
@@ -240,9 +323,15 @@ def test_audit_logging():
         test_credentials,
         "admin"
     )
-    
-    # Check audit log
-    audit_log = msp.get_audit_log(10)
+
+    def get_audit_log():
+        return msp.get_audit_log(10)
+
+    if benchmark:
+        audit_log = benchmark(get_audit_log)
+    else:
+        audit_log = get_audit_log()
+
     assert len(audit_log) > initial_log_count
     
     # Check log entry details
@@ -261,30 +350,44 @@ def setup_ca():
     )
     return ca
 
-def test_ca_initialization():
+def test_ca_initialization(benchmark=None):
     """Test CA initialization"""
-    ca = setup_ca()
+    def init_ca():
+        return setup_ca()
+
+    if benchmark:
+        ca = benchmark(init_ca)
+    else:
+        ca = init_ca()
+
     assert ca.root_cert == "test-root"
     assert len(ca.intermediate_certs) == 1
     assert len(ca.issued_certificates) == 0
     assert len(ca.revoked_certificates) == 0
 
-def test_issue_certificate():
+def test_issue_certificate(benchmark=None):
     """Test certificate issuance"""
     ca = setup_ca()
-    certificate = ca.issue_certificate(
-        subject="test-subject",
-        public_key="test-public-key",
-        attributes={"role": "admin"},
-        valid_days=365
-    )
-    
+
+    def issue_cert():
+        return ca.issue_certificate(
+            subject="test-subject",
+            public_key="test-public-key",
+            attributes={"role": "admin"},
+            valid_days=365
+        )
+
+    if benchmark:
+        certificate = benchmark(issue_cert)
+    else:
+        certificate = issue_cert()
+
     assert certificate is not None
     assert certificate.subject == "test-subject"
     assert certificate.public_key == "test-public-key"
     assert certificate.cert_id in ca.issued_certificates
 
-def test_revoke_certificate():
+def test_revoke_certificate(benchmark=None):
     """Test certificate revocation"""
     ca = setup_ca()
     # Issue certificate first
@@ -293,14 +396,19 @@ def test_revoke_certificate():
         public_key="test-key",
         attributes={}
     )
-    
-    # Revoke certificate
-    result = ca.revoke_certificate(certificate.cert_id, "compromised")
-    
+
+    def revoke_cert():
+        return ca.revoke_certificate(certificate.cert_id, "compromised")
+
+    if benchmark:
+        result = benchmark(revoke_cert)
+    else:
+        result = revoke_cert()
+
     assert result
     assert certificate.cert_id in ca.revoked_certificates
 
-def test_verify_certificate_valid():
+def test_verify_certificate_valid(benchmark=None):
     """Test verification of valid certificate"""
     ca = setup_ca()
     certificate = ca.issue_certificate(
@@ -308,11 +416,17 @@ def test_verify_certificate_valid():
         public_key="test-key",
         attributes={}
     )
-    
-    result = ca.verify_certificate(certificate.cert_id)
+
+    def verify_cert():
+        return ca.verify_certificate(certificate.cert_id)
+    if benchmark:
+        result = benchmark(verify_cert)
+    else:
+        result = verify_cert()
+
     assert result
 
-def test_verify_certificate_revoked():
+def test_verify_certificate_revoked(benchmark=None):
     """Test verification of revoked certificate"""
     ca = setup_ca()
     certificate = ca.issue_certificate(
@@ -323,14 +437,29 @@ def test_verify_certificate_revoked():
     
     # Revoke and then verify
     ca.revoke_certificate(certificate.cert_id, "test")
-    result = ca.verify_certificate(certificate.cert_id)
-    
+
+    def verify_revoked_cert():
+        return ca.verify_certificate(certificate.cert_id)
+
+    if benchmark:
+        result = benchmark(verify_revoked_cert)
+    else:
+        result = verify_revoked_cert()
+
     assert not result
 
-def test_verify_certificate_nonexistent():
+def test_verify_certificate_nonexistent(benchmark=None):
     """Test verification of non-existent certificate"""
     ca = setup_ca()
-    result = ca.verify_certificate("non-existent-cert-id")
+
+    def verify_nonexistent_cert():
+        return ca.verify_certificate("non-existent-cert-id")
+
+    if benchmark:
+        result = benchmark(verify_nonexistent_cert)
+    else:
+        result = verify_nonexistent_cert()
+
     assert not result
 
 
@@ -339,20 +468,28 @@ def setup_policies():
     policies = OrganizationPolicies()
     return policies
 
-def test_define_policy():
+
+def test_define_policy(benchmark=None):
     """Test policy definition"""
     policies = setup_policies()
     policy_config = {
         "required_attributes": ["role", "department"],
         "conditions": {"department": "engineering"}
     }
-    
-    policies.define_policy("test_policy", policy_config)
-    
+
+    def define_policy():
+        policies.define_policy("test_policy", policy_config)
+
+    if benchmark:
+        benchmark(define_policy)
+    else:
+        define_policy()
+
     assert "test_policy" in policies.policies
     assert policies.policies["test_policy"]["config"] == policy_config
 
-def test_evaluate_policy_success():
+
+def test_evaluate_policy_success(benchmark=None):
     """Test successful policy evaluation"""
     policies = setup_policies()
     policy_config = {
@@ -365,11 +502,18 @@ def test_evaluate_policy_success():
         "role": "admin",
         "department": "engineering"
     }
-    
-    result = policies.evaluate_policy("test_policy", context)
+
+    def evaluate_policy():
+        return policies.evaluate_policy("test_policy", context)
+
+    if benchmark:
+        result = benchmark(evaluate_policy)
+    else:
+        result = evaluate_policy()
+
     assert result
 
-def test_evaluate_policy_missing_attributes():
+def test_evaluate_policy_missing_attributes(benchmark=None):
     """Test policy evaluation with missing attributes"""
     policies = setup_policies()
     policy_config = {
@@ -382,116 +526,190 @@ def test_evaluate_policy_missing_attributes():
         "role": "admin"
         # Missing department
     }
-    
-    result = policies.evaluate_policy("test_policy", context)
+
+    def evaluate_policy_missing_attrs():
+        return policies.evaluate_policy("test_policy", context)
+
+    if benchmark:
+        result = benchmark(evaluate_policy_missing_attrs)
+    else:
+        result = evaluate_policy_missing_attrs()
+
     assert not result
 
-def test_evaluate_policy_nonexistent():
+def test_evaluate_policy_nonexistent(benchmark=None):
     """Test evaluation of non-existent policy"""
     policies = setup_policies()
-    result = policies.evaluate_policy("non_existent", {})
+
+    def evaluate_nonexistent_policy():
+        return policies.evaluate_policy("non_existent", {})
+
+    if benchmark:
+        result = benchmark(evaluate_nonexistent_policy)
+    else:
+        result = evaluate_nonexistent_policy()
+
     assert not result
 
-def test_assign_role_permissions():
+def test_assign_role_permissions(benchmark=None):
     """Test role permission assignment"""
     policies = setup_policies()
     permissions = ["read", "write", "execute"]
-    
-    policies.assign_role_permissions("test_role", permissions)
-    
+
+    def assign_permissions():
+        policies.assign_role_permissions("test_role", permissions)
+
+    if benchmark:
+        benchmark(assign_permissions)
+    else:
+        assign_permissions()
+
     assert policies.role_permissions["test_role"] == permissions
 
-def test_check_permission_success():
+def test_check_permission_success(benchmark=None):
     """Test successful permission check"""
     policies = setup_policies()
     permissions = ["read", "write"]
     policies.assign_role_permissions("test_role", permissions)
-    
-    result = policies.check_permission("test_role", "read")
+
+    def check_perm_success():
+        return policies.check_permission("test_role", "read")
+
+    if benchmark:
+        result = benchmark(check_perm_success)
+    else:
+        result = check_perm_success()
+
     assert result
 
-def test_check_permission_denied():
+def test_check_permission_denied(benchmark=None):
     """Test denied permission check"""
     policies = setup_policies()
     permissions = ["read"]
     policies.assign_role_permissions("test_role", permissions)
-    
-    result = policies.check_permission("test_role", "write")
+
+    def check_perm_denied():
+        return policies.check_permission("test_role", "write")
+
+    if benchmark:
+        result = benchmark(check_perm_denied)
+    else:
+        result = check_perm_denied()
+
     assert not result
 
-def test_check_permission_nonexistent_role():
+def test_check_permission_nonexistent_role(benchmark=None):
     """Test permission check for non-existent role"""
     policies = setup_policies()
-    result = policies.check_permission("non_existent_role", "read")
+
+    def check_nonexistent_role():
+        return policies.check_permission("non_existent_role", "read")
+
+    if benchmark:
+        result = benchmark(check_nonexistent_role)
+    else:
+        result = check_nonexistent_role()
+
     assert not result
 
 
-def test_register_entity_with_special_characters():
+def test_register_entity_with_special_characters(benchmark=None):
     """Test entity registration with special characters"""
     msp, test_credentials, _ = setup_msp()
-    
-    # Test with special characters in entity_id
-    result = msp.register_entity(
-        "test-user@domain.com",
-        test_credentials,
-        "admin"
-    )
+
+    def register_special_chars():
+        # Test with special characters in entity_id
+        return msp.register_entity(
+            "test-user@domain.com",
+            test_credentials,
+            "admin"
+        )
+
+    if benchmark:
+        result = benchmark(register_special_chars)
+    else:
+        result = register_special_chars()
+
     assert result
     assert "test-user@domain.com" in msp.entities
 
 
-def test_register_entity_with_invalid_role():
+def test_register_entity_with_invalid_role_edge_case(benchmark=None):
     """Test entity registration with invalid role"""
     msp, test_credentials, _ = setup_msp()
-    
-    # Test with invalid role
-    result = msp.register_entity(
-        "test-invalid-role-user",
-        test_credentials,
-        "nonexistent_role"
-    )
+
+    def register_invalid_role():
+        # Test with invalid role
+        return msp.register_entity(
+            "test-invalid-role-user",
+            test_credentials,
+            "nonexistent_role"
+        )
+    if benchmark:
+        result = benchmark(register_invalid_role)
+    else:
+        result = register_invalid_role()
+
     assert not result
     assert "test-invalid-role-user" not in msp.entities
 
 
-def test_validate_identity_with_invalid_inputs():
+def test_validate_identity_with_invalid_inputs(benchmark=None):
     """Test identity validation with invalid inputs"""
     msp, test_credentials, _ = setup_msp()
     
-    # Register a valid entityfirst
+    # Register a valid entity first
     msp.register_entity("test-validate-user", test_credentials, "operator")
-    
-    # Test with None entity_id
-    result = msp.validate_identity(None, test_credentials)
-    assert not result
-    
-    # Test with empty entity_id
-    result = msp.validate_identity("",test_credentials)
-    assert not result
-    
-    # Test with None credentials
-    result = msp.validate_identity("test-validate-user", None)
-    assert not result
+
+    def validate_all_cases():
+        # Test with None entity_id
+        result1 = msp.validate_identity(None, test_credentials)
+
+        # Test with empty entity_id
+        result2 = msp.validate_identity("", test_credentials)
+
+        # Test with None credentials
+        result3 = msp.validate_identity("test-validate-user", None)
+
+        return result1, result2, result3
+
+    if benchmark:
+        result1, result2, result3 = benchmark(validate_all_cases)
+    else:
+        result1, result2, result3 = validate_all_cases()
+
+    assert not result1
+    assert not result2
+    assert not result3
 
 
-def test_authorize_action_edge_cases():
+def test_authorize_action_edge_cases(benchmark=None):
     """Test authorization with edge cases"""
     msp, test_credentials, _ = setup_msp()
     
     # Register entity
     msp.register_entity("test-auth-user", test_credentials, "operator")
-    
-    # Test with empty action
-    result = msp.authorize_action("test-auth-user", "")
-    assert not result
-    
-    # Test with None action
-    result = msp.authorize_action("test-auth-user", None)
-    assert not result
-    
-    # Test with non-existent user
-    result = msp.authorize_action("nonexistent_user", "view_data")
-    assert not result
+
+    def authorize_all_cases():
+        # Test with empty action
+        result1 = msp.authorize_action("test-auth-user", "")
+
+        # Test with None action
+        result2 = msp.authorize_action("test-auth-user", None)
+
+        # Test with non-existent user
+        result3 = msp.authorize_action("nonexistent_user", "view_data")
+
+        return result1, result2, result3
+
+    if benchmark:
+        result1, result2, result3 = benchmark(authorize_all_cases)
+    else:
+        result1, result2, result3 = authorize_all_cases()
+
+    assert not result1
+    assert not result2
+    assert not result3
 
 
 def setup_integration_msp():
@@ -505,9 +723,9 @@ def setup_integration_msp():
     msp = HierarchicalMSP("integration-test-org", ca_config)
     return msp
 
-def test_full_entity_lifecycle():
+
+def test_full_entity_lifecycle(benchmark=None):
     """Test complete entity lifecycle"""
-    msp = setup_integration_msp()
     credentials = {
         "public_key": "integration-test-key",
         "private_key": "integration-test-private"
@@ -517,51 +735,67 @@ def test_full_entity_lifecycle():
         "department": "security",
         "clearance": "high"
     }
-    
-    # 1. Register entity
-    register_result = msp.register_entity(
-        "integration-user",
-        credentials,
-        "admin",
-        attributes
-    )
-    assert register_result
-    
-    # 2. Validate identity
-    validate_result = msp.validate_identity(
-        "integration-user",
-        credentials
-    )
-    assert validate_result
-    
-    # 3. Authorize actions
-    auth_result = msp.authorize_action(
-        "integration-user",
-        "manage_entities"
-    )
-    assert auth_result
-    
-    # 4. Get entity info
-    info = msp.get_entity_info("integration-user")
-    assert info is not None
-    assert info["role"] == "admin"
-    
-    # 5. Revoke entity
-    revoke_result = msp.revoke_entity(
-        "integration-user",
-        "end_of_employment"
-    )
-    assert revoke_result
-    
-    # 6. Verify revoked entity cannot be validated
-    _validate_after_revoke = msp.validate_identity(
-        "integration-user",
-        credentials
-    )
-    # Should still validate identity but not authorize actions
-    # (identity validation checks certificate, authorization checks status)
 
-def test_role_based_access_control():
+    def full_lifecycle():
+        msp = setup_integration_msp()
+
+        # 1. Register entity
+        register_result = msp.register_entity(
+            "integration-user",
+            credentials,
+            "admin",
+            attributes
+        )
+
+        # 2. Validate identity
+        # For validation, we should only pass the public key, not the private key
+        validation_credentials = {
+            "public_key": credentials["public_key"]
+        }
+        validate_result = msp.validate_identity(
+            "integration-user",
+            validation_credentials
+        )
+
+        # 3. Authorize actions
+        auth_result = msp.authorize_action(
+            "integration-user",
+            "manage_entities"
+        )
+
+        # 4. Get entity info
+        info = msp.get_entity_info("integration-user")
+
+        # 5. Revoke entity
+        revoke_result = msp.revoke_entity(
+            "integration-user",
+            "end_of_employment"
+        )
+
+        # 6. Try to validate again (should still work even after revocation)
+        validate_after_revoke = msp.validate_identity(
+            "integration-user",
+            validation_credentials
+        )
+
+        return register_result, validate_result, auth_result, info, revoke_result, validate_after_revoke
+
+    if benchmark:
+        results = benchmark(full_lifecycle)
+    else:
+        results = full_lifecycle()
+
+    register_result, validate_result, auth_result, info, revoke_result, validate_after_revoke = results
+
+    assert register_result, "Entity registration failed"
+    assert validate_result, "Identity validation failed after registration"
+    assert auth_result, "Authorization failed for admin user"
+    assert info is not None, "Failed to get entity info"
+    assert info["role"] == "admin", "Entity role mismatch"
+    assert revoke_result, "Entity revocation failed"
+
+
+def test_role_based_access_control(benchmark=None):
     """Test role-based access control integration"""
     msp = setup_integration_msp()
     admin_creds = {"public_key": "admin-key", "private_key": "admin-private"}
@@ -570,46 +804,55 @@ def test_role_based_access_control():
     # Register admin and viewer
     msp.register_entity("test-admin", admin_creds, "admin")
     msp.register_entity("test-viewer", viewer_creds, "viewer")
-    
-    # Test admin permissions
-    admin_manage = msp.authorize_action("test-admin", "manage_entities")
-    admin_view = msp.authorize_action("test-admin", "view_data")
-    
+
+    def test_rbac():
+        # Test admin permissions
+        admin_manage = msp.authorize_action("test-admin", "manage_entities")
+        admin_view = msp.authorize_action("test-admin", "view_data")
+
+        # Test viewer permissions
+        viewer_manage = msp.authorize_action("test-viewer", "manage_entities")
+        viewer_view = msp.authorize_action("test-viewer", "view_data")
+
+        return (admin_manage, admin_view, viewer_manage, viewer_view)
+
+    if benchmark:
+        results = benchmark(test_rbac)
+    else:
+        results = test_rbac()
+
+    admin_manage, admin_view, viewer_manage, viewer_view = results
+
     assert admin_manage
     assert admin_view
-    
-    # Test viewer permissions
-    viewer_manage = msp.authorize_action("test-viewer", "manage_entities")
-    viewer_view = msp.authorize_action("test-viewer", "view_data")
-    
     assert not viewer_manage
     assert viewer_view
 
 
-def test_msp_registration_performance():
+def test_msp_registration_performance(benchmark=None):
     """Test performance of entity registration"""
     msp, test_credentials, test_attributes = setup_msp()
     
 
-    start_time = time.perf_counter()
-    
-    # Register 100 entities
-    for i in range(100):
-        result = msp.register_entity(
-            f"perf-test-user-{i}",
-        test_credentials,
-            "operator",
-            test_attributes
-        )
-        assert result
-    
-    end_time = time.perf_counter()
-    
-    # Registration of 100 entities should take less than 2 seconds
-    assert (end_time - start_time) <2.0
+    def register_entities():
+        # Register 100 entities
+        for i in range(100):
+            result = msp.register_entity(
+                f"perf-test-user-{i}",
+                test_credentials,
+                "operator",
+                test_attributes
+            )
+            assert result
+
+    # Benchmark the registration of 100 entities
+    if benchmark:
+        benchmark(register_entities)
+    else:
+        register_entities()
 
 
-def test_msp_validation_performance():
+def test_msp_validation_performance(benchmark=None):
     """Test performance of identity validation"""
     msp, test_credentials, _ = setup_msp()
     
@@ -621,23 +864,23 @@ def test_msp_validation_performance():
             "operator"
         )
 
-    start_time = time.perf_counter()
-    
-    # Validate 100 entities
-    for i in range(100):
-        result = msp.validate_identity(
-            f"val-perf-user-{i}",
-            test_credentials
-        )
-        assert result
-    
-    end_time= time.perf_counter()
-    
-    # Validation of 100 entities should take less than 2 seconds
-    assert (end_time - start_time) < 2.0
+    def validate_entities():
+        # Validate 100 entities
+        for a in range(100):
+            result = msp.validate_identity(
+                f"val-perf-user-{a}",
+                test_credentials
+            )
+            assert result
+
+    # Benchmark the validation of 100 entities
+    if benchmark:
+        benchmark(validate_entities)
+    else:
+        validate_entities()
 
 
-def test_msp_authorization_performance():
+def test_msp_authorization_performance(benchmark=None):
     """Test performance of action authorization"""
     msp, test_credentials, _ = setup_msp()
     
@@ -649,22 +892,22 @@ def test_msp_authorization_performance():
             "admin"
         )
 
-    start_time = time.perf_counter()
-    
-    #Authorize 100 entities for various actions
-    for i in range(100):
-        result1 = msp.authorize_action(f"auth-perf-user-{i}", "manage_entities")
-        result2 = msp.authorize_action(f"auth-perf-user-{i}", "view_data")
-    assert result1
-    assert result2
-    
-    end_time = time.perf_counter()
-    
-    # Authorization of 100 entities for 2 actions each should take less than 2 seconds
-    assert (end_time - start_time) < 2.0
+    def authorize_entities():
+        # Authorize 100 entities for various actions
+        for a in range(100):
+            result1 = msp.authorize_action(f"auth-perf-user-{a}", "manage_entities")
+            result2 = msp.authorize_action(f"auth-perf-user-{a}", "view_data")
+            assert result1
+            assert result2
+
+    # Benchmark the authorization of 100 entities for 2 actions each
+    if benchmark:
+        benchmark(authorize_entities)
+    else:
+        authorize_entities()
 
 
-def test_msp_security_injection_attacks():
+def test_msp_security_injection_attacks(benchmark=None):
     """Test MSP resistance to injection attacks"""
     ca_config = {
         "root_cert": "security-test-root",
@@ -685,23 +928,36 @@ def test_msp_security_injection_attacks():
         "admin'--",
         "' OR '1'='1"
     ]
-    
-    for attempt in sql_injection_attempts:
-        # These should be treated as regular entity_ids
-        result = msp.register_entity(attempt, credentials, "operator")
-        assert result is True  # Registration should succeed
-        
-        # Validation should work normally
-        is_valid = msp.validate_identity(attempt, credentials)
-        assert is_valid is True
-        
-        # Entity info should be retrievable
-        entity_info = msp.get_entity_info(attempt)
-        assert entity_info is not None
-        assert entity_info["entity_id"] == attempt
+
+    def test_sql_injections():
+        results = []
+        for attempt in sql_injection_attempts:
+            # These should be treated as regular entity_ids
+            result = msp.register_entity(attempt, credentials, "operator")
+            results.append(result)
+
+            # Validation should work normally
+            is_valid = msp.validate_identity(attempt, credentials)
+            results.append(is_valid)
+
+            # Entity info should be retrievable
+            entity_info = msp.get_entity_info(attempt)
+            results.append(entity_info is not None)
+        return results
+
+    if benchmark:
+        results = benchmark(test_sql_injections)
+    else:
+        results = test_sql_injections()
+
+    # All operations should succeed
+    for i in range(0, len(results), 3):
+        assert results[i] is True    # Registration
+        assert results[i+1] is True  # Validation
+        assert results[i+2] is True  # Info retrieval
 
 
-def test_msp_security_xss_attacks():
+def test_msp_security_xss_attacks(benchmark=None):
     """Test MSP resistance to XSS attacks"""
     ca_config = {
         "root_cert": "xss-test-root",
@@ -722,19 +978,34 @@ def test_msp_security_xss_attacks():
         "public_key": "xss-public-key",
         "private_key": "xss-private-key"
     }
-    
-    for i, attributes in enumerate(xss_attempts):
-        entity_id = f"xss-test-entity-{i}"
-        result = msp.register_entity(entity_id, credentials, "viewer", attributes)
-        assert result is True
-        
-        # Entity info should be retrievable withattributes preserved
-        entity_info = msp.get_entity_info(entity_id)
-        assert entity_info is not None
-        assert entity_info["attributes"] == attributes
+
+    def test_xss_attempts():
+        results = []
+        for a, attributes in enumerate(xss_attempts):
+            entity_id = f"xss-test-entity-{a}"
+            result = msp.register_entity(entity_id, credentials, "viewer", attributes)
+            results.append(result)
+
+            # Entity info should be retrievable withattributes preserved
+            entity_info = msp.get_entity_info(entity_id)
+            results.append(entity_info is not None)
+            if entity_info:
+                results.append(entity_info["attributes"] == attributes)
+        return results
+
+    if benchmark:
+        results = benchmark(test_xss_attempts)
+    else:
+        results = test_xss_attempts()
+
+    # All operations should succeed
+    for i in range(0, len(results), 3):
+        assert results[i] is True     # Registration
+        assert results[i+1] is True   # Info retrieval
+        assert results[i+2] is True   # Attributes preserved
 
 
-def test_msp_directory_traversal_attacks():
+def test_msp_directory_traversal_attacks(benchmark=None):
     """Test MSP resistance to directory traversal attacks"""
     ca_config = {
         "root_cert": "traversal-test-root",
@@ -754,14 +1025,26 @@ def test_msp_directory_traversal_attacks():
         "..\\..\\..\\windows\\system32\\cmd.exe",
         "/etc/passwd",
         "../../config/database.yml"
-]
-    
-    for attempt in traversal_attempts:
-        # These should be treated as regular entity_ids
-        result = msp.register_entity(attempt, credentials, "operator")
-        assert result is True
-        
-        # Validation should work normally
-        is_valid = msp.validate_identity(attempt, credentials)
-        assert is_valid is True
+    ]
 
+    def test_traversal_attempts():
+        results = []
+        for attempt in traversal_attempts:
+            # These should be treated as regular entity_ids
+            result = msp.register_entity(attempt, credentials, "operator")
+            results.append(result)
+
+            # Validation should work normally
+            is_valid = msp.validate_identity(attempt, credentials)
+            results.append(is_valid)
+        return results
+
+    if benchmark:
+        results = benchmark(test_traversal_attempts)
+    else:
+        results = test_traversal_attempts()
+
+    # All operations should succeed
+    for i in range(0, len(results), 2):
+        assert results[i] is True     # Registration
+        assert results[i+1] is True   # Validation

@@ -22,6 +22,7 @@ from hierarchical_blockchain.security.key_backup_manager import (
 backup_dir = "backups/keys"
 metadata_file = os.path.join(backup_dir, "backup_metadata.json")
 
+
 @pytest.fixture(autouse=True)
 def setup_and_teardown():
     """Setup and teardown for each test"""
@@ -37,7 +38,8 @@ def setup_and_teardown():
     if os.path.exists(backup_dir):
         shutil.rmtree(backup_dir)
 
-def test_key_backup_manager_initialization():
+
+def test_key_backup_manager_initialization(benchmark=None):
     """Test KeyBackupManager initialization"""
     config = {
         "enabled": True,
@@ -58,7 +60,18 @@ def test_key_backup_manager_initialization():
     assert km.retention_period == 365
     assert os.path.exists(backup_dir)
 
-def test_backup_keys_when_disabled():
+    def init_key_backup_manager():
+        return KeyBackupManager(config)
+
+    if benchmark:
+        result = benchmark(init_key_backup_manager)
+    else:
+        result = init_key_backup_manager()
+
+    assert result.enabled is True
+
+
+def test_backup_keys_when_disabled(benchmark=None):
     """Test backup_keys when backup is disabled"""
     config = {"enabled": False}
     km = KeyBackupManager(config)
@@ -67,8 +80,15 @@ def test_backup_keys_when_disabled():
     
     assert backup_id == ""
 
+    if benchmark:
+        result = benchmark(km.backup_keys, b"public_key", b"private_key", "test")
+    else:
+        result = km.backup_keys(b"public_key", b"private_key", "test")
+    assert result == ""
+
+
 @patch('hierarchical_blockchain.security.key_backup_manager.Fernet')
-def test_backup_keys_success(mock_fernet):
+def test_backup_keys_success(mock_fernet, benchmark):
     """Test successful key backup"""
     config = {"enabled": True}
     km = KeyBackupManager(config)
@@ -93,8 +113,16 @@ def test_backup_keys_success(mock_fernet):
     # Check metadata was updated
     assert os.path.exists(metadata_file)
 
+    if benchmark:
+        result = benchmark(km.backup_keys, public_key, private_key, "consensus")
+    else:
+        result = km.backup_keys(public_key, private_key, "consensus")
+
+    assert result.startswith("consensus_")
+
+
 @patch('hierarchical_blockchain.security.key_backup_manager.Fernet')
-def test_backup_keys_encryption(mock_fernet):
+def test_backup_keys_encryption(mock_fernet, benchmark=None):
     """Test that backup data is encrypted"""
     config = {"enabled": True}
     km = KeyBackupManager(config)
@@ -113,8 +141,14 @@ def test_backup_keys_encryption(mock_fernet):
     assert mock_fernet.called
     assert mock_fernet_instance.encrypt.called
 
+    if benchmark:
+        benchmark(km.backup_keys, public_key, private_key, "test")
+    else:
+        km.backup_keys(public_key, private_key, "test")
+
+
 @patch('hierarchical_blockchain.security.key_backup_manager.Fernet')
-def test_restore_keys_success(mock_fernet):
+def test_restore_keys_success(mock_fernet, benchmark=None):
     """Test successful key restoration"""
     config = {"enabled": True}
     km = KeyBackupManager(config)
@@ -142,7 +176,15 @@ def test_restore_keys_success(mock_fernet):
     # Note: Due to hex encoding/decoding in the mock, exact comparison might differ
     # but the main point is that the method works without throwing exceptions
 
-def test_list_backups():
+    if benchmark:
+        result = benchmark(km.restore_keys, backup_id)
+    else:
+        result = km.restore_keys(backup_id)
+
+    assert "public_key" in result
+
+
+def test_list_backups(benchmark=None):
     """Test listing backups"""
     config = {"enabled": True}
     km = KeyBackupManager(config)
@@ -167,8 +209,16 @@ def test_list_backups():
         assert len(type1_backups) == 1
         assert type1_backups[0]["key_type"] == "type1"
 
+        if benchmark:
+            result = benchmark(km.list_backups)
+        else:
+            result = km.list_backups()
+
+        assert len(result) >= 2
+
+
 @patch('hierarchical_blockchain.security.key_backup_manager.Fernet')
-def test_verify_backup_integrity_valid(mock_fernet):
+def test_verify_backup_integrity_valid(mock_fernet, benchmark=None):
     """Test backup integrity verification with valid backup"""
     config = {"enabled": True}
     km = KeyBackupManager(config)
@@ -185,7 +235,15 @@ def test_verify_backup_integrity_valid(mock_fernet):
     is_valid = km.verify_backup_integrity(backup_id)
     assert is_valid is True
 
-def test_verify_backup_integrity_invalid():
+    if benchmark:
+        result = benchmark(km.verify_backup_integrity, backup_id)
+    else:
+        result = km.verify_backup_integrity(backup_id)
+
+    assert result is True
+
+
+def test_verify_backup_integrity_invalid(benchmark=None):
     """Test backup integrity verification with invalid backup"""
     config = {"enabled": True}
     km = KeyBackupManager(config)
@@ -194,7 +252,15 @@ def test_verify_backup_integrity_invalid():
     is_valid = km.verify_backup_integrity("non_existent_backup")
     assert is_valid is False
 
-def test_create_key_backup_manager_factory():
+    if benchmark:
+        result = benchmark(km.verify_backup_integrity, "non_existent_backup")
+    else:
+        result = km.verify_backup_integrity("non_existent_backup")
+
+    assert result is False
+
+
+def test_create_key_backup_manager_factory(benchmark=None):
     """Test the factory function"""
     config = {"enabled": True}
     km = create_key_backup_manager(config)
@@ -202,8 +268,16 @@ def test_create_key_backup_manager_factory():
     assert isinstance(km, KeyBackupManager)
     assert km.enabled is True
 
+    if benchmark:
+        result = benchmark(create_key_backup_manager, config)
+    else:
+        result = create_key_backup_manager(config)
 
-def test_backup_keys_with_invalid_input():
+    assert isinstance(result, KeyBackupManager)
+    assert result.enabled is True
+
+
+def test_backup_keys_with_invalid_input(benchmark=None):
     """Test backup_keys with invalid inputs"""
     config = {"enabled": True}
     km = KeyBackupManager(config)
@@ -217,8 +291,15 @@ def test_backup_keys_with_invalid_input():
     backup_id = km.backup_keys(long_key, long_key, "long_test")
     assert backup_id.startswith("long_test_")
 
+    if benchmark:
+        result = benchmark(km.backup_keys, b"", b"", "test")
+    else:
+        result = km.backup_keys(b"", b"", "test")
 
-def test_restore_keys_with_invalid_backup_id():
+    assert result.startswith("test_")
+
+
+def test_restore_keys_with_invalid_backup_id(benchmark=None):
     """Test restore_keys with invalid/non-existent backup ID"""
     config = {"enabled": True}
     km = KeyBackupManager(config)
@@ -227,8 +308,20 @@ def test_restore_keys_with_invalid_backup_id():
     with pytest.raises(RestoreError):
         km.restore_keys("non_existent_backup")
 
+    # Benchmark restore with non-existent backup ID
+    def restore_nonexistent():
+        try:
+            km.restore_keys("non_existent_backup")
+        except RestoreError:
+            pass  # Expected exception
 
-def test_verify_backup_integrity_with_invalid_inputs():
+    if benchmark:
+        benchmark(restore_nonexistent)
+    else:
+        restore_nonexistent()
+
+
+def test_verify_backup_integrity_with_invalid_inputs(benchmark=None):
     """Test verify_backup_integrity with invalid inputs"""
     config = {"enabled": True}
     km = KeyBackupManager(config)
@@ -238,6 +331,13 @@ def test_verify_backup_integrity_with_invalid_inputs():
     
     # Test with non-existent backup ID
     assert km.verify_backup_integrity("non_existent") is False
+
+    if benchmark:
+        result = benchmark(km.verify_backup_integrity, "")
+    else:
+        result = km.verify_backup_integrity("")
+
+    assert result is False
 
 
 def test_backup_keys_performance():
