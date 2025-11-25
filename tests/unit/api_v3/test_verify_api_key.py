@@ -181,7 +181,8 @@ def test_check_resource_permission(mock_key_manager, default_config, benchmark):
     result = benchmark(verify_key.check_resource_permission, "test_api_key", "test_resource")
 
     assert result is True
-    mock_key_manager.has_permission.assert_called_once_with("test_api_key", "test_resource")
+    # Since benchmark runs the function multiple times, we check that it was called at least once
+    mock_key_manager.has_permission.assert_any_call("test_api_key", "test_resource")
 
 
 def test_require_permission_decorator(mock_key_manager, default_config):
