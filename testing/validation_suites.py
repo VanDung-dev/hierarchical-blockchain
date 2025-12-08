@@ -443,7 +443,7 @@ class TestComprehensiveValidation:
         
         # Test non-cryptocurrency compliance
         forbidden_terms = ["transaction", "mining", "coin", "token", "wallet"]
-        test_description = "HieraChain framework with events and proofs"
+        test_description = "HieraChain: Hierarchical blockchain framework with events and proofs"
         
         for term in forbidden_terms:
             assert term not in test_description.lower()
