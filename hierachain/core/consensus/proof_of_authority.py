@@ -8,7 +8,7 @@ Sub-Chains) have designated roles and permissions for block creation.
 
 import time
 import hashlib
-from typing import Dict, Any, Optional, Set
+from typing import Any, Optional
 
 from hierachain.core.consensus.base_consensus import BaseConsensus
 from hierachain.core.block import Block
@@ -34,16 +34,20 @@ class ProofOfAuthority(BaseConsensus):
             name: Name of the consensus mechanism
         """
         super().__init__(name)
-        self.authorities: Set[str] = set()
-        self.authority_metadata: Dict[str, Dict[str, Any]] = {}
+        self.authorities: set[str] = set()
+        self.authority_metadata: dict[str, dict[str, Any]] = {}
         self.block_interval: float = 10.0  # Default 10 seconds between blocks
         self.config = {
             "block_interval": self.block_interval,
             "require_authority_signature": True,
             "max_authorities": 100
         }
-    
-    def add_authority(self, authority_id: str, metadata: Optional[Dict[str, Any]] = None) -> bool:
+
+    def add_authority(
+        self,
+        authority_id: str,
+        metadata: dict[str, Any] | None = None
+    ) -> bool:
         """
         Add a new authority to the consensus mechanism.
         
@@ -88,8 +92,8 @@ class ProofOfAuthority(BaseConsensus):
             True if entity is an authority, False otherwise
         """
         return authority_id in self.authorities
-    
-    def can_create_block(self, authority_id: Optional[str] = None) -> bool:
+
+    def can_create_block(self, authority_id: str | None = None) -> bool:
         """
         Check if a block can be created by the given authority.
         
@@ -125,8 +129,10 @@ class ProofOfAuthority(BaseConsensus):
             return False
         
         # Validate all events in the block
-        # Use to_event_list() if available to handle Arrow Tables
-        events = block.to_event_list() if hasattr(block, 'to_event_list') else block.events
+        # Handle Arrow Table events gracefully
+        # Validate all events in the block
+        # Handle Arrow Table events gracefully
+        events = block.to_event_list()
         for event in events:
             if not self.validate_event_for_consensus(event):
                 return False
@@ -188,11 +194,12 @@ class ProofOfAuthority(BaseConsensus):
             "timestamp": time.time(),
             "block_index": block.index
         }
-        
+
         # Create a simple signature (in production, use proper cryptographic signatures)
-        signature_string = f"{signature_data['block_hash']}{authority_id}{signature_data['timestamp']}"
-        return hashlib.sha256(signature_string.encode()).hexdigest()
-    
+        sig_str = (f"{signature_data['block_hash']}{authority_id}"
+                   f"{signature_data['timestamp']}")
+        return hashlib.sha256(sig_str.encode()).hexdigest()
+
     def _has_valid_authority_signature(self, block: Block) -> bool:
         """
         Check if block has a valid authority signature.
@@ -204,21 +211,23 @@ class ProofOfAuthority(BaseConsensus):
             True if block has valid authority signature, False otherwise
         """
         # Look for consensus finalization event
-        # Use to_event_list() if available to handle Arrow Tables
-        events = block.to_event_list() if hasattr(block, 'to_event_list') else block.events
+        # Handle Arrow Table events gracefully
+        # Look for consensus finalization event
+        # Handle Arrow Table events gracefully
+        events = block.to_event_list()
         for event in events:
-            if (event.get("event") == "consensus_finalization" and 
-                "details" in event and 
-                "authority_id" in event["details"] and
-                "authority_signature" in event["details"]):
-                
+            if (event.get("event") == "consensus_finalization" and
+                "details" in event and
+                "authority_id" in event.get("details", {}) and
+                "authority_signature" in event.get("details", {})):
+
                 authority_id = event["details"]["authority_id"]
                 if self.is_authority(authority_id):
                     return True
         
         return False
-    
-    def get_next_authority(self, current_block_index: int) -> Optional[str]:
+
+    def get_next_authority(self, current_block_index: int) -> str | None:
         """
         Get the next authority that should create a block (round-robin).
         
@@ -234,8 +243,8 @@ class ProofOfAuthority(BaseConsensus):
         authorities_list = sorted(list(self.authorities))
         next_index = (current_block_index + 1) % len(authorities_list)
         return authorities_list[next_index]
-    
-    def get_authority_stats(self) -> Dict[str, Any]:
+
+    def get_authority_stats(self) -> dict[str, Any]:
         """
         Get statistics about authorities.
         
@@ -248,8 +257,8 @@ class ProofOfAuthority(BaseConsensus):
             "authority_metadata": self.authority_metadata,
             "max_authorities": self.config["max_authorities"]
         }
-    
-    def validate_event_for_consensus(self, event: Dict[str, Any]) -> bool:
+
+    def validate_event_for_consensus(self, event: dict[str, Any]) -> bool:
         """
         Validate an event according to PoA consensus rules.
         
@@ -270,13 +279,7 @@ class ProofOfAuthority(BaseConsensus):
             if not isinstance(event["entity_id"], str):
                 return False
         
-        # Check for proper event types (business events, not crypto transactions)
-        _valid_event_types = [
-            "operation_start", "operation_complete", "status_update",
-            "resource_allocation", "quality_check", "approval",
-            "genesis", "consensus_finalization", "proof_submission"
-        ]
-        
+
         event_type = event.get("event", "")
         # Allow custom event types but reject cryptocurrency-related ones
         crypto_event_types = ["transaction", "mining", "coin_transfer", "wallet_update"]
@@ -314,5 +317,6 @@ class ProofOfAuthority(BaseConsensus):
     
     def __repr__(self) -> str:
         """Detailed string representation of PoA consensus."""
-        return (f"ProofOfAuthority(name={self.name}, authorities={len(self.authorities)}, "
+        return (f"ProofOfAuthority(name={self.name}, "
+                f"authorities={len(self.authorities)}, "
                 f"block_interval={self.config['block_interval']})")

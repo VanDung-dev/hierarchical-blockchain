@@ -6,6 +6,7 @@ The framework supports various consensus algorithms while maintaining
 the event-based model and hierarchical structure principles.
 """
 
+import pyarrow as pa
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional
 from hierachain.core.block import Block
@@ -86,6 +87,10 @@ class BaseConsensus(ABC):
         Returns:
             True if event is valid for this consensus, False otherwise
         """
+        # Check if input is a PyArrow object
+        if isinstance(event, (pa.Table, pa.RecordBatch)):
+            return True
+
         # Basic validation - ensure it's an event, not a transaction
         if not isinstance(event, dict):
             return False
@@ -109,16 +114,23 @@ class BaseConsensus(ABC):
                 return False
         
         # Check details field (but exclude hash/signature fields)
-        if "details" in event and isinstance(event["details"], dict):
+        if "details" in event:
             details = event["details"]
-            # Check only non-hash/signature fields
-            for key, value in details.items():
-                if key not in ["authority_signature", "signature", "hash", "proof_hash"]:
-                    value_str = str(value).lower()
-                    for term in forbidden_terms:
-                        if term in value_str:
-                            return False
-        
+            if isinstance(details, dict):
+                # Check only non-hash/signature fields
+                for key, value in details.items():
+                    if key not in ["authority_signature", "signature", "hash", "proof_hash"]:
+                        value_str = str(value).lower()
+                        for term in forbidden_terms:
+                            if term in value_str:
+                                return False
+            elif isinstance(details, str):
+                # details might be a JSON string as per Arrow schema
+                details_lower = details.lower()
+                for term in forbidden_terms:
+                    if term in details_lower:
+                        return False
+
         # Check other top-level fields (excluding hash/signature fields)
         for key, value in event.items():
             if key not in ["authority_signature", "signature", "hash", "proof_hash", "details", "event", "timestamp"]:
