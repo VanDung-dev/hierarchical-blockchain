@@ -9,10 +9,12 @@ components.
 import time
 import json
 import logging
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 from datetime import datetime
 import hashlib
 import os
+import pyarrow as pa
+import pyarrow.compute as pc
 
 LOCALIZED_MESSAGES = {
     "default": "Unknown error occurred",
@@ -423,6 +425,78 @@ class APIValidator:
         
         logger.info("Initialized APIValidator")
     
+    def _validate_arrow_recursive(self, data: Union[pa.Array, pa.ChunkedArray], field_name: str) -> None:
+        """
+        Recursively validate Arrow arrays for forbidden terms.
+        Handles nested types: Map, List, Struct.
+        """
+        try:
+            # Handle ChunkedArray by iterating chunks
+            if isinstance(data, pa.ChunkedArray):
+                for chunk in data.chunks:
+                    self._validate_arrow_recursive(chunk, field_name)
+                return
+
+            type_ = data.type
+            
+            # String types: Validate content
+            if pa.types.is_string(type_) or pa.types.is_large_string(type_):
+                self._check_string_array(data, field_name)
+                    
+            # Map types: Validate keys and items separately
+            elif pa.types.is_map(type_):
+                try:
+                    if hasattr(data, "keys") and hasattr(data, "items"):
+                         self._validate_arrow_recursive(data.keys, f"{field_name}.keys")
+                         self._validate_arrow_recursive(data.items, f"{field_name}.values")
+                    else:
+                         # Fallback cast
+                         struct_type = pa.struct([
+                             pa.field("key", type_.key_type, nullable=False),
+                             pa.field("value", type_.item_type, nullable=True) # Value nullable
+                         ])
+                         list_type = pa.list_(struct_type)
+                         as_list = data.cast(list_type)
+                         flattened = as_list.flatten()
+                         self._validate_arrow_recursive(flattened, f"{field_name}.entry")
+                except ValidationError:
+                     raise
+                except Exception:
+                     pylist = data.to_pylist()
+                     pass
+                
+            # List types: Flatten and recurse
+            elif pa.types.is_list(type_) or pa.types.is_large_list(type_):
+                # Flatten List to get underlying values
+                flattened = data.flatten()
+                self._validate_arrow_recursive(flattened, f"{field_name}.nested")
+                
+            # Struct types: distinct check for each child field
+            elif pa.types.is_struct(type_):
+                # StructArray
+                for i in range(type_.num_fields):
+                    field = type_.field(i)
+                    child = data.field(i)
+                    self._validate_arrow_recursive(child, f"{field_name}.{field.name}")
+                        
+        except ValidationError:
+            raise
+        except Exception as e:
+            logger.warning(f"Recursive validation error on {field_name}: {e}")
+
+    def _check_string_array(self, array: pa.Array, field_name: str) -> None:
+        """Helper to check a specific string array using compute."""
+        # Convert to lowercase for checking
+        lower_data = pc.utf8_lower(array)
+        
+        for term in self.forbidden_terms:
+            # match_substring returns a boolean array
+            has_term = pc.any(pc.match_substring(lower_data, term)).as_py()
+            if has_term:
+                error_msg = f"Forbidden crypto term '{term}' found in column '{field_name}'"
+                logger.error(error_msg)
+                raise ValidationError(error_msg)
+
     def validate_endpoint_data(self, data: Any) -> bool:
         """
         Validate API endpoint data for compliance
@@ -438,49 +512,42 @@ class APIValidator:
         """
         # Check for cryptocurrency terms
         try:
-            # Handle PyArrow objects
-            if hasattr(data, "schema"):
-                # Check column names
+            # Handle PyArrow objects - ZERO COPY VALIDATION
+            if hasattr(data, "schema") and isinstance(data, (pa.Table, pa.RecordBatch)):
+                # 1. Schema Validation (Metadata check)
                 for name in data.schema.names:
-                    if name.lower() in self.forbidden_terms:
+                    if any(term in name.lower() for term in self.forbidden_terms):
                         error_msg = f"Forbidden cryptocurrency term '{name}' found in Arrow schema"
                         logger.error(error_msg)
                         raise ValidationError(error_msg)
 
-                # Convert to python objects for content check (simplified)
-                if hasattr(data, "to_pylist"):
-                    data_to_check = data.to_pylist()
-                else:
-                    data_to_check = str(data)
-            else:
-                data_to_check = data
-                
-            data_str = json.dumps(data_to_check).lower()
-            for term in self.forbidden_terms:
-                if term in data_str:
-                    error_msg = f"Forbidden cryptocurrency term '{term}' found in API data"
-                    logger.error(error_msg)
-                    raise ValidationError(error_msg)
+                # 2. Content Validation using Recursive Helper
+                for col_name in data.column_names:
+                    col_data = data[col_name]
+                    self._validate_arrow_recursive(col_data, col_name)
 
-            # Validate required event structure
-            # For Arrow, we assume schema validation handled structure, or we check schema fields
-            if hasattr(data, "schema"):
-                # Arrow objects typically represent multiple events or a structured dataset
+                # 3. Structure Validation
                 required_fields = ["entity_id", "event", "timestamp"]
-                # If it looks like an event table (has these fields)
                 if "event" in data.schema.names:
-                    for field in required_fields:
-                        if field not in data.schema.names:
-                            error_msg = f"Missing required field '{field}' in Arrow event data"
-                            logger.error(error_msg)
-                            raise ValidationError(error_msg)
-            elif isinstance(data, dict) and "event" in data:
-                required_fields = ["entity_id", "event", "timestamp"]
-                for field in required_fields:
-                    if field not in data:
-                        error_msg = f"Missing required field '{field}' in event data"
+                    missing = [f for f in required_fields if f not in data.schema.names]
+                    if missing:
+                        error_msg = f"Missing required fields {missing} in Arrow event data"
+                        logger.error(error_msg)
+            else:
+                # Legacy fallback for Dict/JSON objects
+                data_str = json.dumps(data).lower()
+                for term in self.forbidden_terms:
+                    if term in data_str:
+                        error_msg = f"Forbidden cryptocurrency term '{term}' found in API data"
                         logger.error(error_msg)
                         raise ValidationError(error_msg)
+
+                if isinstance(data, dict) and "event" in data:
+                    required_fields = ["entity_id", "event", "timestamp"]
+                    for field in required_fields:
+                        if field not in data:
+                            error_msg = f"Missing required field '{field}' in event data"
+                            logger.error(error_msg)
             
         except ValidationError:
             raise
@@ -515,7 +582,7 @@ class APIValidator:
                 try:
                     data_content = json.dumps(data, sort_keys=True)
                 except TypeError:
-                     data_content = str(data)
+                    data_content = str(data)
 
             audit_entry = {
                 "event": "api_call_audit",
