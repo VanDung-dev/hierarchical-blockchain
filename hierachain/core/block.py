@@ -64,12 +64,15 @@ class Block:
             # Create empty table with correct schema
             return pa.Table.from_pylist([], schema=schemas.get_event_schema())
         
-        # Pre-process details to JSON strings if they are dicts
+        # Pre-process details to match Map<String, String> schema
         processed_events = []
         for e in events_list:
             ev = e.copy()
-            if isinstance(ev.get('details'), (dict, list)):
-                ev['details'] = json.dumps(ev['details'])
+            details = ev.get('details')
+            if isinstance(details, dict):
+                ev['details'] = {k: str(v) for k, v in details.items()}
+            elif details is None:
+                ev['details'] = {}
             processed_events.append(ev)
             
         s = schemas.get_event_schema()
@@ -133,10 +136,11 @@ class Block:
         events = []
         for row in table.to_pylist():
             if row.get('details'):
-                try:
-                    row['details'] = json.loads(row['details'])
-                except (TypeError, json.JSONDecodeError):
-                    pass
+                # Convert list of tuples back to dict
+                if isinstance(row['details'], list):
+                    row['details'] = dict(row['details'])
+            else:
+                 row['details'] = {}
             events.append(row)
         return events
 
