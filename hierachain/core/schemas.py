@@ -16,7 +16,7 @@ EVENT_SCHEMA = pa.schema([
     ('entity_id', pa.string()),      # Metadata: Unique ID of the entity
     ('event', pa.string()),          # Event type
     ('timestamp', pa.float64()),     # Event timestamp
-    ('details', pa.string())         # Flexible details (JSON string)
+    ('details', pa.map_(pa.string(), pa.string())) # Flexible details (Key-Value Map)
 ])
 
 
@@ -42,15 +42,12 @@ def get_block_schema() -> pa.Schema:
         ('timestamp', pa.float64()),         # Block timestamp
         ('previous_hash', pa.string()),      # Hash of the previous block
         ('nonce', pa.int64()),               # Nonce for mining
-        ('timestamp', pa.float64()),         # Block timestamp
-        ('previous_hash', pa.string()),      # Hash of the previous block
-        ('nonce', pa.int64()),               # Nonce for mining
         ('hash', pa.string()),               # Hash of the block
         ('events', pa.list_(pa.struct([      # List of events:
-            ('entity_id', pa.string()),         # Renamed from entity_id to match EVENT_SCHEMA
-            ('event', pa.string()),             # Renamed from event_type to match EVENT_SCHEMA
-            ('timestamp', pa.float64()),        # Renamed from timestamp to match EVENT_SCHEMA
-            ('details', pa.string())            # Renamed from details to match EVENT_SCHEMA
+            ('entity_id', pa.string()),                    # Renamed from entity_id to match EVENT_SCHEMA
+            ('event', pa.string()),                        # Renamed from event_type to match EVENT_SCHEMA
+            ('timestamp', pa.float64()),                   # Renamed from timestamp to match EVENT_SCHEMA
+            ('details', pa.map_(pa.string(), pa.string())) # Renamed from details to match EVENT_SCHEMA
         ])))
     ])
 
