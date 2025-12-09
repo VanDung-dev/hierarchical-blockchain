@@ -70,7 +70,7 @@ class Block:
             ev = e.copy()
             details = ev.get('details')
             if isinstance(details, dict):
-                ev['details'] = {k: str(v) for k, v in details.items()}
+                ev['details'] = [(k, str(v)) for k, v in details.items()]
             elif details is None:
                 ev['details'] = {}
             processed_events.append(ev)
