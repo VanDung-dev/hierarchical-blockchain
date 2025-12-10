@@ -7,14 +7,13 @@ This module implements the Block class following the framework guidelines:
 - Events are domain-specific operations with metadata
 """
 
-import hashlib
-import json
 import time
 from typing import List, Dict, Any, Optional, Union
 import pyarrow as pa
 import pyarrow.compute as pc
 
 from hierachain.core import schemas
+from hierachain.core.utils import MerkleTree, generate_hash
 
 
 class Block:
@@ -28,7 +27,8 @@ class Block:
     """
     
     def __init__(self, index: int, events: Union[List[Dict[str, Any]], pa.Table], 
-                 timestamp: Optional[float] = None, previous_hash: str = "", nonce: int = 0):
+                 timestamp: Optional[float] = None, previous_hash: str = "", 
+                 nonce: int = 0, merkle_root: Optional[str] = None):
         """
         Initialize a new block.
         
@@ -38,6 +38,7 @@ class Block:
             timestamp: Block creation timestamp (defaults to current time)
             previous_hash: Hash of the previous block
             nonce: Nonce value
+            merkle_root: Merkle root of the events (optional, calculated if None)
         """
         self.index = index
         self.timestamp = timestamp or time.time()
@@ -49,6 +50,11 @@ class Block:
             self._events = events
         else:
             self._events = self._convert_events_to_arrow(events)
+            
+        # Calculate Merkle Root if not provided
+        self.merkle_root = merkle_root
+        if self.merkle_root is None:
+            self.merkle_root = self.calculate_merkle_root()
             
         self.hash = self.calculate_hash()
     
@@ -78,24 +84,33 @@ class Block:
         s = schemas.get_event_schema()
         return pa.Table.from_pylist(processed_events, schema=s)
 
+    def calculate_merkle_root(self) -> str:
+        """
+        Calculate the Merkle Root of the block's events.
+        """
+        if len(self._events) == 0:
+            return MerkleTree([]).get_root()
+            
+        # Convert events to list of dicts for hashing
+        # Optimization: We could hash Arrow rows directly in future
+        events_list = self._table_to_list_of_dicts(self._events)
+        tree = MerkleTree(events_list)
+        return tree.get_root()
+
     def calculate_hash(self) -> str:
         """
         Calculate the hash of the block.
-        Converts Arrow data back to standard JSON structure for hashing.
+        Now uses Merkle Root in header instead of full event list.
         """
-        events_list = self._table_to_list_of_dicts(self._events)
-        
-        block_data = {
+        block_header = {
             "index": self.index,
-            "events": events_list,
             "timestamp": self.timestamp,
             "previous_hash": self.previous_hash,
-            "nonce": self.nonce
+            "nonce": self.nonce,
+            "merkle_root": self.merkle_root
         }
         
-        # Convert to JSON string with sorted keys for consistent hashing
-        block_string = json.dumps(block_data, sort_keys=True, separators=(',', ':'))
-        return hashlib.sha256(block_string.encode()).hexdigest()
+        return generate_hash(block_header)
     
     def add_event(self, event: Dict[str, Any]) -> None:
         """
@@ -108,6 +123,9 @@ class Block:
             self._events = new_table
         else:
             self._events = pa.concat_tables([self._events, new_table])
+            
+        # Update Merkle Root and Block Hash
+        self.merkle_root = self.calculate_merkle_root()
         self.hash = self.calculate_hash()
     
     def get_events_by_entity(self, entity_id: str) -> List[Dict[str, Any]]:
@@ -177,6 +195,7 @@ class Block:
             "timestamp": self.timestamp,
             "previous_hash": self.previous_hash,
             "nonce": self.nonce,
+            "merkle_root": self.merkle_root,
             "hash": self.hash
         }
     
@@ -196,7 +215,8 @@ class Block:
             events=data["events"],
             timestamp=data["timestamp"],
             previous_hash=data["previous_hash"],
-            nonce=data.get("nonce", 0)
+            nonce=data.get("nonce", 0),
+            merkle_root=data.get("merkle_root")
         )
         return block # Hash is recalculated in init
 

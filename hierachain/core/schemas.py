@@ -13,20 +13,21 @@ import pyarrow as pa
 # Event Schema
 # Corresponds to a single event dictionary
 EVENT_SCHEMA = pa.schema([
-    ('entity_id', pa.string()),      # Metadata: Unique ID of the entity
-    ('event', pa.string()),          # Event type
-    ('timestamp', pa.float64()),     # Event timestamp
-    ('details', pa.map_(pa.string(), pa.string())) # Flexible details (Key-Value Map)
+    ('entity_id', pa.string()),                     # Metadata: Unique ID of the entity
+    ('event', pa.string()),                         # Event type
+    ('timestamp', pa.float64()),                    # Event timestamp
+    ('details', pa.map_(pa.string(), pa.string()))  # Flexible details (Key-Value Map)
 ])
 
 
 # Block Header Schema (for metadata only, if needed separately)
 BLOCK_HEADER_SCHEMA = pa.schema([
-    ('index', pa.int64()),
-    ('timestamp', pa.float64()),
-    ('previous_hash', pa.string()),
-    ('nonce', pa.int64()),
-    ('hash', pa.string())
+    ('index', pa.int64()),          # Block index
+    ('timestamp', pa.float64()),    # Block creation timestamp
+    ('previous_hash', pa.string()), # Hash of the previous block
+    ('nonce', pa.int64()),          # Added nonce
+    ('merkle_root', pa.string()),   # Added Merkle Root
+    ('hash', pa.string())           # Added hash
 ])
 
 
@@ -42,6 +43,7 @@ def get_block_schema() -> pa.Schema:
         ('timestamp', pa.float64()),         # Block timestamp
         ('previous_hash', pa.string()),      # Hash of the previous block
         ('nonce', pa.int64()),               # Nonce for mining
+        ('merkle_root', pa.string()),        # Merkle Root of events
         ('hash', pa.string()),               # Hash of the block
         ('events', pa.list_(pa.struct([      # List of events:
             ('entity_id', pa.string()),                    # Renamed from entity_id to match EVENT_SCHEMA

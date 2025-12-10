@@ -352,3 +352,51 @@ def validate_no_cryptocurrency_terms(data: Union[str, Dict[str, Any]]) -> bool:
             return False
     
     return True
+
+
+class MerkleTree:
+    """
+    Merkle Tree implementation for efficient data verification and hashing.
+    """
+    
+    def __init__(self, data_list: List[Union[str, Dict[str, Any]]]):
+        """
+        Initialize Merkle Tree from a list of data items.
+        
+        Args:
+            data_list: List of data items (strings or dicts) to include in the tree
+        """
+        self.leaves = [generate_hash(data) for data in data_list]
+        self.root = self._build_tree(self.leaves)
+
+    def _build_tree(self, nodes: List[str]) -> str:
+        """
+        Recursively build the Merkle Tree.
+        
+        Args:
+            nodes: List of hash nodes at the current level
+            
+        Returns:
+            Root hash of the tree
+        """
+        if not nodes:
+            return hashlib.sha256(b"").hexdigest() # Empty tree hash
+            
+        if len(nodes) == 1:
+            return nodes[0]
+        
+        new_level = []
+        for i in range(0, len(nodes), 2):
+            left = nodes[i]
+            # Duplicate last node if number of nodes is odd
+            right = nodes[i+1] if i+1 < len(nodes) else left
+            
+            # Combine hashes
+            combined = left + right
+            new_level.append(hashlib.sha256(combined.encode()).hexdigest())
+            
+        return self._build_tree(new_level)
+
+    def get_root(self) -> str:
+        """Get the Merkle Root hash."""
+        return self.root
