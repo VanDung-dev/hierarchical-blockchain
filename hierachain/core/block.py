@@ -24,12 +24,18 @@ class Block:
     Data Consistency:
     - Events are stored internally as a `pyarrow.Table`.
     - `self.events` property exposes this Table.
-    - Hashing still uses strict JSON canonicalization for backward compatibility.
+    - Hashing uses strict JSON canonicalization.
     """
     
-    def __init__(self, index: int, events: Union[List[Dict[str, Any]], pa.Table], 
-                 timestamp: Optional[float] = None, previous_hash: str = "", 
-                 nonce: int = 0, merkle_root: Optional[str] = None):
+    def __init__(
+        self,
+        index: int,
+        events: Union[List[Dict[str, Any]], pa.Table],
+        timestamp: Optional[float] = None,
+        previous_hash: str = "",
+        nonce: int = 0,
+        merkle_root: Optional[str] = None
+    ):
         """
         Initialize a new block.
         
@@ -39,7 +45,7 @@ class Block:
             timestamp: Block creation timestamp (defaults to current time)
             previous_hash: Hash of the previous block
             nonce: Nonce value
-            merkle_root: Merkle root of the events (optional, calculated if None)
+            merkle_root: Merkle root of the events (optional)
         """
         self.index = index
         self.timestamp = timestamp or time.time()
@@ -55,10 +61,9 @@ class Block:
             else:
                 self.merkle_root = merkle_root
         else:
-            # 1. Calculate Merkle Root directly from List (avoiding Arrow conversion overhead)
+            # Calculate Merkle Root from list
             self.merkle_root = merkle_root or self.calculate_merkle_from_list(events)
-            
-            # 2. Convert to Arrow Table ONCE for efficient storage
+            # Convert to Arrow Table for efficient storage
             self._events = self._convert_events_to_arrow(events)
             
         self.hash = self.calculate_hash()
@@ -70,52 +75,64 @@ class Block:
 
     @staticmethod
     def _convert_events_to_arrow(events_list: List[Dict[str, Any]]) -> pa.Table:
-        """Helper to convert list of dicts to Arrow Table with schema."""
+        """
+        Convert list of dicts to Arrow Table.
+        
+        Handles:
+        - details: dict -> list of tuples for Map<String, String>
+        - data: full payload as binary JSON
+        """
         if not events_list:
-            # Create empty table with correct schema
             return pa.Table.from_pylist([], schema=schemas.get_event_schema())
         
-        # Pre-process details to match Map<String, String> schema
         processed_events = []
         for e in events_list:
             ev = e.copy()
+            
+            # Process details field
             details = ev.get('details')
             if isinstance(details, dict):
+                # Convert dict to list of tuples, stringify values
                 ev['details'] = [(k, str(v)) for k, v in details.items()]
+            elif isinstance(details, list):
+                # Already list of tuples - keep as is
+                ev['details'] = details
             elif details is None:
                 ev['details'] = []
 
-            # Populate 'data' field (Full Payload - Binary JSON)
-            ev['data'] = json.dumps(e).encode('utf-8')
+            # Store full payload as binary JSON
+            clean_event = {}
+            for k, v in e.items():
+                if isinstance(v, bytes) or k == 'data':
+                    continue
+                if k == 'details' and isinstance(v, list):
+                    try:
+                        clean_event[k] = dict(v)
+                    except (TypeError, ValueError):
+                        clean_event[k] = v
+                else:
+                    clean_event[k] = v
+            ev['data'] = json.dumps(clean_event).encode('utf-8')
 
             processed_events.append(ev)
             
-        s = schemas.get_event_schema()
-        return pa.Table.from_pylist(processed_events, schema=s)
+        return pa.Table.from_pylist(processed_events, schema=schemas.get_event_schema())
 
     @staticmethod
     def calculate_merkle_from_list(events_list: List[Dict[str, Any]]) -> str:
-        """
-        Calculate Merkle Root from a list of event dictionaries.
-        Static method to allow calculation before Block instantiation.
-        """
+        """Calculate Merkle Root from a list of event dictionaries."""
         if not events_list:
             return MerkleTree([]).get_root()
         tree = MerkleTree(events_list)
         return tree.get_root()
 
     def calculate_merkle_root(self) -> str:
-        """
-        Calculate the Merkle Root of the block's events.
-        """
+        """Calculate the Merkle Root of the block's events."""
         events_list = self._table_to_list_of_dicts(self._events)
         return self.calculate_merkle_from_list(events_list)
 
     def calculate_hash(self) -> str:
-        """
-        Calculate the hash of the block.
-        Now uses Merkle Root in header instead of full event list.
-        """
+        """Calculate the hash of the block."""
         block_header = {
             "index": self.index,
             "timestamp": self.timestamp,
@@ -127,28 +144,26 @@ class Block:
         return generate_hash(block_header)
     
     def get_events_by_entity(self, entity_id: str) -> List[Dict[str, Any]]:
-        """
-        Get all events for a specific entity.
-        Uses Arrow filtering.
-        """
-        filtered_table = self._events.filter(pc.equal(self._events['entity_id'], entity_id))
-        return self._table_to_list_of_dicts(filtered_table)
+        """Get all events for a specific entity using Arrow filtering."""
+        filtered = self._events.filter(pc.equal(self._events['entity_id'], entity_id))
+        return self._table_to_list_of_dicts(filtered)
 
     def get_events_by_type(self, event_type: str) -> List[Dict[str, Any]]:
         """Get all events of a specific type."""
-        filtered_table = self._events.filter(pc.equal(self._events['event'], event_type))
-        return self._table_to_list_of_dicts(filtered_table)
+        filtered = self._events.filter(pc.equal(self._events['event'], event_type))
+        return self._table_to_list_of_dicts(filtered)
     
     def to_event_list(self) -> List[Dict[str, Any]]:
-        """
-        Convert internal Arrow events to a list of dictionaries.
-        This provides a standard Python interface for consumers.
-        """
+        """Convert internal Arrow events to a list of dictionaries."""
         return self._table_to_list_of_dicts(self._events)
 
     @staticmethod
     def _table_to_list_of_dicts(table: pa.Table) -> List[Dict[str, Any]]:
-        """Convert Arrow Table to list of dicts with parsed details."""
+        """
+        Convert Arrow Table to list of dicts with parsed details.
+        
+        Uses 'data' field for full payload recovery when available.
+        """
         events = []
         has_data_col = 'data' in table.column_names
 
@@ -164,13 +179,12 @@ class Block:
             
             # 2. Fallback: Reconstruct from flat schema
             if row.get('details'):
-                # Convert list of tuples back to dict
                 if isinstance(row['details'], list):
                     row['details'] = dict(row['details'])
             else:
-                 row['details'] = {}
+                row['details'] = {}
             
-            # Remove 'data' field from the reconstructed dict if it exists but failed
+            # Remove internal 'data' field from output
             if 'data' in row:
                 del row['data']
                 
@@ -218,14 +232,14 @@ class Block:
     def from_dict(cls, data: Dict[str, Any]) -> 'Block':
         """
         Create a Block instance from dictionary data.
-        
+
         Args:
             data: Dictionary containing block data
-            
+
         Returns:
             Block instance
         """
-        block = cls(
+        return cls(
             index=data["index"],
             events=data["events"],
             timestamp=data["timestamp"],
@@ -233,13 +247,11 @@ class Block:
             nonce=data.get("nonce", 0),
             merkle_root=data.get("merkle_root")
         )
-        return block # Hash is recalculated in init
 
     def __str__(self) -> str:
         """String representation of the block."""
-        return f"Block(index={self.index}, events_count={len(self._events)}, hash={self.hash[:10]}...)"
+        return f"Block(index={self.index}, events={len(self._events)}, hash={self.hash[:10]}...)"
     
     def __repr__(self) -> str:
         """Detailed string representation of the block."""
-        return (f"Block(index={self.index}, events={len(self._events)}, "
-                f"timestamp={self.timestamp}, hash={self.hash})")
+        return f"Block(index={self.index}, events={len(self._events)}, hash={self.hash})"

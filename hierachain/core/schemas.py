@@ -9,26 +9,24 @@ This module defines the Apache Arrow schemas used for:
 
 import pyarrow as pa
 
-
-# Event Schema
-# Corresponds to a single event dictionary
+# Event Schema - Simple structure for events
 EVENT_SCHEMA = pa.schema([
-    ('entity_id', pa.string()),                     # Metadata: Unique ID of the entity
-    ('event', pa.string()),                         # Event type
-    ('timestamp', pa.float64()),                    # Event timestamp
-    ('details', pa.map_(pa.string(), pa.string())), # Flexible details (Key-Value Map)
-    ('data', pa.binary())                           # RAW Payload (JSON serialized)
+    ('entity_id', pa.string()),
+    ('event', pa.string()),
+    ('timestamp', pa.float64()),
+    ('details', pa.map_(pa.string(), pa.string())),
+    ('data', pa.binary()),
 ])
 
 
-# Block Header Schema (for metadata only, if needed separately)
+# Block Header Schema
 BLOCK_HEADER_SCHEMA = pa.schema([
-    ('index', pa.int64()),          # Block index
-    ('timestamp', pa.float64()),    # Block creation timestamp
-    ('previous_hash', pa.string()), # Hash of the previous block
-    ('nonce', pa.int64()),          # Added nonce
-    ('merkle_root', pa.string()),   # Added Merkle Root
-    ('hash', pa.string())           # Added hash
+    ('index', pa.int64()),
+    ('timestamp', pa.float64()),
+    ('previous_hash', pa.string()),
+    ('nonce', pa.int64()),
+    ('merkle_root', pa.string()),
+    ('hash', pa.string()),
 ])
 
 
@@ -37,22 +35,27 @@ def get_event_schema() -> pa.Schema:
     return EVENT_SCHEMA
 
 
+def get_block_header_schema() -> pa.Schema:
+    """Return the Arrow schema for a Block Header."""
+    return BLOCK_HEADER_SCHEMA
+
+
 def get_block_schema() -> pa.Schema:
     """Return the Arrow schema for a full Block (header + events)."""
     return pa.schema([
-        ('index', pa.int64()),               # Block index
-        ('timestamp', pa.float64()),         # Block timestamp
-        ('previous_hash', pa.string()),      # Hash of the previous block
-        ('nonce', pa.int64()),               # Nonce for mining
-        ('merkle_root', pa.string()),        # Merkle Root of events
-        ('hash', pa.string()),               # Hash of the block
-        ('events', pa.list_(pa.struct([      # List of events:
-            ('entity_id', pa.string()),                     # Renamed from entity_id to match EVENT_SCHEMA
-            ('event', pa.string()),                         # Renamed from event_type to match EVENT_SCHEMA
-            ('timestamp', pa.float64()),                    # Renamed from timestamp to match EVENT_SCHEMA
-            ('details', pa.map_(pa.string(), pa.string())), # Renamed from details to match EVENT_SCHEMA
-            ('data', pa.binary())                           # NEW: Binary payload
-        ])))
+        ('index', pa.int64()),
+        ('timestamp', pa.float64()),
+        ('previous_hash', pa.string()),
+        ('nonce', pa.int64()),
+        ('merkle_root', pa.string()),
+        ('hash', pa.string()),
+        ('events', pa.list_(pa.struct([
+            ('entity_id', pa.string()),
+            ('event', pa.string()),
+            ('timestamp', pa.float64()),
+            ('details', pa.map_(pa.string(), pa.string())),
+            ('data', pa.binary()),
+        ]))),
     ])
 
 # Constants for conversion
