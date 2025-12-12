@@ -2,7 +2,7 @@
 Consensus module for the HieraChain framework.
 """
 
-from .ordering_service import (
+from hierachain.consensus.ordering_service import (
     OrderingService,
     OrderingNode,
     OrderingStatus,
