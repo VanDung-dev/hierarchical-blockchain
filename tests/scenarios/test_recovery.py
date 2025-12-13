@@ -389,7 +389,7 @@ class TestAPIRecovery:
         if key_data is not None:
             key_manager.key_cache[test_key] = {
                 'data': key_data,
-               'cached_at': time.time(),
+                'cached_at': time.time(),
                 'ttl': 300
             }
         
