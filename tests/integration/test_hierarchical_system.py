@@ -16,6 +16,7 @@ def test_full_hierarchical_flow():
     
     # Create Sub-Chain
     sub_chain = SubChain(name="IntegrationSubChain", domain_type="manufacturing")
+    sub_chain.proof_submission_interval = float('inf')
     
     # Connect Sub-Chain to Main Chain
     connection_result = sub_chain.connect_to_main_chain(main_chain)
@@ -72,6 +73,10 @@ def test_multiple_sub_chains():
     sub_chain_1 = SubChain(name="ProductionChain", domain_type="manufacturing")
     sub_chain_2 = SubChain(name="QualityChain", domain_type="quality_control")
     sub_chain_3 = SubChain(name="ShippingChain", domain_type="logistics")
+
+    sub_chain_1.proof_submission_interval = float('inf')
+    sub_chain_2.proof_submission_interval = float('inf')
+    sub_chain_3.proof_submission_interval = float('inf')
     
     # Connect all Sub-Chains to Main Chain
     assert sub_chain_1.connect_to_main_chain(main_chain) is True
@@ -120,6 +125,7 @@ def test_hierarchical_integrity():
     # Create Main Chain and Sub-Chain
     main_chain = MainChain(name="IntegrityMainChain")
     sub_chain = SubChain(name="IntegritySubChain", domain_type="testing")
+    sub_chain.proof_submission_interval = float('inf')
     sub_chain.connect_to_main_chain(main_chain)
     
     # Add operations and finalize
@@ -155,6 +161,7 @@ def test_entity_tracing_across_chains():
     # Create Main Chain and Sub-Chain
     main_chain = MainChain(name="TracingMainChain")
     sub_chain = SubChain(name="TracingSubChain", domain_type="manufacturing")
+    sub_chain.proof_submission_interval = float('inf')
     sub_chain.connect_to_main_chain(main_chain)
     
     # Add operations for an entity
@@ -192,6 +199,10 @@ def test_cross_chain_entity_tracing():
     sub_chain_1 = SubChain(name="ManufacturingChain", domain_type="manufacturing")
     sub_chain_2 = SubChain(name="QualityChain", domain_type="quality_control")
     sub_chain_3 = SubChain(name="ShippingChain", domain_type="logistics")
+    
+    sub_chain_1.proof_submission_interval = float('inf')
+    sub_chain_2.proof_submission_interval = float('inf')
+    sub_chain_3.proof_submission_interval = float('inf')
     
     # Connect all Sub-Chains to Main Chain
     sub_chain_1.connect_to_main_chain(main_chain)
@@ -252,6 +263,9 @@ def test_nested_hierarchy():
     # Create first level Sub-Chains
     sub_chain_level1_a = SubChain(name="Level1ChainA", domain_type="manufacturing")
     sub_chain_level1_b = SubChain(name="Level1ChainB", domain_type="logistics")
+
+    sub_chain_level1_a.proof_submission_interval = float('inf')
+    sub_chain_level1_b.proof_submission_interval = float('inf')
     
     # Connect first level Sub-Chains to Main Chain
     assert sub_chain_level1_a.connect_to_main_chain(main_chain) is True
@@ -260,6 +274,9 @@ def test_nested_hierarchy():
     # Create second level Sub-Chains (nested under Level1ChainA)
     sub_chain_level2_a1 = SubChain(name="Level2ChainA1", domain_type="assembly")
     sub_chain_level2_a2 = SubChain(name="Level2ChainA2", domain_type="quality_control")
+
+    sub_chain_level2_a1.proof_submission_interval = float('inf')
+    sub_chain_level2_a2.proof_submission_interval = float('inf')
     
     # Connect second level Sub-Chains to first level Sub-Chain A
     # Note: In this implementation, sub-chains connect directly to main chain
@@ -269,6 +286,7 @@ def test_nested_hierarchy():
     
     # Create third level Sub-Chain (nested under Level2ChainA1)
     sub_chain_level3_a1a = SubChain(name="Level3ChainA1A", domain_type="inspection")
+    sub_chain_level3_a1a.proof_submission_interval = float('inf')
     assert sub_chain_level3_a1a.connect_to_main_chain(main_chain) is True
     
     # Verify all chains are registered in Main Chain
@@ -363,6 +381,7 @@ def test_rollback_on_error():
     # Create Main Chain and Sub-Chains
     main_chain = MainChain(name="RollbackTestMainChain")
     sub_chain = SubChain(name="RollbackTestSubChain", domain_type="testing")
+    sub_chain.proof_submission_interval = float('inf')
     sub_chain.connect_to_main_chain(main_chain)
     
     # Create initial state snapshot
@@ -454,6 +473,7 @@ def test_basic_hierarchical_system_functionality():
 
     # Test Sub-Chain creation
     sub_chain = SubChain(name="BasicFunctionalitySubChain", domain_type="testing")
+    sub_chain.proof_submission_interval = float('inf')
     assert sub_chain is not None
     assert sub_chain.name == "BasicFunctionalitySubChain"
     assert sub_chain.domain_type == "testing"
