@@ -39,9 +39,11 @@ test_message = BFTMessage(
     sequence_number=1,
     sender_id="node_1",
     timestamp=time.time(),
-    signature=hashlib.sha256(b"test").hexdigest(),
+    signature="",
     data={"test": "data"}
 )
+# Sign with real key
+test_message.signature = network["node_1"]._sign_message(test_message.get_signable_payload())
 
 def test_bft_network_creation():
     """Test creation of BFT network"""
@@ -299,9 +301,11 @@ def test_bft_with_malicious_nodes():
         sequence_number=1,
         sender_id="node_1",
         timestamp=time.time(),
-        signature=hashlib.sha256(b"test").hexdigest(),
+        signature="",
         data={"test": "data"}
     )
+    # Sign with real key
+    normal_message.signature = network["node_1"]._sign_message(normal_message.get_signable_payload())
 
     # Test invalid signature message (simulating malicious behavior)
     invalid_message = BFTMessage(
