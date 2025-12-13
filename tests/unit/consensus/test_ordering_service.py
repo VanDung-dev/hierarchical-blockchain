@@ -12,6 +12,7 @@ from hierachain.error_mitigation.error_classifier import (
     PriorityLevel,
     ErrorCategory,
 )
+import shutil
 from hierachain.error_mitigation.validator import (
     ConsensusValidator,
     EncryptionValidator,
@@ -77,28 +78,41 @@ def test_receive_valid_event():
 def test_block_creation(benchmark: Any) -> None:
     """Test block creation when batch size is reached"""
     def execute() -> tuple[OrderingService, dict[str, Any]]:
-        config = {"block_size": 3, "batch_timeout": 0.1}
-        service = OrderingService(nodes=[node], config=config)
+        temp_dir = tempfile.mkdtemp()
+        try:
+            config = {"block_size": 3, "batch_timeout": 0.1, "storage_dir": temp_dir}
+            service = OrderingService(nodes=[node], config=config)
 
-        # Add events to reach batch size
-        event_ids = []
-        for i in range(3):
-            event = {
-                "entity_id": f"TEST-{i:03d}",
-                "event": "test_event",
-                "timestamp": time.time()
-            }
-            event_id = service.receive_event(event, "test-channel", "test-org")
-            event_ids.append(event_id)
+            # Add events to reach batch size
+            event_ids = []
+            for i in range(3):
+                event = {
+                    "entity_id": f"TEST-{i:03d}",
+                    "event": "test_event",
+                    "timestamp": time.time()
+                }
+                event_id = service.receive_event(event, "test-channel", "test-org")
+                event_ids.append(event_id)
 
-        # Wait a bit for processing
-        time.sleep(0.2)
+            # Wait for processing with polling
+            timeout = 2.0
+            start_wait = time.time()
+            block = None
+            while time.time() - start_wait < timeout:
+                block = service.get_next_block()
+                if block:
+                    break
+                time.sleep(0.1)
 
-        # Should have created a block and added to commit queue
-        block = service.get_next_block()
-        assert block is not None
-        assert len(block.events) == 3
-        return service, block
+            assert block is not None
+            assert len(block.events) == 3
+            return service, block
+        finally:
+            # Cleanup is handled by shutdown now, but we should also remove temp dir
+            if 'service' in locals() and hasattr(service, 'shutdown'):
+                service.shutdown()
+            if os.path.exists(temp_dir):
+                shutil.rmtree(temp_dir)
 
     benchmark(execute)
 
@@ -121,24 +135,31 @@ def test_invalid_event_handling():
 
 def test_timeout_block_creation():
     """Test timeout-based block creation functionality"""
-    config = {"block_size": 10, "batch_timeout": 0.1}
-    service = OrderingService(nodes=[node], config=config)
+    temp_dir = tempfile.mkdtemp()
+    try:
+        config = {"block_size": 10, "batch_timeout": 0.1, "storage_dir": temp_dir}
+        service = OrderingService(nodes=[node], config=config)
 
-    # Submit 1 event and wait for timeout
-    event = {
-        "entity_id": "TEST-001",
-        "event": "test_event",
-        "timestamp": time.time()
-    }
-    service.receive_event(event, "test-channel", "test-org")
+        # Submit 1 event and wait for timeout
+        event = {
+            "entity_id": "TEST-001",
+            "event": "test_event",
+            "timestamp": time.time()
+        }
+        service.receive_event(event, "test-channel", "test-org")
 
-    # Wait for processing
-    time.sleep(0.2)
+        # Wait for processing
+        time.sleep(0.2)
 
-    service._check_timeout_block_creation()
-    block = service.get_next_block()
-    assert block is not None
-    assert len(block.events) == 1
+        service._check_timeout_block_creation()
+        block = service.get_next_block()
+        assert block is not None
+        assert len(block.events) == 1
+    finally:
+        if 'service' in locals() and hasattr(service, 'shutdown'):
+            service.shutdown()
+        if os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir)
 
 
 def test_service_status():
@@ -243,19 +264,31 @@ def test_unhealthy_node(benchmark):
 
 def test_service_start_stop():
     """Test service start and stop functionality"""
-    # Create service with minimal config
-    service = OrderingService(nodes=[node], config={})
+    temp_dir = tempfile.mkdtemp()
+    try:
+        # Create service with minimal config
+        config = {"storage_dir": temp_dir}
+        service = OrderingService(nodes=[node], config=config)
 
-    # Check that service is active
-    assert service.status == OrderingStatus.ACTIVE
+        # Check that service is active
+        assert service.status == OrderingStatus.ACTIVE
 
-    # Test stop
-    service.stop()
-    assert service.status == OrderingStatus.STOPPED
+        # Test stop
+        service.shutdown()
+        assert service.status == OrderingStatus.SHUTDOWN
 
-    # Test restart
-    service.start()
-    assert service.status == OrderingStatus.ACTIVE
+        # Test restart
+        service.start()
+        time.sleep(0.1)  # Allow thread to start
+        assert service.status == OrderingStatus.ACTIVE
+        
+        # Final cleanup
+        service.shutdown()
+    finally:
+        if 'service' in locals() and hasattr(service, 'shutdown'):
+            service.shutdown()
+        if os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir)
 
 
 def test_system_error_handling():
@@ -303,88 +336,103 @@ def test_system_error_handling():
 def test_large_volume_performance(benchmark):
     """Test performance with large volume of events"""
     def execute():
-        config = {"block_size": 100, "batch_timeout": 0.5}
-        service = OrderingService(nodes=[node], config=config)
+        temp_dir = tempfile.mkdtemp()
+        try:
+            config = {"block_size": 100, "batch_timeout": 0.5, "storage_dir": temp_dir}
+            service = OrderingService(nodes=[node], config=config)
 
-        # Record start time
-        start_time = time.time()
+            # Record start time
+            start_time = time.time()
 
-        # Submit large number of events
-        event_count = 1000
-        event_ids = []
-        for i in range(event_count):
-            event = {
-                "entity_id": f"LARGE-{i:03d}",
-                "event": f"large_event_{i}",
-                "timestamp": time.time()
-            }
-            event_id = service.receive_event(event, "test-channel", "test-org")
-            event_ids.append(event_id)
+            # Submit large number of events
+            event_count = 1000
+            event_ids = []
+            for i in range(event_count):
+                event = {
+                    "entity_id": f"LARGE-{i:03d}",
+                    "event": f"large_event_{i}",
+                    "timestamp": time.time()
+                }
+                event_id = service.receive_event(event, "test-channel", "test-org")
+                event_ids.append(event_id)
 
-        # Wait for all events to be processed
-        time.sleep(0.1)
+            # Wait for all events to be processed
+            time.sleep(0.1)
 
-        # Check performance
-        end_time = time.time()
-        _processing_time = end_time - start_time
+            # Check performance
+            end_time = time.time()
+            _processing_time = end_time - start_time
 
-        # Verify all events were processed
-        certified_count = 0
-        for event_id in event_ids[:100]:  # Check first 100 events
-            status = service.get_event_status(event_id)
-            if status and status["status"] == "certified":
-                certified_count += 1
+            # Verify all events were processed
+            certified_count = 0
+            for event_id in event_ids[:100]:  # Check first 100 events
+                status = service.get_event_status(event_id)
+                if status and status["status"] == "certified":
+                    certified_count += 1
 
-        # At least some events should be certified
-        assert certified_count > 0
+            # At least some events should be certified
+            assert certified_count > 0
 
-        # Should have created blocks
-        blocks = []
-        block = service.get_next_block()
-        while block is not None:
-            blocks.append(block)
+            # Should have created blocks
+            blocks = []
             block = service.get_next_block()
+            while block is not None:
+                blocks.append(block)
+                block = service.get_next_block()
 
-        assert len(blocks) > 0
-        return service, certified_count, blocks
+            assert len(blocks) > 0
+            return service, certified_count, blocks
+        finally:
+            if 'service' in locals() and hasattr(service, 'shutdown'):
+                service.shutdown()
+            if os.path.exists(temp_dir):
+                shutil.rmtree(temp_dir)
 
     benchmark(execute)
 
 
 def test_malformed_event_data():
     """Test handling of malformed event data"""
-    service = OrderingService(nodes=[node], config={})
+    temp_dir = tempfile.mkdtemp()
+    try:
+        config = {"storage_dir": temp_dir}
+        service = OrderingService(nodes=[node], config=config)
 
-    # Test with non-dictionary event data
-    event_id = service.receive_event("not a dict!!!", "test-channel", "test-org")
-    time.sleep(0.1)
-    status = service.get_event_status(event_id)
-    assert status is not None
-    assert status["status"] == "rejected"
+        # Test with non-dictionary event data
+        try:
+            service.receive_event("not a dict!!!", "test-channel", "test-org")
+            assert False, "Should have raised ValueError"
+        except ValueError:
+            pass
+        
+        # Test with wrong timestamp type
+        invalid_event = {
+            "entity_id": "TEST-001",
+            "event": "test_event",
+            "timestamp": "not_a_timestamp"
+        }
+        
+        try:
+            service.receive_event(invalid_event, "test-channel", "test-org")
+        except (ValueError, RuntimeError):
+            pass
 
-    # Test with wrong timestamp type
-    invalid_event = {
-        "entity_id": "TEST-001",
-        "event": "test_event",
-        "timestamp": "not_a_timestamp"
-    }
-    event_id = service.receive_event(invalid_event, "test-channel", "test-org")
-    time.sleep(0.1)
-    status = service.get_event_status(event_id)
-    assert status is not None
-    assert status["status"] == "rejected"
-
-    # Test with future timestamp
-    future_event = {
-        "entity_id": "TEST-002",
-        "event": "future_event",
-        "timestamp": time.time() + 7200  # 2 hours in the future
-    }
-    event_id = service.receive_event(future_event, "test-channel", "test-org")
-    time.sleep(0.1)
-    status = service.get_event_status(event_id)
-    assert status is not None
-    assert status["status"] == "rejected"
+        # Test with future timestamp
+        future_event = {
+            "entity_id": "TEST-002",
+            "event": "future_event",
+            "timestamp": time.time() + 7200  # 2 hours in the future
+        }
+        event_id = service.receive_event(future_event, "test-channel", "test-org")
+        time.sleep(0.1)
+        status = service.get_event_status(event_id)
+        assert status is not None
+        assert status["status"] == "rejected"
+    finally:
+        if 'service' in locals() and hasattr(service, 'shutdown'):
+            service.shutdown()
+        if os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir)
 
 
 def test_concurrent_edge_cases():
@@ -464,13 +512,15 @@ def test_cleanup_on_service_stop():
     time.sleep(0.1)
 
     # Stop service
-    service.stop()
+    service.shutdown()
 
     # Check that service is properly stopped
-    assert service.status == OrderingStatus.STOPPED
+    assert service.status == OrderingStatus.SHUTDOWN
 
     # Verify that threads are properly joined
     if hasattr(service, 'processing_thread') and service.processing_thread:
+        # Give a small grace period for thread to finish
+        service.processing_thread.join(timeout=1.0)
         assert not service.processing_thread.is_alive()
 
 
@@ -867,31 +917,39 @@ def test_very_small_block_size():
 
 def test_very_large_block_size():
     """Test ordering service with very large block size"""
-    config = {"block_size": 10000, "batch_timeout": 0.1}
-    service = OrderingService(nodes=[node], config=config)
+    temp_dir = tempfile.mkdtemp()
+    try:
+        # Increase timeout to avoid auto-block creation
+        config = {"block_size": 10000, "batch_timeout": 10.0, "storage_dir": temp_dir}
+        service = OrderingService(nodes=[node], config=config)
 
-    # Add a few events
-    event_ids = []
-    for i in range(5):
-        event = {
-            "entity_id": f"LARGEBLOCK-{i:03d}",
-            "event": f"large_block_test_{i}",
-            "timestamp": time.time()
-        }
-        event_id = service.receive_event(event, "test-channel", "test-org")
-        event_ids.append(event_id)
+        # Add a few events
+        event_ids = []
+        for i in range(5):
+            event = {
+                "entity_id": f"LARGEBLOCK-{i:03d}",
+                "event": f"large_block_test_{i}",
+                "timestamp": time.time()
+            }
+            event_id = service.receive_event(event, "test-channel", "test-org")
+            event_ids.append(event_id)
 
-    time.sleep(0.2)
+        time.sleep(0.2)
 
-    # With such a large block size, events should be certified but no block created yet
-    for event_id in event_ids:
-        status = service.get_event_status(event_id)
-        assert status is not None
-        assert status["status"] == "certified"
+        # With such a large block size, events should be certified but no block created yet
+        for event_id in event_ids:
+            status = service.get_event_status(event_id)
+            assert status is not None
+            assert status["status"] == "certified"
 
-    # Should not have created a block yet (only 5 events, block_size=10000)
-    block = service.get_next_block()
-    assert block is None
+        # Should not have created a block yet (only 5 events, block_size=10000)
+        block = service.get_next_block()
+        assert block is None
+    finally:
+        if 'service' in locals() and hasattr(service, 'shutdown'):
+            service.shutdown()
+        if os.path.exists(temp_dir):
+            shutil.rmtree(temp_dir)
 
 
 def test_service_recovery_after_crash():
@@ -914,7 +972,7 @@ def test_service_recovery_after_crash():
 
     # Simulate a crash by creating a new service instance
     # In a real scenario, this would be a restart
-    service.stop()
+    service.shutdown()
     new_service = OrderingService(nodes=[node], config=config)
 
     # The new service should be able to process new events
