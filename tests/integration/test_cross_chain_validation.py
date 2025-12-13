@@ -13,12 +13,16 @@ def test_cross_chain_validation():
     """Test cross-chain validation functionality"""
     # Create Hierarchy Manager with Main Chain
     hierarchy_manager = HierarchyManager("ValidationMainChain")
+    hierarchy_manager.configure_auto_proof_submission(False)
     main_chain = hierarchy_manager.main_chain
     
     # Create Sub-Chain and add to hierarchy using the create_sub_chain method
-    hierarchy_manager.create_sub_chain("ValidationSubChain", "testing")
+    # This automatically connects it to the main chain
+    hierarchy_manager.create_sub_chain("ValidationSubChain", "generic")
     sub_chain = hierarchy_manager.get_sub_chain("ValidationSubChain")
-    sub_chain.connect_to_main_chain(main_chain)
+    
+    # Explicitly disable auto-proof submission at the sub-chain level to prevent race conditions
+    sub_chain.proof_submission_interval = float('inf')
     
     # Add operations to Sub-Chain
     sub_chain.start_operation("ENTITY-001", "test_operation", {"param": "value1"})
@@ -54,6 +58,9 @@ def test_cross_chain_validation_with_multiple_sub_chains():
 
     sub_chain1 = hierarchy_manager.get_sub_chain("SubChain1")
     sub_chain2 = hierarchy_manager.get_sub_chain("SubChain2")
+
+    sub_chain1.proof_submission_interval = float('inf')
+    sub_chain2.proof_submission_interval = float('inf')
 
     sub_chain1.connect_to_main_chain(main_chain)
     sub_chain2.connect_to_main_chain(main_chain)
@@ -96,6 +103,7 @@ def test_cross_chain_validation_with_missing_sub_chain():
     # Create Sub-Chain and add operations
     hierarchy_manager.create_sub_chain("ExistingSubChain", "testing")
     sub_chain = hierarchy_manager.get_sub_chain("ExistingSubChain")
+    sub_chain.proof_submission_interval = float('inf')
     sub_chain.connect_to_main_chain(main_chain)
 
     # Add operations and submit proof
@@ -135,6 +143,9 @@ def test_cross_chain_validation_with_entity_consistency():
 
     order_chain = hierarchy_manager.get_sub_chain("OrderChain")
     inventory_chain = hierarchy_manager.get_sub_chain("InventoryChain")
+
+    order_chain.proof_submission_interval = float('inf')
+    inventory_chain.proof_submission_interval = float('inf')
 
     order_chain.connect_to_main_chain(main_chain)
     inventory_chain.connect_to_main_chain(main_chain)
@@ -184,6 +195,9 @@ def test_cross_chain_validation_system_integrity():
     sub_chain1 = hierarchy_manager.get_sub_chain("TestSubChain1")
     sub_chain2 = hierarchy_manager.get_sub_chain("TestSubChain2")
 
+    sub_chain1.proof_submission_interval = float('inf')
+    sub_chain2.proof_submission_interval = float('inf')
+
     sub_chain1.connect_to_main_chain(main_chain)
     sub_chain2.connect_to_main_chain(main_chain)
 
@@ -226,6 +240,9 @@ def test_cross_chain_validation_fault_tolerance():
     sub_chain1 = hierarchy_manager.get_sub_chain("FaultToleranceSubChain1")
     sub_chain2 = hierarchy_manager.get_sub_chain("FaultToleranceSubChain2")
 
+    sub_chain1.proof_submission_interval = float('inf')
+    sub_chain2.proof_submission_interval = float('inf')
+
     sub_chain1.connect_to_main_chain(main_chain)
     sub_chain2.connect_to_main_chain(main_chain)
 
@@ -252,6 +269,7 @@ def test_cross_chain_validation_with_timestamp_inconsistency():
     # Create Sub-Chain and add operations
     hierarchy_manager.create_sub_chain("SubChainWithTimestampIssue", "testing")
     sub_chain = hierarchy_manager.get_sub_chain("SubChainWithTimestampIssue")
+    sub_chain.proof_submission_interval = float('inf')
     sub_chain.connect_to_main_chain(main_chain)
 
     # Add operations and submit proof
@@ -416,6 +434,7 @@ def test_cross_chain_validation_with_large_number_of_sub_chains():
         chain_name = f"SubChain{i:03d}"
         hierarchy_manager.create_sub_chain(chain_name, f"domain_{i}")
         sub_chain = hierarchy_manager.get_sub_chain(chain_name)
+        sub_chain.proof_submission_interval = float('inf')
         sub_chain.connect_to_main_chain(main_chain)
 
         # Add operations to each Sub-Chain
@@ -452,6 +471,7 @@ def test_cross_chain_validation_with_invalid_input_data():
     # Create Sub-Chain
     hierarchy_manager.create_sub_chain("InvalidDataSubChain", "testing")
     sub_chain = hierarchy_manager.get_sub_chain("InvalidDataSubChain")
+    sub_chain.proof_submission_interval = float('inf')
     sub_chain.connect_to_main_chain(main_chain)
 
     # Test with various invalid inputs
