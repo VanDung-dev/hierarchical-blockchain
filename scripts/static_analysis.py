@@ -528,8 +528,7 @@ class StaticAnalyzer:
         project_root = Path(project_path)
         
         # Analyze Python files
-        if 'security' in self.enabled_analyzers or \
-           'quality' in self.enabled_analyzers or 'compliance' in self.enabled_analyzers:
+        if 'security' in self.enabled_analyzers or 'quality' in self.enabled_analyzers or 'compliance' in self.enabled_analyzers:
             
             for py_file in self._get_python_files(project_root):
                 file_path = str(py_file)
@@ -648,9 +647,7 @@ class StaticAnalyzer:
         return summary
 
 
-def run_static_analysis(project_path: str = ".", 
-                       output_file: Optional[str] = None,
-                       output_format: str = "json") -> bool:
+def run_static_analysis(project_path: str = ".", output_file: Optional[str] = None, output_format: str = "json") -> bool:
     """
     Entry point for running static analysis.
     
