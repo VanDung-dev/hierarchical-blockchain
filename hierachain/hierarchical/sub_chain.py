@@ -8,6 +8,7 @@ framework guidelines for HieraChain structure.
 
 import time
 import threading
+import logging
 from typing import Dict, Any, List, Optional, Callable
 
 from hierachain.core.blockchain import Blockchain
@@ -15,6 +16,7 @@ from hierachain.core.consensus.proof_of_authority import ProofOfAuthority
 from hierachain.core.utils import sanitize_metadata_for_main_chain, create_event
 from hierachain.consensus.ordering_service import OrderingService, OrderingNode, OrderingStatus
 
+logger = logging.getLogger(__name__)
 
 class SubChain(Blockchain):
     """
@@ -99,32 +101,36 @@ class SubChain(Blockchain):
         if hasattr(self, 'custom_config') and self.custom_config:
             config.update(self.custom_config)
         
-        self.ordering_service = OrderingService(nodes=[local_node], config=config)
-    
-    def add_event(self, event: Dict[str, Any]) -> None:
-        """
-        Add an event to the chain via Ordering Service.
+        self.ordering_service = OrderingService(nodes=[], config=config)
         
-        Args:
-            event: Event dictionary
-        """
-        # Validate and add default fields (inherited from Blockchain.add_event logic)
-        if not isinstance(event, dict):
-            raise ValueError("Event must be a dictionary")
-        
+        # Sync OrderingService with local chain state (Genesis)
+        if self.chain:
+            latest = self.chain[-1]
+            # OrderingService uses block_history to determine previous_hash
+            self.ordering_service.block_history = [latest]
+            # OrderingService uses blocks_created to determine next index
+            self.ordering_service.blocks_created = latest.index + 1
+
+    def add_event(self, event: Dict[str, Any]) -> str:
+        """Add event to Sub-Chain."""
+        # Add timestamp if missing
         if "timestamp" not in event:
             event["timestamp"] = time.time()
             
-        # Delegate to Ordering Service (Durability + Ordering)
-        # This writes to Journal (Arrow) immediately
-        try:
-            self.ordering_service.receive_event(
-                event_data=event,
-                channel_id=self.name,
-                submitter_org=self.name
-            )
-        except Exception as e:
-            raise RuntimeError(f"Failed to submit event to ordering service: {e}")
+        # Ensure required fields for OrderingService
+        if "entity_id" not in event:
+            event["entity_id"] = event.get("sender", "system")
+        if "event" not in event:
+            event["event"] = event.get("type", "generic_event")
+            
+        logger.debug(f"SubChain {self.name} adding event: {event.get('event')}")
+        self.ordering_service.receive_event(
+            event_data=event,
+            channel_id=self.name,
+            submitter_org=self.name
+        )
+
+        return f"tx-{hash(str(event))}"
     
     def connect_to_main_chain(self, main_chain: Any) -> bool:
         """
@@ -267,11 +273,14 @@ class SubChain(Blockchain):
         Returns:
             True if proof was submitted successfully, False otherwise
         """
-        if not self.chain or len(self.chain) <= 1:  # Only genesis block
-            return False
         
         # Get latest block for proof
         latest_block = self.get_latest_block()
+        logger.warning(f"DEBUG: SubChain {self.name} submitting proof. Chain length: {len(self.chain)}. Latest block index: {latest_block.index}")
+
+        if not self.chain or len(self.chain) <= 1:  # Only genesis block
+            print("DEBUG: SubChain has only genesis block. Aborting proof submission.")
+            return False
         
         # Generate summary metadata (not detailed domain data)
         if metadata_filter:
@@ -285,6 +294,7 @@ class SubChain(Blockchain):
             proof_hash=latest_block.hash,
             metadata=metadata
         )
+        print(f"DEBUG: MainChain.add_proof returned: {success}")
         
         if success:
             self.last_proof_submission = time.time()
@@ -431,18 +441,17 @@ class SubChain(Blockchain):
     
     def finalize_sub_chain_block(self) -> Optional[Dict[str, Any]]:
         """
-        Finalize new blocks from the Ordering Service.
-        Replaces manual block creation.
-        
-        Returns:
-            Information about the last finalized block, or None
+        Pull ordered blocks from Ordering Service and finalize them.
         """
-        # 1. Pull completed blocks from Ordering Service
         new_blocks = []
+        
         while True:
             block = self.ordering_service.get_next_block()
             if not block:
+                logger.debug(f"DEBUG: No block returned from get_next_block. Queue {id(self.ordering_service.commit_queue)} empty.")
                 break
+            
+            logger.debug(f"DEBUG: Got block {block.index} from ordering service. Queue {id(self.ordering_service.commit_queue)}")
             
             # 2. Stitch block into local chain
             latest_block = self.get_latest_block()
@@ -477,26 +486,63 @@ class SubChain(Blockchain):
 
     def flush_pending_and_finalize(self, timeout: float = 3.0) -> Optional[Dict[str, Any]]:
         """
-        Synchronously wait for pending events to be processed and finalize blocks.
-        
-        This method is useful for tests where immediate block creation is needed
-        instead of waiting for batch timeout.
-        
+        Flush pending events and finalize the block.
+
         Args:
-            timeout: Maximum time to wait for event processing (seconds)
-            
+            timeout: Timeout for waiting for block to be finalized
+
         Returns:
-            Information about the last finalized block, or None
+            Finalized block details or None if timeout
         """
+        logger.debug(f"flush_pending_and_finalize for {self.name}")
         start_time = time.time()
 
         while not self.ordering_service.event_pool.empty():
             if time.time() - start_time > timeout:
                 break
 
-        self.ordering_service._check_timeout_block_creation()
+        # Capture initial chain length
+        initial_len = len(self.chain)
 
-        return self.finalize_sub_chain_block()
+        # Force block creation in the ordering service thread
+        loop = getattr(self.ordering_service, 'loop', None)
+        if loop and loop.is_running():
+            import asyncio
+            future = asyncio.run_coroutine_threadsafe(
+                self.ordering_service._check_timeout_block_creation(force=True),
+                loop
+            )
+            try:
+                # Wait for block creation to complete
+                future.result(timeout=timeout)
+                logger.error(f"DEBUG: Block creation future completed. QM={self.ordering_service.commit_queue.qsize()} QID={id(self.ordering_service.commit_queue)} BC={self.ordering_service.blocks_created}")
+            except Exception as e:
+                logger.error(f"Error forcing block creation: {e}")
+
+        # Try to consume result manually first
+        result = self.finalize_sub_chain_block()
+        if result:
+            return result
+            
+        # If no result, maybe background consumer took it? Wait for chain to grow.
+        wait_start = time.time()
+        while len(self.chain) == initial_len:
+            if time.time() - wait_start > timeout:
+                logger.warning("Timeout waiting for block to appear in chain during flush")
+                break
+            time.sleep(0.1)
+
+        if len(self.chain) > initial_len:
+            last_block = self.chain[-1]
+            return {
+                "block_index": last_block.index,
+                "block_hash": last_block.hash,
+                "events_count": len(last_block.events),
+                "finalized_at": time.time(),
+                "domain_type": self.domain_type
+            }
+            
+        return None
     
     def _block_consumer_loop(self):
         """Background thread to continuously pull blocks."""
