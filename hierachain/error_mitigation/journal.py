@@ -53,13 +53,16 @@ class TransactionJournal:
             raise ValueError("Security: Path traversal sequence ('..') not allowed in storage_dir.")
 
         self.storage_path = Path(storage_dir).resolve()
-        self._validate_filename(active_log_name)
-        self.active_log_file = (self.storage_path / active_log_name).resolve()
+
+        safe_log_name = os.path.basename(active_log_name)
+        self._validate_filename(safe_log_name)
+        
+        self.active_log_file = (self.storage_path / safe_log_name).resolve()
 
         try:
             self.active_log_file.relative_to(self.storage_path)
         except ValueError:
-             raise ValueError(f"Security: Log file path {self.active_log_file} escapes storage directory {self.storage_path}")
+            raise ValueError(f"Security: Log file path {self.active_log_file} escapes storage directory {self.storage_path}")
         
         self._file_handle = None
         self._schema = schemas.get_event_schema()
