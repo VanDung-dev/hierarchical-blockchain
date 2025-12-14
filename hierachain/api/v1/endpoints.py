@@ -28,17 +28,6 @@ router = APIRouter(prefix="/api/v1", tags=["HieraChain"])
 hierarchy_manager = HierarchyManager()
 entity_tracer = EntityTracer(hierarchy_manager)
 
-def validate_chain_identifier(name: str) -> str:
-    """
-    Validate chain identifier against strict security rules.
-    Allowed: alphanumeric, underscore, hyphen.
-    """
-    if not re.match(r'^[a-zA-Z0-9_\-]+$', name):
-        raise HTTPException(
-            status_code=400, 
-            detail=f"Invalid chain identifier '{name}'. Only alphanumeric, underscore, and hyphen are allowed."
-        )
-    return name
 
 @router.get("/health")
 async def health_check():
