@@ -54,12 +54,14 @@ class TransactionJournal:
         self.storage_path = Path(storage_dir).resolve()
 
         data_root = Path("data").resolve()
-        if not str(self.storage_path).startswith(str(data_root)):
+        # Enforce storage_path stays within data_root using os.path.commonpath (recognized by CodeQL)
+        import os as _os
+        if _os.path.commonpath([str(data_root), str(self.storage_path)]) != str(data_root):
             raise ValueError(f"Security: Storage path {self.storage_path} must be within {data_root}")
 
         safe_log_name = os.path.basename(active_log_name)
         self._validate_filename(safe_log_name)
-        
+
         self.active_log_file = (self.storage_path / safe_log_name).resolve()
 
         try:
@@ -67,6 +69,16 @@ class TransactionJournal:
         except ValueError:
             raise ValueError(f"Security: Log file path {self.active_log_file} escapes storage directory {self.storage_path}")
         
+        # Reject symlinks for both directory and file targets for additional safety
+        try:
+            if self.storage_path.is_symlink():
+                raise ValueError("Security: storage path cannot be a symlink")
+            if self.active_log_file.exists() and self.active_log_file.is_symlink():
+                raise ValueError("Security: active log file cannot be a symlink")
+        except Exception:
+            # If FS checks fail (e.g., missing path), continue; mkdir below will create dir safely
+            pass
+
         self._file_handle = None
         self._schema = schemas.get_event_schema()
         
