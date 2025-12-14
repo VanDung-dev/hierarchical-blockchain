@@ -49,7 +49,7 @@ class Settings:
     
     # Parallel Processing settings
     PARALLEL_PROCESSING_ENABLED = True
-    MAX_WORKER_THREADS = None  # Auto-detect based on CPU count
+    MAX_WORKERS = None  # Auto-detect based on CPU count (defaults to 50%)
     PROCESSING_CHUNK_SIZE = 100
     
     # Security settings
