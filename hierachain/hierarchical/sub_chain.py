@@ -9,6 +9,7 @@ framework guidelines for HieraChain structure.
 import time
 import threading
 import logging
+import re
 from typing import Dict, Any, List, Optional, Callable
 
 from hierachain.core.blockchain import Blockchain
@@ -38,6 +39,9 @@ class SubChain(Blockchain):
             domain_type: Type of domain this Sub-Chain handles
             config: Optional configuration override for underlying services
         """
+        if not re.match(r'^[a-zA-Z0-9_\-]+$', name):
+             raise ValueError(f"Invalid SubChain name '{name}'. Allowed: alphanumeric, underscore, hyphen.")
+
         super().__init__(name)
         self.domain_type = domain_type
         self.custom_config = config
