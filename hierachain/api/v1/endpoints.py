@@ -214,7 +214,11 @@ async def get_chain_stats(chain_name: str):
 @router.post("/chains/{chain_name}/create")
 async def create_sub_chain(chain_name: str, chain_type: str = "generic"):
     """Create a new sub-chain"""
-    validate_chain_identifier(chain_name)
+    if not re.match(r'^[a-zA-Z0-9_\-]+$', chain_name):
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Invalid chain identifier '{chain_name}'. Only alphanumeric, underscore, and hyphen are allowed."
+        )
     try:
         main_chain = hierarchy_manager.get_main_chain()
         if not main_chain:
