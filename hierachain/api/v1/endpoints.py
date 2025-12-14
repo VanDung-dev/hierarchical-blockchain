@@ -10,6 +10,7 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
 import time
 import re
+import os
 
 from hierachain.api.v1.schemas import (
     EventRequest, EventResponse, ChainInfoResponse, 
@@ -220,10 +221,12 @@ async def create_sub_chain(chain_name: str, chain_type: str = "generic"):
             # Create main chain if it doesn't exist
             main_chain = MainChain()
             hierarchy_manager.set_main_chain(main_chain)
-        
+
+        safe_chain_name = os.path.basename(chain_name)
+
         # Create sub-chain
-        sub_chain = SubChain(name=chain_name, domain_type=chain_type)
-        hierarchy_manager.add_sub_chain(chain_name, sub_chain)
+        sub_chain = SubChain(name=safe_chain_name, domain_type=chain_type)
+        hierarchy_manager.add_sub_chain(safe_chain_name, sub_chain)
         
         return JSONResponse(
             status_code=status.HTTP_201_CREATED,
