@@ -62,8 +62,6 @@ def test_cross_chain_validation_with_multiple_sub_chains():
     sub_chain1.proof_submission_interval = float('inf')
     sub_chain2.proof_submission_interval = float('inf')
 
-
-
     # Add operations to Sub-Chain 1
     sub_chain1.start_operation("ENTITY-001", "test_operation", {"param": "value1"})
     sub_chain1.complete_operation("ENTITY-001", "test_operation", {"result": "success"})
@@ -103,7 +101,6 @@ def test_cross_chain_validation_with_missing_sub_chain():
     hierarchy_manager.create_sub_chain("ExistingSubChain", "testing")
     sub_chain = hierarchy_manager.get_sub_chain("ExistingSubChain")
     sub_chain.proof_submission_interval = float('inf')
-
 
     # Add operations and submit proof
     sub_chain.start_operation("ENTITY-001", "test_operation", {"param": "value1"})
@@ -145,8 +142,6 @@ def test_cross_chain_validation_with_entity_consistency():
 
     order_chain.proof_submission_interval = float('inf')
     inventory_chain.proof_submission_interval = float('inf')
-
-
 
     # Simulate an entity being processed across multiple chains
     entity_id = "ORDER-12345"
@@ -196,8 +191,6 @@ def test_cross_chain_validation_system_integrity():
     sub_chain1.proof_submission_interval = float('inf')
     sub_chain2.proof_submission_interval = float('inf')
 
-
-
     # Add operations to Sub-Chains
     sub_chain1.start_operation("ENTITY-001", "test_operation", {"param": "value1"})
     sub_chain1.complete_operation("ENTITY-001", "test_operation", {"result": "success"})
@@ -239,8 +232,6 @@ def test_cross_chain_validation_fault_tolerance():
 
     sub_chain1.proof_submission_interval = float('inf')
     sub_chain2.proof_submission_interval = float('inf')
-
-
 
     # Add operations to Sub-Chains
     sub_chain1.start_operation("ENTITY-001", "test_operation", {"param": "value1"})
@@ -412,11 +403,7 @@ def test_cross_chain_validation_with_logic_inconsistency():
     assert entity_validation_results["entity_found"] is True
     assert entity_validation_results["chains_checked"] >= 1
     assert entity_validation_results["total_events"] >= 1
-    # The inconsistency detection might vary based on implementation details
-    # but we're testing that the validation runs without errors
 
-
-# ... existing code ...
 
 def test_cross_chain_validation_with_large_number_of_sub_chains():
     """Test cross-chain validation performance with a large number of sub-chains"""
@@ -455,8 +442,6 @@ def test_cross_chain_validation_with_large_number_of_sub_chains():
     assert validation_results["inconsistent_proofs"] == 0
     assert validation_results["overall_consistent"] is True
 
-
-# ... existing code ...
 
 def test_cross_chain_validation_with_invalid_input_data():
     """Test cross-chain validation behavior with invalid input data"""
