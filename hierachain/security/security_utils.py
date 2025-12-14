@@ -5,7 +5,7 @@ This module provides cryptographic primitives for the HieraChain framework,
 focusing on Ed25519 for digital signatures as required for enterprise-grade security.
 """
 
-from typing import Tuple, Optional
+from typing import Tuple, Optional, List, Dict, Any
 import binascii
 from nacl.signing import SigningKey, VerifyKey
 from nacl.encoding import HexEncoder
@@ -70,9 +70,10 @@ class KeyPair:
         except Exception as e:
             raise CryptoError(f"Signing failed: {str(e)}")
 
-def verify_signature(public_key_hex: str, message: bytes, signature_hex: str) -> bool:
+def verify_signature_standalone(public_key_hex: str, message: bytes, signature_hex: str) -> bool:
     """
-    Verify an Ed25519 signature.
+    Pure function to verify an Ed25519 signature.
+    Designed to be picklable for multiprocessing.
 
     Args:
         public_key_hex: The signer's public key in hex format.
@@ -95,8 +96,23 @@ def verify_signature(public_key_hex: str, message: bytes, signature_hex: str) ->
     except (BadSignatureError, ValueError, binascii.Error):
         return False
     except Exception as e:
+        # Logger might not work well in subprocess without config, but we try
         logger.error(f"Unexpected error during verification: {e}")
         return False
+
+def verify_signature(public_key_hex: str, message: bytes, signature_hex: str) -> bool:
+    """
+    Verify an Ed25519 signature.
+    
+    Args:
+        public_key_hex: The signer's public key in hex format.
+        message: The original message bytes.
+        signature_hex: The signature in hex format.
+
+    Returns:
+        True if valid, False otherwise.
+    """
+    return verify_signature_standalone(public_key_hex, message, signature_hex)
 
 def generate_key_pair_hex() -> Tuple[str, str]:
     """
@@ -107,3 +123,35 @@ def generate_key_pair_hex() -> Tuple[str, str]:
     """
     kp = KeyPair.generate()
     return kp.public_key, kp.private_key
+
+def verify_batch_signatures(items: List[Dict[str, Any]]) -> List[bool]:
+    """
+    Verify a batch of signatures, designed for multiprocessing.
+    
+    Args:
+        items: List of dicts, each containing:
+                - 'public_key': hex string
+                - 'message': bytes or string (if string, will be encoded)
+                - 'signature': hex string
+
+    Returns:
+        List of booleans corresponding to validity of each item.
+    """
+    results = []
+    for item in items:
+        try:
+            pk = item.get('public_key')
+            msg = item.get('message')
+            sig = item.get('signature')
+            
+            if not pk or not msg or not sig:
+                results.append(False)
+                continue
+                
+            if isinstance(msg, str):
+                msg = msg.encode('utf-8')
+                
+            results.append(verify_signature_standalone(pk, msg, sig))
+        except Exception:
+            results.append(False)
+    return results
