@@ -8,6 +8,7 @@ rapid shutdowns.
 """
 
 import os
+import re
 import logging
 import struct
 import json
@@ -28,6 +29,17 @@ class TransactionJournal:
     IO and ensures schema consistency early in the pipeline.
     """
     
+    @staticmethod
+    def _validate_filename(name: str) -> None:
+        """
+        Validate filename against strict security rules (CWE-22).
+        Allowed: alphanumeric, underscore, hyphen, single dot.
+        """
+        # Strict allowlist approach.
+        pattern = r'^[a-zA-Z0-9_\-]+(\.[a-zA-Z0-9]+)?$'
+        if not re.match(pattern, name):
+            raise ValueError(f"Security: Invalid filename '{name}'. Allowed: [a-zA-Z0-9_-] and single optional extension.")
+    
     def __init__(self, storage_dir: str = "data/journal", active_log_name: str = "current.log"):
         """
         Initialize the Transaction Journal.
@@ -36,9 +48,19 @@ class TransactionJournal:
             storage_dir: Directory to store journal files.
             active_log_name: Name of the active journal file.
         """
-        safe_log_name = os.path.basename(active_log_name)
+        # Explicit check for traversal in storage input before Path processing
+        if ".." in storage_dir:
+            raise ValueError("Security: Path traversal sequence ('..') not allowed in storage_dir.")
+
         self.storage_path = Path(storage_dir).resolve()
-        self.active_log_file = self.storage_path / safe_log_name
+        self._validate_filename(active_log_name)
+        self.active_log_file = (self.storage_path / active_log_name).resolve()
+
+        try:
+            self.active_log_file.relative_to(self.storage_path)
+        except ValueError:
+             raise ValueError(f"Security: Log file path {self.active_log_file} escapes storage directory {self.storage_path}")
+        
         self._file_handle = None
         self._schema = schemas.get_event_schema()
         
