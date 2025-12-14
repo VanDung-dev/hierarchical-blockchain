@@ -48,13 +48,15 @@ class TransactionJournal:
             storage_dir: Directory to store journal files.
             active_log_name: Name of the active journal file.
         """
-        # Strictly validate storage_dir string BEFORE any filesystem resolution (CodeQL: py/path-injection)
+        # Strictly validate storage_dir input string first
         self._validate_storage_dir_input(storage_dir)
 
-        self.storage_path = Path(storage_dir).resolve()  # codeql[py/path-injection]
-
         data_root = Path("data").resolve()
-        # Enforce storage_path stays within data_root using os.path.commonpath (recognized by CodeQL)
+
+        # Build a safe storage path anchored to data_root from sanitized components
+        self.storage_path = self._build_storage_path(data_root, storage_dir)
+
+        # Enforce storage_path stays within data_root as an additional guard
         import os as _os
         if _os.path.commonpath([str(data_root), str(self.storage_path)]) != str(data_root):
             raise ValueError(f"Security: Storage path {self.storage_path} must be within {data_root}")
@@ -62,7 +64,8 @@ class TransactionJournal:
         safe_log_name = os.path.basename(active_log_name)
         self._validate_filename(safe_log_name)
 
-        self.active_log_file = (self.storage_path / safe_log_name).resolve()  # codeql[py/path-injection]
+        # Build active log file path strictly inside storage_path (no resolve at sink)
+        self.active_log_file = (self.storage_path / safe_log_name)
 
         try:
             self.active_log_file.relative_to(self.storage_path)
@@ -122,6 +125,56 @@ class TransactionJournal:
                 raise ValueError("Security: storage_dir contains invalid path components")
             if not re.match(r'^[a-zA-Z0-9_\-]+$', comp):
                 raise ValueError("Security: storage_dir contains invalid path components")
+
+    @staticmethod
+    def _build_storage_path(data_root: Path, storage_dir: str) -> Path:
+        """
+        Build a safe storage path anchored strictly to data_root using sanitized components.
+        - Absolute input must already be under data_root, otherwise reject.
+        - Relative input is interpreted as components under data_root; if it starts with 'data', drop the prefix to avoid duplication.
+        - Only allow components matching [a-zA-Z0-9_-].
+        """
+        import os as _os
+
+        # Handle absolute paths explicitly
+        if _os.path.isabs(storage_dir):
+            abs_path = Path(storage_dir).resolve()
+            # Must be within data_root
+            if _os.path.commonpath([str(data_root), str(abs_path)]) != str(data_root):
+                raise ValueError(f"Security: Storage path {abs_path} must be within {data_root}")
+            try:
+                rel_parts = list(abs_path.relative_to(data_root).parts)
+            except Exception:
+                rel_parts = []
+            # Validate each component
+            safe_parts = []
+            for comp in rel_parts:
+                if comp in ('', '.', '..'):
+                    raise ValueError("Security: storage_dir contains invalid path components")
+                if not re.match(r'^[a-zA-Z0-9_\-]+$', comp):
+                    raise ValueError("Security: storage_dir contains invalid path components")
+                safe_parts.append(comp)
+            return data_root.joinpath(*safe_parts) if safe_parts else data_root
+
+        # Relative path case: sanitize from raw string
+        # Strip optional Windows drive prefix
+        _s = storage_dir
+        m = re.match(r'^([a-zA-Z]:[\\/])(.*)$', _s)
+        if m:
+            _s = m.group(2)
+        # Split into components
+        comps = re.split(r'[\\/]+', _s)
+        # Drop leading 'data' to avoid data/data duplication
+        if comps and comps[0].lower() == 'data':
+            comps = comps[1:]
+        safe_parts = []
+        for comp in comps:
+            if comp in ('', '.', '..'):
+                raise ValueError("Security: storage_dir contains invalid path components")
+            if not re.match(r'^[a-zA-Z0-9_\-]+$', comp):
+                raise ValueError("Security: storage_dir contains invalid path components")
+            safe_parts.append(comp)
+        return data_root.joinpath(*safe_parts) if safe_parts else data_root
         
     def _open_journal(self):
         """Open the journal file for appending (binary mode)."""
