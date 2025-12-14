@@ -186,6 +186,7 @@ class BlockBuilder:
         self.block_size = config.get("block_size", 500)
         self.batch_timeout = config.get("batch_timeout", 2.0)  # seconds
         self.current_batch: list[PendingEvent] = []
+        self.current_batch_ids: set[str] = set()
         self.batch_start_time = time.time()
 
     def add_event(self, event: PendingEvent) -> list[dict[str, Any]] | None:
@@ -198,8 +199,16 @@ class BlockBuilder:
         Returns:
             List of event data if batch is ready, None otherwise
         """
+        if event.event_id in self.current_batch_ids:
+            return None
+
+        # Start timer on first event in batch
+        if not self.current_batch:
+            self.batch_start_time = time.time()
+
         self.current_batch.append(event)
-        
+        self.current_batch_ids.add(event.event_id)
+
         # Check if batch is ready
         if self.is_batch_ready():
             return self._finalize_batch()
@@ -235,6 +244,7 @@ class BlockBuilder:
 
         # Reset batch
         self.current_batch.clear()
+        self.current_batch_ids.clear()
         self.batch_start_time = time.time()
         
         return events_list
@@ -524,11 +534,18 @@ class OrderingService:
             self.processing_thread = threading.Thread(target=self._process_events)
             self.processing_thread.daemon = True
             self.processing_thread.start()
-        
-        # Enable ACTIVE mode
-        self.status = OrderingStatus.ACTIVE
-    
-    
+
+        # Status will be set to ACTIVE by the processing thread after recovery
+        # Wait for service to become ACTIVE (with timeout) to ensure it's ready
+        if self.config.get("wait_for_active", True):
+            start_time = time.time()
+            timeout = self.config.get("start_timeout", 5.0)
+            while self.status != OrderingStatus.ACTIVE:
+                if time.time() - start_time > timeout:
+                    logger.warning("Service start timed out waiting for ACTIVE status")
+                    break
+                time.sleep(0.01)
+
     def lockdown(self) -> None:
         """Enter LOCKDOWN mode"""
         self.status = OrderingStatus.LOCKDOWN
@@ -552,6 +569,10 @@ class OrderingService:
         """Async event processing loop"""
         # Recover state before processing new events
         await self._recover_state_async()
+
+        # Enable ACTIVE mode after recovery
+        self.status = OrderingStatus.ACTIVE
+        logger.info("Ordering Service is now ACTIVE and ready to process events")
 
         batch = []
         last_batch_time = time.time()
@@ -660,9 +681,7 @@ class OrderingService:
                     if not is_valid:
                         event.status = EventStatus.REJECTED
                         self.statistics["events_rejected"] += 1
-                        logger.warning(
-                            f"Event {event.event_id} rejected due to invalid signature"
-                        )
+                        logger.warning(f"Event {event.event_id} rejected due to invalid signature")
             except Exception as e:
                 logger.error(f"Batch verification failed: {e}")
 
@@ -754,9 +773,9 @@ class OrderingService:
             self.statistics["events_committed"] += block_event_count
             
             if self.statistics["events_committed"] > 0:
-                self.statistics["average_processing_time"] = (
-                    self.statistics["total_latency"] / self.statistics["events_committed"]
-                )
+                total_latency = self.statistics["total_latency"]
+                events_committed = self.statistics["events_committed"]
+                self.statistics["average_processing_time"] = (total_latency / events_committed)
             
             # Clear in-memory processed events cache
             self.processed_events.clear()
@@ -813,7 +832,8 @@ class OrderingService:
     def _generate_event_id(event_data: dict[str, Any], channel_id: str) -> str:
         """Generate unique event ID"""
         clean_data = OrderingService._make_serializable(event_data)
-        data = f"{channel_id}:{json.dumps(clean_data, sort_keys=True, separators=(',', ':'))}:{time.time()}"
+        json_str = json.dumps(clean_data, sort_keys=True, separators=(',', ':'))
+        data = f"{channel_id}:{json_str}:{time.time()}"
         return hashlib.sha256(data.encode()).hexdigest()[:16]
     
     def _setup_default_validation_rules(self) -> None:
