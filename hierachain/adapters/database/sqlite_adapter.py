@@ -36,6 +36,11 @@ class SQLiteAdapter:
             database_path: Path to the SQLite database file
         """
         self.database_path = database_path
+        
+        # Security check for Path Traversal (CWE-22)
+        if ".." in self.database_path:
+             raise ValueError(f"Security: Invalid database path '{self.database_path}'. Path traversal detected.")
+             
         self.connection_pool_size = 5
         self._initialize_database()
     

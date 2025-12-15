@@ -39,6 +39,16 @@ class FileStorageAdapter:
         
         self._create_directories()
         logger.info(f"File storage initialized at: {self.storage_path}")
+
+    @staticmethod
+    def _validate_filename(name: str) -> None:
+        """
+        Validate filename against strict security rules (CWE-22).
+        Allowed: alphanumeric, underscore, hyphen.
+        """
+        import re
+        if not re.match(r'^[a-zA-Z0-9_\-]+$', name):
+            raise ValueError(f"Security: Invalid name '{name}'. Only alphanumeric, underscore, and hyphen are allowed.")
     
     def _create_directories(self):
         """Create necessary directories for storage"""
@@ -55,16 +65,19 @@ class FileStorageAdapter:
     
     def _get_chain_file(self, chain_name: str) -> Path:
         """Get file path for chain metadata"""
+        self._validate_filename(chain_name)
         return self.chains_path / f"{chain_name}.json"
     
     def _get_block_file(self, chain_name: str, block_index: int) -> Path:
         """Get file path for a specific block (Parquet)"""
+        self._validate_filename(chain_name)
         chain_dir = self.blocks_path / chain_name
         chain_dir.mkdir(exist_ok=True)
         return chain_dir / f"block_{block_index:06d}.parquet"
     
     def _get_events_dir(self, chain_name: str) -> Path:
         """Get directory for chain events dataset"""
+        self._validate_filename(chain_name)
         path = self.events_path / chain_name
         path.mkdir(parents=True, exist_ok=True)
         return path
@@ -262,6 +275,7 @@ class FileStorageAdapter:
     def get_chain_blocks(self, chain_name: str, limit: int = None, offset: int = 0) -> List[Dict]:
         """Get blocks for a specific chain"""
         try:
+            self._validate_filename(chain_name)
             chain_dir = self.blocks_path / chain_name
             if not chain_dir.exists():
                 return []
@@ -300,6 +314,8 @@ class FileStorageAdapter:
             
             return blocks
             
+        except ValueError:
+            raise
         except Exception as e:
             logger.error(f"Failed to get blocks for chain {chain_name}: {e}")
             return []
@@ -357,6 +373,8 @@ class FileStorageAdapter:
             events.sort(key=lambda x: x.get("timestamp", 0))
             return events
             
+        except ValueError:
+            raise
         except Exception as e:
             logger.error(f"Failed to get events for entity {entity_id}: {e}")
             return []
@@ -364,6 +382,7 @@ class FileStorageAdapter:
     def get_chain_stats(self, chain_name: str) -> Dict:
         """Get statistics for a specific chain using Arrow Datasets"""
         try:
+            self._validate_filename(chain_name)
             chain_dir = self.blocks_path / chain_name
             events_dir = self._get_events_dir(chain_name)
             
@@ -404,6 +423,8 @@ class FileStorageAdapter:
                 "unique_entities": unique_entities_count
             }
             
+        except ValueError:
+            raise
         except Exception as e:
             logger.error(f"Failed to get stats for chain {chain_name}: {e}")
             return {
