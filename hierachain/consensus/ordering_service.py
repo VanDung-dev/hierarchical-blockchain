@@ -723,7 +723,7 @@ class OrderingService:
             if certification_result["valid"]:
                 pending_event.status = EventStatus.CERTIFIED
                 self.statistics["events_certified"] += 1
-                logger.error(f"Event {pending_event.event_id} CERTIFIED. Adding to block builder.")
+                logger.debug(f"Event {pending_event.event_id} CERTIFIED. Adding to block builder.")
                 
                 # Add to block builder
                 raw_block_data = self.block_builder.add_event(pending_event)
@@ -809,9 +809,9 @@ class OrderingService:
                 logger.error(f"Failed to log block cut event: {e}")
 
         # Put in commit queue
-        logger.error(f"DEBUG: Committing block {block.index} to queue {id(self.commit_queue)}. Queue size before: {self.commit_queue.qsize()}")
+        logger.debug(f"DEBUG: Committing block {block.index} to queue {id(self.commit_queue)}. Queue size before: {self.commit_queue.qsize()}")
         self.commit_queue.put(block)
-        logger.error(f"DEBUG: Block {block.index} committed. Queue {id(self.commit_queue)} size after: {self.commit_queue.qsize()}")
+        logger.debug(f"DEBUG: Block {block.index} committed. Queue {id(self.commit_queue)} size after: {self.commit_queue.qsize()}")
         
         # Add to history
         self.block_history.append(block)
