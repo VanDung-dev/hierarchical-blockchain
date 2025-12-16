@@ -294,7 +294,6 @@ development:
 
 # Version-specific Configuration
 version_config:
-  upgrade_path: "0.dev4_to_0.dev5" # Upgrade path identifier
   compatibility:
     backward_compatible: true      # Backward compatibility
     forward_compatible: false      # Forward compatibility (N/A for dev versions)

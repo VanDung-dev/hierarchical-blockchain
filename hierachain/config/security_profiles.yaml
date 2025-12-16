@@ -106,7 +106,7 @@ security:
           require_special_chars: true
           max_age_days: 90
 
-  # Key Backup and Recovery Configuration (v0.dev5)
+  # Key Backup and Recovery Configuration
   key_backup:
     enabled: true
     frequency: "daily"
