@@ -29,6 +29,9 @@ def test_recovery_and_rehydration():
             "batch_timeout": 0.5
         }
         chain1 = SubChain(chain_name, "test_domain", config=config)
+        # Set low block interval to allow fast block creation in test loop
+        chain1.consensus.config["block_interval"] = 0.01
+        time.sleep(0.5) # Allow genesis block to age
         
         # Add 3 events to generate 3 blocks
         print("[Test] Adding 3 events...")
@@ -62,9 +65,11 @@ def test_recovery_and_rehydration():
         # 2. Second Run: Simulation of Crash/Restart
         print("[Test] Phase 2: Restarting (Simulating Crash)...")
         time.sleep(1.0) # Allow sockets/files to close
-        
+
         # Re-initialize with SAME config to ensure same block formation rules
         chain2 = SubChain(chain_name, "test_domain", config=config)
+        chain2.consensus.config["block_interval"] = 0.01
+        time.sleep(0.5) # Allow genesis block to age
         
         print("[Test]        # Verify Rehydration")
         latest_block_2 = chain2.get_latest_block()
