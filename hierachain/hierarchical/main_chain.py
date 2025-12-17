@@ -39,9 +39,6 @@ class MainChain(Blockchain):
         # Dynamic Consensus Loading
         if settings.CONSENSUS_TYPE == "proof_of_federation":
             self.consensus = ProofOfFederation("MainChain_PoF")
-            # Default self as first validator in PoF mode
-            if hasattr(self.consensus, 'add_validator'):
-                self.consensus.add_validator("main_chain", {"role": "boot_node"})
         else:
             # Default back to PoA
             self.consensus = ProofOfAuthority("MainChain_PoA")
@@ -50,7 +47,8 @@ class MainChain(Blockchain):
         self.sub_chain_metadata: Dict[str, Dict[str, Any]] = {}
         self.proof_count: int = 0
 
-        if isinstance(self.consensus, ProofOfAuthority):
+        # Register Main Chain as the primary authority/validator
+        if hasattr(self.consensus, 'add_authority'):
             self.consensus.add_authority("main_chain", {
                 "role": "root_authority",
                 "permissions": ["proof_validation", "sub_chain_registration"],
