@@ -58,6 +58,7 @@ def test_pof_round_robin_leader_selection():
 def test_pof_block_validation_correct_leader():
     """Test that blocks must be signed by the correct rotating leader"""
     pof = ProofOfFederation(name="TestPoF")
+    pof.config["min_validators"] = 2  # Required for test with 2 validators
     validators = ["val_A", "val_B"] # sorted: val_A, val_B
     for v in validators:
         pof.add_validator(v)
