@@ -109,9 +109,10 @@ class TransactionJournal:
 
         # Allow only safe characters overall (components and separators)
         # Allow optional Windows drive prefix like "C:\\" or "D:/" at the beginning
-        overall_pattern = r'^(?:[a-zA-Z]:[\\/])?[a-zA-Z0-9_\-/\\]+$'
+        # Added . for usernames/extensions and ~ for Windows short paths
+        overall_pattern = r'^(?:[a-zA-Z]:[\\/])?[a-zA-Z0-9_\-~./\\]+$'
         if not re.match(overall_pattern, storage_dir):
-            raise ValueError("Security: storage_dir contains invalid characters. Allowed: [a-zA-Z0-9_-] and path separators")
+            raise ValueError("Security: storage_dir contains invalid characters. Allowed: [a-zA-Z0-9_-], dot, tilde, and path separators")
 
         # Validate each component is safe and not empty / dot components
         # Strip Windows drive prefix from component validation if present
@@ -123,8 +124,9 @@ class TransactionJournal:
         for comp in components:
             if comp in ('', '.', '..'):
                 raise ValueError("Security: storage_dir contains invalid path components")
-            if not re.match(r'^[a-zA-Z0-9_\-]+$', comp):
-                raise ValueError("Security: storage_dir contains invalid path components")
+            # Added . and ~ to component validation
+            if not re.match(r'^[a-zA-Z0-9_\-~.]+$', comp):
+                raise ValueError(f"Security: storage_dir contains invalid path components: {comp}")
 
     @staticmethod
     def _build_storage_path(data_root: Path, storage_dir: str) -> Path:
