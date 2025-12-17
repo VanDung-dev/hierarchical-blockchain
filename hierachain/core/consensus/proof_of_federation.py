@@ -48,6 +48,10 @@ class ProofOfFederation(BaseConsensus):
             "enforce_rotation": True
         }
 
+    def get_validator_count(self) -> int:
+        """Get the number of active validators."""
+        return len(self.validators)
+
     def add_validator(self, validator_id: str, metadata: Optional[Dict[str, Any]] = None) -> bool:
         """
         Add a validator to the federation.

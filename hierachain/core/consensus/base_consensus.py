@@ -30,6 +30,15 @@ class BaseConsensus(ABC):
         """
         self.name = name
         self.config: Dict[str, Any] = {}
+
+    def get_validator_count(self) -> int:
+        """
+        Get the number of active validators/authorities.
+        
+        Returns:
+            The count of entities capable of signing blocks.
+        """
+        return 0
     
     @abstractmethod
     def validate_block(self, block: Block, previous_block: Block) -> bool:
