@@ -247,7 +247,7 @@ class MainChain(Blockchain):
             "sub_chains": list(self.registered_sub_chains),
             "total_proofs": len(proof_events),
             "consensus_type": self.consensus.name,
-            "authorities": len(self.consensus.authorities)
+            "authorities": self.consensus.get_validator_count()
         }
     
     def finalize_main_chain_block(self) -> Optional[Dict[str, Any]]:
