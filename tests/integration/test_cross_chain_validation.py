@@ -15,12 +15,14 @@ def test_cross_chain_validation():
     hierarchy_manager = HierarchyManager("ValidationMainChain")
     hierarchy_manager.configure_auto_proof_submission(False)
     main_chain = hierarchy_manager.main_chain
+    main_chain.consensus.config["block_interval"] = 0.01
     
     # Create Sub-Chain and add to hierarchy using the create_sub_chain method
     # This automatically connects it to the main chain
     hierarchy_manager.create_sub_chain("ValidationSubChain", "generic")
     sub_chain = hierarchy_manager.get_sub_chain("ValidationSubChain")
     assert sub_chain is not None
+    sub_chain.consensus.config["block_interval"] = 0.01
     
     # Explicitly disable auto-proof submission at the sub-chain level to prevent race conditions
     sub_chain.proof_submission_interval = float('inf')
@@ -52,6 +54,7 @@ def test_cross_chain_validation_with_multiple_sub_chains():
     # Create Hierarchy Manager with Main Chain
     hierarchy_manager = HierarchyManager("MultiChainValidationMain")
     main_chain = hierarchy_manager.main_chain
+    main_chain.consensus.config["block_interval"] = 0.01
 
     # Create multiple Sub-Chains
     hierarchy_manager.create_sub_chain("SubChain1", "testing")
@@ -59,6 +62,8 @@ def test_cross_chain_validation_with_multiple_sub_chains():
 
     sub_chain1 = hierarchy_manager.get_sub_chain("SubChain1")
     sub_chain2 = hierarchy_manager.get_sub_chain("SubChain2")
+    sub_chain1.consensus.config["block_interval"] = 0.01
+    sub_chain2.consensus.config["block_interval"] = 0.01
     assert sub_chain1 is not None
     assert sub_chain2 is not None
 
@@ -99,11 +104,13 @@ def test_cross_chain_validation_with_missing_sub_chain():
     # Create Hierarchy Manager with Main Chain
     hierarchy_manager = HierarchyManager("MissingChainValidationMain")
     main_chain = hierarchy_manager.main_chain
+    main_chain.consensus.config["block_interval"] = 0.01
 
     # Create Sub-Chain and add operations
     hierarchy_manager.create_sub_chain("ExistingSubChain", "testing")
     sub_chain = hierarchy_manager.get_sub_chain("ExistingSubChain")
     assert sub_chain is not None
+    sub_chain.consensus.config["block_interval"] = 0.01
     sub_chain.proof_submission_interval = float('inf')
 
     # Add operations and submit proof
@@ -136,6 +143,7 @@ def test_cross_chain_validation_with_entity_consistency():
     # Create Hierarchy Manager with Main Chain
     hierarchy_manager = HierarchyManager("EntityConsistencyMain")
     main_chain = hierarchy_manager.main_chain
+    main_chain.consensus.config["block_interval"] = 0.01
 
     # Create Sub-Chains
     hierarchy_manager.create_sub_chain("OrderChain", "order_processing")
@@ -145,6 +153,8 @@ def test_cross_chain_validation_with_entity_consistency():
     inventory_chain = hierarchy_manager.get_sub_chain("InventoryChain")
     assert order_chain is not None
     assert inventory_chain is not None
+    order_chain.consensus.config["block_interval"] = 0.01
+    inventory_chain.consensus.config["block_interval"] = 0.01
 
     order_chain.proof_submission_interval = float('inf')
     inventory_chain.proof_submission_interval = float('inf')
@@ -186,6 +196,7 @@ def test_cross_chain_validation_system_integrity():
     # Create Hierarchy Manager with Main Chain
     hierarchy_manager = HierarchyManager("SystemIntegrityMain")
     main_chain = hierarchy_manager.main_chain
+    main_chain.consensus.config["block_interval"] = 0.01
 
     # Create Sub-Chains
     hierarchy_manager.create_sub_chain("TestSubChain1", "testing")
@@ -195,6 +206,8 @@ def test_cross_chain_validation_system_integrity():
     sub_chain2 = hierarchy_manager.get_sub_chain("TestSubChain2")
     assert sub_chain1 is not None
     assert sub_chain2 is not None
+    sub_chain1.consensus.config["block_interval"] = 0.01
+    sub_chain2.consensus.config["block_interval"] = 0.01
 
     sub_chain1.proof_submission_interval = float('inf')
     sub_chain2.proof_submission_interval = float('inf')
@@ -230,6 +243,7 @@ def test_cross_chain_validation_fault_tolerance():
     # Create Hierarchy Manager with Main Chain
     hierarchy_manager = HierarchyManager("FaultToleranceValidationMain")
     main_chain = hierarchy_manager.main_chain
+    main_chain.consensus.config["block_interval"] = 0.01
 
     # Create Sub-Chains
     hierarchy_manager.create_sub_chain("FaultToleranceSubChain1", "testing")
@@ -239,6 +253,8 @@ def test_cross_chain_validation_fault_tolerance():
     sub_chain2 = hierarchy_manager.get_sub_chain("FaultToleranceSubChain2")
     assert sub_chain1 is not None
     assert sub_chain2 is not None
+    sub_chain1.consensus.config["block_interval"] = 0.01
+    sub_chain2.consensus.config["block_interval"] = 0.01
 
     sub_chain1.proof_submission_interval = float('inf')
     sub_chain2.proof_submission_interval = float('inf')
@@ -284,11 +300,13 @@ def test_cross_chain_validation_with_timestamp_inconsistency():
     # Create Hierarchy Manager with Main Chain
     hierarchy_manager = HierarchyManager("TimestampInconsistencyMain")
     main_chain = hierarchy_manager.main_chain
+    main_chain.consensus.config["block_interval"] = 0.01
 
     # Create Sub-Chain and add operations
     hierarchy_manager.create_sub_chain("SubChainWithTimestampIssue", "testing")
     sub_chain = hierarchy_manager.get_sub_chain("SubChainWithTimestampIssue")
     assert sub_chain is not None
+    sub_chain.consensus.config["block_interval"] = 0.01
     sub_chain.proof_submission_interval = float('inf')
 
 
@@ -362,6 +380,7 @@ def test_cross_chain_validation_with_empty_hierarchy():
     # Create Hierarchy Manager with Main Chain only
     hierarchy_manager = HierarchyManager("EmptyHierarchyMain")
     main_chain = hierarchy_manager.main_chain
+    main_chain.consensus.config["block_interval"] = 0.01
 
     # Finalize an empty block on main chain
     main_chain.finalize_block()
@@ -384,11 +403,13 @@ def test_cross_chain_validation_with_corrupted_entity_data():
     # Create Hierarchy Manager with Main Chain
     hierarchy_manager = HierarchyManager("CorruptedEntityMain")
     main_chain = hierarchy_manager.main_chain
+    main_chain.consensus.config["block_interval"] = 0.01
 
     # Create Sub-Chains
     hierarchy_manager.create_sub_chain("TestChain", "testing")
     test_chain = hierarchy_manager.get_sub_chain("TestChain")
     assert test_chain is not None
+    test_chain.consensus.config["block_interval"] = 0.01
 
 
     # Add operations with entity that has invalid data
@@ -416,11 +437,14 @@ def test_cross_chain_validation_with_logic_inconsistency():
     # Create Hierarchy Manager with Main Chain
     hierarchy_manager = HierarchyManager("LogicInconsistencyMain")
     main_chain = hierarchy_manager.main_chain
+    main_chain.consensus.config["block_interval"] = 0.01
 
     # Create Sub-Chains
     hierarchy_manager.create_sub_chain("LogicTestChain", "testing")
     test_chain = hierarchy_manager.get_sub_chain("LogicTestChain")
+    test_chain = hierarchy_manager.get_sub_chain("LogicTestChain")
     assert test_chain is not None
+    test_chain.consensus.config["block_interval"] = 0.01
 
 
     # Create logically inconsistent events - complete operation without starting it
@@ -454,6 +478,7 @@ def test_cross_chain_validation_with_large_number_of_sub_chains():
     # Create Hierarchy Manager with Main Chain
     hierarchy_manager = HierarchyManager("LargeScaleValidationMain")
     main_chain = hierarchy_manager.main_chain
+    main_chain.consensus.config["block_interval"] = 0.01
 
     # Create a large number of Sub-Chains (reduced to 5 for test performance)
     num_sub_chains = 5
@@ -462,6 +487,7 @@ def test_cross_chain_validation_with_large_number_of_sub_chains():
         hierarchy_manager.create_sub_chain(chain_name, f"domain_{i}")
         sub_chain = hierarchy_manager.get_sub_chain(chain_name)
         assert sub_chain is not None
+        sub_chain.consensus.config["block_interval"] = 0.01
         sub_chain.proof_submission_interval = float('inf')
 
 
@@ -493,11 +519,13 @@ def test_cross_chain_validation_with_invalid_input_data():
     # Create Hierarchy Manager with Main Chain
     hierarchy_manager = HierarchyManager("InvalidInputValidationMain")
     main_chain = hierarchy_manager.main_chain
+    main_chain.consensus.config["block_interval"] = 0.01
 
     # Create Sub-Chain
     hierarchy_manager.create_sub_chain("InvalidDataSubChain", "testing")
     sub_chain = hierarchy_manager.get_sub_chain("InvalidDataSubChain")
     assert sub_chain is not None
+    sub_chain.consensus.config["block_interval"] = 0.01
     sub_chain.proof_submission_interval = float('inf')
 
 
