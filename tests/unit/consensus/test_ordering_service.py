@@ -39,9 +39,16 @@ node = OrderingNode(
 )
 
 
+def create_test_temp_dir():
+    """Create a temporary directory within the project's data directory to satisfy security constraints."""
+    data_root = os.path.join(os.getcwd(), "data", "test_temp")
+    os.makedirs(data_root, exist_ok=True)
+    return tempfile.mkdtemp(dir=data_root)
+
+
 def test_init_with_defaults():
     """Test initialization with default parameters"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         config = {"storage_dir": temp_dir}
@@ -57,7 +64,7 @@ def test_init_with_defaults():
 
 def test_init_with_params():
     """Test initialization with custom parameters"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         config = {"block_size": 1000, "batch_timeout": 5.0, "storage_dir": temp_dir}
@@ -75,7 +82,7 @@ def test_init_with_params():
 
 def test_receive_valid_event():
     """Test receiving a valid event"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         config = {"storage_dir": temp_dir}
@@ -105,7 +112,7 @@ def test_receive_valid_event():
 def test_block_creation(benchmark: Any) -> None:
     """Test block creation when batch size is reached"""
     def execute() -> tuple[OrderingService, dict[str, Any]]:
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = create_test_temp_dir()
         service = None
         try:
             config = {"block_size": 3, "batch_timeout": 0.1, "storage_dir": temp_dir}
@@ -146,7 +153,7 @@ def test_block_creation(benchmark: Any) -> None:
 
 def test_invalid_event_handling():
     """Test invalid event handling functionality"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         config = {"storage_dir": temp_dir}
@@ -168,7 +175,7 @@ def test_invalid_event_handling():
 
 def test_timeout_block_creation():
     """Test timeout-based block creation functionality"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         config = {"block_size": 10, "batch_timeout": 0.1, "storage_dir": temp_dir}
@@ -207,7 +214,7 @@ def test_timeout_block_creation():
 
 def test_service_status():
     """Test service status functionality"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         config = {"storage_dir": temp_dir}
@@ -225,7 +232,7 @@ def test_service_status():
 
 def test_custom_validation_rule():
     """Test custom validation rule functionality"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         config = {"storage_dir": temp_dir}
@@ -260,7 +267,7 @@ def test_custom_validation_rule():
 def test_concurrent_event_processing(benchmark: Any) -> None:
     """Test concurrent event processing"""
     def execute() -> tuple[OrderingService, int]:
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = create_test_temp_dir()
         service = None
         try:
             service = OrderingService(
@@ -303,7 +310,7 @@ def test_concurrent_event_processing(benchmark: Any) -> None:
 def test_unhealthy_node(benchmark: Any) -> None:
     """Test handling of unhealthy nodes"""
     def execute():
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = create_test_temp_dir()
         service = None
         try:
             # Create an unhealthy node (last heartbeat is old)
@@ -347,7 +354,7 @@ def test_unhealthy_node(benchmark: Any) -> None:
 
 def test_service_start_stop():
     """Test service start and stop functionality"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         # Create service with minimal config
@@ -377,7 +384,7 @@ def test_service_start_stop():
 
 def test_system_error_handling():
     """Test handling of system errors during event processing"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         config = {"storage_dir": temp_dir}
@@ -432,7 +439,7 @@ def test_system_error_handling():
 def test_large_volume_performance(benchmark):
     """Test performance with large volume of events"""
     def execute():
-        temp_dir = tempfile.mkdtemp()
+        temp_dir = create_test_temp_dir()
         service = None
         try:
             config = {"block_size": 100, "batch_timeout": 0.5, "storage_dir": temp_dir}
@@ -494,7 +501,7 @@ def test_large_volume_performance(benchmark):
 
 def test_malformed_event_data():
     """Test handling of malformed event data"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         config = {"storage_dir": temp_dir}
@@ -539,7 +546,7 @@ def test_malformed_event_data():
 
 def test_concurrent_edge_cases():
     """Test concurrent processing edge cases"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         config = {"block_size": 5, "batch_timeout": 0.1, "storage_dir": temp_dir}
@@ -592,7 +599,7 @@ def test_concurrent_edge_cases():
 
 def test_leader_election_scenarios():
     """Test leader election scenarios"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         # Create multiple nodes with one leader
@@ -633,7 +640,7 @@ def test_leader_election_scenarios():
 
 def test_cleanup_on_service_stop():
     """Test proper cleanup when service is stopped"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         service = OrderingService(nodes=[node], config={"storage_dir": temp_dir})
@@ -670,7 +677,7 @@ def test_cleanup_on_service_stop():
 
 def test_network_failure_scenarios():
     """Test handling of network failure scenarios"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         # Create nodes with different network conditions
@@ -711,7 +718,7 @@ def test_network_failure_scenarios():
 
 def test_network_partition_handling():
     """Test handling of network partition scenarios"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         # Create multiple nodes
@@ -769,7 +776,7 @@ def test_network_partition_handling():
 
 def test_leader_failover():
     """Test leader failover when leader node goes down"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         # Create nodes with one leader
@@ -821,7 +828,7 @@ def test_leader_failover():
 
 def test_complex_event_data():
     """Test handling of complex event data structures"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         config = {"storage_dir": temp_dir}
@@ -1025,7 +1032,7 @@ def test_resource_validator_with_extreme_values():
 
 def test_binary_data_handling():
     """Test handling of binary data in events"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         # Create binary data
@@ -1061,7 +1068,7 @@ def test_binary_data_handling():
 
 def test_large_payload_handling():
     """Test handling of large payload events"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         service = OrderingService(
@@ -1108,7 +1115,7 @@ def test_large_payload_handling():
 
 def test_very_small_block_size():
     """Test ordering service with very small block size"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         config = {"block_size": 1, "batch_timeout": 0.1, "storage_dir": temp_dir}
@@ -1141,7 +1148,7 @@ def test_very_small_block_size():
 
 def test_very_large_block_size():
     """Test ordering service with very large block size"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         # Increase timeout to avoid auto-block creation
@@ -1179,7 +1186,7 @@ def test_very_large_block_size():
 
 def test_service_recovery_after_crash():
     """Test service recovery after simulated crash"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     new_service = None
     try:
@@ -1228,7 +1235,7 @@ def test_service_recovery_after_crash():
 
 def test_access_control_validation():
     """Test access control validation if implemented"""
-    temp_dir = tempfile.mkdtemp()
+    temp_dir = create_test_temp_dir()
     service = None
     try:
         service = OrderingService(nodes=[node], config={"storage_dir": temp_dir})
