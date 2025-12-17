@@ -79,6 +79,24 @@ class SubChain(Blockchain):
         self.consumer_thread = threading.Thread(target=self._block_consumer_loop, daemon=True)
         self.consumer_thread.start()
 
+    def is_valid_new_block(self, block) -> bool:
+        """
+        Validate a new block including consensus rules.
+        """
+        # 1. Base structural validation
+        if not super().is_valid_new_block(block):
+            return False
+            
+        # 2. Consensus validation
+        previous_block = self.get_latest_block()
+        
+        if not self.consensus.validate_block(block, previous_block):
+            # Log warning but don't crash - useful for debugging consensus failures
+            logger.warning(f"Consensus validation failed for block {block.index}")
+            return False
+            
+        return True
+
     def stop(self):
         """Stop the background block consumer."""
         self.running = False
@@ -476,9 +494,12 @@ class SubChain(Blockchain):
             # Recalculate hash with new metadata
             block.hash = block.calculate_hash()
             
-            # 3. Add to chain
-            if self.add_block(block):
-                new_blocks.append(block)
+            # 3. Finalize with consensus (signatures)
+            finalized_block = self.consensus.finalize_block(block, self.name)
+            
+            # 4. Add to chain
+            if self.add_block(finalized_block):
+                new_blocks.append(finalized_block)
                 # Auto-submit proof if needed
                 self.auto_submit_proof_if_needed()
             else:
