@@ -27,7 +27,12 @@ class Settings:
     PROOF_SUBMISSION_INTERVAL = 300  # 5 minutes in seconds
     
     # Consensus settings
-    CONSENSUS_TYPE = "hierarchical_poa"  # Hierarchical Proof of Authority
+    # Options: "proof_of_authority" (Static/Centralized) or "proof_of_federation" (Dynamic/Consortium)
+    CONSENSUS_TYPE = "proof_of_authority" 
+    CONSENSUS_FEDERATION_CONFIG: Dict[str, Any] = {
+        "min_validators": 3,
+        "block_interval": 5.0
+    }
     VALIDATOR_TIMEOUT = 30  # seconds
     BFT_ENABLED = True  # Enable Byzantine Fault Tolerance consensus
     BFT_FAULT_TOLERANCE = 1  # Number of Byzantine faults to tolerate (f)
