@@ -64,15 +64,15 @@ class SqlStorageBackend:
             # 2. Create Event Records
             events = []
             for event_data in block_data.get('events', []):
+                evt_id = event_data.get("event_id")
                 event_model = EventModel(
                     block_hash=block_data['hash'],
+                    event_id=evt_id,
                     event_type=event_data.get('event', 'unknown'),
                     timestamp=event_data.get('timestamp', 0.0),
                     sender_id=event_data.get('sender', None),
                     data=event_data # Store full JSON
                 )
-                # If event has a unique ID logic, set it here. 
-                # For now let DB auto-increment ID.
                 events.append(event_model)
             
             new_block.events = events
@@ -86,6 +86,33 @@ class SqlStorageBackend:
             session.rollback()
             logger.error(f"Failed to save block to DB: {e}")
             return False
+        finally:
+            session.close()
+
+    def get_event_by_id(self, event_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Retrieve an event by its unique ID.
+        
+        Args:
+            event_id: The unique event ID.
+            
+        Returns:
+            Dictionary containing event data and status info, or None if not found.
+        """
+        session = self.Session()
+        try:
+            event_model = session.query(EventModel).filter_by(event_id=event_id).first()
+            if not event_model:
+                return None
+            
+            # Reconstruct status info
+            return {
+                "event_id": event_model.event_id,
+                "status": "ordered",
+                "block_hash": event_model.block_hash,
+                "timestamp": event_model.timestamp,
+                "data": event_model.data
+            }
         finally:
             session.close()
 
