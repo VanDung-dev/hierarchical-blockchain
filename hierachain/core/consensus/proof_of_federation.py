@@ -85,6 +85,18 @@ class ProofOfFederation(BaseConsensus):
             return True
         return False
 
+    def add_authority(self, authority_id: str, metadata: Optional[Dict[str, Any]] = None) -> bool:
+        """Alias for add_validator for compatibility."""
+        return self.add_validator(authority_id, metadata)
+
+    def remove_authority(self, authority_id: str) -> bool:
+        """Alias for remove_validator for compatibility."""
+        return self.remove_validator(authority_id)
+    
+    def is_authority(self, authority_id: str) -> bool:
+        """Check if an ID is an active authority/validator."""
+        return authority_id in self.validators
+
     def get_current_leader(self, block_index: int) -> Optional[str]:
         """
         Determine the expected leader for a specific block index.
