@@ -14,6 +14,8 @@ from typing import Dict, Any, List, Optional, Callable
 
 from hierachain.core.blockchain import Blockchain
 from hierachain.core.consensus.proof_of_authority import ProofOfAuthority
+from hierachain.core.consensus.proof_of_federation import ProofOfFederation
+from hierachain.config.settings import settings
 from hierachain.core.utils import sanitize_metadata_for_main_chain, create_event
 from hierachain.consensus.ordering_service import OrderingService, OrderingNode, OrderingStatus
 
@@ -40,24 +42,31 @@ class SubChain(Blockchain):
             config: Optional configuration override for underlying services
         """
         if not re.match(r'^[a-zA-Z0-9_\-]+$', name):
-             raise ValueError(f"Invalid SubChain name '{name}'. Allowed: alphanumeric, underscore, hyphen.")
+            raise ValueError(f"Invalid SubChain name '{name}'. Allowed: alphanumeric, underscore, hyphen.")
 
         super().__init__(name)
         self.domain_type = domain_type
         self.custom_config = config
-        self.consensus = ProofOfAuthority(f"{name}_PoA")
+        
+        # Dynamic Consensus Loading
+        if settings.CONSENSUS_TYPE == "proof_of_federation":
+            self.consensus = ProofOfFederation(f"{name}_PoF")
+        else:
+            self.consensus = ProofOfAuthority(f"{name}_PoA")
+            
         self.main_chain_connection: Optional[Any] = None
         self.proof_submission_interval: float = 60.0  # Submit proofs every 60 seconds
         self.last_proof_submission: float = 0.0
         self.completed_operations: int = 0
         
         # Register Sub-Chain as authority for its own operations
-        self.consensus.add_authority(name, {
-            "role": "sub_chain_authority",
-            "domain_type": domain_type,
-            "permissions": ["domain_operations", "event_creation"],
-            "created_at": time.time()
-        })
+        if hasattr(self.consensus, 'add_authority'):
+            self.consensus.add_authority(name, {
+                "role": "sub_chain_authority",
+                "domain_type": domain_type,
+                "permissions": ["domain_operations", "event_creation"],
+                "created_at": time.time()
+            })
         
         # Initialize Ordering Service
         self._init_ordering_service()
