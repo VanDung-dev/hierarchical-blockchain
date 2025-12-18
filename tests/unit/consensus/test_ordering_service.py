@@ -28,15 +28,20 @@ from hierachain.error_mitigation.recovery_engine import (
     BackupRecoveryEngine,
 )
 
-# Create a test node
-node = OrderingNode(
-    node_id="test-node",
-    endpoint="localhost:2661",
-    is_leader=True,
-    weight=1.0,
-    status=OrderingStatus.ACTIVE,
-    last_heartbeat=time.time()
-)
+# Create a test node factory function to ensure fresh heartbeat
+def create_test_node():
+    """Create a fresh test node with current timestamp for heartbeat."""
+    return OrderingNode(
+        node_id="test-node",
+        endpoint="localhost:2661",
+        is_leader=True,
+        weight=1.0,
+        status=OrderingStatus.ACTIVE,
+        last_heartbeat=time.time()
+    )
+
+# Keep legacy 'node' for backward compatibility, but it may have stale heartbeat
+node = create_test_node()
 
 
 def create_test_temp_dir():
@@ -218,7 +223,9 @@ def test_service_status():
     service = None
     try:
         config = {"storage_dir": temp_dir}
-        service = OrderingService(nodes=[node], config=config)
+        # Use fresh node to ensure heartbeat is not stale
+        fresh_node = create_test_node()
+        service = OrderingService(nodes=[fresh_node], config=config)
 
         status = service.get_service_status()
         assert status["nodes"]["healthy"] == 1
