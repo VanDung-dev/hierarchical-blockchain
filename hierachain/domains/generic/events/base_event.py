@@ -80,7 +80,7 @@ class BaseEvent(ABC):
         Returns:
             True if domain-specific validation passes, False otherwise
         """
-        pass
+        raise NotImplementedError("Subclasses must implement validate_domain_specific()")
     
     def to_dict(self) -> Dict[str, Any]:
         """

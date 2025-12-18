@@ -369,7 +369,7 @@ class BaseChain(SubChain, ABC):
         Returns:
             True if operation is valid for this domain, False otherwise
         """
-        pass
+        raise NotImplementedError("Subclasses must implement validate_domain_operation()")
     
     @abstractmethod
     def get_domain_statistics(self) -> Dict[str, Any]:
@@ -382,7 +382,7 @@ class BaseChain(SubChain, ABC):
         Returns:
             Domain-specific statistics
         """
-        pass
+        raise NotImplementedError("Subclasses must implement get_domain_statistics()")
     
     def get_base_domain_statistics(self) -> Dict[str, Any]:
         """

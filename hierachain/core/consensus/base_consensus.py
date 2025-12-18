@@ -52,7 +52,7 @@ class BaseConsensus(ABC):
         Returns:
             True if block is valid according to consensus rules, False otherwise
         """
-        pass
+        raise NotImplementedError("Subclasses must implement validate_block()")
     
     @abstractmethod
     def finalize_block(self, block: Block) -> Block:
@@ -68,7 +68,7 @@ class BaseConsensus(ABC):
         Returns:
             Finalized block
         """
-        pass
+        raise NotImplementedError("Subclasses must implement finalize_block()")
     
     @abstractmethod
     def can_create_block(self, authority_id: Optional[str] = None) -> bool:
@@ -81,7 +81,7 @@ class BaseConsensus(ABC):
         Returns:
             True if block creation is allowed, False otherwise
         """
-        pass
+        raise NotImplementedError("Subclasses must implement can_create_block()")
     
     def validate_event_for_consensus(self, event: Dict[str, Any]) -> bool:
         """
