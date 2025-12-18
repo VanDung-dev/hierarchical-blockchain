@@ -160,8 +160,8 @@ class SystemMetricsCollector:
                     elif os.path.exists('/proc/loadavg'):
                         with open('/proc/loadavg', 'r') as load_file:
                             load_avg = float(load_file.read().split()[0])
-                except (IOError, OSError):
-                    pass
+                except (IOError, OSError) as e:
+                    self.logger.debug(f"Load average unavailable: {e}")
                 
                 return {
                     'cpu_usage_total': min(load_avg * 100 / cpu_count, 100.0),  # Rough approximation
@@ -355,8 +355,8 @@ class SystemMetricsCollector:
                     
                     metrics['network_connections_count'] = connection_count
                     
-                except (IOError, OSError):
-                    pass  # Keep default values
+                except (IOError, OSError) as e:
+                    self.logger.debug(f"Network stats fallback: {e}")
                 
                 return metrics
         except Exception as e:

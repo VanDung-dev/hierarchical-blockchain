@@ -9,12 +9,15 @@ This module implements the Block class following the framework guidelines:
 
 import time
 import json
+import logging
 from typing import List, Dict, Any, Optional, Union
 import pyarrow as pa
 import pyarrow.compute as pc
 
 from hierachain.core import schemas
 from hierachain.core.utils import MerkleTree, generate_hash
+
+logger = logging.getLogger(__name__)
 
 
 class Block:
@@ -179,8 +182,8 @@ class Block:
                     event_data = json.loads(row['data'])
                     events.append(event_data)
                     continue
-                except (json.JSONDecodeError, TypeError):
-                    pass
+                except (json.JSONDecodeError, TypeError) as e:
+                    logger.debug(f"JSON decode fallback: {e}")
             
             # 2. Fallback: Reconstruct from flat schema
             if row.get('details'):
