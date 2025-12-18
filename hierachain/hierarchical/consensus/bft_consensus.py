@@ -16,6 +16,7 @@ from enum import Enum
 from hierachain.error_mitigation.validator import ConsensusValidator
 from hierachain.error_mitigation.error_classifier import ErrorClassifier
 from hierachain.security.security_utils import KeyPair, verify_signature
+from hierachain.security.key_provider import LocalKeyProvider
 from hierachain.network.zmq_transport import ZmqNode
 
 import logging
@@ -108,10 +109,15 @@ class BFTConsensus:
         self.f = f  # Max faulty nodes tolerated
         self.n = len(all_nodes)  # Total nodes
         
-        self.keypair = keypair
         self.node_public_keys = node_public_keys or {}
         self.zmq_node = zmq_node
         
+        # Key Management: Prioritize Provider, fallback to legacy KeyPair
+        self.key_provider = None
+        if keypair:
+            # Legacy mode: Wrap KeyPair in LocalKeyProvider
+            self.key_provider = LocalKeyProvider(keypair)
+            
         # Network and chain references (initialize before use)
         self.network_send_function: Optional[Callable] = None
         self.chain: Optional[Any] = None
@@ -611,12 +617,12 @@ class BFTConsensus:
         Returns:
             Hex encoded signature
         """
-        if not self.keypair:
+        if not self.key_provider:
             # Fallback for testing without keys (unsafe for prod)
             combined = f"{self.node_id}:{data}:{time.time()}"
             return hashlib.sha256(combined.encode()).hexdigest()
 
-        return self.keypair.sign(data)
+        return self.key_provider.sign(data)
     
     def _verify_signature(self, message: BFTMessage) -> bool:
         """
