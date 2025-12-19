@@ -12,8 +12,9 @@ import zmq
 import zmq.asyncio
 import json
 import asyncio
+import time
 import logging
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
 
@@ -32,8 +33,14 @@ class ZmqNode:
     """
     
 
-    def __init__(self, node_id: str, port: int, host: str = "127.0.0.1", 
-                 server_secret_key: bytes = None, server_public_key: bytes = None):
+    def __init__(
+            self,
+            node_id: str,
+            port: int,
+            host: str = "127.0.0.1",
+            server_secret_key: bytes = None,
+            server_public_key: bytes = None
+    ):
         self.node_id = node_id
         self.host = host
         self.port = port
@@ -46,7 +53,11 @@ class ZmqNode:
         
         self.ctx = zmq.asyncio.Context()
         self._stop_event = asyncio.Event()
-        self._message_handler: Optional[Callable[[dict[str, Any], str], Any]] = None
+        self._message_handler: Callable[[dict[str, Any], str], Any] | None = None
+
+        # Replay Protection
+        self.replay_buffer: set[tuple[float, str]] = set() # (timestamp, nonce)
+        self.replay_tolerance = 60 # seconds
         
         # Sockets
         self.router = None  # For receiving (bind)
@@ -95,6 +106,44 @@ class ZmqNode:
     def set_handler(self, handler: Callable[[dict[str, Any], str], Any]):
         """Set the callback function for processing received messages."""
         self._message_handler = handler
+
+    def _is_valid_replay(self, message_data: dict[str, Any]) -> bool:
+        """
+        Check if message is a replay.
+        Returns True if valid (not a replay), False otherwise.
+        """
+        timestamp = message_data.get("timestamp")
+        nonce = message_data.get("nonce")
+        
+        if timestamp is None:
+            logger.warning("Message missing timestamp")
+            return False
+            
+        if nonce is None:
+            logger.warning("Message missing nonce")
+            return False
+            
+        now = time.time()
+        
+        # 1. Check timestamp freshness
+        if abs(now - timestamp) > self.replay_tolerance:
+            logger.warning(f"Message timestamp out of tolerance: {timestamp} (now={now})")
+            return False
+            
+        # 2. Check nonce uniqueness
+        entry = (timestamp, nonce)
+        if entry in self.replay_buffer:
+            logger.warning(f"Replay detected: {nonce}")
+            return False
+            
+        # 3. Add to buffer and cleanup
+        self.replay_buffer.add(entry)
+        
+        # Cleanup old entries
+        cutoff = now - self.replay_tolerance
+        self.replay_buffer = {e for e in self.replay_buffer if e[0] > cutoff}
+        
+        return True
 
     async def send_direct(self, target_peer_id: str, message: dict[str, Any]) -> bool:
         """
@@ -152,7 +201,6 @@ class ZmqNode:
         """Loop to receive messages from ROUTER socket."""
         while not self._stop_event.is_set():
             try:
-                # ROUTER receives multipart: [sender_id, empty, message] or [sender_id, message]
                 msg_parts = await self.router.recv_multipart()
                 
                 if len(msg_parts) < 2:
@@ -166,6 +214,11 @@ class ZmqNode:
                 
                 try:
                     message_data = json.loads(message_str)
+                    
+                    # Replay Check
+                    if not self._is_valid_replay(message_data):
+                        continue
+                        
                     if self._message_handler:
                         # Process message (could be async or sync)
                         if asyncio.iscoroutinefunction(self._message_handler):
