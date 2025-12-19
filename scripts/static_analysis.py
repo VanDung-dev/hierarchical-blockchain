@@ -11,7 +11,7 @@ import re
 import json
 import logging
 import argparse
-from typing import Any, Optional
+from typing import Any
 from dataclasses import dataclass, asdict
 from enum import Enum
 from pathlib import Path
@@ -491,7 +491,7 @@ class DependencyAnalyzer:
 
 class StaticAnalyzer:
     """Main static analyzer orchestrating all analysis types"""
-    def __init__(self, config: Optional[dict[str, Any]] = None):
+    def __init__(self, config: dict[str, Any] | None = None):
         """Initialize static analyzer with configuration"""
         self.config = config or {}
         self.logger = logging.getLogger(__name__)
@@ -551,7 +551,7 @@ class StaticAnalyzer:
         
         return all_findings
     
-    def analyze_file(self, file_path: str, analysis_types: Optional[list[str]] = None) -> list[AnalysisFinding]:
+    def analyze_file(self, file_path: str, analysis_types: list[str] | None = None) -> list[AnalysisFinding]:
         """Analyze single file"""
         analysis_types = analysis_types or self.enabled_analyzers
         findings = []
@@ -643,7 +643,7 @@ class StaticAnalyzer:
         return summary
 
 
-def run_static_analysis(project_path: str = ".", output_file: Optional[str] = None, output_format: str = "json") -> bool:
+def run_static_analysis(project_path: str = ".", output_file: str | None = None, output_format: str = "json") -> bool:
     """
     Entry point for running static analysis.
     
