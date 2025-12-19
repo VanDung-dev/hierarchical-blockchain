@@ -10,7 +10,6 @@ import json
 import os
 import logging
 import time
-from typing import Union
 from pathlib import Path
 import pyarrow as pa
 import pyarrow.parquet as pq
@@ -104,7 +103,7 @@ class FileStorageAdapter:
             logger.error(f"Failed to store chain metadata {chain_name}: {e}")
             raise
     
-    def store_block(self, chain_name: str, block_data: Union[dict, Block]):
+    def store_block(self, chain_name: str, block_data: dict | Block):
         """
         Store block data using Parquet for high performance.
         
@@ -211,7 +210,7 @@ class FileStorageAdapter:
                 use_dictionary=True,
                 write_statistics=True
             )
-                 
+
         except Exception as e:
             logger.error(f"Failed to update events index: {e}")
             # Don't raise - this is not critical for block storage
@@ -352,8 +351,7 @@ class FileStorageAdapter:
                         if block_data:
 
                             events_table = block_data["events"]
-                            expr = (pc.field("entity_id") == entity_id) & \
-                                   (pc.field("timestamp") == record["timestamp"])
+                            expr = (pc.field("entity_id") == entity_id) & (pc.field("timestamp") == record["timestamp"])
                             subset = events_table.filter(expr)
                             subset_rows = Block._table_to_list_of_dicts(subset)
                             

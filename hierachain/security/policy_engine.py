@@ -10,7 +10,7 @@ enterprise blockchain applications.
 import time
 import json
 import re
-from typing import Any, Union
+from typing import Any
 from dataclasses import dataclass
 from enum import Enum
 
@@ -59,7 +59,7 @@ class PolicyCondition:
     """Individual policy condition"""
     attribute: str
     operator: ComparisonOperator
-    value: Union[str, int, float, list[Any]]
+    value: str | int | float | list[Any]
     
     def evaluate(self, context: dict[str, Any]) -> bool:
         """

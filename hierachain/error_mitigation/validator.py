@@ -11,7 +11,7 @@ import json
 import logging
 import hashlib
 import os
-from typing import Any, Union
+from typing import Any
 from datetime import datetime
 import pyarrow as pa
 import pyarrow.compute as pc
@@ -425,7 +425,7 @@ class APIValidator:
         
         logger.info("Initialized APIValidator")
     
-    def _validate_arrow_recursive(self, data: Union[pa.Array, pa.ChunkedArray], field_name: str) -> None:
+    def _validate_arrow_recursive(self, data: pa.Array | pa.ChunkedArray, field_name: str) -> None:
         """
         Recursively validate Arrow arrays for forbidden terms.
         Handles nested types: Map, List, Struct.

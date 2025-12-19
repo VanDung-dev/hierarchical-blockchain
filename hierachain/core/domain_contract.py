@@ -8,7 +8,7 @@ and security controls across enterprise processes.
 """
 
 import time
-from typing import Any, Callable, Union
+from typing import Any, Callable
 from dataclasses import dataclass
 from enum import Enum
 
@@ -217,7 +217,7 @@ class DomainContract:
     blockchain applications.
     """
     
-    def __init__(self, contract_id: str, version: Union[str, ContractVersion], 
+    def __init__(self, contract_id: str, version: str | ContractVersion,
                  implementation: Callable | None = None, 
                  metadata: dict[str, Any] | None = None):
         """
@@ -393,7 +393,7 @@ class DomainContract:
         
         return execution_result
     
-    def upgrade_to_version(self, new_version: Union[str, ContractVersion], 
+    def upgrade_to_version(self, new_version: str | ContractVersion,
                           new_implementation: Callable | None = None,
                           metadata: dict[str, Any] | None = None) -> bool:
         """

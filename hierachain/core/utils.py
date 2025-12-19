@@ -9,7 +9,7 @@ import hashlib
 import json
 import time
 import uuid
-from typing import Any, Union
+from typing import Any
 from datetime import datetime
 
 
@@ -39,7 +39,7 @@ def compute_leaves_from_events_standalone(events: list[dict[str, Any]]) -> list[
         leaves.append(hashlib.sha256(data_string.encode()).hexdigest())
     return leaves
 
-def generate_hash(data: Union[str, dict[str, Any]]) -> str:
+def generate_hash(data: str | dict[str, Any]) -> str:
     """
     Generate SHA-256 hash for given data.
     
@@ -350,7 +350,7 @@ def create_domain_event_template(domain_type: str) -> dict[str, Any]:
     }
 
 
-def validate_no_cryptocurrency_terms(data: Union[str, dict[str, Any]]) -> bool:
+def validate_no_cryptocurrency_terms(data: str | dict[str, Any]) -> bool:
     """
     Validate that data doesn't contain cryptocurrency terminology.
     
@@ -385,7 +385,7 @@ class MerkleTree:
     Merkle Tree implementation for efficient data verification and hashing.
     """
     
-    def __init__(self, data_list: list[Union[str, dict[str, Any]]] = None, leaves: list[str] = None):
+    def __init__(self, data_list: list[str | dict[str, Any]] = None, leaves: list[str] = None):
         """
         Initialize Merkle Tree.
         

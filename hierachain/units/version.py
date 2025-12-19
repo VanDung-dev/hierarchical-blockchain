@@ -4,7 +4,7 @@ Version utility functions for HieraChain Framework.
 This module provides functions for managing and retrieving version information.
 """
 
-from typing import Tuple, Union
+from typing import Tuple
 
 # Version information
 VERSION: Tuple[int, int, int, str, int] = (0, 0, 0, "dev", 5)
@@ -105,8 +105,8 @@ def get_documentation_status(version: Tuple[int, int, int, str, int] | None) -> 
         return "development"
 
 
-def compare_versions(version1: Union[str, Tuple[int, int, int, str, int]], 
-                     version2: Union[str, Tuple[int, int, int, str, int]]) -> int:
+def compare_versions(version1: str | Tuple[int, int, int, str, int], 
+                     version2: str | Tuple[int, int, int, str, int]) -> int:
     """
     Compare two versions.
     
@@ -119,7 +119,7 @@ def compare_versions(version1: Union[str, Tuple[int, int, int, str, int]],
         0 if version1 == version2
         1 if version1 > version2
     """
-    def _version_tuple(v: Union[str, Tuple[int, int, int, str, int]]) -> Tuple[int, int, int, str, int]:
+    def _version_tuple(v: str | Tuple[int, int, int, str, int]) -> Tuple[int, int, int, str, int]:
         if isinstance(v, str):
             # Parse string version to tuple (simplified)
             import re

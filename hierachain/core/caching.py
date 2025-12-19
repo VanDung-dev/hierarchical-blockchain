@@ -8,7 +8,7 @@ TTL support, and specialized blockchain data caching. Delivers significant perfo
 import time
 import threading
 import logging
-from typing import Any, Union
+from typing import Any
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -435,7 +435,7 @@ class BlockchainCacheManager:
         
         return False
     
-    def _search_nested_for_entity(self, data: Union[dict, list], entity_id: str) -> bool:
+    def _search_nested_for_entity(self, data: dict | list, entity_id: str) -> bool:
         """Recursively search nested structures for entity"""
         if isinstance(data, dict):
             for key, value in data.items():
