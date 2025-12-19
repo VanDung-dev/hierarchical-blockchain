@@ -7,12 +7,13 @@ from Sub-Chains, never detailed domain data, following framework guidelines.
 """
 
 import time
-from typing import Any, Optional, Set
+from typing import Any, Set
 
 from hierachain.core.blockchain import Blockchain
 from hierachain.core.consensus.proof_of_authority import ProofOfAuthority
 from hierachain.core.consensus.proof_of_federation import ProofOfFederation
 from hierachain.core.utils import sanitize_metadata_for_main_chain, validate_proof_metadata
+from hierachain.core.block import Block
 from hierachain.config.settings import settings
 
 
@@ -250,7 +251,7 @@ class MainChain(Blockchain):
             "registration_time": self.sub_chain_metadata.get(sub_chain_name, {}).get("registered_at")
         }
     
-    def finalize_block(self) -> Optional['Block']:
+    def finalize_block(self) -> "Block | None":
         """
         Finalize pending events into a new block using consensus.
         Overridden from base Blockchain to ensure PoA/PoF compliance.

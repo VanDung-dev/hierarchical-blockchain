@@ -7,7 +7,7 @@ coordinating the interaction between the Main Chain and multiple Sub-Chains
 """
 
 import time
-from typing import Optional, Any
+from typing import Any
 
 from hierachain.hierarchical.main_chain import MainChain
 from hierachain.hierarchical.multi_org import create_organization, MultiOrgNetwork
@@ -52,7 +52,7 @@ class HierarchyManager:
         }
 
         self.organizations: dict[str, Any] = {}
-        self.network: Optional[MultiOrgNetwork] = None
+        self.network: MultiOrgNetwork | None = None
         self.channels: dict[str, Channel] = {}
         self.private_collections: dict[str, PrivateCollection] = {}
         
