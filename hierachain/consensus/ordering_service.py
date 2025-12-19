@@ -11,13 +11,13 @@ import hashlib
 import json
 import threading
 import logging
+import asyncio
 from queue import Queue, Empty
 from typing import Any, Callable
 from dataclasses import dataclass
 from enum import Enum
 import concurrent.futures
 import pyarrow as pa
-import asyncio
 
 from hierachain.core.block import Block
 from hierachain.core import schemas
@@ -25,14 +25,11 @@ from hierachain.error_mitigation.journal import TransactionJournal
 from hierachain.storage.sql_backend import SqlStorageBackend
 from hierachain.core.performance import process_pool
 from hierachain.config.settings import Settings
-from hierachain.core.utils import (
-    compute_leaves_from_events_standalone,
-    MerkleTree
-)
+from hierachain.core.utils import compute_leaves_from_events_standalone, MerkleTree
 from hierachain.security.security_utils import verify_batch_signatures
 
-
 logger = logging.getLogger(__name__)
+
 
 class OrderingStatus(Enum):
     """Ordering service status enumeration"""

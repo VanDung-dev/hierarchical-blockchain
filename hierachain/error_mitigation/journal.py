@@ -14,8 +14,8 @@ import struct
 import json
 from typing import Any, Generator
 from pathlib import Path
-
 import pyarrow as pa
+
 from hierachain.core import schemas
 
 logger = logging.getLogger(__name__)

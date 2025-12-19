@@ -9,6 +9,7 @@ the event-based model and hierarchical structure principles.
 import pyarrow as pa
 from abc import ABC, abstractmethod
 from typing import Any
+
 from hierachain.core.block import Block
 
 

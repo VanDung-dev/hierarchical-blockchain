@@ -9,7 +9,7 @@ for both Main Chain and Sub-Chain implementations, following framework guideline
 """
 
 import time
-from typing import Any,  Callable
+from typing import Any, Callable
 
 from hierachain.core.block import Block
 

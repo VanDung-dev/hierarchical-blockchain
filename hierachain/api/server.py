@@ -9,11 +9,11 @@ The server uses FastAPI for high performance and includes proper error handling,
 CORS support, and comprehensive logging.
 """
 
+import uvicorn
+import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-import uvicorn
-import logging
 from contextlib import asynccontextmanager
 
 from hierachain.api.v1.endpoints import router as v1_router

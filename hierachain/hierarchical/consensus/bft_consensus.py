@@ -10,6 +10,7 @@ import time
 import hashlib
 import threading
 import uuid
+import logging
 from typing import Any, Callable
 from dataclasses import dataclass, field
 from enum import Enum
@@ -19,8 +20,6 @@ from hierachain.error_mitigation.error_classifier import ErrorClassifier
 from hierachain.security.security_utils import KeyPair, verify_signature
 from hierachain.security.key_provider import LocalKeyProvider
 from hierachain.network.zmq_transport import ZmqNode
-
-import logging
 
 logger = logging.getLogger(__name__)
 

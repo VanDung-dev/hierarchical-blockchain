@@ -6,6 +6,7 @@ and Microsoft Dynamics. It handles the conversion of enterprise business events 
 blockchain-compatible events while maintaining the hierarchical structure where sub-chain 
 events are later summarized on the main chain.
 """
+
 import time
 import logging
 from typing import Any

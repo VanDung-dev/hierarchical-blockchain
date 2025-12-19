@@ -6,11 +6,11 @@ The system follows a two-level architecture where sub-chains handle business eve
 stores cryptographic proofs from sub-chains.
 """
 
-from fastapi import APIRouter, HTTPException, status
-from fastapi.responses import JSONResponse
 import time
 import re
 import os
+from fastapi import APIRouter, HTTPException, status
+from fastapi.responses import JSONResponse
 
 from hierachain.api.v1.schemas import (
     EventRequest, EventResponse, ChainInfoResponse, 

@@ -11,11 +11,11 @@ import json
 import logging
 import hashlib
 import threading
+import uuid
 from typing import Any, Callable
 from dataclasses import dataclass, asdict
 from enum import Enum
 from pathlib import Path
-import uuid
 
 
 class AuditEventType(Enum):

@@ -5,15 +5,16 @@ Implements VerifyAPIKey dependency inspired by Google's Apigee for securing API 
 Ensures only authorized clients with valid, non-revoked API keys can access protected resources.
 """
 
-from fastapi import Depends, HTTPException, Security
-from fastapi.security import APIKeyHeader, APIKeyQuery
 import time
 import sys
 import os
+from fastapi import Depends, HTTPException, Security
+from fastapi.security import APIKeyHeader, APIKeyQuery
+
+from hierachain.security.key_manager import KeyManager
 
 # Add the project root to the path for imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-from hierachain.security.key_manager import KeyManager
 
 # Different API key placement options
 api_key_header = APIKeyHeader(name="x-api-key", auto_error=False)

@@ -7,9 +7,9 @@ for heavy CPU operations (hashing, signature verification).
 
 import os
 import logging
+import asyncio
 from concurrent.futures import ProcessPoolExecutor
 from typing import Callable, Any, Optional
-import asyncio
 
 logger = logging.getLogger(__name__)
 

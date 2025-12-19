@@ -9,7 +9,6 @@ health is critical, it rejects the request with a 503 Service Unavailable respon
 
 import logging
 from typing import Set
-
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse

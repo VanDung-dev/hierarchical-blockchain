@@ -10,12 +10,12 @@ batch processing.
 import os
 import time
 import threading
+import queue
+import logging
 from typing import Any, Callable
 from dataclasses import dataclass, field
 from enum import Enum
-import logging
 from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor, Future, as_completed
-import queue
 
 
 class ProcessingError(Exception):

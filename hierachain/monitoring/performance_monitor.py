@@ -9,13 +9,13 @@ CPU, memory, throughput, and custom metrics.
 import time
 import threading
 import logging
+import statistics
+import json
+import os
 from typing import Any, Callable, Tuple
 from dataclasses import dataclass, asdict
 from enum import Enum
 from collections import deque, defaultdict
-import statistics
-import json
-import os
 from datetime import datetime
 
 # Optional dependency - graceful degradation if not available

@@ -5,12 +5,12 @@ This module provides cryptographic primitives for the HieraChain framework,
 focusing on Ed25519 for digital signatures as required for enterprise-grade security.
 """
 
-from typing import Tuple, Any
+import logging
 import binascii
+from typing import Tuple, Any
 from nacl.signing import SigningKey, VerifyKey
 from nacl.encoding import HexEncoder
 from nacl.exceptions import BadSignatureError
-import logging
 
 logger = logging.getLogger(__name__)
 

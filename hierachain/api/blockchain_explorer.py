@@ -6,9 +6,9 @@ capabilities for developer experience and data analysis.
 """
 
 import time
+import logging
 from typing import Any
 from dataclasses import dataclass, field
-import logging
 
 
 class ExplorerError(Exception):

@@ -9,7 +9,7 @@ ensuring fair participation and removing single points of failure.
 
 import time
 import hashlib
-from typing import Any, Optional
+from typing import Any
 
 from hierachain.core.consensus.base_consensus import BaseConsensus
 from hierachain.core.block import Block

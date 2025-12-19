@@ -9,9 +9,9 @@ types of data
 import json
 import os
 import logging
+import time
 from typing import Union
 from pathlib import Path
-import time
 import pyarrow as pa
 import pyarrow.parquet as pq
 import pyarrow.dataset as ds

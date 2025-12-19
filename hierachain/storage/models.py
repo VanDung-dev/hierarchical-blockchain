@@ -5,9 +5,9 @@ This module defines the database schema for the HieraChain framework,
 allowing persistent storage of blocks, events, and world state.
 """
 
-from sqlalchemy import Column, Integer, String, Float, Text, ForeignKey, JSON
-from sqlalchemy.orm import declarative_base, relationship
 import time
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, JSON
+from sqlalchemy.orm import declarative_base, relationship
 
 Base = declarative_base()
 

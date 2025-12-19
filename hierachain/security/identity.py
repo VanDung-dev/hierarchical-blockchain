@@ -9,8 +9,9 @@ identity validation for enterprise applications.
 import time
 from typing import Any
 import logging
-from hierachain.security.security_utils import verify_signature
 from nacl.encoding import HexEncoder
+
+from hierachain.security.security_utils import verify_signature
 
 logger = logging.getLogger(__name__)
 

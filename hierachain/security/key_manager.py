@@ -10,8 +10,8 @@ import time
 import json
 import hashlib
 import binascii
-from typing import Set
 import logging
+from typing import Set
 
 logger = logging.getLogger(__name__)
 
