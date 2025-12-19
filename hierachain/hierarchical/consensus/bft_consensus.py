@@ -129,6 +129,12 @@ class BFTConsensus:
             # Set up send function wrapper
             self.network_send_function = self._send_via_zmq
         
+        # Enforce Cryptographic Keys
+        if not self.key_provider:
+            raise ConsensusError("Cryptographic keys are required for BFT consensus")
+        if not self.node_public_keys:
+            logger.warning("No public keys provided for validators. Signature verification will fail.")
+
         # Validate BFT requirements (n >= 3f + 1)
         if self.n < 3 * self.f + 1:
             raise ConsensusError(
@@ -617,10 +623,9 @@ class BFTConsensus:
         Returns:
             Hex encoded signature
         """
+        # Ensure key provider is available (enforced in __init__)
         if not self.key_provider:
-            # Fallback for testing without keys (unsafe for prod)
-            combined = f"{self.node_id}:{data}:{time.time()}"
-            return hashlib.sha256(combined.encode()).hexdigest()
+             raise ConsensusError("Cannot sign message: No key provider available")
 
         return self.key_provider.sign(data)
     
@@ -631,9 +636,9 @@ class BFTConsensus:
         if not message.signature:
             return False
 
-        # Fallback to length check if no keys configured (legacy mode)
         if not self.node_public_keys:
-            return len(message.signature) == 64
+            # Cannot verify without public keys
+            return False
 
         public_key = self.node_public_keys.get(message.sender_id)
         if not public_key:
