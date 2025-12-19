@@ -49,7 +49,7 @@ setup(
     ],
         keywords="blockchain, framework, enterprise, hierarchical",
     project_urls={
-        "Bug Reports": "https://github.com/VanDung-dev/HieraChainissues",
+        "Bug Reports": "https://github.com/VanDung-dev/HieraChain/issues",
         "Source": "https://github.com/VanDung-dev/HieraChain",
     },
 )
