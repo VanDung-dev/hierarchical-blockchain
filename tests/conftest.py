@@ -4,6 +4,7 @@ Pytest configuration for HieraChain project.
 Ensures project root is on sys.path so test imports like `import api`, `import core`,
 `import hierarchical` resolve correctly during test collection.
 """
+
 import os
 import sys
 import shutil

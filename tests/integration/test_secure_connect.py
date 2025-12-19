@@ -9,6 +9,7 @@ import asyncio
 import logging
 import sys
 import os
+import pytest
 
 from hierachain.network.secure_connection import SecureConnectionManager
 from hierachain.security.msp import HierarchicalMSP
@@ -20,8 +21,6 @@ sys.path.append(os.getcwd())
 # Setup Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 logger = logging.getLogger("TestSecureNet")
-
-import pytest
 
 if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())

@@ -6,8 +6,10 @@ including validator management, round-robin leader selection, and block validati
 """
 
 import time
+
 from hierachain.core.consensus.proof_of_federation import ProofOfFederation
 from hierachain.core.block import Block
+
 
 def test_pof_validator_management():
     """Test adding and removing validators in PoF consensus"""

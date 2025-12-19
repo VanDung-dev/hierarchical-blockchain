@@ -6,21 +6,16 @@ including message handling, consensus phases, and node communication.
 """
 
 import time
-import hashlib
 
 from hierachain.hierarchical.consensus.bft_consensus import (
-    BFTConsensus,
-    create_bft_network,
-    ConsensusError,
-    BFTMessage,
-    MessageType
+    BFTConsensus, create_bft_network, ConsensusError,
+    BFTMessage, MessageType
 )
 from hierachain.security.security_utils import KeyPair
 from hierachain.error_mitigation.validator import ConsensusValidator
 from hierachain.error_mitigation.error_classifier import ErrorClassifier
 from hierachain.error_mitigation.recovery_engine import (
-    ConsensusRecoveryEngine,
-    NetworkRecoveryEngine
+    ConsensusRecoveryEngine, NetworkRecoveryEngine
 )
 
 # Create a BFT network

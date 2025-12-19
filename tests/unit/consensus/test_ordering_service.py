@@ -2,30 +2,24 @@
 Unit tests for the Ordering Service
 """
 
-from typing import Any
 import time
 import os
 import tempfile
+import shutil
+from typing import Any
+
 from hierachain.consensus import OrderingService, OrderingNode, OrderingStatus
 from hierachain.error_mitigation.error_classifier import (
-    ErrorClassifier,
-    PriorityLevel,
-    ErrorCategory,
+    ErrorClassifier, PriorityLevel, ErrorCategory,
 )
-import shutil
 from hierachain.error_mitigation.validator import (
-    ConsensusValidator,
-    EncryptionValidator,
-    ResourceValidator,
-    APIValidator,
-    ValidationError,
-    SecurityError
+    ConsensusValidator, EncryptionValidator,
+    ResourceValidator, APIValidator,
+    ValidationError, SecurityError
 )
 from hierachain.error_mitigation.recovery_engine import (
-    NetworkRecoveryEngine,
-    AutoScaler,
-    ConsensusRecoveryEngine,
-    BackupRecoveryEngine,
+    NetworkRecoveryEngine, AutoScaler,
+    ConsensusRecoveryEngine, BackupRecoveryEngine,
 )
 
 # Create a test node factory function to ensure fresh heartbeat

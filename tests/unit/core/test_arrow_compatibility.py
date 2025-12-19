@@ -8,12 +8,12 @@ It tests the conversion of events to and from Arrow tables, as well as the addit
 import time
 import sys
 import os
+import pyarrow as pa
+
+from hierachain.core.block import Block
 
 # Add project root to path
 sys.path.append(os.getcwd())
-
-import pyarrow as pa
-from hierachain.core.block import Block
 
 def test_arrow_conversion():
     """

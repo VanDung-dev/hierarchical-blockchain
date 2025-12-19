@@ -8,7 +8,9 @@ Specifically, it tests the recovery and rehydration capabilities of the chain.
 import os
 import shutil
 import time
+
 from hierachain.hierarchical.sub_chain import SubChain
+
 
 def test_recovery_and_rehydration():
     chain_name = "test_reliability_chain"

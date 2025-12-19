@@ -13,9 +13,7 @@ import pytest
 from unittest.mock import Mock, patch
 
 from hierachain.security.key_backup_manager import (
-    KeyBackupManager,
-    create_key_backup_manager,
-    RestoreError
+    KeyBackupManager, create_key_backup_manager, RestoreError
 )
 
 # Global variables for setup and teardown

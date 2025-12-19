@@ -5,7 +5,9 @@ Tests the advanced MSP implementation including certificate management,
 role-based access control, and hierarchical identity management for enterprise applications.
 """
 
-from hierachain.security.msp import HierarchicalMSP, CertificateAuthority, OrganizationPolicies
+from hierachain.security.msp import (
+    HierarchicalMSP, CertificateAuthority, OrganizationPolicies
+)
 
 
 def setup_msp():

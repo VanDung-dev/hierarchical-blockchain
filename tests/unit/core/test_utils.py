@@ -11,10 +11,8 @@ import string
 from hypothesis import given, strategies as st
 
 from hierachain.core.utils import (
-    generate_hash,
-    generate_entity_id,
-    generate_proof_hash,
-    validate_proof_metadata
+    generate_hash, generate_entity_id,
+    generate_proof_hash, validate_proof_metadata
 )
 
 

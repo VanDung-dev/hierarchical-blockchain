@@ -12,7 +12,9 @@ If the service is not deterministic, it should produce different blocks.
 import time
 import shutil
 import os
+
 from hierachain.consensus.ordering_service import OrderingService, OrderingNode, OrderingStatus
+
 
 def test_determinism():
     data_dir = "data/test_determinism"

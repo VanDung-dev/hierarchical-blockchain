@@ -7,12 +7,12 @@ This includes:
 - Testing tampering detection in the consensus process.
 """
 
-
 import time
 
 from hierachain.hierarchical.main_chain import MainChain
 from hierachain.hierarchical.sub_chain import SubChain
 from hierachain.core.block import Block
+
 
 def test_unfinalized_block_rejection():
     """

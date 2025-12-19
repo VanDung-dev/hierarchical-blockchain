@@ -7,8 +7,12 @@ including key generation, signing, verification, and vault management.
 
 import pytest
 import os
-from hierachain.security.key_provider import LocalKeyProvider, FileVaultProvider, CryptoError
-from hierachain.security.security_utils import KeyPair, verify_signature
+from hierachain.security.key_provider import (
+    LocalKeyProvider, FileVaultProvider, CryptoError
+)
+from hierachain.security.security_utils import (
+    KeyPair, verify_signature
+)
 
 def test_local_key_provider():
     # Setup

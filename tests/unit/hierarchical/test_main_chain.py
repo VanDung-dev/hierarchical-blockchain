@@ -6,7 +6,6 @@ where the main chain stores proofs from registered sub-chains.
 """
 
 from unittest.mock import Mock
-import time
 
 from hierachain.hierarchical.main_chain import MainChain
 

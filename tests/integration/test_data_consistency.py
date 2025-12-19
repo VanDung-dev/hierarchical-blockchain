@@ -12,11 +12,12 @@ import sys
 import os
 import pyarrow as pa
 
+from hierachain.core.block import Block
+from hierachain.storage.world_state import WorldState
+
 # Ensure project root is in path
 sys.path.append(os.getcwd())
 
-from hierachain.core.block import Block
-from hierachain.storage.world_state import WorldState
 
 def create_test_block() -> Block:
     events = [
