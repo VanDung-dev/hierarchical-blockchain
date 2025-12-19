@@ -10,7 +10,7 @@ import time
 import logging
 import os
 import threading
-from typing import Any, Optional, Callable, Tuple
+from typing import Any, Callable, Tuple
 from enum import Enum
 from dataclasses import dataclass
 
@@ -44,8 +44,8 @@ class MitigationResult:
     action_id: str
     status: MitigationStatus
     start_time: float
-    end_time: Optional[float]
-    error_message: Optional[str]
+    end_time: float | None
+    error_message: str | None
     output: dict[str, Any]
 
 
@@ -79,12 +79,7 @@ class ConsensusMitigationStrategies:
                         'endpoint': f'validator-{i}.blockchain.local:7051',
                         'public_key': f'generated_key_{i}'
                     }
-                
-                # In real implementation, this would:
-                # 1. Provision new node infrastructure
-                # 2. Configure node with proper certificates
-                # 3. Add node to consensus participant list
-                # 4. Verify node connectivity and sync
+
                 logging.info(f"Added validator node: {config['node_id']}")
             
             return True
@@ -112,13 +107,7 @@ class ConsensusMitigationStrategies:
             optimal_timeout = max(float(target_timeout), network_latency * 3)
             
             logging.info(f"Updating leader timeout to {optimal_timeout}s")
-            
-            # In real implementation, this would:
-            # 1. Update consensus configuration
-            # 2. Distribute new configuration to all nodes
-            # 3. Restart consensus with new settings
-            # 4. Monitor for improved performance
-            
+
             return True
             
         except Exception as e:
@@ -175,12 +164,6 @@ class SecurityMitigationStrategies:
             logging.info(f"Renewing {len(cert_ids)} certificates")
             
             for cert_id in cert_ids:
-                # In real implementation, this would:
-                # 1. Generate new key pair
-                # 2. Create certificate signing request
-                # 3. Submit to CA for signing
-                # 4. Update certificate in MSP
-                # 5. Distribute to relevant nodes
                 logging.info(f"Renewed certificate: {cert_id}")
             
             return True
@@ -235,12 +218,6 @@ class SecurityMitigationStrategies:
             
             logging.info(f"Upgrading encryption to {algorithm} with {key_size}-bit keys")
             
-            # In real implementation, this would:
-            # 1. Update encryption configurations
-            # 2. Generate new encryption keys
-            # 3. Re-encrypt existing data
-            # 4. Update key rotation policies
-            
             return True
             
         except Exception as e:
@@ -269,17 +246,8 @@ class PerformanceMitigationStrategies:
             logging.info(f"Scaling processing capacity: {scaling_type} to {target_capacity}x")
             
             if scaling_type == 'horizontal':
-                # In real implementation, this would:
-                # 1. Provision additional processing nodes
-                # 2. Configure load balancing
-                # 3. Update service discovery
-                # 4. Verify distributed processing
                 pass
             elif scaling_type == 'vertical':
-                # In real implementation, this would:
-                # 1. Increase CPU and memory allocation
-                # 2. Restart services with new resources
-                # 3. Monitor performance improvement
                 pass
             
             return True
@@ -339,12 +307,6 @@ class PerformanceMitigationStrategies:
             
             logging.info(f"Optimizing event processing: batch_size={batch_size}, workers={parallel_workers}")
             
-            # In real implementation, this would:
-            # 1. Update batch processing configurations
-            # 2. Adjust worker thread pool sizes
-            # 3. Optimize event serialization
-            # 4. Implement parallel processing where safe
-            
             return True
             
         except Exception as e:
@@ -372,12 +334,6 @@ class StorageMitigationStrategies:
             
             logging.info(f"Implementing state pruning: retain {retention_days} days, interval {pruning_interval}s")
             
-            # In real implementation, this would:
-            # 1. Identify old state entries
-            # 2. Archive or remove expired data
-            # 3. Update storage indices
-            # 4. Schedule regular pruning jobs
-            
             return True
             
         except Exception as e:
@@ -400,13 +356,6 @@ class StorageMitigationStrategies:
             compression = params.get('compression', True)
             
             logging.info(f"Executing backup to {backup_target}, compression={compression}")
-            
-            # In real implementation, this would:
-            # 1. Create consistent snapshot
-            # 2. Compress and encrypt backup data
-            # 3. Transfer to backup location
-            # 4. Verify backup integrity
-            # 5. Update backup metadata
             
             return True
             
@@ -432,11 +381,6 @@ class StorageMitigationStrategies:
             logging.info(f"Optimizing storage indices: types={index_types}, rebuild={rebuild_existing}")
             
             for index_type in index_types:
-                # In real implementation, this would:
-                # 1. Analyze query patterns
-                # 2. Create or optimize indices
-                # 3. Rebuild existing indices if needed
-                # 4. Monitor query performance improvement
                 logging.info(f"Optimized index: {index_type}")
             
             return True
@@ -454,7 +398,7 @@ class MitigationManager:
     handles dependencies, and tracks execution status.
     """
     
-    def __init__(self, config: Optional[dict[str, Any]] = None):
+    def __init__(self, config: dict[str, Any] | None = None):
         """
         Initialize mitigation manager.
         

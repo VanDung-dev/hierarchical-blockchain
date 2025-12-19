@@ -12,7 +12,7 @@ import logging
 import shutil
 import os
 import hashlib
-from typing import Any, Optional
+from typing import Any
 from datetime import datetime
 from dataclasses import dataclass, asdict
 from enum import Enum
@@ -72,8 +72,8 @@ class RollbackOperation:
     target_snapshot: StateSnapshot
     status: RollbackStatus
     start_time: float
-    end_time: Optional[float]
-    error_message: Optional[str]
+    end_time: float | None
+    error_message: str | None
     rollback_steps: list[str]
     affected_components: list[str]
     
@@ -280,7 +280,7 @@ class RollbackManager:
         
         return rollback_op
     
-    def get_snapshots(self, snapshot_type: Optional[RollbackType] = None) -> list[StateSnapshot]:
+    def get_snapshots(self, snapshot_type: RollbackType | None = None) -> list[StateSnapshot]:
         """
         Get list of available snapshots
         
@@ -325,7 +325,7 @@ class RollbackManager:
         logger.warning(f"Snapshot not found for deletion: {snapshot_id}")
         return False
     
-    def get_rollback_operations(self, status: Optional[RollbackStatus] = None) -> list[RollbackOperation]:
+    def get_rollback_operations(self, status: RollbackStatus | None = None) -> list[RollbackOperation]:
         """
         Get rollback operations
         

@@ -9,7 +9,7 @@ Supports SAP, Oracle, Microsoft Dynamics, and other enterprise systems.
 import time
 import threading
 from datetime import datetime
-from typing import Any, Optional, Callable
+from typing import Any, Callable
 from dataclasses import dataclass, field
 from enum import Enum
 import logging
@@ -210,7 +210,7 @@ class ERPIntegrationFramework:
         return self.sync_scheduler.stop_task(profile_name)
     
     # Built-in transformers
-    def _transform_date(self, value: Any, params: Optional[dict[str, Any]] = None) -> str:
+    def _transform_date(self, value: Any, params: dict[str, Any] | None = None) -> str:
         """Transform date values"""
         if params and "format" in params:
             try:
@@ -220,7 +220,7 @@ class ERPIntegrationFramework:
                 return str(value)
         return str(value)
     
-    def _transform_amount(self, value: Any, params: Optional[dict[str, Any]] = None) -> float:
+    def _transform_amount(self, value: Any, params: dict[str, Any] | None = None) -> float:
         """Transform amount values"""
         try:
             if params and "currency_conversion" in params:
@@ -232,21 +232,21 @@ class ERPIntegrationFramework:
             return 0.0
     
     @staticmethod
-    def _transform_id(value: Any, params: Optional[dict[str, Any]] = None) -> str:
+    def _transform_id(value: Any, params: dict[str, Any] | None = None) -> str:
         """Transform ID values"""
         if params and "prefix" in params:
             return f"{params['prefix']}{value}"
         return str(value)
     
     @staticmethod
-    def _transform_status(value: Any, params: Optional[dict[str, Any]] = None) -> str:
+    def _transform_status(value: Any, params: dict[str, Any] | None = None) -> str:
         """Transform status values"""
         if params and "mapping" in params:
             return params["mapping"].get(str(value), str(value))
         return str(value)
     
     @staticmethod
-    def _transform_currency(value: Any, params: Optional[dict[str, Any]] = None) -> dict[str, Any]:
+    def _transform_currency(value: Any, params: dict[str, Any] | None = None) -> dict[str, Any]:
         """Transform currency values"""
         return {
             "amount": float(value),
@@ -254,7 +254,7 @@ class ERPIntegrationFramework:
         }
     
     @staticmethod
-    def _transform_boolean(value: Any, _params: Optional[dict[str, Any]] = None) -> bool:
+    def _transform_boolean(value: Any, _params: dict[str, Any] | None = None) -> bool:
         """Transform boolean values"""
         if isinstance(value, bool):
             return value
@@ -302,7 +302,7 @@ class MappingEngine:
             self.profiles[profile_name]["last_updated"] = time.time()
             return True
     
-    def get_profile(self, profile_name: str) -> Optional[dict[str, Any]]:
+    def get_profile(self, profile_name: str) -> dict[str, Any] | None:
         """Get mapping profile"""
         with self.lock:
             return self.profiles.get(profile_name)
@@ -415,7 +415,7 @@ class EventTranslator:
         current[parts[-1]] = value
     
     @staticmethod
-    def _get_transformer(_name: str) -> Optional[Callable]:
+    def _get_transformer(_name: str) -> Callable | None:
         """Get transformer function by name"""
         # This would typically reference the mapping engine's transformers
         # For now, return a simple identity function

@@ -9,7 +9,7 @@ import hashlib
 import json
 import time
 import uuid
-from typing import Any, Optional, Union
+from typing import Any, Union
 from datetime import datetime
 
 
@@ -164,8 +164,8 @@ def validate_proof_metadata(metadata: dict[str, Any]) -> bool:
     return True
 
 
-def create_event(entity_id: str, event_type: str, details: Optional[dict[str, Any]] = None,
-                timestamp: Optional[float] = None) -> dict[str, Any]:
+def create_event(entity_id: str, event_type: str, details: dict[str, Any] | None = None,
+                timestamp: float | None = None) -> dict[str, Any]:
     """
     Create a properly structured event following framework guidelines.
     

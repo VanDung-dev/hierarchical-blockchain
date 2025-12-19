@@ -9,7 +9,7 @@ CPU, memory, throughput, and custom metrics.
 import time
 import threading
 import logging
-from typing import Any, Optional, Callable, Tuple
+from typing import Any, Callable, Tuple
 from dataclasses import dataclass, asdict
 from enum import Enum
 from collections import deque, defaultdict
@@ -54,7 +54,7 @@ class MetricValue:
     timestamp: float
     value: float
     unit: MetricUnit
-    metadata: Optional[dict[str, Any]] = None
+    metadata: dict[str, Any] | None = None
 
 
 @dataclass
@@ -64,16 +64,16 @@ class PerformanceMetric:
     metric_type: MetricType
     unit: MetricUnit
     description: str
-    threshold_warning: Optional[float] = None
-    threshold_critical: Optional[float] = None
+    threshold_warning: float | None = None
+    threshold_critical: float | None = None
     history_size: int = 1000
-    values: Optional[deque] = None
+    values: deque | None = None
     
     def __post_init__(self):
         if self.values is None:
             self.values = deque(maxlen=self.history_size)
     
-    def add_value(self, value: float, metadata: Optional[dict[str, Any]] = None):
+    def add_value(self, value: float, metadata: dict[str, Any] | None = None):
         """Add new metric value"""
         metric_value = MetricValue(
             timestamp=time.time(),
@@ -83,11 +83,11 @@ class PerformanceMetric:
         )
         self.values.append(metric_value)
     
-    def get_current_value(self) -> Optional[float]:
+    def get_current_value(self) -> float | None:
         """Get most recent metric value"""
         return self.values[-1].value if self.values else None
     
-    def get_average(self, duration_seconds: Optional[int] = None) -> Optional[float]:
+    def get_average(self, duration_seconds: int | None = None) -> float | None:
         """Get average value over specified duration"""
         if not self.values:
             return None
@@ -100,7 +100,7 @@ class PerformanceMetric:
         
         return statistics.mean(values) if values else None
     
-    def get_max(self, duration_seconds: Optional[int] = None) -> Optional[float]:
+    def get_max(self, duration_seconds: int | None = None) -> float | None:
         """Get maximum value over specified duration"""
         if not self.values:
             return None
@@ -472,7 +472,7 @@ class PerformanceMonitor:
     for system and blockchain performance metrics.
     """
     
-    def __init__(self, config: Optional[dict[str, Any]] = None):
+    def __init__(self, config: dict[str, Any] | None = None):
         """
         Initialize performance monitor.
         
@@ -579,9 +579,9 @@ class PerformanceMonitor:
     
     def add_custom_metric(self, name: str, metric_type: MetricType, 
                          unit: MetricUnit, description: str,
-                         threshold_warning: Optional[float] = None,
-                         threshold_critical: Optional[float] = None,
-                         callback: Optional[Callable[[], float]] = None):
+                         threshold_warning: float | None = None,
+                         threshold_critical: float | None = None,
+                         callback: Callable[[], float] | None = None):
         """Add custom performance metric"""
         self.metrics[name] = PerformanceMetric(
             name=name,
@@ -761,7 +761,7 @@ class PerformanceMonitor:
         return result
     
     def get_metric_history(self, metric_name: str, 
-                          duration_seconds: Optional[int] = None) -> list[dict[str, Any]]:
+                          duration_seconds: int | None = None) -> list[dict[str, Any]]:
         """Get metric value history"""
         if metric_name not in self.metrics:
             return []

@@ -8,7 +8,7 @@ and security controls across enterprise processes.
 """
 
 import time
-from typing import Any, Optional, Callable, Union
+from typing import Any, Callable, Union
 from dataclasses import dataclass
 from enum import Enum
 
@@ -134,8 +134,8 @@ class ContractLifecycle:
     def __init__(self):
         self.status = ContractStatus.DEVELOPMENT
         self.status_history: list[dict[str, Any]] = []
-        self.deployment_info: Optional[dict[str, Any]] = None
-        self.deprecation_info: Optional[dict[str, Any]] = None
+        self.deployment_info: dict[str, Any] | None = None
+        self.deprecation_info: dict[str, Any] | None = None
         
     def transition_to(self, new_status: ContractStatus, reason: str = "", 
                      metadata: dict[str, Any] = None) -> bool:
@@ -218,8 +218,8 @@ class DomainContract:
     """
     
     def __init__(self, contract_id: str, version: Union[str, ContractVersion], 
-                 implementation: Optional[Callable] = None, 
-                 metadata: Optional[dict[str, Any]] = None):
+                 implementation: Callable | None = None, 
+                 metadata: dict[str, Any] | None = None):
         """
         Initialize domain contract.
         
@@ -294,7 +294,7 @@ class DomainContract:
                 pass
         return False
     
-    def execute(self, event: dict[str, Any], context: Optional[dict[str, Any]] = None) -> dict[str, Any]:
+    def execute(self, event: dict[str, Any], context: dict[str, Any] | None = None) -> dict[str, Any]:
         """
         Execute contract logic based on domain event.
         
@@ -394,8 +394,8 @@ class DomainContract:
         return execution_result
     
     def upgrade_to_version(self, new_version: Union[str, ContractVersion], 
-                          new_implementation: Optional[Callable] = None,
-                          metadata: Optional[dict[str, Any]] = None) -> bool:
+                          new_implementation: Callable | None = None,
+                          metadata: dict[str, Any] | None = None) -> bool:
         """
         Upgrade contract to new version.
         
@@ -454,7 +454,7 @@ class DomainContract:
         
         return True
     
-    def deprecate(self, reason: str = "", end_of_life_date: Optional[float] = None) -> bool:
+    def deprecate(self, reason: str = "", end_of_life_date: float | None = None) -> bool:
         """
         Mark contract as deprecated.
         

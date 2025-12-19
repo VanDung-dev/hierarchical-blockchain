@@ -8,7 +8,7 @@ Sub-Chains) have designated roles and permissions for block creation.
 
 import time
 import hashlib
-from typing import Any, Optional
+from typing import Any
 
 from hierachain.core.consensus.base_consensus import BaseConsensus
 from hierachain.core.block import Block
@@ -136,7 +136,7 @@ class ProofOfAuthority(BaseConsensus):
         
         return True
     
-    def finalize_block(self, block: Block, authority_id: Optional[str] = None) -> Block:
+    def finalize_block(self, block: Block, authority_id: str | None = None) -> Block:
         """
         Finalize a block according to PoA consensus.
         

@@ -7,7 +7,7 @@ It ensures proper event structure following framework guidelines.
 """
 
 import time
-from typing import Any, Optional
+from typing import Any
 from abc import ABC, abstractmethod
 
 from hierachain.core.utils import validate_event_structure, validate_no_cryptocurrency_terms
@@ -25,8 +25,8 @@ class BaseEvent(ABC):
     """
     
     def __init__(self, entity_id: str, event_type: str, 
-                 details: Optional[dict[str, Any]] = None, 
-                 timestamp: Optional[float] = None):
+                 details: dict[str, Any] | None = None, 
+                 timestamp: float | None = None):
         """
         Initialize a base event.
         
@@ -208,8 +208,8 @@ class GenericEvent(BaseEvent):
     """
     
     def __init__(self, entity_id: str, event_type: str, 
-                 details: Optional[dict[str, Any]] = None, 
-                 timestamp: Optional[float] = None):
+                 details: dict[str, Any] | None = None, 
+                 timestamp: float | None = None):
         """
         Initialize a generic event.
         
@@ -241,8 +241,8 @@ class OperationEvent(BaseEvent):
     
     def __init__(self, entity_id: str, operation_type: str, 
                  operation_status: str = "started",
-                 details: Optional[dict[str, Any]] = None, 
-                 timestamp: Optional[float] = None):
+                 details: dict[str, Any] | None = None, 
+                 timestamp: float | None = None):
         """
         Initialize an operation event.
         
@@ -286,7 +286,7 @@ class OperationEvent(BaseEvent):
         
         return True
     
-    def complete_operation(self, result: Optional[dict[str, Any]] = None) -> 'OperationEvent':
+    def complete_operation(self, result: dict[str, Any] | None = None) -> 'OperationEvent':
         """
         Create a completion event for this operation.
         

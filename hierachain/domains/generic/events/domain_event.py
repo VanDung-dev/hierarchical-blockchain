@@ -7,7 +7,7 @@ framework guidelines and can be used as templates for custom domain implementati
 """
 
 import time
-from typing import Any, Optional
+from typing import Any
 
 from hierachain.domains.generic.events.base_event import BaseEvent
 
@@ -21,8 +21,8 @@ class DomainEvent(BaseEvent):
     """
     
     def __init__(self, entity_id: str, event_type: str, domain_type: str,
-                 details: Optional[dict[str, Any]] = None, 
-                 timestamp: Optional[float] = None):
+                 details: dict[str, Any] | None = None, 
+                 timestamp: float | None = None):
         """
         Initialize a domain event.
         
@@ -69,8 +69,8 @@ class ResourceAllocationEvent(DomainEvent):
     
     def __init__(self, entity_id: str, resource_type: str, resource_id: str,
                  allocation_type: str = "assigned", domain_type: str = "generic",
-                 details: Optional[dict[str, Any]] = None, 
-                 timestamp: Optional[float] = None):
+                 details: dict[str, Any] | None = None, 
+                 timestamp: float | None = None):
         """
         Initialize a resource allocation event.
         
@@ -135,9 +135,9 @@ class QualityCheckEvent(DomainEvent):
     """
     
     def __init__(self, entity_id: str, check_type: str, check_result: str,
-                 inspector_id: Optional[str] = None, domain_type: str = "generic",
-                 details: Optional[dict[str, Any]] = None, 
-                 timestamp: Optional[float] = None):
+                 inspector_id: str | None = None, domain_type: str = "generic",
+                 details: dict[str, Any] | None = None, 
+                 timestamp: float | None = None):
         """
         Initialize a quality check event.
         
@@ -199,9 +199,9 @@ class StatusUpdateEvent(DomainEvent):
     """
     
     def __init__(self, entity_id: str, old_status: str, new_status: str,
-                 reason: Optional[str] = None, domain_type: str = "generic",
-                 details: Optional[dict[str, Any]] = None, 
-                 timestamp: Optional[float] = None):
+                 reason: str | None = None, domain_type: str = "generic",
+                 details: dict[str, Any] | None = None, 
+                 timestamp: float | None = None):
         """
         Initialize a status update event.
         
@@ -267,8 +267,8 @@ class ApprovalEvent(DomainEvent):
     
     def __init__(self, entity_id: str, approval_type: str, approval_status: str,
                  approver_id: str, domain_type: str = "generic",
-                 details: Optional[dict[str, Any]] = None, 
-                 timestamp: Optional[float] = None):
+                 details: dict[str, Any] | None = None, 
+                 timestamp: float | None = None):
         """
         Initialize an approval event.
         
@@ -334,9 +334,9 @@ class ComplianceEvent(DomainEvent):
     """
     
     def __init__(self, entity_id: str, compliance_type: str, compliance_status: str,
-                 regulation_reference: Optional[str] = None, domain_type: str = "generic",
-                 details: Optional[dict[str, Any]] = None, 
-                 timestamp: Optional[float] = None):
+                 regulation_reference: str | None = None, domain_type: str = "generic",
+                 details: dict[str, Any] | None = None, 
+                 timestamp: float | None = None):
         """
         Initialize a compliance event.
         

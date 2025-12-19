@@ -7,7 +7,6 @@ Ensures only authorized clients with valid, non-revoked API keys can access prot
 
 from fastapi import Depends, HTTPException, Security
 from fastapi.security import APIKeyHeader, APIKeyQuery
-from typing import Optional
 import time
 import sys
 import os
@@ -64,7 +63,7 @@ class VerifyAPIKey:
         else:
             self.api_key_dependency = api_key_header  # Default to header
     
-    async def __call__(self, api_key: Optional[str] = Security(api_key_header)) -> dict:
+    async def __call__(self, api_key: str | None = Security(api_key_header)) -> dict:
         """
         Verify API key and return context variables.
         

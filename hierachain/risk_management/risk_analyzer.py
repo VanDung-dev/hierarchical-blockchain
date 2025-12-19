@@ -9,7 +9,7 @@ Focuses on consensus, security, performance, and storage risks.
 import time
 import logging
 import os
-from typing import Any, Optional
+from typing import Any
 from dataclasses import dataclass
 from enum import Enum
 
@@ -53,7 +53,7 @@ class RiskAnalyzer:
     performance, storage, and operational domains.
     """
     
-    def __init__(self, config: Optional[dict[str, Any]] = None):
+    def __init__(self, config: dict[str, Any] | None = None):
         """
         Initialize risk analyzer with configuration.
         

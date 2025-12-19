@@ -9,7 +9,7 @@ Provides Byzantine fault tolerance with configurable fault tolerance levels.
 import time
 import hashlib
 import threading
-from typing import Any, Optional, Callable
+from typing import Any, Callable
 from dataclasses import dataclass, field
 from enum import Enum
 
@@ -88,10 +88,10 @@ class BFTConsensus:
     """Byzantine Fault Tolerance consensus implementation"""
     
     def __init__(self, node_id: str, all_nodes: list[str], f: int = 1, 
-                 error_config: Optional[dict[str, Any]] = None,
-                 keypair: Optional[KeyPair] = None,
-                 node_public_keys: Optional[dict[str, str]] = None,
-                 zmq_node: Optional[ZmqNode] = None):
+                 error_config: dict[str, Any] | None = None,
+                 keypair: KeyPair | None = None,
+                 node_public_keys: dict[str, str] | None = None,
+                 zmq_node: ZmqNode | None = None):
         """
         Initialize BFT consensus
         
@@ -119,8 +119,8 @@ class BFTConsensus:
             self.key_provider = LocalKeyProvider(keypair)
             
         # Network and chain references (initialize before use)
-        self.network_send_function: Optional[Callable] = None
-        self.chain: Optional[Any] = None
+        self.network_send_function: Callable | None = None
+        self.chain: Any | None = None
         
         if zmq_node:
             # Verify zmq_node matches our node_id
@@ -146,7 +146,7 @@ class BFTConsensus:
         self.view = 0
         self.sequence_number = 0
         self.state = ConsensusState.IDLE
-        self.current_request: Optional[dict[str, Any]] = None
+        self.current_request: dict[str, Any] | None = None
         
         # Message storage
         self.pre_prepare_messages: dict[int, BFTMessage] = {}
@@ -162,7 +162,7 @@ class BFTConsensus:
         self.max_failure_count = 3
 
         # View change state
-        self.view_change_timer: Optional[threading.Timer] = None
+        self.view_change_timer: threading.Timer | None = None
         self.view_change_timeout = 30.0  # seconds
         self.last_heartbeat = time.time()
         

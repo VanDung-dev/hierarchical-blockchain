@@ -8,7 +8,7 @@ health is critical, it rejects the request with a 503 Service Unavailable respon
 """
 
 import logging
-from typing import Optional, Set
+from typing import Set
 
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
@@ -32,10 +32,10 @@ class ResourceGuardMiddleware(BaseHTTPMiddleware):
     def __init__(
         self,
         app: ASGIApp,
-        monitor: Optional[PerformanceMonitor] = None,
+        monitor: PerformanceMonitor | None = None,
         memory_threshold_percent: float = 80.0,
         cpu_threshold_percent: float = 80.0,
-        exempt_paths: Optional[Set[str]] = None,
+        exempt_paths: Set[str] | None = None,
     ):
         """
         Initialize the ResourceGuardMiddleware.

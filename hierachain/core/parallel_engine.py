@@ -10,7 +10,7 @@ batch processing.
 import os
 import time
 import threading
-from typing import Any, Optional, Callable
+from typing import Any, Callable
 from dataclasses import dataclass, field
 from enum import Enum
 import logging
@@ -49,9 +49,9 @@ class ProcessingResult:
     task_id: str
     success: bool
     result: Any = None
-    error: Optional[str] = None
+    error: str | None = None
     processing_time: float = 0.0
-    worker_id: Optional[str] = None
+    worker_id: str | None = None
 
 
 class WorkerPool:
@@ -152,7 +152,7 @@ class WorkerPool:
 class ParallelProcessingEngine:
     """Parallel processing engine for blockchain operations"""
     
-    def __init__(self, max_workers: Optional[int] = None, chunk_size: int = 100):
+    def __init__(self, max_workers: int | None = None, chunk_size: int = 100):
         """
         Initialize parallel processing engine
         
@@ -553,7 +553,7 @@ class ParallelProcessingEngine:
 
 # Factory functions and utilities
 
-def create_parallel_engine(max_workers: Optional[int] = None, 
+def create_parallel_engine(max_workers: int | None = None, 
                           chunk_size: int = 100) -> ParallelProcessingEngine:
     """Create parallel processing engine with default configuration"""
     return ParallelProcessingEngine(max_workers, chunk_size)
@@ -571,7 +571,7 @@ def create_high_performance_engine() -> ParallelProcessingEngine:
     return engine
 
 
-def parallel_map(data: list[Any], func: Callable, max_workers: Optional[int] = None) -> list[Any]:
+def parallel_map(data: list[Any], func: Callable, max_workers: int | None = None) -> list[Any]:
     """Simple parallel map function"""
     engine = create_parallel_engine(max_workers)
     
@@ -583,7 +583,7 @@ def parallel_map(data: list[Any], func: Callable, max_workers: Optional[int] = N
 
 
 def parallel_filter(data: list[Any], predicate: Callable, 
-                   max_workers: Optional[int] = None) -> list[Any]:
+                   max_workers: int | None = None) -> list[Any]:
     """Parallel filter function"""
     def filter_func(item):
         return item if predicate(item) else None

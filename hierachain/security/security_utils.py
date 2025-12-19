@@ -5,7 +5,7 @@ This module provides cryptographic primitives for the HieraChain framework,
 focusing on Ed25519 for digital signatures as required for enterprise-grade security.
 """
 
-from typing import Tuple, Optional, Any
+from typing import Tuple, Any
 import binascii
 from nacl.signing import SigningKey, VerifyKey
 from nacl.encoding import HexEncoder
@@ -22,7 +22,7 @@ class KeyPair:
     """
     Represents an Ed25519 key pair for signing and verification.
     """
-    def __init__(self, private_key: Optional[SigningKey] = None):
+    def __init__(self, private_key: SigningKey | None = None):
         if private_key:
             self._signing_key = private_key
         else:

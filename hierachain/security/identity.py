@@ -7,7 +7,7 @@ identity validation for enterprise applications.
 """
 
 import time
-from typing import Optional, Any
+from typing import Any
 import logging
 from hierachain.security.security_utils import verify_signature
 from nacl.encoding import HexEncoder
@@ -28,7 +28,7 @@ class IdentityManager:
         self.users: dict[str, dict[str, Any]] = {}
         self.roles: dict[str, list[str]] = {}
     
-    def register_organization(self, org_id: str, name: str, participants: Optional[list[str]] = None) -> str:
+    def register_organization(self, org_id: str, name: str, participants: list[str] | None = None) -> str:
         """Register new organization"""
         self.organizations[org_id] = {
             "name": name,
@@ -37,7 +37,7 @@ class IdentityManager:
         }
         return org_id
     
-    def register_user(self, user_id: str, org_id: str, role: str, public_key: Optional[str] = None) -> str:
+    def register_user(self, user_id: str, org_id: str, role: str, public_key: str | None = None) -> str:
         """Register new user with Ed25519 public key validation."""
         if org_id not in self.organizations:
             raise IdentityError(f"Organization {org_id} does not exist")
@@ -70,7 +70,7 @@ class IdentityManager:
         logger.info(f"Registered user {user_id} with role {role}")
         return user_id
     
-    def validate_identity(self, user_id: str, required_role: Optional[str] = None) -> bool:
+    def validate_identity(self, user_id: str, required_role: str | None = None) -> bool:
         """Validate identity and role"""
         if user_id not in self.users:
             return False
@@ -99,11 +99,11 @@ class IdentityManager:
             
         return verify_signature(user["public_key"], message, signature)
     
-    def get_user_info(self, user_id: str) -> Optional[dict[str, Any]]:
+    def get_user_info(self, user_id: str) -> dict[str, Any] | None:
         """Get user information"""
         return self.users.get(user_id)
     
-    def get_organization_info(self, org_id: str) -> Optional[dict[str, Any]]:
+    def get_organization_info(self, org_id: str) -> dict[str, Any] | None:
         """Get organization information"""
         return self.organizations.get(org_id)
     

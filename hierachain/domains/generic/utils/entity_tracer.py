@@ -7,7 +7,7 @@ across multiple Sub-Chains while maintaining framework guidelines.
 """
 
 import time
-from typing import Any, Optional, Set
+from typing import Any, Set
 from collections import defaultdict
 from hierachain.hierarchical.hierarchy_manager import HierarchyManager
 
@@ -253,7 +253,7 @@ class EntityTracer:
         return interactions
     
     @staticmethod
-    def _get_current_status(events: list[dict[str, Any]]) -> Optional[str]:
+    def _get_current_status(events: list[dict[str, Any]]) -> str | None:
         """Get the current status of an entity from its events."""
         # Find the most recent status update
         status_events = [e for e in events if e.get("event") == "status_update"]
@@ -268,7 +268,7 @@ class EntityTracer:
         
         return None
     
-    def find_related_entities(self, entity_id: str, relationship_types: Optional[list[str]] = None) -> dict[str, list[str]]:
+    def find_related_entities(self, entity_id: str, relationship_types: list[str] | None = None) -> dict[str, list[str]]:
         """
         Find entities related to the given entity.
         

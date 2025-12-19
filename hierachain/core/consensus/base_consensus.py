@@ -8,7 +8,7 @@ the event-based model and hierarchical structure principles.
 
 import pyarrow as pa
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any
 from hierachain.core.block import Block
 
 
@@ -71,7 +71,7 @@ class BaseConsensus(ABC):
         raise NotImplementedError("Subclasses must implement finalize_block()")
     
     @abstractmethod
-    def can_create_block(self, authority_id: Optional[str] = None) -> bool:
+    def can_create_block(self, authority_id: str | None = None) -> bool:
         """
         Check if a block can be created by the given authority.
         

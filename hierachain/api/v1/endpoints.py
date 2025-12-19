@@ -5,7 +5,7 @@ This module provides RESTful API endpoints for interacting with the HieraChain s
 The system follows a two-level architecture where sub-chains handle business events and the main chain
 stores cryptographic proofs from sub-chains.
 """
-from typing import Optional
+
 from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import JSONResponse
 import time
@@ -124,7 +124,7 @@ async def submit_proof(chain_name: str):
         raise HTTPException(status_code=500, detail=f"Failed to submit proof: {str(e)}")
 
 @router.get("/entities/{entity_id}/trace", response_model=EntityTraceResponse)
-async def trace_entity(entity_id: str, chain_name: Optional[str] = None):
+async def trace_entity(entity_id: str, chain_name: str | None = None):
     """Trace an entity across chains"""
     try:
         if chain_name:

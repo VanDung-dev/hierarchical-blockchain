@@ -11,7 +11,6 @@ import shutil
 import hashlib
 import logging
 from datetime import datetime, timedelta
-from typing import Optional
 from cryptography.fernet import Fernet
 
 logger = logging.getLogger(__name__)
@@ -209,7 +208,7 @@ class KeyBackupManager:
             logger.error(f"Key restore failed for {backup_id}: {str(e)}")
             raise RestoreError(f"Failed to restore keys: {str(e)}")
     
-    def list_backups(self, key_type: Optional[str] = None) -> list[dict]:
+    def list_backups(self, key_type: str | None = None) -> list[dict]:
         """
         List available backups, optionally filtered by key type.
         
@@ -409,7 +408,7 @@ class KeyBackupManager:
         # For now, this is a placeholder for system integration
         logger.info(f"Applied restored {key_type} keys to system")
     
-    def _find_backup_file(self, backup_id: str) -> Optional[str]:
+    def _find_backup_file(self, backup_id: str) -> str | None:
         """Find the backup file for given backup ID."""
         metadata = self.metadata.get(backup_id)
         if not metadata:

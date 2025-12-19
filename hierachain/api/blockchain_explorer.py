@@ -6,7 +6,7 @@ capabilities for developer experience and data analysis.
 """
 
 import time
-from typing import Any, Optional
+from typing import Any
 from dataclasses import dataclass, field
 import logging
 
@@ -29,7 +29,7 @@ class ComponentConfig:
 class BlockchainExplorer:
     """Integration with blockchain explorer for visualization and analysis"""
     
-    def __init__(self, chain: Any, config: Optional[dict[str, Any]] = None):
+    def __init__(self, chain: Any, config: dict[str, Any] | None = None):
         """
         Initialize blockchain explorer
         
@@ -67,11 +67,11 @@ class BlockchainExplorer:
         """Register a custom explorer component"""
         self.ui_components[component_id] = component
     
-    def get_component(self, component_id: str) -> Optional[Any]:
+    def get_component(self, component_id: str) -> Any | None:
         """Get a registered component"""
         return self.ui_components.get(component_id)
     
-    def render(self, component_id: Optional[str] = None, **kwargs) -> dict[str, Any]:
+    def render(self, component_id: str | None = None, **kwargs) -> dict[str, Any]:
         """
         Render explorer UI
         
@@ -433,7 +433,7 @@ class ProofVisualizerComponent:
         
         return hierarchy
     
-    def _get_latest_proof_for_chain(self, chain_name: str) -> Optional[dict[str, Any]]:
+    def _get_latest_proof_for_chain(self, chain_name: str) -> dict[str, Any] | None:
         """Get latest proof for specific chain"""
         if hasattr(self.chain, 'main_chain'):
             for block in reversed(self.chain.main_chain.chain):

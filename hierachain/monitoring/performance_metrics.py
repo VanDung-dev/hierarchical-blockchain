@@ -12,7 +12,7 @@ from collections import defaultdict
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from functools import wraps
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 
 logger = logging.getLogger(__name__)
 
@@ -144,7 +144,7 @@ class PerformanceMetrics:
         duration_ms: float,
         data_size_bytes: int = 0,
         row_count: int = 0,
-        metadata: Optional[dict[str, Any]] = None
+        metadata: dict[str, Any] | None = None
     ) -> None:
         """
         Record a metric sample.
@@ -183,7 +183,7 @@ class PerformanceMetrics:
         operation: str,
         data_size_bytes: int = 0,
         row_count: int = 0,
-        metadata: Optional[dict[str, Any]] = None
+        metadata: dict[str, Any] | None = None
     ):
         """
         Context manager to measure operation duration.
@@ -240,7 +240,7 @@ class PerformanceMetrics:
             return wrapper
         return decorator
     
-    def get_metrics(self, operation: Optional[str] = None) -> dict[str, Any]:
+    def get_metrics(self, operation: str | None = None) -> dict[str, Any]:
         """
         Get aggregated metrics.
         

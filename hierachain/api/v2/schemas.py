@@ -6,7 +6,7 @@ API v2 requests and responses in the HieraChain system.
 These schemas support the new enterprise security and data isolation features.
 """
 
-from typing import Any, Optional
+from typing import Any
 from pydantic import BaseModel, Field, ConfigDict
 
 
@@ -45,7 +45,7 @@ class ChannelResponse(BaseModel):
     
     success: bool = Field(..., description="Whether the operation was successful")
     message: str = Field(..., description="Response message")
-    channel_id: Optional[str] = Field(None, description="Channel identifier")
+    channel_id: str | None = Field(None, description="Channel identifier")
 
 
 class PrivateCollectionCreateRequest(BaseModel):
@@ -109,7 +109,7 @@ class PrivateDataResponse(BaseModel):
     
     success: bool = Field(..., description="Whether the operation was successful")
     message: str = Field(..., description="Response message")
-    key: Optional[str] = Field(None, description="Key of the private data")
+    key: str | None = Field(None, description="Key of the private data")
 
 
 class ContractCreateRequest(BaseModel):
@@ -180,8 +180,8 @@ class ContractResponse(BaseModel):
     
     success: bool = Field(..., description="Whether the operation was successful")
     message: str = Field(..., description="Response message")
-    contract_id: Optional[str] = Field(None, description="Contract identifier")
-    result: Optional[dict[str, Any]] = Field(None, description="Result of contract execution")
+    contract_id: str | None = Field(None, description="Contract identifier")
+    result: dict[str, Any] | None = Field(None, description="Result of contract execution")
 
 
 class OrganizationRequest(BaseModel):
@@ -223,4 +223,4 @@ class OrganizationResponse(BaseModel):
     
     success: bool = Field(..., description="Whether the operation was successful")
     message: str = Field(..., description="Response message")
-    org_id: Optional[str] = Field(None, description="Organization identifier")
+    org_id: str | None = Field(None, description="Organization identifier")

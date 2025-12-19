@@ -9,7 +9,7 @@ blockchain deployments.
 
 import time
 import hashlib
-from typing import Any, Optional
+from typing import Any
 from dataclasses import dataclass
 from enum import Enum
 from datetime import datetime, timezone
@@ -86,7 +86,7 @@ class CertificateRevocationList:
         self.version = 1
         
     def revoke_certificate(self, serial_number: str, reason: str = "unspecified",
-                         revocation_date: Optional[datetime] = None) -> None:
+                         revocation_date: datetime | None = None) -> None:
         """
         Revoke a certificate.
         
@@ -109,7 +109,7 @@ class CertificateRevocationList:
         """Check if certificate is revoked"""
         return serial_number in self.revoked_certificates
     
-    def get_revocation_info(self, serial_number: str) -> Optional[dict[str, Any]]:
+    def get_revocation_info(self, serial_number: str) -> dict[str, Any] | None:
         """Get revocation information for a certificate"""
         return self.revoked_certificates.get(serial_number)
     
@@ -359,7 +359,7 @@ class CertificateManager:
             subject_alt_names=cert_info.get("SubjectAltNames", "").split(',')
         )
     
-    def store_certificate(self, cert: CertificateInfo, metadata: Optional[dict[str, Any]] = None) -> str:
+    def store_certificate(self, cert: CertificateInfo, metadata: dict[str, Any] | None = None) -> str:
         """
         Store certificate with metadata.
         
@@ -386,7 +386,7 @@ class CertificateManager:
         
         return storage_id
     
-    def get_certificate(self, storage_id: str) -> Optional[CertificateInfo]:
+    def get_certificate(self, storage_id: str) -> CertificateInfo | None:
         """Get certificate by storage ID"""
         if storage_id in self.certificate_store:
             entry = self.certificate_store[storage_id]
@@ -395,7 +395,7 @@ class CertificateManager:
             return entry["certificate"]
         return None
     
-    def validate_certificate_by_id(self, storage_id: str) -> Optional[dict[str, Any]]:
+    def validate_certificate_by_id(self, storage_id: str) -> dict[str, Any] | None:
         """Validate certificate by storage ID"""
         cert = self.get_certificate(storage_id)
         if cert:
@@ -457,7 +457,7 @@ class CertificateManager:
         self._update_statistics()
         return self.statistics.copy()
     
-    def export_certificate_info(self, storage_id: str) -> Optional[dict[str, Any]]:
+    def export_certificate_info(self, storage_id: str) -> dict[str, Any] | None:
         """Export comprehensive certificate information"""
         if storage_id not in self.certificate_store:
             return None

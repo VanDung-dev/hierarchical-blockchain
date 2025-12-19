@@ -6,7 +6,7 @@ directly for common business scenarios or as a reference for creating
 custom domain-specific chains.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from hierachain.domains.generic.chains.base_chain import BaseChain
 from hierachain.domains.generic.events.domain_event import EventFactory
@@ -74,7 +74,7 @@ class DomainChain(BaseChain):
         self.add_domain_rule("quality_before_approval", quality_check_before_approval)
     
     def start_domain_operation(self, entity_id: str, operation_type: str, 
-                              details: Optional[dict[str, Any]] = None) -> bool:
+                              details: dict[str, Any] | None = None) -> bool:
         """
         Start a domain-specific operation with validation.
         
@@ -104,7 +104,7 @@ class DomainChain(BaseChain):
         return success
     
     def complete_domain_operation(self, entity_id: str, operation_type: str, 
-                                 result: Optional[dict[str, Any]] = None) -> bool:
+                                 result: dict[str, Any] | None = None) -> bool:
         """
         Complete a domain-specific operation with result tracking.
         
@@ -131,7 +131,7 @@ class DomainChain(BaseChain):
     
     def allocate_resource(self, entity_id: str, resource_type: str, resource_id: str,
                          allocation_type: str = "assigned", 
-                         details: Optional[dict[str, Any]] = None) -> bool:
+                         details: dict[str, Any] | None = None) -> bool:
         """
         Allocate a resource to an entity.
         
@@ -158,8 +158,8 @@ class DomainChain(BaseChain):
         return self.add_domain_event(event)
     
     def perform_quality_check(self, entity_id: str, check_type: str, check_result: str,
-                             inspector_id: Optional[str] = None,
-                             details: Optional[dict[str, Any]] = None) -> bool:
+                             inspector_id: str | None = None,
+                             details: dict[str, Any] | None = None) -> bool:
         """
         Perform a quality check on an entity.
         
@@ -195,8 +195,8 @@ class DomainChain(BaseChain):
         return success
     
     def update_entity_status(self, entity_id: str, status: str, 
-                           details: Optional[dict[str, Any]] = None,
-                           reason: Optional[str] = None) -> bool:
+                           details: dict[str, Any] | None = None,
+                           reason: str | None = None) -> bool:
         """
         Update the status of an entity.
         
@@ -229,7 +229,7 @@ class DomainChain(BaseChain):
         return self.add_domain_event(event)
     
     def process_approval(self, entity_id: str, approval_type: str, approval_status: str,
-                        approver_id: str, details: Optional[dict[str, Any]] = None) -> bool:
+                        approver_id: str, details: dict[str, Any] | None = None) -> bool:
         """
         Process an approval for an entity.
         
@@ -269,8 +269,8 @@ class DomainChain(BaseChain):
         return success
     
     def check_compliance(self, entity_id: str, compliance_type: str, compliance_status: str,
-                        regulation_reference: Optional[str] = None,
-                        details: Optional[dict[str, Any]] = None) -> bool:
+                        regulation_reference: str | None = None,
+                        details: dict[str, Any] | None = None) -> bool:
         """
         Check compliance for an entity.
         

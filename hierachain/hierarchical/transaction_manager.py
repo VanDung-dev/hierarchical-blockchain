@@ -9,7 +9,7 @@ import uuid
 import time
 import logging
 from enum import Enum
-from typing import Optional, Any
+from typing import Any
 from dataclasses import dataclass, field
 
 logger = logging.getLogger(__name__)
@@ -36,7 +36,7 @@ class CrossChainTransaction:
     state: TransactionState = TransactionState.PENDING
     created_at: float = field(default_factory=time.time)
     updated_at: float = field(default_factory=time.time)
-    error_message: Optional[str] = None
+    error_message: str | None = None
 
 
 class CrossChainTransactionManager:
@@ -80,7 +80,7 @@ class CrossChainTransactionManager:
 
         return tx_id
 
-    def get_transaction(self, tx_id: str) -> Optional[CrossChainTransaction]:
+    def get_transaction(self, tx_id: str) -> CrossChainTransaction | None:
         """Get transaction details."""
         return self.transactions.get(tx_id)
 

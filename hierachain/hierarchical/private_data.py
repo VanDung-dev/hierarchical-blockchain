@@ -9,7 +9,7 @@ This significantly enhances data privacy in enterprise collaborations.
 import time
 import hashlib
 import json
-from typing import Any, Optional
+from typing import Any
 from dataclasses import dataclass
 from enum import Enum
 from cryptography.fernet import Fernet, InvalidToken
@@ -183,7 +183,7 @@ class PrivateCollection:
             print(f"Failed to add private data: {str(e)}")
             return False
     
-    def get_data(self, key: str, requester_org_id: str) -> Optional[Any]:
+    def get_data(self, key: str, requester_org_id: str) -> Any | None:
         """
         Retrieve private data if requester has access.
         
@@ -218,7 +218,7 @@ class PrivateCollection:
         except (InvalidToken, UnicodeDecodeError, json.JSONDecodeError):
             return None
     
-    def get_data_hash(self, key: str, _requester_org_id: str) -> Optional[str]:
+    def get_data_hash(self, key: str, _requester_org_id: str) -> str | None:
         """
         Get hash of private data without revealing the data itself.
         
@@ -241,7 +241,7 @@ class PrivateCollection:
             
         return entry.hash_value
     
-    def get_metadata(self, key: str, requester_org_id: str) -> Optional[dict[str, Any]]:
+    def get_metadata(self, key: str, requester_org_id: str) -> dict[str, Any] | None:
         """
         Get metadata for private data entry.
         

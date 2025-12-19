@@ -8,7 +8,7 @@ affiliation hierarchies, and channel management across organizational boundaries
 
 import time
 import threading
-from typing import Any, Optional
+from typing import Any
 from dataclasses import dataclass, field
 
 
@@ -268,7 +268,7 @@ class MultiOrgNetwork:
     
     def __init__(self):
         self.organizations: dict[str, Organization] = {}
-        self.system_channel: Optional[ApplicationChannel] = None
+        self.system_channel: ApplicationChannel | None = None
         self.application_channels: dict[str, ApplicationChannel] = {}
         self.lock = threading.Lock()
     
@@ -336,13 +336,13 @@ class MultiOrgNetwork:
             self.application_channels[channel_id] = channel
             return channel
     
-    def get_channel(self, channel_id: str) -> Optional[ApplicationChannel]:
+    def get_channel(self, channel_id: str) -> ApplicationChannel | None:
         """Get channel by ID"""
         if channel_id == "system-channel":
             return self.system_channel
         return self.application_channels.get(channel_id)
     
-    def get_organization(self, org_id: str) -> Optional[Organization]:
+    def get_organization(self, org_id: str) -> Organization | None:
         """Get organization by ID"""
         return self.organizations.get(org_id)
     
@@ -355,8 +355,7 @@ class MultiOrgNetwork:
             "total_members": sum(len(org.members) for org in self.organizations.values())
         }
     
-    def validate_cross_org_operation(self, operation: dict[str, Any], 
-                                     channel_id: str) -> bool:
+    def validate_cross_org_operation(self, operation: dict[str, Any], channel_id: str) -> bool:
         """Validate cross-organizational operation"""
         channel = self.get_channel(channel_id)
         if not channel:

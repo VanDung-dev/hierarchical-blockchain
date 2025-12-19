@@ -8,7 +8,7 @@ ensuring data integrity and schema compliance.
 import json
 import logging
 from enum import Enum
-from typing import Any, Callable, Optional, Tuple
+from typing import Any, Callable, Tuple
 from dataclasses import dataclass, field
 
 import pyarrow as pa
@@ -80,7 +80,7 @@ class DataValidator:
         self,
         level: ValidationLevel = ValidationLevel.RELAXED,
         auto_fix: bool = False,
-        custom_validators: Optional[dict[str, Callable]] = None
+        custom_validators: dict[str, Callable] | None = None
     ):
         """
         Initialize validator.

@@ -7,7 +7,7 @@ TTL support, and specialized blockchain data caching. Delivers significant perfo
 
 import time
 import threading
-from typing import Any, Optional, Union
+from typing import Any, Union
 from dataclasses import dataclass, field
 from enum import Enum
 import logging
@@ -34,7 +34,7 @@ class CacheEntry:
     access_time: float = field(default_factory=time.time)
     creation_time: float = field(default_factory=time.time)
     access_count: int = 0
-    ttl: Optional[float] = None
+    ttl: float | None = None
     
     @property
     def is_expired(self) -> bool:
@@ -70,7 +70,7 @@ class AdvancedCache:
         # TTL cleanup
         self._start_ttl_cleanup_thread()
     
-    def get(self, key: str) -> Optional[Any]:
+    def get(self, key: str) -> Any | None:
         """Get item from cache"""
         with self.lock:
             if key not in self.cache:
@@ -90,7 +90,7 @@ class AdvancedCache:
             self.hits += 1
             return entry.value
     
-    def set(self, key: str, value: Any, ttl: Optional[float] = None):
+    def set(self, key: str, value: Any, ttl: float | None = None):
         """Set item in cache with optional TTL"""
         with self.lock:
             # Check if we need to evict
@@ -241,7 +241,7 @@ class AdvancedCache:
 class BlockchainCacheManager:
     """Cache manager specifically for blockchain data"""
     
-    def __init__(self, chain: Any, config: Optional[dict[str, Any]] = None):
+    def __init__(self, chain: Any, config: dict[str, Any] | None = None):
         """
         Initialize blockchain cache manager
         
@@ -285,7 +285,7 @@ class BlockchainCacheManager:
         self.lock = threading.RLock()
         self.logger = logging.getLogger(__name__)
     
-    def get_block(self, chain_name: str, index: int) -> Optional[Any]:
+    def get_block(self, chain_name: str, index: int) -> Any | None:
         """Get block from cache or chain (42x faster when cached)"""
         start_time = time.time()
         cache_key = f"{chain_name}:{index}"
@@ -319,7 +319,7 @@ class BlockchainCacheManager:
             
             return block
     
-    def get_events_for_block(self, chain_name: str, index: int) -> Optional[list[Any]]:
+    def get_events_for_block(self, chain_name: str, index: int) -> list[Any] | None:
         """Get events for a block"""
         cache_key = f"events:{chain_name}:{index}"
         
@@ -473,7 +473,7 @@ class BlockchainCacheManager:
         
         return False
     
-    def _get_chain(self, chain_name: str) -> Optional[Any]:
+    def _get_chain(self, chain_name: str) -> Any | None:
         """Get chain by name"""
         if chain_name == "main" and hasattr(self.chain, 'main_chain'):
             return self.chain.main_chain
@@ -492,7 +492,7 @@ class BlockchainCacheManager:
             for key in keys_to_remove:
                 self.entity_cache.delete(key)
     
-    def invalidate_block_cache(self, chain_name: str, index: Optional[int] = None):
+    def invalidate_block_cache(self, chain_name: str, index: int | None = None):
         """Invalidate cached blocks for a chain"""
         with self.lock:
             if index is not None:
@@ -567,7 +567,7 @@ class BlockchainCacheManager:
 
 
 # Factory functions
-def create_blockchain_cache(chain: Any, config: Optional[dict[str, Any]] = None) -> BlockchainCacheManager:
+def create_blockchain_cache(chain: Any, config: dict[str, Any] | None = None) -> BlockchainCacheManager:
     """Create blockchain cache manager with default configuration"""
     return BlockchainCacheManager(chain, config)
 

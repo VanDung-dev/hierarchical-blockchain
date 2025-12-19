@@ -9,7 +9,7 @@ types of data
 import json
 import os
 import logging
-from typing import Optional, Union
+from typing import Union
 from pathlib import Path
 import time
 import pyarrow as pa
@@ -216,7 +216,7 @@ class FileStorageAdapter:
             logger.error(f"Failed to update events index: {e}")
             # Don't raise - this is not critical for block storage
     
-    def get_chain_metadata(self, chain_name: str) -> Optional[dict]:
+    def get_chain_metadata(self, chain_name: str) -> dict | None:
         """Get chain metadata"""
         try:
             chain_file = self._get_chain_file(chain_name)
@@ -230,7 +230,7 @@ class FileStorageAdapter:
             logger.error(f"Failed to get chain metadata {chain_name}: {e}")
             return None
     
-    def get_block(self, chain_name: str, block_index: int) -> Optional[dict]:
+    def get_block(self, chain_name: str, block_index: int) -> dict | None:
         """
         Get a specific block.
         Returns a Dictionary suitable for Block.from_dict(), with 'events' as a pyarrow.Table.

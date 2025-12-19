@@ -9,7 +9,7 @@ completely isolated data space with its own governance policies and access contr
 import time
 import pyarrow as pa
 import pyarrow.compute as pc
-from typing import Any, Optional, Set, TYPE_CHECKING
+from typing import Any, Set, TYPE_CHECKING
 from dataclasses import dataclass
 from enum import Enum
 
@@ -114,7 +114,7 @@ class ChannelLedger:
         event["channel_event"] = True
         self.current_block_events.append(event)
     
-    def finalize_block(self) -> Optional[Block]:
+    def finalize_block(self) -> Block | None:
         """Finalize current block and add to ledger"""
         if not self.current_block_events:
             return None
@@ -153,7 +153,7 @@ class ChannelLedger:
         
         return block
     
-    def get_events_by_filter(self, filter_func, filter_expr: Optional[Any] = None) -> list[dict[str, Any]]:
+    def get_events_by_filter(self, filter_func, filter_expr: Any | None = None) -> list[dict[str, Any]]:
         """
         Get events matching filter criteria.
         
@@ -374,7 +374,7 @@ class Channel:
         
         return True
     
-    def query_events(self, query_params: dict[str, Any], requester_org_id: str) -> Optional[list[dict[str, Any]]]:
+    def query_events(self, query_params: dict[str, Any], requester_org_id: str) -> list[dict[str, Any] | None]:
         """
         Query events from the channel.
         
@@ -459,7 +459,7 @@ class Channel:
         limit = query_params.get("limit", len(events))
         return events[:limit]
     
-    def finalize_block(self) -> Optional[Any]:
+    def finalize_block(self) -> Any | None:
         """Finalize current block in the channel ledger"""
         return self.ledger.finalize_block()
     
@@ -477,7 +477,7 @@ class Channel:
             "statistics": self.event_statistics
         }
     
-    def get_organization_info(self, org_id: str) -> Optional[dict[str, Any]]:
+    def get_organization_info(self, org_id: str) -> dict[str, Any] | None:
         """Get information about a specific organization"""
         if org_id not in self.organizations:
             return None

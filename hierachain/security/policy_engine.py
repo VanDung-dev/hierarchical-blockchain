@@ -10,7 +10,7 @@ enterprise blockchain applications.
 import time
 import json
 import re
-from typing import Any, Optional, Union
+from typing import Any, Union
 from dataclasses import dataclass
 from enum import Enum
 
@@ -168,7 +168,7 @@ class PolicyRule:
     priority: int = 0
     description: str = ""
     
-    def evaluate(self, context: dict[str, Any]) -> Optional[PolicyEffect]:
+    def evaluate(self, context: dict[str, Any]) -> PolicyEffect | None:
         """
         Evaluate rule against context.
         
@@ -230,7 +230,7 @@ class Policy:
     """
     
     def __init__(self, policy_id: str, policy_type: PolicyType, 
-                 rules: Optional[list[PolicyRule]] = None,
+                 rules: list[PolicyRule] | None = None,
                  default_effect: PolicyEffect = PolicyEffect.DENY,
                  description: str = ""):
         """
@@ -567,8 +567,7 @@ class PolicyEngine:
         
         return combined_result
     
-    def get_applicable_policies(self, _context: dict[str, Any],
-                              policy_type: Optional[PolicyType] = None) -> list[str]:
+    def get_applicable_policies(self, _context: dict[str, Any], policy_type: PolicyType | None = None) -> list[str]:
         """Get list of policies that might apply to context"""
         applicable_policies = []
         
@@ -583,7 +582,7 @@ class PolicyEngine:
         
         return applicable_policies
     
-    def get_policy_info(self, policy_id: str) -> Optional[dict[str, Any]]:
+    def get_policy_info(self, policy_id: str) -> dict[str, Any] | None:
         """Get comprehensive policy information"""
         policy = self.policies.get(policy_id)
         if not policy:
@@ -621,8 +620,7 @@ class PolicyEngine:
         """Cache evaluation result"""
         # Implement LRU eviction if cache is full
         if len(self.evaluation_cache) >= self.max_cache_entries:
-            oldest_key = min(self.evaluation_cache.keys(), 
-                           key=lambda k: self.evaluation_cache[k]["cached_at"])
+            oldest_key = min(self.evaluation_cache.keys(), key=lambda k: self.evaluation_cache[k]["cached_at"])
             del self.evaluation_cache[oldest_key]
         
         self.evaluation_cache[cache_key] = {

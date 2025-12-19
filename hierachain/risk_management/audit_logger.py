@@ -11,7 +11,7 @@ import json
 import logging
 import hashlib
 import threading
-from typing import Any, Optional, Callable
+from typing import Any, Callable
 from dataclasses import dataclass, asdict
 from enum import Enum
 from pathlib import Path
@@ -54,11 +54,11 @@ class AuditEvent:
     source_component: str
     description: str
     details: dict[str, Any]
-    user_id: Optional[str] = None
-    session_id: Optional[str] = None
-    ip_address: Optional[str] = None
-    affected_entities: Optional[list[str]] = None
-    correlation_id: Optional[str] = None
+    user_id: str | None = None
+    session_id: str | None = None
+    ip_address: str | None = None
+    affected_entities: list[str] | None = None
+    correlation_id: str | None = None
     
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
@@ -97,11 +97,11 @@ class AuditFilter:
     """Filter for audit events"""
     
     def __init__(self, 
-                 event_types: Optional[list[AuditEventType]] = None,
-                 severity_levels: Optional[list[AuditSeverity]] = None,
-                 source_components: Optional[list[str]] = None,
-                 time_range: Optional[tuple] = None,
-                 user_ids: Optional[list[str]] = None):
+                 event_types: list[AuditEventType] | None = None,
+                 severity_levels: list[AuditSeverity] | None = None,
+                 source_components: list[str] | None = None,
+                 time_range: tuple | None = None,
+                 user_ids: list[str] | None = None):
         """
         Initialize audit filter.
         
@@ -148,7 +148,7 @@ class AuditStorage:
         raise NotImplementedError
     
     def retrieve_events(self, filter_criteria: AuditFilter, 
-                       limit: Optional[int] = None) -> list[AuditEvent]:
+                       limit: int | None = None) -> list[AuditEvent]:
         """Retrieve audit events matching filter criteria."""
         raise NotImplementedError
     
@@ -194,7 +194,7 @@ class FileAuditStorage(AuditStorage):
             return False
     
     def retrieve_events(self, filter_criteria: AuditFilter, 
-                       limit: Optional[int] = None) -> list[AuditEvent]:
+                       limit: int | None = None) -> list[AuditEvent]:
         """Retrieve audit events from files."""
         events = []
         
@@ -316,7 +316,7 @@ class AuditLogger:
     """
     
     def __init__(self, 
-                 storage: Optional[AuditStorage] = None,
+                 storage: AuditStorage | None = None,
                  enable_real_time_alerts: bool = True):
         """
         Initialize audit logger.
@@ -348,7 +348,7 @@ class AuditLogger:
                           severity: str, description: str, 
                           affected_components: list[str],
                           details: dict[str, Any], 
-                          correlation_id: Optional[str] = None):
+                          correlation_id: str | None = None):
         """Log risk detection event."""
         event = AuditEvent(
             event_id=str(uuid.uuid4()),
@@ -370,7 +370,7 @@ class AuditLogger:
     
     def log_mitigation_action(self, action_id: str, status: str, 
                              description: str, details: dict[str, Any],
-                             correlation_id: Optional[str] = None):
+                             correlation_id: str | None = None):
         """Log mitigation action event."""
         if status == "started":
             event_type = AuditEventType.MITIGATION_STARTED
@@ -422,8 +422,8 @@ class AuditLogger:
         self._log_event(event)
     
     def log_security_event(self, event_type: str, description: str,
-                          details: dict[str, Any], user_id: Optional[str] = None,
-                          ip_address: Optional[str] = None,
+                          details: dict[str, Any], user_id: str | None = None,
+                          ip_address: str | None = None,
                           severity: str = "warning"):
         """Log security-related event."""
         event = AuditEvent(
@@ -466,8 +466,8 @@ class AuditLogger:
         self._log_event(event)
     
     def log_user_action(self, user_id: str, action: str, description: str,
-                       details: dict[str, Any], session_id: Optional[str] = None,
-                       ip_address: Optional[str] = None):
+                       details: dict[str, Any], session_id: str | None = None,
+                       ip_address: str | None = None):
         """Log user action event."""
         event = AuditEvent(
             event_id=str(uuid.uuid4()),
@@ -489,8 +489,8 @@ class AuditLogger:
     
     def log_configuration_change(self, component: str, parameter: str,
                                 old_value: Any, new_value: Any,
-                                user_id: Optional[str] = None,
-                                description: Optional[str] = None):
+                                user_id: str | None = None,
+                                description: str | None = None):
         """Log configuration change event."""
         desc = description or f"Configuration changed: {component}.{parameter}"
         
@@ -559,7 +559,7 @@ class AuditLogger:
                     self.logger.error(f"Alert handler failed: {str(e)}")
     
     def query_events(self, filter_criteria: AuditFilter,
-                     limit: Optional[int] = None) -> list[AuditEvent]:
+                     limit: int | None = None) -> list[AuditEvent]:
         """Query audit events with filter criteria."""
         return self.storage.retrieve_events(filter_criteria, limit)
     

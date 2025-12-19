@@ -6,7 +6,7 @@ It connects the application logic (OrderingService) with the database models.
 """
 
 import logging
-from typing import Any, Optional
+from typing import Any
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
@@ -89,7 +89,7 @@ class SqlStorageBackend:
         finally:
             session.close()
 
-    def get_event_by_id(self, event_id: str) -> Optional[dict[str, Any]]:
+    def get_event_by_id(self, event_id: str) -> dict[str, Any] | None:
         """
         Retrieve an event by its unique ID.
         
@@ -116,7 +116,7 @@ class SqlStorageBackend:
         finally:
             session.close()
 
-    def get_latest_block(self) -> Optional[dict[str, Any]]:
+    def get_latest_block(self) -> dict[str, Any] | None:
         """Retrieve the latest block from DB."""
         session = self.Session()
         try:
@@ -127,7 +127,7 @@ class SqlStorageBackend:
         finally:
             session.close()
 
-    def get_block_by_index(self, index: int) -> Optional[dict[str, Any]]:
+    def get_block_by_index(self, index: int) -> dict[str, Any] | None:
         """Retrieve block by index."""
         session = self.Session()
         try:

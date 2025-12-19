@@ -9,7 +9,7 @@ for both Main Chain and Sub-Chain implementations, following framework guideline
 """
 
 import time
-from typing import Any, Optional, Callable
+from typing import Any,  Callable
 
 from hierachain.core.block import Block
 
@@ -82,7 +82,7 @@ class Blockchain:
         
         self.pending_events.append(event)
     
-    def create_block(self, events: Optional[list[dict[str, Any]]] = None) -> Block:
+    def create_block(self, events: list[dict[str, Any]] | None = None) -> Block:
         """
         Create a new block with the given events or pending events.
         
@@ -124,7 +124,7 @@ class Blockchain:
             return True
         return False
     
-    def finalize_block(self) -> Optional[Block]:
+    def finalize_block(self) -> Block | None:
         """
         Finalize pending events into a new block and add it to the chain.
         

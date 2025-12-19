@@ -8,7 +8,7 @@ with domain-specific functionality while maintaining framework guidelines.
 
 import time
 import logging
-from typing import Any, Optional, Callable
+from typing import Any, Callable
 from abc import ABC, abstractmethod
 
 from hierachain.hierarchical.sub_chain import SubChain
@@ -95,7 +95,7 @@ class BaseChain(SubChain, ABC):
         self.add_event(registration_event)
         return True
     
-    def get_entity_info(self, entity_id: str) -> Optional[dict[str, Any]]:
+    def get_entity_info(self, entity_id: str) -> dict[str, Any] | None:
         """
         Get information about a registered entity.
         

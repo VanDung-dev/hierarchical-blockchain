@@ -10,7 +10,7 @@ import time
 import threading
 import logging
 import re
-from typing import Any, Optional, Callable
+from typing import Any, Callable
 
 from hierachain.core.blockchain import Blockchain
 from hierachain.core.consensus.proof_of_authority import ProofOfAuthority
@@ -32,7 +32,7 @@ class SubChain(Blockchain):
     - Use entity_id as metadata field within events (not as block identifier)
     """
     
-    def __init__(self, name: str, domain_type: str = "generic", config: Optional[dict[str, Any]] = None):
+    def __init__(self, name: str, domain_type: str = "generic", config: dict[str, Any] | None = None):
         """
         Initialize a Sub-Chain.
         
@@ -54,7 +54,7 @@ class SubChain(Blockchain):
         else:
             self.consensus = ProofOfAuthority(f"{name}_PoA")
             
-        self.main_chain_connection: Optional[Any] = None
+        self.main_chain_connection: Any | None = None
         self.proof_submission_interval: float = 60.0  # Submit proofs every 60 seconds
         self.last_proof_submission: float = 0.0
         self.completed_operations: int = 0
@@ -203,7 +203,7 @@ class SubChain(Blockchain):
         
         return False
     
-    def start_operation(self, entity_id: str, operation_type: str, details: Optional[dict[str, Any]] = None) -> bool:
+    def start_operation(self, entity_id: str, operation_type: str, details: dict[str, Any] | None = None) -> bool:
         """
         Start a domain-specific operation for an entity.
         
@@ -234,7 +234,7 @@ class SubChain(Blockchain):
         self.add_event(event)
         return True
     
-    def complete_operation(self, entity_id: str, operation_type: str, result: Optional[dict[str, Any]] = None) -> bool:
+    def complete_operation(self, entity_id: str, operation_type: str, result: dict[str, Any] | None = None) -> bool:
         """
         Complete a domain-specific operation for an entity.
         
@@ -263,7 +263,7 @@ class SubChain(Blockchain):
         self.completed_operations += 1
         return True
     
-    def update_entity_status(self, entity_id: str, status: str, details: Optional[dict[str, Any]] = None) -> bool:
+    def update_entity_status(self, entity_id: str, status: str, details: dict[str, Any] | None = None) -> bool:
         """
         Update the status of an entity.
         
@@ -290,7 +290,7 @@ class SubChain(Blockchain):
         self.add_event(event)
         return True
     
-    def submit_proof_to_main(self, main_chain: Any, metadata_filter: Optional[Callable] = None) -> bool:
+    def submit_proof_to_main(self, main_chain: Any, metadata_filter: Callable | None = None) -> bool:
         """
         Submit cryptographic proof to Main Chain.
         
@@ -470,7 +470,7 @@ class SubChain(Blockchain):
             "proof_submission_interval": self.proof_submission_interval
         }
     
-    def finalize_sub_chain_block(self) -> Optional[dict[str, Any]]:
+    def finalize_sub_chain_block(self) -> dict[str, Any] | None:
         """
         Pull ordered blocks from Ordering Service and finalize them.
         """
@@ -518,7 +518,7 @@ class SubChain(Blockchain):
             "domain_type": self.domain_type
         }
 
-    def flush_pending_and_finalize(self, timeout: float = 3.0) -> Optional[dict[str, Any]]:
+    def flush_pending_and_finalize(self, timeout: float = 3.0) -> dict[str, Any] | None:
         """
         Flush pending events and finalize the block.
 

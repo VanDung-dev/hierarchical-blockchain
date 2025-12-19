@@ -7,7 +7,6 @@ changing the core consensus logic.
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional
 import json
 import base64
 import os
@@ -82,7 +81,7 @@ class FileVaultProvider(KeyProvider):
         """
         self.vault_path = vault_path
         self._password = password
-        self._public_key: Optional[str] = None
+        self._public_key: str | None = None
         
         # Verify easy access by loading public key immediately
         self._load_public_key()

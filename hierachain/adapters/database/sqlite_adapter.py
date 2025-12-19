@@ -10,7 +10,7 @@ import sqlite3
 import json
 import time
 import logging
-from typing import Any, Optional
+from typing import Any
 from contextlib import contextmanager
 
 from hierachain.core.block import Block
@@ -217,7 +217,7 @@ class SQLiteAdapter:
             "details": json.loads(row['details'] or '{}')
         }
 
-    def load_chain(self, chain_name: str) -> Optional[dict[str, Any]]:
+    def load_chain(self, chain_name: str) -> dict[str, Any] | None:
         """
         Load a blockchain from the database.
         
@@ -315,7 +315,7 @@ class SQLiteAdapter:
             logger.error(f"Error storing proof: {e}")
             return False
     
-    def get_entity_events(self, entity_id: str, chain_name: Optional[str] = None) -> list[dict[str, Any]]:
+    def get_entity_events(self, entity_id: str, chain_name: str | None = None) -> list[dict[str, Any]]:
         """
         Get all events for a specific entity.
         
@@ -355,7 +355,7 @@ class SQLiteAdapter:
             logger.error(f"Error getting entity events: {e}")
             return []
     
-    def get_events_by_type(self, event_type: str, chain_name: Optional[str] = None) -> list[dict[str, Any]]:
+    def get_events_by_type(self, event_type: str, chain_name: str | None = None) -> list[dict[str, Any]]:
         """
         Get all events of a specific type.
         

@@ -77,7 +77,7 @@ class MainChain(Blockchain):
             
         return True
     
-    def register_sub_chain(self, sub_chain_name: str, metadata: Optional[dict[str, Any]] = None) -> bool:
+    def register_sub_chain(self, sub_chain_name: str, metadata: dict[str, Any] | None = None) -> bool:
         """
         Register a Sub-Chain with the Main Chain.
         
@@ -295,7 +295,7 @@ class MainChain(Blockchain):
             "authorities": self.consensus.get_validator_count()
         }
     
-    def finalize_main_chain_block(self) -> Optional[dict[str, Any]]:
+    def finalize_main_chain_block(self) -> dict[str, Any] | None:
         """
         Finalize a block on the Main Chain using PoA consensus.
         

@@ -50,7 +50,7 @@ class HierarchyManager:
             "total_blocks": 0,
             "active_chains": 0
         }
-        
+
         self.organizations: dict[str, Any] = {}
         self.network: Optional[MultiOrgNetwork] = None
         self.channels: dict[str, Channel] = {}
@@ -60,7 +60,7 @@ class HierarchyManager:
         self.transaction_manager: CrossChainTransactionManager = CrossChainTransactionManager(self)
     
     def create_sub_chain(self, name: str, domain_type: str, 
-                        metadata: Optional[dict[str, Any]] = None) -> bool:
+                        metadata: dict[str, Any] | None = None) -> bool:
         """
         Create and register a new sub-chain (DomainChain).
         
@@ -89,7 +89,7 @@ class HierarchyManager:
         
         return False
     
-    def get_sub_chain(self, name: str) -> Optional[DomainChain]:
+    def get_sub_chain(self, name: str) -> DomainChain | None:
         """Get a sub-chain by name."""
         return self.sub_chains.get(name)
 
@@ -102,7 +102,7 @@ class HierarchyManager:
         return self.main_chain
         
     def initiate_cross_chain_transaction(self, source_chain_name: str, dest_chain_name: str,
-                                        payload: dict[str, Any]) -> Optional[str]:
+                                        payload: dict[str, Any]) -> str | None:
         """
         Initiate a cross-chain 2PC transaction.
         
@@ -117,7 +117,7 @@ class HierarchyManager:
         return self.transaction_manager.initiate_transaction(source_chain_name, dest_chain_name, payload)
 
     def start_operation(self, sub_chain_name: str, entity_id: str, 
-                       operation_type: str, details: Optional[dict[str, Any]] = None) -> bool:
+                       operation_type: str, details: dict[str, Any] | None = None) -> bool:
         """
         Start an operation on a specific sub-chain.
         
@@ -149,11 +149,6 @@ class HierarchyManager:
         chain = self.get_sub_chain(sub_chain_name)
         if not chain:
             return False
-
-        # In a real implementation:
-        # 1. Generate Merkle proof of current state
-        # 2. Submit to Main Chain
-        # 3. Main Chain verifies signatures and previous hash linkage
         
         # Simplified simulation:
         return True
@@ -213,7 +208,7 @@ class HierarchyManager:
             results[name] = self.submit_proof_to_main_chain(name)
         return results
 
-    def finalize_main_chain_block(self) -> Optional[Any]:
+    def finalize_main_chain_block(self) -> Any | None:
         """
         Finalize the current block on the main chain.
         """
@@ -373,7 +368,7 @@ class HierarchyManager:
         
         return channel
     
-    def get_channel(self, channel_id: str) -> Optional[Channel]:
+    def get_channel(self, channel_id: str) -> Channel | None:
         """
         Get channel by ID (0.dev3 feature).
         
@@ -432,7 +427,7 @@ class HierarchyManager:
         
         return private_collection
     
-    def get_private_collection(self, name: str) -> Optional[PrivateCollection]:
+    def get_private_collection(self, name: str) -> PrivateCollection | None:
         """
         Get private data collection by name (0.dev3 feature).
         

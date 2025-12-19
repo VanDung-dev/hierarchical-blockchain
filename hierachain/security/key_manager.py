@@ -10,7 +10,7 @@ import time
 import json
 import hashlib
 import binascii
-from typing import Optional, Set
+from typing import Set
 import logging
 
 logger = logging.getLogger(__name__)
@@ -90,7 +90,7 @@ class KeyManager:
         # Check for wildcard permission or specific resource permission
         return 'all' in permissions or resource in permissions
     
-    def get_user(self, api_key: str) -> Optional[str]:
+    def get_user(self, api_key: str) -> str | None:
         """
         Get user ID associated with API key.
         
@@ -98,12 +98,12 @@ class KeyManager:
             api_key: The API key
             
         Returns:
-            Optional[str]: User ID or None if not found
+            str | None: User ID or None if not found
         """
         key_data = self._get_key_data(api_key)
         return key_data.get('user_id') if key_data else None
     
-    def get_app_details(self, api_key: str) -> Optional[dict]:
+    def get_app_details(self, api_key: str) -> dict | None:
         """
         Get application details associated with API key.
         
@@ -111,7 +111,7 @@ class KeyManager:
             api_key: The API key
             
         Returns:
-            Optional[Dict]: App details or None if not found
+            dict | None: App details or None if not found
         """
         key_data = self._get_key_data(api_key)
         return key_data.get('app_details', {}) if key_data else None
@@ -179,7 +179,7 @@ class KeyManager:
         if api_key in self.key_cache:
             del self.key_cache[api_key]
     
-    def _get_key_data(self, api_key: str) -> Optional[dict]:
+    def _get_key_data(self, api_key: str) -> dict | None:
         """
         Get key data from cache or storage.
         
@@ -187,7 +187,7 @@ class KeyManager:
             api_key: The API key
             
         Returns:
-            Optional[Dict]: Key data or None if not found
+            dict | None: Key data or None if not found
         """
         # Check cache first
         cached = self.key_cache.get(api_key)

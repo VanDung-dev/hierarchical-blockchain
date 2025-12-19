@@ -10,7 +10,7 @@ This module implements the Block class following the framework guidelines:
 import time
 import json
 import logging
-from typing import Any, Optional, Union
+from typing import Any,   Union
 import pyarrow as pa
 import pyarrow.compute as pc
 
@@ -34,12 +34,12 @@ class Block:
         self,
         index: int,
         events: Union[list[dict[str, Any]], pa.Table],
-        timestamp: Optional[float] = None,
+        timestamp: float | None = None,
         previous_hash: str = "",
         nonce: int = 0,
-        merkle_root: Optional[str] = None,
-        creator_id: Optional[str] = None,
-        signature: Optional[str] = None
+        merkle_root: str | None = None,
+        creator_id: str | None = None,
+        signature: str | None = None
     ):
         """
         Initialize a new block.

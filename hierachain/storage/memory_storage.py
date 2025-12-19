@@ -5,7 +5,7 @@ This module provides an in-memory storage implementation for the HieraChain syst
 It supports key-value storage with indexing capabilities for efficient data retrieval.
 """
 
-from typing import   Any, Optional
+from typing import Any
 
 
 class MemoryStorage:
@@ -20,7 +20,7 @@ class MemoryStorage:
         if field_name not in self.indexes:
             self.indexes[field_name] = {}
     
-    def get(self, key: str) -> Optional[dict[str, Any]]:
+    def get(self, key: str) -> dict[str, Any] | None:
         """Get value by key"""
         return self.data.get(key)
     

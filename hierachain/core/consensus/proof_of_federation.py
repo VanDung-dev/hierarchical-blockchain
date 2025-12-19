@@ -52,7 +52,7 @@ class ProofOfFederation(BaseConsensus):
         """Get the number of active validators."""
         return len(self.validators)
 
-    def add_validator(self, validator_id: str, metadata: Optional[dict[str, Any]] = None) -> bool:
+    def add_validator(self, validator_id: str, metadata: dict[str, Any] | None = None) -> bool:
         """
         Add a validator to the federation.
         
@@ -89,7 +89,7 @@ class ProofOfFederation(BaseConsensus):
             return True
         return False
 
-    def add_authority(self, authority_id: str, metadata: Optional[dict[str, Any]] = None) -> bool:
+    def add_authority(self, authority_id: str, metadata: dict[str, Any] | None = None) -> bool:
         """Alias for add_validator for compatibility."""
         return self.add_validator(authority_id, metadata)
 
@@ -101,7 +101,7 @@ class ProofOfFederation(BaseConsensus):
         """Check if an ID is an active authority/validator."""
         return authority_id in self.validators
 
-    def get_current_leader(self, block_index: int) -> Optional[str]:
+    def get_current_leader(self, block_index: int) -> str | None:
         """
         Determine the expected leader for a specific block index.
         
@@ -119,7 +119,7 @@ class ProofOfFederation(BaseConsensus):
         leader_idx = block_index % len(self.validators)
         return self.validators[leader_idx]
 
-    def can_create_block(self, authority_id: Optional[str] = None) -> bool:
+    def can_create_block(self, authority_id: str | None = None) -> bool:
         """
         Check if the authority can create a block.
         
@@ -187,7 +187,7 @@ class ProofOfFederation(BaseConsensus):
                 
         return True
 
-    def finalize_block(self, block: Block, authority_id: Optional[str] = None) -> Block:
+    def finalize_block(self, block: Block, authority_id: str | None = None) -> Block:
         """
         Finalize block by attaching the Federation Signature.
         """
@@ -228,7 +228,7 @@ class ProofOfFederation(BaseConsensus):
         )
 
     @staticmethod
-    def _extract_signer_id(block: Block) -> Optional[str]:
+    def _extract_signer_id(block: Block) -> str | None:
         """Helper to find the signer ID from the block's events."""
         events = block.to_event_list()
         for event in reversed(events): # Check end of block first

@@ -11,7 +11,7 @@ import logging
 import threading
 import smtplib
 import json
-from typing import Any, Optional, Tuple
+from typing import Any, Tuple
 from dataclasses import dataclass, asdict
 from enum import Enum
 from email.mime.text import MIMEText
@@ -58,14 +58,14 @@ class Alert:
     title: str
     description: str
     source_component: str
-    metric_name: Optional[str] = None
-    current_value: Optional[float] = None
-    threshold_value: Optional[float] = None
+    metric_name: str | None = None
+    current_value: float | None = None
+    threshold_value: float | None = None
     status: AlertStatus = AlertStatus.ACTIVE
-    acknowledgment_time: Optional[float] = None
-    resolved_time: Optional[float] = None
+    acknowledgment_time: float | None = None
+    resolved_time: float | None = None
     escalation_level: int = 0
-    metadata: Optional[dict[str, Any]] = None
+    metadata: dict[str, Any] | None = None
     
     def to_dict(self) -> dict[str, Any]:
         """Convert alert to dictionary"""
@@ -89,7 +89,7 @@ class AlertRule:
     category: AlertCategory
     metric_name: str
     condition: str  # "greater_than", "less_than", "equals", "anomaly"
-    threshold: Optional[float]
+    threshold: float | None
     severity: AlertSeverity
     enabled: bool = True
     cooldown_period: int = 300  # seconds
@@ -291,7 +291,7 @@ class AlertManager:
     alert lifecycle (creation, acknowledgment, escalation, resolution).
     """
     
-    def __init__(self, config: Optional[dict[str, Any]] = None):
+    def __init__(self, config: dict[str, Any] | None = None):
         """
         Initialize alert manager.
         
@@ -441,8 +441,8 @@ class AlertManager:
                     source_component=source_component
                 )
     
-    def create_alert(self, rule: AlertRule, current_value: Optional[float] = None,
-                     source_component: str = "unknown", custom_description: Optional[str] = None):
+    def create_alert(self, rule: AlertRule, current_value: float | None = None,
+                     source_component: str = "unknown", custom_description: str | None = None):
         """Create new alert"""
         alert_id = f"{rule.rule_id}_{int(time.time())}"
         
@@ -525,7 +525,7 @@ class AlertManager:
                 self.logger.error(f"Notification failed: {str(notify_ex)}")
                 self.stats['notifications_failed'] += 1
     
-    def acknowledge_alert(self, alert_id: str, user: Optional[str] = None) -> bool:
+    def acknowledge_alert(self, alert_id: str, user: str | None = None) -> bool:
         """Acknowledge an alert"""
         if alert_id not in self.active_alerts:
             return False
@@ -542,7 +542,7 @@ class AlertManager:
         self.logger.info(f"Alert acknowledged: {alert_id} by {user or 'unknown'}")
         return True
     
-    def resolve_alert(self, alert_id: str, user: Optional[str] = None) -> bool:
+    def resolve_alert(self, alert_id: str, user: str | None = None) -> bool:
         """Resolve an alert"""
         if alert_id not in self.active_alerts:
             return False
@@ -586,8 +586,8 @@ class AlertManager:
             self._send_notifications(escalation_alert)
             self.logger.critical(f"Alert escalated: {alert_id} (level {alert.escalation_level})")
     
-    def get_active_alerts(self, category: Optional[AlertCategory] = None,
-                         severity: Optional[AlertSeverity] = None) -> list[Alert]:
+    def get_active_alerts(self, category: AlertCategory | None = None,
+                         severity: AlertSeverity | None = None) -> list[Alert]:
         """Get active alerts with optional filtering"""
         alerts = list(self.active_alerts.values())
         

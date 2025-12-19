@@ -8,7 +8,7 @@ business applications.
 
 import time
 import hashlib
-from typing import Any, Optional, Set
+from typing import Any, Set
 from dataclasses import dataclass
 from enum import Enum
 
@@ -216,7 +216,7 @@ class HierarchicalMSP:
         self._initialize_default_roles()
         
     def register_entity(self, entity_id: str, credentials: dict[str, Any], 
-                       role: str, attributes: Optional[dict[str, Any]] = None) -> bool:
+                       role: str, attributes: dict[str, Any] | None = None) -> bool:
         """
         Register entity with role-based access control and attribute-based policies.
         
@@ -405,7 +405,7 @@ class HierarchicalMSP:
             "permissions": permissions
         })
     
-    def get_entity_info(self, entity_id: str) -> Optional[dict[str, Any]]:
+    def get_entity_info(self, entity_id: str) -> dict[str, Any] | None:
         """Get detailed information about an entity"""
         if entity_id not in self.entities:
             return None

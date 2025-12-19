@@ -8,7 +8,6 @@ and provides indexing capabilities for entities and events.
 
 import json
 import logging
-from typing import Optional
 import time
 
 try:
@@ -197,7 +196,7 @@ class RedisStorageAdapter:
             logger.error(f"Failed to update chain stats: {e}")
             # Don't raise - this is not critical for block storage
     
-    def get_chain_metadata(self, chain_name: str) -> Optional[dict]:
+    def get_chain_metadata(self, chain_name: str) -> dict | None:
         """Get chain metadata"""
         try:
             chain_key = self._get_chain_key(chain_name)
@@ -228,7 +227,7 @@ class RedisStorageAdapter:
             logger.error(f"Failed to get chain metadata {chain_name}: {e}")
             return None
     
-    def get_block(self, chain_name: str, block_index: int) -> Optional[dict]:
+    def get_block(self, chain_name: str, block_index: int) -> dict | None:
         """Get a specific block"""
         try:
             block_key = self._get_block_key(chain_name, block_index)

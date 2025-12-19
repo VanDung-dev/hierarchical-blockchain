@@ -9,7 +9,7 @@ components.
 import time
 import json
 import logging
-from typing import Any, Union, Optional
+from typing import Any, Union
 from datetime import datetime
 import hashlib
 import os
@@ -559,7 +559,7 @@ class APIValidator:
         logger.info("API endpoint data validation passed")
         return True
     
-    def audit_api_call(self, endpoint: str, data: Any, user_id: Optional[str] = None) -> None:
+    def audit_api_call(self, endpoint: str, data: Any, user_id: str | None = None) -> None:
         """
         Audit API call for compliance and logging
         

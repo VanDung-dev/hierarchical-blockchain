@@ -4,7 +4,7 @@ Version utility functions for HieraChain Framework.
 This module provides functions for managing and retrieving version information.
 """
 
-from typing import Tuple, Union, Optional
+from typing import Tuple, Union
 
 # Version information
 VERSION: Tuple[int, int, int, str, int] = (0, 0, 0, "dev", 5)
@@ -13,7 +13,7 @@ VERSION: Tuple[int, int, int, str, int] = (0, 0, 0, "dev", 5)
 _VERSION_PATTERN = r"(?P<major>\d+)\.(?P<minor>\d+)(?:\.(?P<micro>\d+))?(?:\.(?P<releaselevel>[a-z]+)(?P<serial>\d+)?)?"
 
 
-def get_version(version: Optional[Tuple[int, int, int, str, int]] = None) -> str:
+def get_version(version: Tuple[int, int, int, str, int] | None = None) -> str:
     """
     Return a PEP 440-compliant version number from VERSION.
     
@@ -45,7 +45,7 @@ def get_version(version: Optional[Tuple[int, int, int, str, int]] = None) -> str
     return version_str
 
 
-def get_complete_version(version: Optional[Tuple[int, int, int, str, int]] = None) -> Tuple[int, int, int, str, int]:
+def get_complete_version(version: Tuple[int, int, int, str, int] | None = None) -> Tuple[int, int, int, str, int]:
     """
     Return a tuple of the version.
     
@@ -61,7 +61,7 @@ def get_complete_version(version: Optional[Tuple[int, int, int, str, int]] = Non
     return version
 
 
-def get_major_version(version: Optional[Tuple[int, int, int, str, int]] = None) -> str:
+def get_major_version(version: Tuple[int, int, int, str, int] | None = None) -> str:
     """
     Return the major version number from VERSION.
     
@@ -78,7 +78,7 @@ def get_major_version(version: Optional[Tuple[int, int, int, str, int]] = None) 
     return f"{major}.{minor}"
 
 
-def get_documentation_status(version: Optional[Tuple[int, int, int, str, int]] = None) -> str:
+def get_documentation_status(version: Tuple[int, int, int, str, int] | None) -> str:
     """
     Return the documentation status for the version.
     
