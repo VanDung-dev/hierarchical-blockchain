@@ -13,6 +13,7 @@ import threading
 import logging
 import asyncio
 from queue import Queue, Empty
+from collections import deque
 from typing import Any, Callable
 from dataclasses import dataclass
 from enum import Enum
@@ -288,7 +289,10 @@ class OrderingService:
         self.processed_events: dict[str, PendingEvent] = {}
         self.storage = SqlStorageBackend(connection_string=config.get("db_url"))
         
-        self.block_history: list[Block] = []
+        # Hybrid Cache: bounded deque for recent blocks + last_block for previous_hash
+        cache_size = config.get("block_cache_size", 100)
+        self.block_history: deque[Block] = deque(maxlen=cache_size)
+        self.last_block: Block | None = None
         self.blocks_created = 0
         self.events_processed = 0
         
@@ -380,7 +384,7 @@ class OrderingService:
     def get_blocks(self, start_index: int = 0) -> list[Block]:
         """
         Get list of blocks starting from a specific index.
-        Used for synchronization/rehydration.
+        Uses cache for recent blocks, falls back to database for older blocks.
         
         Args:
             start_index: Block index to start from
@@ -390,11 +394,41 @@ class OrderingService:
         """
         if start_index < 0:
             start_index = 0
-            
-        if start_index >= len(self.block_history):
+
+        # Check if range is covered by cache
+        if self.block_history:
+            cache_min_index = self.block_history[0].index
+            if start_index >= cache_min_index:
+                offset = start_index - cache_min_index
+                return list(self.block_history)[offset:]
+        
+        # Fallback to database storage
+        return self._get_blocks_from_storage(start_index)
+
+    def _get_blocks_from_storage(self, start_index: int) -> list[Block]:
+        """Load blocks from persistent storage."""
+        if not self.storage:
             return []
-            
-        return self.block_history[start_index:]
+
+        blocks = []
+        current_index = start_index
+        
+        while True:
+            block_data = self.storage.get_block_by_index(current_index)
+            if not block_data:
+                break
+            # Convert dict to Block object
+            block = Block(
+                index=block_data["index"],
+                events=block_data["events"],
+                previous_hash=block_data["previous_hash"]
+            )
+            block.hash = block_data["hash"]
+            block.timestamp = block_data["timestamp"]
+            blocks.append(block)
+            current_index += 1
+        
+        return blocks
 
     def receive_event(self, event_data: dict[str, Any], channel_id: str, submitter_org: str) -> str:
         """
@@ -644,7 +678,7 @@ class OrderingService:
             merkle_root = merkle_tree.root
 
             # Create Block (MAIN THREAD)
-            previous_hash = self.block_history[-1].hash if self.block_history else "0"
+            previous_hash = self.last_block.hash if self.last_block else "0"
             
             block = Block(
                 index=self.blocks_created, 
@@ -822,8 +856,11 @@ class OrderingService:
         self.commit_queue.put(block)
         logger.debug(f"DEBUG: Block {block.index} committed. Queue {id(self.commit_queue)} size after: {self.commit_queue.qsize()}")
         
-        # Add to history
+        # Add to history cache (deque auto-removes oldest when full)
         self.block_history.append(block)
+        
+        # Always maintain last_block reference for previous_hash lookup
+        self.last_block = block
         
         # Update statistics
         self.blocks_created += 1
