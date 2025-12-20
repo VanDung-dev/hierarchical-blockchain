@@ -1,25 +1,27 @@
 """
-Unit tests for API v3 VerifyAPIKey module
+Unit tests for VerifyAPIKey module
 
-This module contains unit tests for the VerifyAPIKey class and related 
-functionality in the API v3 module, including API key verification, 
-permission checking, and security event logging.
+This module contains unit tests for the VerifyAPIKey class, including API key
+verification, permission checking, and security event logging.
 """
 
 import pytest
 import asyncio
 import inspect
-from unittest.mock import Mock, patch
-from unittest import mock
+from unittest.mock import Mock, patch, ANY
 from fastapi import HTTPException
 
-from hierachain.api.v3.verify import VerifyAPIKey, ResourcePermissionChecker, create_verify_api_key
+from hierachain.security.verify_api_key import (
+    VerifyAPIKey, 
+    ResourcePermissionChecker,
+    create_verify_api_key
+)
 
 
 @pytest.fixture
 def mock_key_manager():
     """Mock KeyManager for testing"""
-    with patch('hierachain.api.v3.verify.KeyManager') as mock_km:
+    with patch('hierachain.security.key_manager.KeyManager') as mock_km:
         mock_instance = Mock()
         mock_instance.is_valid.return_value = True
         mock_instance.is_revoked.return_value = False
@@ -288,7 +290,7 @@ async def test_verify_api_key_security_logging(mock_key_manager, default_config)
         mock_log.assert_called_with("successful_verification", {
             "user_id": "test_user",
             "app_name": "Test App",
-            "timestamp": mock.ANY
+            "timestamp": ANY
         })
         
         # Reset mock
@@ -303,7 +305,7 @@ async def test_verify_api_key_security_logging(mock_key_manager, default_config)
         
         mock_log.assert_called_with("invalid_api_key", {
             "key_prefix": "invalid_",
-            "timestamp": mock.ANY
+            "timestamp": ANY
         })
 
 
