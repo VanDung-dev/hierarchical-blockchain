@@ -11,7 +11,7 @@ CORS support, and comprehensive logging.
 
 import uvicorn
 import logging
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
@@ -19,6 +19,7 @@ from contextlib import asynccontextmanager
 from hierachain.api.v1.endpoints import router as v1_router
 from hierachain.api.v2.endpoints import router as v2_router
 from hierachain.config.settings import Settings
+from hierachain.security.verify_api_key import VerifyAPIKey
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -39,6 +40,17 @@ def create_app() -> FastAPI:
     # Get settings
     settings = Settings()
     api_config = settings.get_api_config()
+
+    # Initialize implementation with settings
+    if settings.AUTH_ENABLED:
+        logger.info("Global API Authentication ENFORCED")
+        auth_dependency = VerifyAPIKey(settings.get_auth_config())
+    else:
+        logger.warning("Global API Authentication DISABLED")
+        # No-op dependency
+        auth_dependency = lambda: None
+
+    dependencies = [Depends(auth_dependency)] if settings.AUTH_ENABLED else []
     
     # Create FastAPI app
     fast_app = FastAPI(
@@ -47,7 +59,8 @@ def create_app() -> FastAPI:
         version=api_config["version"],
         docs_url="/docs",
         redoc_url="/redoc",
-        lifespan=lifespan
+        lifespan=lifespan,
+        dependencies=dependencies
     )
 
     # Add CORS middleware
