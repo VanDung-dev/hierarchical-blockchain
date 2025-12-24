@@ -280,7 +280,8 @@ class BFTConsensus:
                 sender_id=message["sender_id"],
                 timestamp=message["timestamp"],
                 signature=message["signature"],
-                data=message.get("data", {})
+                data=message.get("data", {}),
+                nonce=message.get("nonce", "")
             )
             
             # Validate message
