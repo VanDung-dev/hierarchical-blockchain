@@ -325,7 +325,7 @@ def demonstrate_hierachain():
         logistics_chain.update_entity_status(
             entity_id,
             "shipped",
-            "Ready for delivery"
+            {"message": "Ready for delivery"}
         )
     
     print()
