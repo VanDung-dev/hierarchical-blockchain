@@ -105,6 +105,7 @@ class MainChain(Blockchain):
         
         # Create registration event
         registration_event = {
+            "entity_id": sub_chain_name,
             "event": "sub_chain_registration",
             "timestamp": time.time(),
             "details": {
@@ -154,6 +155,7 @@ class MainChain(Blockchain):
         
         # Add required fields for proper event structure
         event.update({
+            "entity_id": sub_chain_name,
             "event": "proof_submission",
             "timestamp": time.time(),
             "details": {

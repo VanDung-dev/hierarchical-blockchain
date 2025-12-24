@@ -187,6 +187,7 @@ class SubChain(Blockchain):
                 
                 # Create connection event
                 connection_event = {
+                    "entity_id": self.name,
                     "event": "main_chain_connection",
                     "timestamp": time.time(),
                     "details": {
@@ -332,6 +333,7 @@ class SubChain(Blockchain):
             
             # Create proof submission event in Sub-Chain
             proof_event = {
+                "entity_id": self.name,
                 "event": "proof_submitted",
                 "timestamp": time.time(),
                 "details": {
