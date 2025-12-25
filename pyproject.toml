@@ -11,12 +11,13 @@ name = "HieraChain"
 description = "A HieraChain framework for enterprise applications"
 readme = "README.md"
 authors = [{ name = "Nguyễn Lê Văn Dũng", email = "dungnguyen2661@gmail.com" }]
-license = { text = "Apache-2.0" }
+license = { text = "Apache-2.0 OR MIT" }
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
     "License :: OSI Approved :: Apache Software License",
+    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -76,8 +77,8 @@ hrc = "hierachain.cli.__init__:hrc"
 "Homepage" = "https://github.com/VanDung-dev/HieraChain"
 "Bug Reports" = "https://github.com/VanDung-dev/HieraChain/issues"
 "Source" = "https://github.com/VanDung-dev/HieraChain"
-"Documentation" = "https://github.com/VanDung-dev/HieraChain/blob/main/README.md"
-"License" = "https://github.com/VanDung-dev/HieraChain/blob/main/LICENSE"
+"License-Apache" = "https://github.com/VanDung-dev/HieraChain/blob/main/LICENSE-APACHE"
+"License-MIT" = "https://github.com/VanDung-dev/HieraChain/blob/main/LICENSE-MIT"
 "Security Policy" = "https://github.com/VanDung-dev/HieraChain/blob/main/SECURITY.md"
 
 [tool.setuptools_scm]
