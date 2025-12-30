@@ -1,8 +1,7 @@
 """
 Shared types for HieraChain Integration.
 
-This module defines common data structures used by both the Go/Arrow client
-and legacy gRPC client (during migration).
+This module defines common data structures used by the Go/Arrow client.
 """
 
 from __future__ import annotations

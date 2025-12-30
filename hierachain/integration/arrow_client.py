@@ -1,13 +1,18 @@
 """
-Client for communicating with HieraChain Engine via Arrow IPC over TCP.
+Client for communicating with the HieraChain Engine using Arrow IPC over TCP.
 
-
+Provides helpers to serialize batches of `Transaction` objects into an
+Apache Arrow IPC stream, send length-prefixed messages over a TCP socket,
+and receive responses. Supports context-manager semantics for automatic
+connect/close.
 """
 
 
 import socket
 import struct
 import pyarrow as pa
+from typing import List, Dict, Any, Optional
+import time
 import logging
 
 # Import Transaction from types to decouple from go_client
@@ -23,7 +28,7 @@ class ArrowClient:
     def __init__(self, host: str = "localhost", port: int = 50051):
         self.host = host
         self.port = port
-        self.sock: socket.socket | None = None
+        self.sock: Optional[socket.socket] = None
 
     def connect(self):
         """Establish TCP connection to the server."""
@@ -44,7 +49,7 @@ class ArrowClient:
             self.sock = None
             logger.info("Disconnected from Arrow Server")
 
-    def submit_batch(self, transactions: list[Transaction]) -> bytes:
+    def submit_batch(self, transactions: List[Transaction]) -> bytes:
         """
         Submit a batch of transactions to the engine.
         
@@ -102,7 +107,7 @@ class ArrowClient:
             data.extend(packet)
         return data
 
-    def _transactions_to_arrow(self, transactions: list[Transaction]) -> pa.Table:
+    def _transactions_to_arrow(self, transactions: List[Transaction]) -> pa.Table:
         """Convert list of Transactions to Arrow Table."""
         
         # Define Schema matches Go/Rust expectations
