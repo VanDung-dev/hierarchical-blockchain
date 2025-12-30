@@ -96,6 +96,15 @@ class Settings:
     LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
     LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
     
+    # Go Engine settings
+    GO_ENGINE_ENABLED = os.getenv("HIE_USE_GO_ENGINE", "false").lower() == "true"
+    GO_ENGINE_ADDRESS = os.getenv("HIE_GO_ENGINE_ADDRESS", "localhost:50051")
+    GO_ENGINE_TIMEOUT = float(os.getenv("HIE_GO_ENGINE_TIMEOUT", "30.0"))
+    GO_ENGINE_MAX_RETRIES = int(os.getenv("HIE_GO_ENGINE_RETRIES", "3"))
+    GO_ENGINE_RETRY_DELAY = float(os.getenv("HIE_GO_ENGINE_RETRY_DELAY", "1.0"))
+    GO_ENGINE_FALLBACK_ENABLED = os.getenv("HIE_GO_ENGINE_FALLBACK", "true").lower() == "true"
+    GO_ENGINE_HEALTH_CHECK_INTERVAL = float(os.getenv("HIE_GO_ENGINE_HEALTH_INTERVAL", "30.0"))
+
     @classmethod
     def get_storage_config(cls) -> dict[str, Any]:
         """Get storage configuration"""
@@ -109,7 +118,7 @@ class Settings:
                 "db": cls.REDIS_DB
             }
         }
-    
+
     @classmethod
     def get_consensus_config(cls) -> dict[str, Any]:
         """Get consensus configuration"""
@@ -117,7 +126,7 @@ class Settings:
             "type": cls.CONSENSUS_TYPE,
             "validator_timeout": cls.VALIDATOR_TIMEOUT
         }
-    
+
     @classmethod
     def get_api_config(cls) -> dict[str, Any]:
         """Get API configuration"""
@@ -126,7 +135,7 @@ class Settings:
             "host": cls.API_HOST,
             "port": cls.API_PORT
         }
-    
+
     @classmethod
     def get_integration_config(cls) -> dict[str, Any]:
         """Get integration configuration"""
@@ -134,7 +143,7 @@ class Settings:
             "erp_enabled": cls.ERP_INTEGRATION_ENABLED,
             "supported_systems": cls.SUPPORTED_ERP_SYSTEMS
         }
-    
+
     @classmethod
     def get_auth_config(cls) -> dict[str, Any]:
         """Get authentication configuration"""
@@ -143,27 +152,40 @@ class Settings:
             "key_location": cls.API_KEY_LOCATION,
             "key_name": cls.API_KEY_NAME
         }
-    
+
+    @classmethod
+    def get_go_engine_config(cls) -> dict[str, Any]:
+        """Get Go Engine configuration"""
+        return {
+            "enabled": cls.GO_ENGINE_ENABLED,
+            "address": cls.GO_ENGINE_ADDRESS,
+            "timeout": cls.GO_ENGINE_TIMEOUT,
+            "max_retries": cls.GO_ENGINE_MAX_RETRIES,
+            "retry_delay": cls.GO_ENGINE_RETRY_DELAY,
+            "fallback_enabled": cls.GO_ENGINE_FALLBACK_ENABLED,
+            "health_check_interval": cls.GO_ENGINE_HEALTH_CHECK_INTERVAL
+        }
+
     @classmethod
     def validate_config(cls) -> list[str]:
         """Validate configuration and return list of errors"""
         errors = []
-        
+
         if cls.BLOCK_SIZE_LIMIT <= 0:
             errors.append("BLOCK_SIZE_LIMIT must be positive")
-        
+
         if cls.PROOF_SUBMISSION_INTERVAL <= 0:
             errors.append("PROOF_SUBMISSION_INTERVAL must be positive")
-        
+
         if cls.VALIDATOR_TIMEOUT <= 0:
             errors.append("VALIDATOR_TIMEOUT must be positive")
-        
+
         if cls.DEFAULT_STORAGE_BACKEND not in ["memory", "redis", "sqlite"]:
             errors.append("DEFAULT_STORAGE_BACKEND must be one of: memory, redis, sqlite")
-        
+
         if cls.API_PORT <= 0 or cls.API_PORT > 65535:
             errors.append("API_PORT must be between 1 and 65535")
-        
+
         return errors
 
 
@@ -173,6 +195,7 @@ class DevelopmentSettings(Settings):
     LOG_LEVEL = "DEBUG"
     API_HOST = "localhost"
     DEFAULT_STORAGE_BACKEND = "memory"
+    GO_ENGINE_ENABLED = False  # Disabled by default in dev
 
 
 class ProductionSettings(Settings):
@@ -181,6 +204,7 @@ class ProductionSettings(Settings):
     API_HOST = "0.0.0.0"
     DEFAULT_STORAGE_BACKEND = "redis"
     REQUIRE_ORGANIZATION_VALIDATION = True
+    GO_ENGINE_ENABLED = True  # Enabled in production for high performance
 
 
 class TestingSettings(Settings):
@@ -189,6 +213,7 @@ class TestingSettings(Settings):
     DEFAULT_STORAGE_BACKEND = "memory"
     BLOCK_SIZE_LIMIT = 10  # Smaller blocks for testing
     PROOF_SUBMISSION_INTERVAL = 10  # Faster submissions for testing
+    GO_ENGINE_ENABLED = False  # Disabled in testing
 
 
 # Get settings based on environment
