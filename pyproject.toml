@@ -46,7 +46,10 @@ dependencies = [
     "pyarrow>=22.0.0",
     "pyzmq>=27.1.0",
     "pynacl>=1.6.1",
-    "starlette>=0.50.0"
+    "starlette>=0.50.0",
+    "grpcio>=1.76.0",
+    "grpcio-tools>=1.76.0",
+    "protobuf>=6.33.2"
 ]
 dynamic = ["version"]
 
