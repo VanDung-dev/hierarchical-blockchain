@@ -14,12 +14,11 @@ import os
 import time
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Callable
+from typing import Any
 
 from hierachain.core.parallel_engine import (
     ParallelProcessingEngine,
-    ProcessingTask,
-    ProcessingResult,
+
 )
 from hierachain.integration.types import (
     Transaction as GoTransaction,
@@ -62,6 +61,24 @@ class HybridEngineConfig:
     fallback_enabled: bool = True
     health_check_interval: float = 30.0
 
+    # P2P Network Configuration
+    p2p_enabled: bool = field(
+        default_factory=lambda: os.getenv("HIE_P2P_ENABLED", "false").lower() == "true"
+    )
+    p2p_node_id: str = field(
+        default_factory=lambda: os.getenv("HIE_P2P_NODE_ID", "")
+    )
+    p2p_host: str = field(
+        default_factory=lambda: os.getenv("HIE_P2P_HOST", "127.0.0.1")
+    )
+    p2p_port: int = field(
+        default_factory=lambda: int(os.getenv("HIE_P2P_PORT", "5555"))
+    )
+    p2p_seed_nodes: list[str] = field(
+        default_factory=lambda: [
+            s.strip() for s in os.getenv("HIE_P2P_SEEDS", "").split(",") if s.strip()
+        ]
+    )
 
 @dataclass
 class HybridResult:
