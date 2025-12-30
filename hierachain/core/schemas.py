@@ -27,6 +27,21 @@ BLOCK_HEADER_SCHEMA = pa.schema([
     ('nonce', pa.int64()),
     ('merkle_root', pa.string()),
     ('hash', pa.string()),
+    ('merkle_root', pa.string()),
+    ('hash', pa.string()),
+])
+
+
+# Transaction Schema - Standardized cross-language schema
+# Must match Rust (core/schemas.rs) and Go (data/schema.go)
+TRANSACTION_SCHEMA = pa.schema([
+    ('tx_id', pa.string()),          # Mandatory
+    ('entity_id', pa.string()),      # Mandatory
+    ('event_type', pa.string()),     # Mandatory
+    ('arrow_payload', pa.binary()),  # Optional (nullable=True by default in pyarrow)
+    ('signature', pa.string()),      # Optional
+    ('timestamp', pa.float64()),     # Mandatory
+    ('details', pa.map_(pa.string(), pa.string())), # Optional
 ])
 
 
@@ -38,6 +53,11 @@ def get_event_schema() -> pa.Schema:
 def get_block_header_schema() -> pa.Schema:
     """Return the Arrow schema for a Block Header."""
     return BLOCK_HEADER_SCHEMA
+
+
+def get_transaction_schema() -> pa.Schema:
+    """Return the Arrow schema for a Transaction."""
+    return TRANSACTION_SCHEMA
 
 
 def get_block_schema() -> pa.Schema:
