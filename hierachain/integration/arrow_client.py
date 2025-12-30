@@ -11,12 +11,11 @@ connect/close.
 import socket
 import struct
 import pyarrow as pa
-from typing import List, Dict, Any, Optional
-import time
 import logging
 
 # Import Transaction from types to decouple from go_client
 from hierachain.integration.types import Transaction
+from hierachain.core.schemas import get_transaction_schema
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +27,7 @@ class ArrowClient:
     def __init__(self, host: str = "localhost", port: int = 50051):
         self.host = host
         self.port = port
-        self.sock: Optional[socket.socket] = None
+        self.sock: socket.socket | None = None
 
     def connect(self):
         """Establish TCP connection to the server."""
@@ -49,7 +48,7 @@ class ArrowClient:
             self.sock = None
             logger.info("Disconnected from Arrow Server")
 
-    def submit_batch(self, transactions: List[Transaction]) -> bytes:
+    def submit_batch(self, transactions: list[Transaction]) -> bytes:
         """
         Submit a batch of transactions to the engine.
         
@@ -107,7 +106,7 @@ class ArrowClient:
             data.extend(packet)
         return data
 
-    def _transactions_to_arrow(self, transactions: List[Transaction]) -> pa.Table:
+    def _transactions_to_arrow(self, transactions: list[Transaction]) -> pa.Table:
         """Convert list of Transactions to Arrow Table."""
         
         # Define Schema matches Go/Rust expectations
@@ -129,26 +128,29 @@ class ArrowClient:
             event_types.append(tx.event_type)
             arrow_payloads.append(tx.arrow_payload)
             signatures.append(tx.signature)
-            timestamps.append(int(tx.timestamp * 1000)) # Convert to ms for consistency? Or keep as float? Go uses time.Time
+            timestamps.append(tx.timestamp) # Standardize on float64 seconds matching Schema
             
             # Details: map[string]string -> List of structs or Map type
             # For simplicity in this phase, ignoring details or handling simply?
             # Let's Skip details for complex map handling for a moment or add as binary json?
             # Let's try to stick to primitives for the first pass or implementation plan doesn't specify schema details.
         
-        # Construct arrays
+        
+        # Use standardized schema
+        schema = get_transaction_schema()
+        
+        # Construct arrays matching the schema fields
         arrays = [
             pa.array(tx_ids, pa.string()),
             pa.array(entity_ids, pa.string()),
             pa.array(event_types, pa.string()),
             pa.array(arrow_payloads, pa.binary()),
             pa.array(signatures, pa.string()),
-            pa.array(timestamps, pa.int64()), # Unix millis
+            pa.array(timestamps, pa.float64()),
+            pa.array([None] * len(transactions), pa.map_(pa.string(), pa.string())),
         ]
         
-        names = ["tx_id", "entity_id", "event_type", "arrow_payload", "signature", "timestamp"]
-        
-        return pa.Table.from_arrays(arrays, names=names)
+        return pa.Table.from_arrays(arrays, schema=schema)
 
     def __enter__(self):
         self.connect()

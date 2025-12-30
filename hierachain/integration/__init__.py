@@ -11,12 +11,7 @@ from hierachain.integration.enterprise import (
     IntegrationError
 )
 
-from hierachain.integration.go_client import (
-    GoEngineClient,
-    GoEngineClientSync,
-    GoEngineError,
-    GoEngineConnectionError,
-    GoEngineUnavailableError,
+from hierachain.integration.types import (
     Transaction,
     BatchResult,
     TxStatus,
@@ -30,11 +25,6 @@ __all__ = [
     'OracleIntegration',
     'DynamicsIntegration',
     'IntegrationError',
-    'GoEngineClient',
-    'GoEngineClientSync',
-    'GoEngineError',
-    'GoEngineConnectionError',
-    'GoEngineUnavailableError',
     'Transaction',
     'BatchResult',
     'TxStatus',
