@@ -53,12 +53,10 @@ HieraChain is a **multi-language blockchain infrastructure** designed for high-p
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
 
----
-
 ## 📦 Project Structure
 
 ```
-HieraChain-Engine/
+HieraChain Ecosystem/
 ├── hierachain/                    # 🐍 Python - Main Framework
 │   ├── adapters/                  # External adapters
 │   ├── api/                       # REST API (FastAPI)
