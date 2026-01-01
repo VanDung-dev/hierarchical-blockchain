@@ -11,6 +11,7 @@ CORS support, and comprehensive logging.
 
 import uvicorn
 import logging
+import time
 from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -206,6 +207,49 @@ def create_app() -> FastAPI:
                     )
         return await call_next(request)
 
+    # Simple In-Memory Rate Limiter Middleware
+    _rate_limit_store = {}
+    
+    @fast_app.middleware("http")
+    async def rate_limit_middleware(request: Request, call_next):
+        if not settings.RATE_LIMIT_ENABLED:
+            return await call_next(request)
+            
+        # Basic IP-based limiting
+        client_ip = request.client.host if request.client else "unknown"
+        current_time = int(time.time())
+        window_size = 60  # 1 minute window
+        rate_limit = settings.RATE_LIMIT_REQUESTS_PER_MINUTE
+        
+        # Clean up old entries occasionally (simple logic)
+        if current_time % 60 == 0:
+            keys_to_del = [k for k, v in _rate_limit_store.items() if v[0] < current_time - window_size]
+            for k in keys_to_del:
+                del _rate_limit_store[k]
+        
+        # Get user history
+        if client_ip not in _rate_limit_store:
+            _rate_limit_store[client_ip] = (current_time, 0)
+            
+        window_start, count = _rate_limit_store[client_ip]
+        
+        if current_time - window_start > window_size:
+            # Reset window
+            _rate_limit_store[client_ip] = (current_time, 1)
+        else:
+            if count >= rate_limit:
+                return JSONResponse(
+                    status_code=429,
+                    content={
+                        "error": "Too Many Requests",
+                        "message": "Rate limit exceeded. Please try again later.",
+                        "status_code": 429
+                    }
+                )
+            _rate_limit_store[client_ip] = (window_start, count + 1)
+            
+        return await call_next(request)
+
     return fast_app
 
 # Create app instance
@@ -224,6 +268,8 @@ def run_server():
         reload=is_debug,
         log_level="info" if not is_debug else "debug",
         server_header=False,
+        timeout_keep_alive=5,  # Mitigate Slowloris: low keep-alive timeout
+        limit_concurrency=100, # Limit concurrent connections
         headers=[("Server", "HieraChain")]  # Custom server header
     )
 
