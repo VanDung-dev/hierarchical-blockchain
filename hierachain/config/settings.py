@@ -216,8 +216,8 @@ class ProductionSettings(Settings):
     # Logging - less verbose in production
     LOG_LEVEL = "WARNING"
     
-    # API - bind to all interfaces for container/server deployment
-    API_HOST = "0.0.0.0"
+    # API - default to explicit localhost, but allow 0.0.0.0 via env for containers
+    API_HOST = os.getenv("HRC_API_HOST", "127.0.0.1")  # nosec
     
     # Storage - use persistent storage
     DEFAULT_STORAGE_BACKEND = "redis"
