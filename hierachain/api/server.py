@@ -18,7 +18,7 @@ from contextlib import asynccontextmanager
 
 from hierachain.api.v1.endpoints import router as v1_router
 from hierachain.api.v2.endpoints import router as v2_router
-from hierachain.config.settings import Settings
+from hierachain.config.settings import get_settings
 from hierachain.security.verify_api_key import VerifyAPIKey
 
 # Configure logging
@@ -38,7 +38,7 @@ def create_app() -> FastAPI:
     """Create and configure FastAPI application"""
     
     # Get settings
-    settings = Settings()
+    settings = get_settings()
     api_config = settings.get_api_config()
 
     # Initialize implementation with settings
@@ -80,6 +80,32 @@ def create_app() -> FastAPI:
         response.headers["X-Content-Type-Options"] = "nosniff"
         # Prevent Clickjacking (protects Swagger UI)
         response.headers["X-Frame-Options"] = "DENY"
+        # Control referrer information
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        # Prevent caching of sensitive data
+        response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
+        response.headers["Pragma"] = "no-cache"
+        
+        # Hide Server Information
+        response.headers._list = [
+            (name, value) for name, value in response.headers._list
+            if name.lower() != b"server"
+        ]
+        response.headers["Server"] = "HieraChain"
+
+        # Allow Swagger UI to work properly
+        if request.url.path in ["/docs", "/redoc", "/openapi.json"]:
+            # Relaxed CSP for documentation pages
+            response.headers["Content-Security-Policy"] = (
+                "default-src 'self'; "
+                "script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+                "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+                "img-src 'self' data: https://fastapi.tiangolo.com"
+            )
+        else:
+            # Strict CSP for API endpoints
+            response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'"
+        
         return response
     
     # Try to include v1 router
@@ -154,7 +180,7 @@ app = create_app()
 
 def run_server():
     """Run the server with uvicorn"""
-    settings = Settings()
+    settings = get_settings()
     api_config = settings.get_api_config()
     is_debug = settings.LOG_LEVEL == "DEBUG"
     
@@ -163,7 +189,9 @@ def run_server():
         host=api_config["host"],
         port=api_config["port"],
         reload=is_debug,
-        log_level="info" if not is_debug else "debug"
+        log_level="info" if not is_debug else "debug",
+        server_header=False,
+        headers=[("Server", "HieraChain")]  # Custom server header
     )
 
 if __name__ == "__main__":
