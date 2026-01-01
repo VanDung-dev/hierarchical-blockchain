@@ -11,7 +11,7 @@ CORS support, and comprehensive logging.
 
 import uvicorn
 import logging
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from contextlib import asynccontextmanager
@@ -173,6 +173,39 @@ def create_app() -> FastAPI:
             }
         )
     
+
+    # RecursionError handler (Prevent Deeply Nested JSON DoS)
+    @fast_app.exception_handler(RecursionError)
+    async def recursion_error_handler(_request, _exc):
+        """Handle RecursionError usually caused by deeply nested JSON"""
+        logger.warning("RecursionError detected - possible JSON bomb attempt")
+        return JSONResponse(
+            status_code=422,
+            content={
+                "error": "Unprocessable Entity",
+                "message": "Input data too complex or deeply nested",
+                "status_code": 422
+            }
+        )
+
+    # Payload size limit middleware
+    @fast_app.middleware("http")
+    async def limit_upload_size(request: Request, call_next):
+        max_upload_size = 5 * 1024 * 1024  # 5 MB
+        if request.method == "POST":
+            if "content-length" in request.headers:
+                content_length = int(request.headers.get("content-length"))
+                if content_length > max_upload_size:
+                    return JSONResponse(
+                        status_code=413,
+                        content={
+                            "error": "Payload Too Large",
+                            "message": f"Request body too large. Limit is {max_upload_size} bytes",
+                            "status_code": 413
+                        }
+                    )
+        return await call_next(request)
+
     return fast_app
 
 # Create app instance
