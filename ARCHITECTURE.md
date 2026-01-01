@@ -17,8 +17,8 @@ HieraChain is a **multi-language blockchain infrastructure** designed for high-p
 │                            Client Applications                                  │
 │                    (Web Apps, Mobile, CLI, External Services)                   │
 └─────────────────────────────────────────────────────────────────────────────────┘
-                                        │
-                                        ▼
+                                       │
+                                       ▼
 ┌─────────────────────────────────────────────────────────────────────────────────┐
 │                               API Gateway Layer                                 │
 │  ┌─────────────────────────────┐      ┌─────────────────────────────────────┐   │
@@ -27,9 +27,9 @@ HieraChain is a **multi-language blockchain infrastructure** designed for high-p
 │  │     Blockchain Explorer     │      │      Metrics (Prometheus)           │   │
 │  └─────────────────────────────┘      └─────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────────────────────┘
-                                        │
-                    ┌───────────────────┼───────────────────┐
-                    ▼                   ▼                   ▼
+                                      │
+             ┌────────────────────────┼──────────────────────────┐
+             ▼                        ▼                          ▼
 ┌──────────────────────────┐ ┌──────────────────┐ ┌──────────────────────────────┐
 │   hierachain (Python)    │ │hierachain-engine │ │  hierachain-consensus (Rust) │
 │                          │ │      (Go)        │ │                              │
@@ -160,13 +160,13 @@ HieraChain Ecosystem/
 ### Transaction Processing Flow
 
 ```
-                              ┌─────────────────────┐
-                              │   Client Request    │
-                              │   (REST/gRPC/WS)    │
-                              └──────────┬──────────┘
-                                         │
-                    ┌────────────────────┼────────────────────┐
-                    ▼                    ▼                    ▼
+                             ┌─────────────────────┐
+                             │   Client Request    │
+                             │   (REST/gRPC/WS)    │
+                             └──────────┬──────────┘
+                                        │
+                   ┌────────────────────┼────────────────────┐
+                   ▼                    ▼                    ▼
          ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐
          │  Python FastAPI  │ │   Go gRPC/Arrow  │ │    WebSocket     │
          │    (Validation)  │ │   (High-Speed)   │ │   (Real-time)    │
@@ -185,24 +185,24 @@ HieraChain Ecosystem/
                           │ (Parallel Processing)   │
                           └───────────┬─────────────┘
                                       │
-                    ┌─────────────────┴─────────────────┐
-                    ▼                                   ▼
+                   ┌──────────────────┴────────────────┐
+                   ▼                                   ▼
          ┌─────────────────────┐           ┌─────────────────────┐
          │   Rust Consensus    │           │   Python Business   │
          │ (Block Creation)    │           │  (Domain Logic)     │
          │ (Hash Calculation)  │           │  (Contracts)        │
          │ (Merkle Root)       │           │  (Validation)       │
-         └─────────┬───────────┘           └─────────┬───────────┘
-                   │                                 │
-                   └─────────────────┬───────────────┘
+         └─────────┬───────────┘           └──────────┬──────────┘
+                   │                                  │
+                   └─────────────────┬────────────────┘
                                      ▼
-                          ┌─────────────────────────┐
-                          │    Block Finalization   │
-                          │    (Rust Core)          │
-                          └───────────┬─────────────┘
+                         ┌─────────────────────────┐
+                         │    Block Finalization   │
+                         │    (Rust Core)          │
+                         └────────────┬────────────┘
                                       │
-                    ┌─────────────────┼─────────────────┐
-                    ▼                 ▼                 ▼
+                  ┌───────────────────┼─────────────────────┐
+                  ▼                   ▼                     ▼
          ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐
          │  Network Layer   │ │  Storage Layer   │ │    Monitoring    │
          │ (P2P Broadcast)  │ │   (Persist)      │ │   (Metrics)      │
@@ -259,11 +259,11 @@ HieraChain Ecosystem/
                         │  • Global consensus               │
                         │  • Cross-chain transactions       │
                         │  • Anchor blocks from sub-chains  │
-                        └───────────────────┬───────────────┘
-                                            │
-           ┌────────────────────────────────┼────────────────────────────────┐
-           │                                │                                │
-           ▼                                ▼                                ▼
+                        └────────────────┬──────────────────┘
+                                         │
+           ┌─────────────────────────────┼────────────────────────────┐
+           │                             │                            │
+           ▼                             ▼                            ▼
 ┌──────────────────────┐     ┌──────────────────────┐     ┌──────────────────────┐
 │     SUB-CHAIN A      │     │     SUB-CHAIN B      │     │     SUB-CHAIN C      │
 │   (Organization 1)   │     │   (Organization 2)   │     │   (Organization 3)   │
@@ -272,9 +272,9 @@ HieraChain Ecosystem/
 │ • Private data       │     │ • Private data       │     │ • Private data       │
 │ • Domain contracts   │     │ • Domain contracts   │     │ • Domain contracts   │
 └──────────────────────┘     └──────────────────────┘     └──────────────────────┘
-           │                                │                                │
-           │                                │                                │
-           ▼                                ▼                                ▼
+           │                             │                            │
+           │                             │                            │
+           ▼                             ▼                            ▼
 ┌──────────────────────┐     ┌──────────────────────┐     ┌──────────────────────┐
 │      CHANNELS        │     │      CHANNELS        │     │      CHANNELS        │
 │   (Private Comms)    │     │   (Private Comms)    │     │   (Private Comms)    │
@@ -407,23 +407,23 @@ HieraChain Ecosystem/
 │                              Security Layers                                    │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
-│  ┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐                │
-│  │  Transport      │   │  Cryptography   │   │  Access         │                │
-│  │  Security       │   │  (Rust)         │   │  Control        │                │
-│  │                 │   │                 │   │                 │                │
-│  │  • TLS 1.3      │   │  • Ed25519      │   │  • Role-based   │                │
-│  │  • mTLS         │   │  • SHA-256      │   │  • Organization │                │
-│  │  • ZMQ Curve    │   │  • Merkle Tree  │   │  • Channel      │                │
-│  └─────────────────┘   └─────────────────┘   └─────────────────┘                │
+│         ┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐         │
+│         │  Transport      │   │  Cryptography   │   │  Access         │         │
+│         │  Security       │   │  (Rust)         │   │  Control        │         │
+│         │                 │   │                 │   │                 │         │
+│         │  • TLS 1.3      │   │  • Ed25519      │   │  • Role-based   │         │
+│         │  • mTLS         │   │  • SHA-256      │   │  • Organization │         │
+│         │  • ZMQ Curve    │   │  • Merkle Tree  │   │  • Channel      │         │
+│         └─────────────────┘   └─────────────────┘   └─────────────────┘         │
 │                                                                                 │
-│  ┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐                │
-│  │  Private Data   │   │  Secure         │   │  Error          │                │
-│  │  Collections    │   │  Connections    │   │  Mitigation     │                │
-│  │                 │   │                 │   │                 │                │
-│  │  • Encryption   │   │  • Peer Auth    │   │  • Fault        │                │
-│  │  • Hash Only    │   │  • Node Verify  │   │    Tolerance    │                │
-│  │  • Access Rules │   │  • Key Rotation │   │  • Recovery     │                │
-│  └─────────────────┘   └─────────────────┘   └─────────────────┘                │
+│         ┌─────────────────┐   ┌─────────────────┐   ┌─────────────────┐         │
+│         │  Private Data   │   │  Secure         │   │  Error          │         │
+│         │  Collections    │   │  Connections    │   │  Mitigation     │         │
+│         │                 │   │                 │   │                 │         │
+│         │  • Encryption   │   │  • Peer Auth    │   │  • Fault        │         │
+│         │  • Hash Only    │   │  • Node Verify  │   │    Tolerance    │         │
+│         │  • Access Rules │   │  • Key Rotation │   │  • Recovery     │         │
+│         └─────────────────┘   └─────────────────┘   └─────────────────┘         │
 │                                                                                 │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -478,19 +478,19 @@ HieraChain Ecosystem/
 │                           Observability Stack                                   │
 ├─────────────────────────────────────────────────────────────────────────────────┤
 │                                                                                 │
-│   ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐          │
-│   │    Prometheus    │    │     Grafana      │    │    Logging       │          │
-│   │    (Metrics)     │───►│  (Dashboards)    │    │   (Structured)   │          │
-│   │                  │    │                  │    │                  │          │
-│   │  • tx_count      │    │  • Performance   │    │  • JSON logs     │          │
-│   │  • block_time    │    │  • Health        │    │  • Trace IDs     │          │
-│   │  • queue_size    │    │  • Alerts        │    │  • Rotation      │          │
-│   └────────▲─────────┘    └──────────────────┘    └──────────────────┘          │
-│            │                                                                    │
-│   ┌────────┴────────────────────────────────────────────────────────────┐       │
-│   │                    Go Engine (metrics.go)                           │       │
-│   │                    Port: 2112 (/metrics)                            │       │
-│   └─────────────────────────────────────────────────────────────────────┘       │
+│       ┌──────────────────┐    ┌──────────────────┐    ┌──────────────────┐      │
+│       │    Prometheus    │    │     Grafana      │    │    Logging       │      │
+│       │    (Metrics)     │───►│  (Dashboards)    │    │   (Structured)   │      │
+│       │                  │    │                  │    │                  │      │
+│       │  • tx_count      │    │  • Performance   │    │  • JSON logs     │      │
+│       │  • block_time    │    │  • Health        │    │  • Trace IDs     │      │
+│       │  • queue_size    │    │  • Alerts        │    │  • Rotation      │      │
+│       └────────▲─────────┘    └──────────────────┘    └──────────────────┘      │
+│                │                                                                │
+│       ┌────────┴─────────────────────────────────────────────────────────┐      │
+│       │                    Go Engine (metrics.go)                        │      │
+│       │                    Port: 2112 (/metrics)                         │      │
+│       └──────────────────────────────────────────────────────────────────┘      │
 │                                                                                 │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
