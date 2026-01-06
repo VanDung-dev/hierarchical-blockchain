@@ -20,6 +20,8 @@ from hierachain.error_mitigation.error_classifier import ErrorClassifier
 from hierachain.security.security_utils import KeyPair, verify_signature
 from hierachain.security.key_provider import LocalKeyProvider
 from hierachain.network.zmq_transport import ZmqNode
+from hierachain.config.settings import settings
+from hierachain.security.zk_verifier import ZKVerifier
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +91,7 @@ class ConsensusError(Exception):
 
 class BFTConsensus:
     """Byzantine Fault Tolerance consensus implementation"""
-    
+
     def __init__(self, node_id: str, all_nodes: list[str], f: int = 1, 
                  error_config: dict[str, Any] | None = None,
                  keypair: KeyPair | None = None,
@@ -308,7 +310,7 @@ class BFTConsensus:
         return self.node_id == self._primary()
     
     def _handle_pre_prepare(self, message: BFTMessage) -> bool:
-        """Process pre-prepare message"""
+        """Process pre-prepare message with optional ZK verification."""
         with self.lock:
             # Don't process if we're the primary
             if self._is_primary():
@@ -328,7 +330,17 @@ class BFTConsensus:
             # Verify signature
             if not self._verify_signature(message):
                 return False
-                
+
+            # === ZK PROOF VERIFICATION ===
+            if settings.ENABLE_ZK_PROOFS:
+                zk_valid = self._verify_operation_zk_proof(message.data)
+                if not zk_valid:
+                    logger.warning(
+                        f"Rejected PRE_PREPARE from {message.sender_id}: "
+                        f"ZK proof invalid"
+                    )
+                    return False
+
             # Accept message
             self.pre_prepare_messages[message.sequence_number] = message
             self.state = ConsensusState.PRE_PREPARED
@@ -354,7 +366,43 @@ class BFTConsensus:
             self._reset_view_change_timer()
             
             return True
-    
+
+    def _verify_operation_zk_proof(self, data: dict[str, Any]) -> bool:
+        """
+        Verify ZK proof attached to an operation in consensus.
+
+        Args:
+            data: Message data containing operation and optional ZK proof
+
+        Returns:
+            True if valid or ZK not required, False otherwise
+        """
+        operation = data.get("operation", {})
+        zk_proof_hex = operation.get("zk_proof")
+
+        # If no ZK proof and not required, accept
+        if zk_proof_hex is None:
+            if settings.ZK_PROOF_REQUIRED_FOR_MAINCHAIN:
+                return False
+            return True
+
+        try:
+            verifier = ZKVerifier(mode=settings.ZK_MODE)
+            zk_proof = bytes.fromhex(zk_proof_hex)
+
+            # Extract public inputs from operation
+            public_inputs = {
+                "old_state_root": operation.get("previous_state", ""),
+                "new_state_root": operation.get("current_state", ""),
+                "block_index": operation.get("sequence", 0)
+            }
+
+            return verifier.verify(zk_proof, public_inputs)
+
+        except Exception as e:
+            logger.error(f"ZK verification error in BFT: {e}")
+            return False
+
     def _handle_prepare(self, message: BFTMessage) -> bool:
         """Process prepare message"""
         with self.lock:
