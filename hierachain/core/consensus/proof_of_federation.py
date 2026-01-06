@@ -5,14 +5,19 @@ This module implements a Federated consensus mechanism designed for
 consortium blockchains (e.g., Healthcare, Education, Supply Chain Consortia).
 It replaces the static authority model with a rotating leader schedule,
 ensuring fair participation and removing single points of failure.
+
+Enhanced with ZK Proof verification for trustless block validation.
 """
 
 import time
 import hashlib
+import logging
 from typing import Any
 
 from hierachain.core.consensus.base_consensus import BaseConsensus
 from hierachain.core.block import Block
+
+logger = logging.getLogger(__name__)
 
 
 class ProofOfFederation(BaseConsensus):
@@ -157,10 +162,13 @@ class ProofOfFederation(BaseConsensus):
     def validate_block(self, block: Block, previous_block: Block) -> bool:
         """
         Validate a block according to PoF rules.
-        
-        1. Basic structure check.
-        2. Time interval check.
-        3. **Leader Rotation Check**: Verify the block signer was the correct leader for this height.
+
+        Args:
+            block: Block to validate.
+            previous_block: Previous block in the chain.
+
+        Returns:
+            True if block is valid according to PoF rules, False otherwise
         """
         # 1. Basic structure
         if not block.validate_structure():
@@ -184,7 +192,15 @@ class ProofOfFederation(BaseConsensus):
             if not self.validate_block_proposer(block.index, signer_id):
                 # "It wasn't your turn!"
                 return False
-                
+
+        # 4. ZK Proof Verification (if enabled)
+        # Uses shared implementation from BaseConsensus
+        zk_valid = self._verify_block_zk_proof(block, previous_block)
+        if not zk_valid:
+            logger.error(f"Block {block.index} ZK proof verification FAILED")
+            return False
+        logger.debug(f"Block {block.index} ZK proof verified")
+
         return True
 
     def finalize_block(self, block: Block, authority_id: str | None = None) -> Block:

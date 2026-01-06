@@ -8,10 +8,13 @@ Sub-Chains) have designated roles and permissions for block creation.
 
 import time
 import hashlib
+import logging
 from typing import Any
 
 from hierachain.core.consensus.base_consensus import BaseConsensus
 from hierachain.core.block import Block
+
+logger = logging.getLogger(__name__)
 
 
 class ProofOfAuthority(BaseConsensus):
@@ -133,7 +136,13 @@ class ProofOfAuthority(BaseConsensus):
         if self.config["require_authority_signature"]:
             if not self._has_valid_authority_signature(block):
                 return False
-        
+
+        # === ZK PROOF VERIFICATION ===
+        # Uses shared implementation from BaseConsensus
+        if not self._verify_block_zk_proof(block):
+            logger.warning(f"Block {block.index} failed ZK proof verification")
+            return False
+
         return True
     
     def finalize_block(self, block: Block, authority_id: str | None = None) -> Block:
