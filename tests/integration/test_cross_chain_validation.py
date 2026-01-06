@@ -35,7 +35,7 @@ def test_cross_chain_validation():
     sub_chain.complete_operation("ENTITY-001", "test_operation", {"result": "success"})
 
     # Finalize Sub-Chain block and submit proof
-    time.sleep(0.25)
+    time.sleep(1.0)
     sub_chain.flush_pending_and_finalize()
     sub_chain.submit_proof_to_main(main_chain)
     main_chain.finalize_block()
@@ -82,11 +82,11 @@ def test_cross_chain_validation_with_multiple_sub_chains():
     sub_chain2.complete_operation("ENTITY-002", "manufacture_product", {"result": "completed"})
 
     # Finalize Sub-Chain blocks and submit proofs
-    time.sleep(0.25)
+    time.sleep(1.0)
     sub_chain1.flush_pending_and_finalize()
     sub_chain1.submit_proof_to_main(main_chain)
 
-    time.sleep(0.25)
+    time.sleep(1.0)
     sub_chain2.flush_pending_and_finalize()
     sub_chain2.submit_proof_to_main(main_chain)
 
@@ -122,7 +122,7 @@ def test_cross_chain_validation_with_missing_sub_chain():
     sub_chain.start_operation("ENTITY-001", "test_operation", {"param": "value1"})
     sub_chain.complete_operation("ENTITY-001", "test_operation", {"result": "success"})
     
-    time.sleep(0.25)
+    time.sleep(1.0)
     sub_chain.flush_pending_and_finalize()
     sub_chain.submit_proof_to_main(main_chain)
     main_chain.finalize_block()
@@ -174,7 +174,7 @@ def test_cross_chain_validation_with_entity_consistency():
     order_chain.update_entity_status(entity_id, "confirmed")
     order_chain.complete_operation(entity_id, "process_order", {"status": "confirmed"})
     
-    time.sleep(0.25)
+    time.sleep(1.0)
     order_chain.flush_pending_and_finalize()
     order_chain.submit_proof_to_main(main_chain)
 
@@ -183,7 +183,7 @@ def test_cross_chain_validation_with_entity_consistency():
     inventory_chain.update_entity_status(entity_id, "items_reserved")
     inventory_chain.complete_operation(entity_id, "reserve_items", {"result": "success"})
     
-    time.sleep(0.25)
+    time.sleep(1.0)
     inventory_chain.flush_pending_and_finalize()
     inventory_chain.submit_proof_to_main(main_chain)
 
@@ -227,14 +227,14 @@ def test_cross_chain_validation_system_integrity():
     sub_chain1.start_operation("ENTITY-001", "test_operation", {"param": "value1"})
     sub_chain1.complete_operation("ENTITY-001", "test_operation", {"result": "success"})
     
-    time.sleep(0.25)
+    time.sleep(1.0)
     sub_chain1.flush_pending_and_finalize()
     sub_chain1.submit_proof_to_main(main_chain)
 
     sub_chain2.start_operation("ENTITY-002", "validate_operation", {"param": "value2"})
     sub_chain2.complete_operation("ENTITY-002", "validate_operation", {"result": "validated"})
     
-    time.sleep(0.25)
+    time.sleep(1.0)
     sub_chain2.flush_pending_and_finalize()
     sub_chain2.submit_proof_to_main(main_chain)
 
@@ -278,14 +278,14 @@ def test_cross_chain_validation_fault_tolerance():
     sub_chain1.start_operation("ENTITY-001", "test_operation", {"param": "value1"})
     sub_chain1.complete_operation("ENTITY-001", "test_operation", {"result": "success"})
     
-    time.sleep(0.25)
+    time.sleep(1.0)
     sub_chain1.flush_pending_and_finalize()
     sub_chain1.submit_proof_to_main(main_chain)
 
     sub_chain2.start_operation("ENTITY-002", "validate_operation", {"param": "value2"})
     sub_chain2.complete_operation("ENTITY-002", "validate_operation", {"result": "validated"})
     
-    time.sleep(0.25)
+    time.sleep(1.0)
     sub_chain2.flush_pending_and_finalize()
     sub_chain2.submit_proof_to_main(main_chain)
 
@@ -337,9 +337,9 @@ def test_cross_chain_validation_with_timestamp_inconsistency():
     # We need to do this before finalizing to ensure we can control the timestamp
     if sub_chain.pending_events:
         # Add a small delay to ensure different timestamps
-        time.sleep(0.25)
+        time.sleep(1.0)
 
-    time.sleep(0.25)
+    time.sleep(1.0)
     sub_chain.flush_pending_and_finalize()
 
     # Submit proof to main chain
@@ -435,7 +435,7 @@ def test_cross_chain_validation_with_corrupted_entity_data():
     test_chain.start_operation("ENTITY-001", "test_operation", {"param": "value1"})
     test_chain.complete_operation("ENTITY-001", "test_operation", {"result": "success"})
     
-    time.sleep(0.25)
+    time.sleep(1.0)
     test_chain.flush_pending_and_finalize()
     test_chain.submit_proof_to_main(main_chain)
     main_chain.finalize_block()
@@ -471,7 +471,7 @@ def test_cross_chain_validation_with_logic_inconsistency():
     test_chain.complete_operation("ENTITY-001", "test_operation", {"result": "success"})
 
     # Wait for ordering service to batch the event
-    time.sleep(0.25)
+    time.sleep(1.0)
 
     block = test_chain.flush_pending_and_finalize()
     assert block is not None, "Failed to finalize block in test_chain"
@@ -526,14 +526,14 @@ def test_cross_chain_validation_with_large_number_of_sub_chains():
         sub_chain.complete_operation(entity_id, "process_operation", {"result": f"completed_{i}"})
 
         # Wait for events to be processed by ordering service
-        time.sleep(0.25)
+        time.sleep(1.0)
 
         # Finalize Sub-Chain blocks and submit proofs
         block_info = sub_chain.flush_pending_and_finalize()
         
         # Retry if flush failed (timeout)
         if block_info is None:
-            time.sleep(0.25)
+            time.sleep(1.0)
             block_info = sub_chain.flush_pending_and_finalize()
             
         assert block_info is not None, f"Failed to finalize block for {chain_name}"
@@ -589,7 +589,7 @@ def test_cross_chain_validation_with_invalid_input_data():
     sub_chain.start_operation("ENTITY-001", "test_operation", {"param": "value1"})
     sub_chain.complete_operation("ENTITY-001", "test_operation", {"result": "success"})
 
-    time.sleep(0.25)
+    time.sleep(1.0)
     sub_chain.flush_pending_and_finalize()
     sub_chain.submit_proof_to_main(main_chain)
     main_chain.finalize_block()
