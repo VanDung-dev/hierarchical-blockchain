@@ -117,6 +117,15 @@ class Settings:
     GO_ENGINE_FALLBACK_ENABLED = os.getenv("HIE_GO_ENGINE_FALLBACK", "true").lower() == "true"
     GO_ENGINE_HEALTH_CHECK_INTERVAL = float(os.getenv("HIE_GO_ENGINE_HEALTH_INTERVAL", "30.0"))
 
+    # Zero Knowledge Proof settings
+    # Enable trustless verification of state transitions
+    ENABLE_ZK_PROOFS = os.getenv("HRC_ENABLE_ZK_PROOFS", "false").lower() == "true"
+    ZK_MODE = os.getenv("HRC_ZK_MODE", "mock")  # "mock" or "production"
+    ZK_VERIFICATION_KEY_PATH = os.getenv("HRC_ZK_VERIFICATION_KEY", "")
+    ZK_PROVING_KEY_PATH = os.getenv("HRC_ZK_PROVING_KEY", "")
+    ZK_CIRCUIT_PATH = os.getenv("HRC_ZK_CIRCUIT", "")
+    ZK_PROOF_REQUIRED_FOR_MAINCHAIN = os.getenv("HRC_ZK_REQUIRED_MAINCHAIN", "false").lower() == "true"
+
     @classmethod
     def get_storage_config(cls) -> dict[str, Any]:
         """Get storage configuration"""
