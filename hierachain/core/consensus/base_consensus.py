@@ -13,7 +13,7 @@ from typing import Any
 
 from hierachain.core.block import Block
 from hierachain.config.settings import settings
-from hierachain.security.zk_verifier import ZKVerifier
+from hierachain.security.zk_verifier import get_zk_verifier
 
 logger = logging.getLogger(__name__)
 
@@ -244,7 +244,8 @@ class BaseConsensus(ABC):
 
         # Build public inputs and verify
         try:
-            verifier = ZKVerifier(mode=settings.ZK_MODE)
+            # Use singleton verifier
+            verifier = get_zk_verifier()
 
             # Determine old_state_root from details or previous_block
             old_state = details.get("previous_state")
