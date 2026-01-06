@@ -25,9 +25,10 @@ from hierachain.core import schemas
 from hierachain.error_mitigation.journal import TransactionJournal
 from hierachain.storage.sql_backend import SqlStorageBackend
 from hierachain.core.performance import process_pool
-from hierachain.config.settings import Settings
+from hierachain.config.settings import Settings, settings
 from hierachain.core.utils import compute_leaves_from_events_standalone, MerkleTree
 from hierachain.security.security_utils import verify_batch_signatures
+from hierachain.security.zk_verifier import ZKVerifier
 
 logger = logging.getLogger(__name__)
 
@@ -102,8 +103,8 @@ class EventCertifier:
         
     def validate(self, event: PendingEvent) -> dict[str, Any]:
         """
-        Validate and certify an event.
-        
+        Validate and certify an event with optional ZK verification.
+
         Args:
             event: Event to validate
             
@@ -115,7 +116,8 @@ class EventCertifier:
             "certified_at": time.time(),
             "valid": True,
             "validation_errors": [],
-            "metadata": {}
+            "metadata": {},
+            "zk_verified": False
         }
         
         # Apply validation rules
@@ -141,12 +143,73 @@ class EventCertifier:
             if field not in event.event_data:
                 certification["valid"] = False
                 certification["validation_errors"].append(f"Missing required field: {field}")
-        
+
+        # === ZK PROOF VERIFICATION ===
+        if settings.ENABLE_ZK_PROOFS and certification["valid"]:
+            zk_result = self._verify_zk_proof(event)
+            certification["zk_verified"] = zk_result["verified"]
+            if not zk_result["verified"] and zk_result["required"]:
+                certification["valid"] = False
+                certification["validation_errors"].append(
+                    f"ZK proof verification failed: {zk_result['reason']}"
+                )
+
         # Store certification result
         self.certified_events[event.event_id] = certification
         
         return certification
-    
+
+    @staticmethod
+    def _verify_zk_proof(event: PendingEvent) -> dict[str, Any]:
+        """
+        Verify ZK proof attached to an event.
+
+        Args:
+            event: Event to verify
+
+        Returns:
+            Dict with verification result
+        """
+        result: dict[str, Any] = {
+            "verified": False,
+            "required": settings.ZK_PROOF_REQUIRED_FOR_MAINCHAIN,
+            "reason": ""
+        }
+
+        # Check for ZK proof in event data
+        zk_proof_hex = event.event_data.get("zk_proof")
+        if zk_proof_hex is None:
+            if settings.ZK_PROOF_REQUIRED_FOR_MAINCHAIN:
+                result["reason"] = "ZK proof required but missing"
+                return result
+            result["verified"] = True
+            result["reason"] = "ZK proof not required"
+            return result
+
+        try:
+            verifier = ZKVerifier(mode=settings.ZK_MODE)
+            zk_proof = bytes.fromhex(zk_proof_hex)
+
+            # Extract public inputs from event
+            details = event.event_data.get("details", {})
+            public_inputs = {
+                "old_state_root": details.get("previous_state", ""),
+                "new_state_root": details.get("current_state", ""),
+                "block_index": details.get("block_index", 0)
+            }
+
+            verified = verifier.verify(zk_proof, public_inputs)
+            result["verified"] = verified
+            if verified:
+                result["reason"] = "ZK proof valid"
+            else:
+                result["reason"] = "ZK proof invalid"
+
+        except Exception as e:
+            result["reason"] = f"ZK verification error: {str(e)}"
+
+        return result
+
     @staticmethod
     def _validate_structure(event_data: Any) -> bool:
         """Validate basic event structure"""
