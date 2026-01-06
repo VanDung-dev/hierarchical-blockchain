@@ -7,6 +7,7 @@ from Sub-Chains, never detailed domain data, following framework guidelines.
 """
 
 import time
+import logging
 from typing import Any
 
 from hierachain.core.blockchain import Blockchain
@@ -15,6 +16,9 @@ from hierachain.core.consensus.proof_of_federation import ProofOfFederation
 from hierachain.core.utils import sanitize_metadata_for_main_chain, validate_proof_metadata
 from hierachain.core.block import Block
 from hierachain.config.settings import settings
+from hierachain.security.zk_verifier import ZKVerifier, ZKVerificationError
+
+logger = logging.getLogger(__name__)
 
 
 class MainChain(Blockchain):
@@ -47,6 +51,12 @@ class MainChain(Blockchain):
         self.registered_sub_chains: set[str] = set()
         self.sub_chain_metadata: dict[str, dict[str, Any]] = {}
         self.proof_count: int = 0
+
+        # ZK Proof Verifier (initialized if ZK proofs are enabled)
+        self.zk_verifier: ZKVerifier | None = None
+        if settings.ENABLE_ZK_PROOFS:
+            self.zk_verifier = ZKVerifier(mode=settings.ZK_MODE)
+            logger.info(f"MainChain initialized with ZK Verification in '{settings.ZK_MODE}' mode")
 
         # Register Main Chain as the primary authority/validator
         if hasattr(self.consensus, 'add_authority'):
@@ -117,55 +127,103 @@ class MainChain(Blockchain):
         
         self.add_event(registration_event)
         return True
-    
-    def add_proof(self, sub_chain_name: str, proof_hash: str, metadata: dict[str, Any]) -> bool:
+
+    def add_proof(
+        self,
+        sub_chain_name: str,
+        proof_hash: str,
+        metadata: dict[str, Any],
+        zk_proof: bytes | None = None
+    ) -> bool:
         """
         Add a proof from a Sub-Chain to the Main Chain.
         
         This is the critical method that follows framework guidelines:
         - Only stores proof evidence, NOT domain data
         - Metadata contains summary data only
-        
+        - NOW WITH ZK PROOF VERIFICATION for trustless security
+
         Args:
             sub_chain_name: Name of the Sub-Chain submitting the proof
             proof_hash: Hash of the block being proven
             metadata: Summary metadata (NOT detailed domain data)
-            
+            zk_proof: Optional ZK proof bytes for trustless verification
+
         Returns:
             True if proof was added successfully, False otherwise
         """
         # Validate Sub-Chain is registered
         if sub_chain_name not in self.registered_sub_chains:
+            logger.warning(f"Rejected proof: SubChain '{sub_chain_name}' not registered")
             return False
         
         # Validate metadata is suitable for Main Chain (no detailed data)
         if not validate_proof_metadata(metadata):
+            logger.warning(f"Rejected proof: Invalid metadata from '{sub_chain_name}'")
             return False
-        
+
+        # === ZK PROOF VERIFICATION ===
+        zk_verified = False
+        if settings.ENABLE_ZK_PROOFS:
+            if self.zk_verifier is None:
+                logger.error("ZK Proofs enabled but ZKVerifier not initialized")
+                return False
+
+            # Check if ZK proof is required
+            if settings.ZK_PROOF_REQUIRED_FOR_MAINCHAIN and zk_proof is None:
+                logger.warning("Rejected proof: ZK proof required but missing")
+                return False
+
+            # Verify ZK proof if provided
+            if zk_proof is not None:
+                public_inputs = {
+                    "old_state_root": metadata.get("previous_merkle_root", ""),
+                    "new_state_root": metadata.get("latest_merkle_root", proof_hash),
+                    "block_index": metadata.get("latest_block_index", 0),
+                    "sub_chain_name": sub_chain_name
+                }
+
+                try:
+                    is_valid = self.zk_verifier.verify(zk_proof, public_inputs)
+                    if not is_valid:
+                        logger.error(
+                            f"ZK Proof FAILED for '{sub_chain_name}' "
+                            f"block {public_inputs['block_index']}"
+                        )
+                        return False
+                    logger.info(
+                        f"ZK Proof VERIFIED for '{sub_chain_name}' "
+                        f"block {public_inputs['block_index']}"
+                    )
+                    zk_verified = True
+                except ZKVerificationError as e:
+                    logger.error(f"ZK Verification error: {e}")
+                    return False
+
         # Sanitize metadata to ensure only summary data
         sanitized_metadata = sanitize_metadata_for_main_chain(metadata)
         
         # Create proof submission event (following guidelines pattern)
-        event = {
+        proof_id = f"PROOF-{self.proof_count + 1}"
+        current_time = time.time()
+        event: dict[str, Any] = {
+            "entity_id": sub_chain_name,
+            "event": "proof_submission",
+            "timestamp": current_time,
             "type": "sub_chain_proof",
             "sub_chain": sub_chain_name,
             "proof_hash": proof_hash,
-            "metadata": sanitized_metadata  # Summary data only
-        }
-        
-        # Add required fields for proper event structure
-        event.update({
-            "entity_id": sub_chain_name,
-            "event": "proof_submission",
-            "timestamp": time.time(),
+            "metadata": sanitized_metadata,
+            "zk_verified": zk_verified,
             "details": {
                 "sub_chain_name": sub_chain_name,
                 "proof_hash": proof_hash,
-                "proof_id": f"PROOF-{self.proof_count + 1}",
-                "submitted_at": time.time()
+                "proof_id": proof_id,
+                "submitted_at": current_time,
+                "zk_verified": zk_verified
             }
-        })
-        
+        }
+
         # Add the event to Main Chain
         self.add_event(event)
         self.proof_count += 1

@@ -18,6 +18,7 @@ from hierachain.core.consensus.proof_of_federation import ProofOfFederation
 from hierachain.config.settings import settings
 from hierachain.core.utils import sanitize_metadata_for_main_chain, create_event
 from hierachain.consensus.ordering_service import OrderingService, OrderingNode, OrderingStatus
+from hierachain.security.zk_prover import ZKProver
 
 logger = logging.getLogger(__name__)
 
@@ -297,7 +298,8 @@ class SubChain(Blockchain):
         
         This follows the guidelines pattern for proof submission where
         Sub-Chains submit proofs with summary metadata, not detailed data.
-        
+        NOW WITH ZK PROOF GENERATION for trustless verification.
+
         Args:
             main_chain: Main Chain to submit proof to
             metadata_filter: Optional function to generate custom metadata
@@ -308,10 +310,13 @@ class SubChain(Blockchain):
         
         # Get latest block for proof
         latest_block = self.get_latest_block()
-        logger.warning(f"DEBUG: SubChain {self.name} submitting proof. Chain length: {len(self.chain)}. Latest block index: {latest_block.index}")
+        logger.debug(
+            f"SubChain {self.name} submitting proof. "
+            f"Chain length: {len(self.chain)}. Block index: {latest_block.index}"
+        )
 
         if not self.chain or len(self.chain) <= 1:  # Only genesis block
-            logger.debug("SubChain has only genesis block. Aborting proof submission.")
+            logger.debug("SubChain has only genesis block. Aborting proof.")
             return False
         
         # Generate summary metadata (not detailed domain data)
@@ -319,12 +324,53 @@ class SubChain(Blockchain):
             metadata = metadata_filter(self)
         else:
             metadata = self._generate_default_proof_metadata()
-        
-        # Submit proof to Main Chain
+
+        # === ZK PROOF GENERATION ===
+        zk_proof: bytes | None = None
+        if settings.ENABLE_ZK_PROOFS:
+            try:
+                # Get state roots for ZK proof
+                previous_block = self.chain[-2] if len(self.chain) > 1 else None
+                old_state_root = (
+                    previous_block.merkle_root if previous_block else "genesis"
+                )
+                new_state_root = latest_block.merkle_root or latest_block.hash
+
+                # Generate ZK proof
+                prover = ZKProver(mode=settings.ZK_MODE)
+                result = prover.generate_proof(
+                    old_state_root=old_state_root,
+                    new_state_root=new_state_root,
+                    block_index=latest_block.index,
+                    events=latest_block.to_event_list() if hasattr(
+                        latest_block, 'to_event_list'
+                    ) else [],
+                    sub_chain_name=self.name
+                )
+
+                if result.success:
+                    zk_proof = result.proof
+                    logger.info(
+                        f"Generated ZK proof for block {latest_block.index} "
+                        f"in {result.generation_time_ms:.2f}ms"
+                    )
+                else:
+                    logger.warning(f"ZK proof generation failed: {result.error}")
+                    # Continue without ZK proof if not required
+                    if settings.ZK_PROOF_REQUIRED_FOR_MAINCHAIN:
+                        return False
+
+            except Exception as e:
+                logger.error(f"ZK proof generation error: {e}")
+                if settings.ZK_PROOF_REQUIRED_FOR_MAINCHAIN:
+                    return False
+
+        # Submit proof to Main Chain (with optional ZK proof)
         success = main_chain.add_proof(
             sub_chain_name=self.name,
             proof_hash=latest_block.hash,
-            metadata=metadata
+            metadata=metadata,
+            zk_proof=zk_proof
         )
         logger.debug(f"MainChain.add_proof returned: {success}")
         
@@ -340,7 +386,8 @@ class SubChain(Blockchain):
                     "main_chain_name": getattr(main_chain, 'name', str(main_chain)),
                     "proof_hash": latest_block.hash,
                     "block_index": latest_block.index,
-                    "submitted_at": time.time()
+                    "submitted_at": time.time(),
+                    "zk_proof_included": zk_proof is not None
                 }
             }
             
