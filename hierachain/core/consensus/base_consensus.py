@@ -6,11 +6,16 @@ The framework supports various consensus algorithms while maintaining
 the event-based model and hierarchical structure principles.
 """
 
+import logging
 import pyarrow as pa
 from abc import ABC, abstractmethod
 from typing import Any
 
 from hierachain.core.block import Block
+from hierachain.config.settings import settings
+from hierachain.security.zk_verifier import ZKVerifier
+
+logger = logging.getLogger(__name__)
 
 
 class BaseConsensus(ABC):
@@ -200,6 +205,72 @@ class BaseConsensus(ABC):
         """
         return 10.0  # Default 10 seconds
     
+    @staticmethod
+    def _verify_block_zk_proof(block: Block, previous_block: Block | None = None) -> bool:
+        """
+        Verify ZK proof attached to a block's consensus event.
+
+        This is a shared implementation that child classes can use directly
+        or override if they need custom logic.
+
+        Args:
+            block: Block to verify
+            previous_block: Previous block for state root (optional)
+
+        Returns:
+            True if ZK proof is valid or not required, False otherwise
+        """
+        if not settings.ENABLE_ZK_PROOFS:
+            return True
+
+        events = block.to_event_list() if hasattr(block, 'to_event_list') else []
+
+        zk_proof = None
+        details: dict[str, Any] = {}
+
+        for event in events:
+            if event.get("event") == "consensus_finalization":
+                details = event.get("details", {})
+                if "zk_proof" in details:
+                    zk_proof = details["zk_proof"]
+                    break
+
+        # If no ZK proof and not required, accept
+        if zk_proof is None:
+            if settings.ZK_PROOF_REQUIRED_FOR_MAINCHAIN:
+                logger.warning(f"Block {block.index}: ZK proof required but missing")
+                return False
+            return True
+
+        # Build public inputs and verify
+        try:
+            verifier = ZKVerifier(mode=settings.ZK_MODE)
+
+            # Determine old_state_root from details or previous_block
+            old_state = details.get("previous_state")
+            if old_state is None and previous_block:
+                old_state = getattr(previous_block, 'merkle_root', None) or "genesis"
+
+            public_inputs = {
+                "old_state_root": old_state or "",
+                "new_state_root": (
+                    details.get("current_state")
+                    or getattr(block, 'merkle_root', None)
+                    or block.hash
+                ),
+                "block_index": block.index
+            }
+
+            # Convert hex string to bytes if needed
+            if isinstance(zk_proof, str):
+                zk_proof = bytes.fromhex(zk_proof)
+
+            return verifier.verify(zk_proof, public_inputs)
+
+        except Exception as e:
+            logger.error(f"ZK verification error in block {block.index}: {e}")
+            return False
+
     def __str__(self) -> str:
         """String representation of the consensus mechanism."""
         return f"{self.__class__.__name__}(name={self.name})"
