@@ -8,7 +8,7 @@ by sanitizing user input before logging and using structured log formats.
 import logging
 import json
 from typing import Any
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 # Characters that can be used for log injection
@@ -79,7 +79,7 @@ class SecureLogger:
     ) -> str:
         """Create a structured log entry in JSON format."""
         log_entry = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "level": level,
             "logger": self.name,
             "message": sanitize_for_log(message),
@@ -135,7 +135,7 @@ class SecureLogger:
             **kwargs: Additional context data
         """
         log_entry = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "type": "security_event",
             "event_type": sanitize_for_log(event_type),
             "severity": severity,
@@ -181,7 +181,7 @@ class SecureLogger:
             **kwargs: Additional context
         """
         log_entry = {
-            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "type": "audit",
             "action": sanitize_for_log(action),
             "resource": sanitize_for_log(resource),
