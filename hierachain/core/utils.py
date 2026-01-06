@@ -315,8 +315,17 @@ def sanitize_metadata_for_main_chain(metadata: dict[str, Any]) -> dict[str, Any]
         "detailed_logs", "complete_history", "full_trace"
     ]
     
+    # Fields that must always be preserved regardless of structure rules
+    # ZK proofs are critical for security and must not be filtered out
+    critical_fields = ["zk_proof", "zk_public_inputs", "proof_hash"]
+
     sanitized = {}
     for key, value in metadata.items():
+        # Always preserve critical security fields
+        if key in critical_fields:
+            sanitized[key] = value
+            continue
+
         if key not in detailed_fields:
             # Keep only summary-level information
             if isinstance(value, (str, int, float, bool)):
