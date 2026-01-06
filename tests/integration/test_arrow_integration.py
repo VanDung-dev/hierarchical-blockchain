@@ -1,7 +1,15 @@
+"""
+Integration tests for ArrowClient
+
+Use HieraChain-Engine for testing.
+https://github.com/VanDung-dev/HieraChain-Engine
+"""
+
 import time
 import logging
 import sys
 import os
+import pytest
 
 # Add project root to path
 sys.path.append(os.getcwd())
@@ -50,9 +58,12 @@ def test_arrow_integration():
             logger.error(f"❌ TEST FAILED: Unexpected response {response}")
             sys.exit(1)
             
+    except ConnectionRefusedError:
+        logger.warning("Arrow server not running. Skipping integration test.")
+        pytest.skip("Arrow server not running on localhost:50051")
     except Exception as e:
         logger.error(f"❌ TEST FAILED: {e}")
-        sys.exit(1)
+        pytest.fail(f"Test failed: {e}")
     finally:
         client.close()
 
