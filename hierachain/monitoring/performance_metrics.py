@@ -5,6 +5,7 @@ This module provides performance tracking for Arrow data operations,
 including storage, conversion, and query operations.
 """
 
+from __future__ import annotations
 import time
 import logging
 import threading
@@ -97,7 +98,7 @@ class PerformanceMetrics:
             ...
     """
     
-    _instance: Optional['PerformanceMetrics'] = None
+    _instance: PerformanceMetrics | None = None
     _lock = threading.Lock()
     
     def __new__(cls) -> 'PerformanceMetrics':
