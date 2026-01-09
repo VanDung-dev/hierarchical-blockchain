@@ -164,15 +164,25 @@ class ZKVerifier:
         Returns:
             True if proof matches expected hash.
         """
-        # Reconstruct expected hash from public inputs
-        payload = (
-            f"{public_inputs.old_state_root}:"
-            f"{public_inputs.new_state_root}:"
-            f"{public_inputs.block_index}"
-        )
-        expected = hashlib.sha256(payload.encode('utf-8')).digest()
+        # Mock proof format: magic_bytes + sha256(public_inputs_json)
+        magic_bytes = b"mock_proof"
         
-        return proof == expected
+        # 1. Check Magic Bytes
+        if not proof.startswith(magic_bytes):
+            logger.warning("Mock proof missing magic bytes prefix")
+            return False
+            
+        # 2. Extract Hash
+        if len(proof) < len(magic_bytes) + 32:
+            logger.warning("Mock proof too short")
+            return False
+            
+        proof_hash = proof[len(magic_bytes):len(magic_bytes) + 32]
+        
+        # 3. Compute Expected Hash (from JSON bytes)
+        expected_hash = hashlib.sha256(public_inputs.to_bytes()).digest()
+        
+        return proof_hash == expected_hash
     
     def _verify_production(self, proof: bytes, public_inputs: ZKPublicInputs) -> bool:
         """

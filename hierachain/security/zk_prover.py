@@ -221,10 +221,21 @@ class ZKProver:
         Returns:
             SHA-256 hash as proof bytes.
         """
-        # Create deterministic proof from public inputs
-        # This MUST match the verification logic in ZKVerifier._verify_mock
-        payload = f"{old_state_root}:{new_state_root}:{block_index}"
-        return hashlib.sha256(payload.encode('utf-8')).digest()
+        # 1. Serialize public inputs to JSON
+        public_inputs = {
+            "old_state_root": old_state_root,
+            "new_state_root": new_state_root,
+            "block_index": block_index,
+            "sub_chain_name": ""  # Default empty as per current schema
+        }
+        payload_bytes = json.dumps(public_inputs, sort_keys=True).encode('utf-8')
+        
+        # 2. Compute SHA-256 hash
+        proof_hash = hashlib.sha256(payload_bytes).digest()
+        
+        # 3. Prepend Magic Bytes (Rust requires this)
+        magic_bytes = b"mock_proof"
+        return magic_bytes + proof_hash
     
     def _generate_production_proof(
         self,
