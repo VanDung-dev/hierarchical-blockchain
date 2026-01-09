@@ -10,16 +10,12 @@ This module defines the Apache Arrow schemas used for:
 import pyarrow as pa
 
 # Event Schema - Simple structure for events
-# Updated to include ZK Proof fields for trustless verification
 EVENT_SCHEMA = pa.schema([
     ('entity_id', pa.string()),
     ('event', pa.string()),
     ('timestamp', pa.float64()),
     ('details', pa.map_(pa.string(), pa.string())),
     ('data', pa.binary()),
-    # ZK Proof fields (optional) - for trustless state verification
-    ('zk_proof', pa.binary()),           # Serialized ZK proof bytes
-    ('zk_public_inputs', pa.binary()),   # Serialized public inputs (JSON)
 ])
 
 
@@ -29,8 +25,6 @@ BLOCK_HEADER_SCHEMA = pa.schema([
     ('timestamp', pa.float64()),
     ('previous_hash', pa.string()),
     ('nonce', pa.int64()),
-    ('merkle_root', pa.string()),
-    ('hash', pa.string()),
     ('merkle_root', pa.string()),
     ('hash', pa.string()),
 ])
@@ -83,13 +77,10 @@ def get_block_schema() -> pa.Schema:
             ('timestamp', pa.float64()),
             ('details', pa.map_(pa.string(), pa.string())),
             ('data', pa.binary()),
-            # ZK Proof fields (optional)
-            ('zk_proof', pa.binary()),
-            ('zk_public_inputs', pa.binary()),
         ]))),
         # Block-level ZK Proof (for SubChain -> MainChain submission)
-        ('block_zk_proof', pa.binary()),
-        ('block_zk_public_inputs', pa.binary()),
+        ('zk_proof', pa.binary()),
+        ('zk_public_inputs', pa.binary()),
     ])
 
 # Constants for conversion
