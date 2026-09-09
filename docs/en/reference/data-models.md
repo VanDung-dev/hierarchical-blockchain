@@ -1,6 +1,6 @@
 ---
 title: "Data Models"
-description: "Describes Event/Block/Transaction schemas based on hierachain/core/schemas.py; examples and invariants."
+description: "Describes Event/Block schemas based on hierachain/core/block.py; examples and invariants."
 icon: material/database-outline
 ---
 
@@ -8,18 +8,18 @@ icon: material/database-outline
 
 ## Purpose
 
-Standardize core data structures (Event, BlockHeader, Transaction, full Block) for cross-language compatibility and data integrity.
+This page defines the core data shapes (Event, Block header, and full Block) so clients in different languages can read and write the same data and checks stay consistent.
 
-## Concepts & Scope
+## Scope
 
-* Based on Arrow Schema in `hierachain/core/schemas.py`.
-* Applies to: Core module, Sub-Chain/Main Chain, and API (serialize/deserialize).
+* Based on Arrow schema `EVENT_SCHEMA` in `hierachain/core/block.py:261`. This is the only Arrow schema in core. There is no separate `schemas.py`.
+* Applies to core, Sub-Chain/Main Chain, and the API layer where data is serialized.
 
-## Main Schemas
+## Main schemas
 
 ### Event
 
-Describes a domain event.
+An event is a domain fact about an entity.
 
 ```python
 EVENT_SCHEMA = schema([
@@ -33,7 +33,7 @@ EVENT_SCHEMA = schema([
 ])
 ```
 
-Example JSON (when returned via API):
+Example JSON as returned by the API:
 
 ```json
 {
@@ -47,65 +47,13 @@ Example JSON (when returned via API):
 }
 ```
 
-### Block Header
+### Block header and block
 
-Minimal metadata for a block.
+There is no `BLOCK_HEADER_SCHEMA` or `TRANSACTION_SCHEMA` in code. `Block` is a plain Python class in `hierachain/core/block.py` with `index`, `timestamp`, `previous_hash`, `merkle_root`, `hash`, `events: pa.Table` (using `EVENT_SCHEMA`), and `data`. Helpers include `calculate_merkle_root()` and `to_event_list()`. `Block.events` is the only Arrow payload. The block has no separate transaction table and no `zk_proof` column.
 
-```python
-BLOCK_HEADER_SCHEMA = schema([
-  ('index', int64),
-  ('timestamp', float64),
-  ('previous_hash', string),
-  ('nonce', int64),
-  ('merkle_root', string),
-  ('hash', string),
-])
-```
+## Pydantic mapping (API ledger)
 
-### Transaction
-
-Standardized transaction/event (with signature, optional ZK proof).
-
-```python
-TRANSACTION_SCHEMA = schema([
-  ('tx_id', string),
-  ('entity_id', string),
-  ('event_type', string),
-  ('arrow_payload', binary),        # Arrow serialized
-  ('signature', string),            # hex signature
-  ('timestamp', float64),
-  ('details', map<string,string>),
-  ('zk_proof', binary),             # optional
-  ('zk_public_inputs', binary),     # optional
-])
-```
-
-### Block (full)
-
-Full block consists of header + event list + (optional) block-level ZK proof.
-
-```python
-      previous_hash:string,
-      nonce:int64,
-      merkle_root:string,
-      hash:string,
-      events:list<struct<
-          entity_id:string,
-          event:string,
-          timestamp:float64,
-          details:map<string,string>,
-          details_cid:string,
-          details_nonce:string,
-          data:binary
-      >>),
-      zk_proof:binary,
-      zk_public_inputs:binary
-  ])
-```
-
-## Pydantic Mapping (API Ledger)
-
-Pydantic models (`hierachain/api/ledger/schemas.py`) are used for API data validation, mapped to core structures:
+The API uses Pydantic models in `hierachain/api/ledger/schemas.py` for validation. They map to the core structures:
 
 ```python
 class EventRequest(BaseModel):
@@ -124,20 +72,20 @@ class ProofSubmissionRequest(BaseModel):
 
 **Conversion rules:**
 
-* `EventRequest.details` (Dict) -> `EVENT_SCHEMA.details` (Map<String, String>).
-* `ProofSubmissionRequest` -> wrapped as `Event` on Main Chain with type `proof_submission`.
+* `EventRequest.details` (dict) becomes `EVENT_SCHEMA.details` (Map<String, String>).
+* `ProofSubmissionRequest` is stored as an `Event` on Main Chain with type `proof_submission`.
 
-## Serialization & Conversion
+## Serialization
 
-* `Block.events` uses `pyarrow.Table` internally; when returned via API it can be converted to a list of dicts (`to_event_list()` or `to_pylist()`).
-* `details` field is always map<string,string>; non-string values will be converted to strings upon input.
-* `data` field is binary; when passing through JSON it needs base64 encoding or can be omitted if not needed.
+* `Block.events` is a `pyarrow.Table` in memory. The API can return it as a list of dicts via `to_event_list()` or `to_pylist()`.
+* `details` is always map<string,string>. Non-string inputs are coerced to strings.
+* `data` is binary. Over JSON you must base64-encode it, or omit it.
 
-### Working with Binary Data (`data` field)
+### Working with binary data (`data` field)
 
-Since the `data` field is defined as `binary` in the Arrow Schema, you must encode your binary payloads (such as small PDF documents, certificates, or serialized objects) to a Base64 string when sending them via JSON APIs, and decode them when receiving.
+The `data` field is `binary` in the Arrow schema. Encode small payloads such as PDFs, certificates, or serialized objects to base64 when sending JSON, and decode on receipt.
 
-**Python Example:**
+**Python example:**
 ```python
 import base64
 
@@ -157,7 +105,7 @@ decoded_data = base64.b64decode(received_encoded_data)
 print(decoded_data.decode('utf-8'))  # "Enterprise visual quality report content"
 ```
 
-## Example Operations (Description)
+## Example operations
 
 ```python
 # Create Block from event list (dict)
