@@ -8,70 +8,76 @@ icon: material/api
 
 ## Overview
 
-The **API** module is the main communication gateway between the outside world and the HieraChain blockchain core. The system is built on **FastAPI**, providing extremely high performance and simultaneously supporting multiple interaction methods: RESTful, GraphQL, and WebSocket.
+The API module handles communication between external clients and the HieraChain core. It is built on FastAPI and supports REST, GraphQL, and WebSocket. Performance is the main design goal, so the same service can serve all three protocols without separate deployments.
 
-### Core Components
+### Core components
 
-* **FastAPI Server (`server.py`)**: Launch point, Middleware configuration, Authentication, and Router integration.
-* **Versioned REST API**: Divided into 3 versions (ledger, business, admin) serving different purposes from core to system administration.
-* **GraphQL Endpoint**: Provides flexible query capabilities with security mechanisms (Depth/Complexity limit).
-* **WebSocket Gateway**: Streams real-time events/blocks using the Publish/Subscribe model.
-* **IPFS Integration**: Transparent handling of on-chain and off-chain data (IPFS + AES-256-GCM).
+* FastAPI server (`server.py`) is the entry point. It sets up middleware, authentication, and routers.
+* Versioned REST API has three groups (ledger, business, admin) for core operations, business features, and system administration.
+* GraphQL endpoint offers flexible field selection with depth and complexity limits.
+* WebSocket gateway streams blocks and events to subscribers using publish/subscribe.
+* IPFS integration handles off-chain data with AES-256-GCM encryption. Large payloads stay off chain and only the CID is stored on chain.
 
 ---
 
-## Architecture & Security (Middleware Layer)
+## Architecture and security
 
-HieraChain API implements a multi-layered security Middleware to ensure enterprise data safety:
+The API uses layered middleware. Each request passes through the same checks before it reaches a handler.
 
-### HTTP Security
+### HTTP security
 
-* **Security Headers**: Automatically adds security headers such as CSP (Content Security Policy), HSTS, X-Frame-Options (DENY), and X-Content-Type-Options (nosniff).
-* **Payload Limit**: Limits request body size (default 5MB) to prevent DoS attacks.
-* **CORS Management**: Controls access from unknown origins, especially strict in Production environments.
+* Security headers are added to every response, including CSP, HSTS, X-Frame-Options set to DENY, and X-Content-Type-Options set to nosniff.
+* Payload limit caps request bodies at 5 MB by default. This helps prevent DoS with large payloads.
+* CORS controls which origins can call the API. Production requires an explicit allow list.
 
-### Rate Limiting
+### Rate limiting
 
-Supports two storage backends for Rate Limit counters:
+Rate limiting counts requests per key and supports two backends:
 
-* **In-memory**: Suitable for single-node setups.
-* **Redis**: Suitable for cluster nodes requiring synchronized limit state.
+* In-memory for single-node deployments.
+* Redis for clusters where counters must stay in sync.
 
-*Default*: 60 requests/minute (configurable via `HRC_RATE_LIMIT_REQUESTS_PER_MINUTE`).
+The default limit is 100 requests per minute, configured with `HRC_RATE_LIMIT_RPM`.
 
 ### Authentication
 
-Uses `APIKeyVerifier` to check access rights based on API Key. This mechanism can be enabled/disabled via the `HRC_AUTH_ENABLED` environment variable.
+`APIKeyVerifier` checks the `X-API-Key` header. Enable or disable it with `HRC_AUTH_ENABLED`.
 
 ---
 
-## REST API Reference
+## REST API reference
 
-### ledger: Core Ledger
+### ledger: core ledger
 
-Focuses on basic blockchain operations:
+These endpoints interact directly with ledger state:
 
-* `GET /api/ledger/health`: Check node health.
-* `GET /api/ledger/chains`: List all Main Chains and Sub-Chains.
-* `POST /api/ledger/chains/{name}/events`: Add an event (automatically handles IPFS if data is large).
-* `GET /api/ledger/entities/{id}/trace`: Trace an entity across all chains in the hierarchy.
-* `GET /api/ledger/chains/{name}/blocks`: Get block list (supports pagination and IPFS CID decoding).
+* `GET /api/ledger/health` checks node health.
+* `GET /api/ledger/network/ping/{target_id}` sends a direct ping to a target peer.
+* `GET /api/ledger/chains` lists Main Chains and Sub-Chains.
+* `POST /api/ledger/chains/{chain_name}/create` provisions a new sub-chain.
+* `GET /api/ledger/chains/{chain_name}/stats` retrieves block, event, and proof counts.
+* `POST /api/ledger/chains/{chain_name}/events` submits an event, offloading oversized payloads to IPFS.
+* `POST /api/ledger/chains/{chain_name}/submit-proof` submits cryptographic proofs from a sub-chain to the main chain.
+* `GET /api/ledger/chains/{chain_name}/blocks` lists blocks with pagination and optional CID decoding.
+* `GET /api/ledger/chains/{chain_name}/blocks/{index_or_hash}` fetches a single block by index or hash.
+* `GET /api/ledger/entities/{id}/trace` traces an entity across the chain hierarchy.
 
-### business: Enterprise Features
+### business: enterprise features
 
-Provides advanced tools for complex business processes:
+These endpoints support business workflows:
 
-* **Channels**: Create private communication channels between organizations (`POST /api/business/channels`).
-* **Private Data**: Manage Private Data Collections that are not publicly shared on the common ledger.
-* **Domain Contracts**: Deploy and execute business-specific smart contracts.
-* **Organizations**: Register and manage organizational identities via MSP.
+* Channels create private communication paths between organizations (`POST /api/business/channels`).
+* Private data collections hold data that is not shared on the common ledger.
+* Domain contracts deploy and run business-specific smart contracts.
+* Organizations register and manage identities through MSP.
 
-### admin: System & Admin
+### admin: system and admin
 
-Dedicated to node management and system operations:
+These endpoints are for node and system operations:
 
-* `POST /api/admin/verify-identity`: Node signs a challenge to prove identity to the management system.
-* `GET /api/admin/status`: Detailed report of uptime, active chain count, version, and license status.
+* `POST /api/admin/verify-identity` lets a node sign a challenge to prove its identity.
+* `GET /api/admin/status` returns uptime, chain counts, version, and license status.
+* `POST /api/admin/chains/{chain_name}/secure-events` submits high-integrity events requiring synchronous signature verification.
 
 ---
 
@@ -79,17 +85,17 @@ Dedicated to node management and system operations:
 
 Endpoint: `/graphql`
 
-GraphQL is recommended when clients need complex data queries or bandwidth optimization (field selection).
+Use GraphQL when clients need to select specific fields or reduce payload size.
 
-### Specific Security Mechanisms
+### Security limits
 
-* **Query Depth Limit**: Maximum 10 levels of nesting.
-* **Complexity Analysis**: Limit of 1000 points per query (calculated based on number of fields and operations).
-* **Introspection Control**: Automatically disables schema exploration (`__schema`) in Production environments.
+* Query depth is limited to 10 levels.
+* Complexity is limited to 1000 points per query, based on field and operation counts.
+* Introspection (`__schema`) is disabled in production.
 
-### Query Example (Lazy-loading IPFS)
+### Query example (lazy-loading IPFS)
 
-When querying events, you can decide whether to decrypt data from IPFS via the `resolveCid` parameter.
+You can choose whether to fetch and decrypt IPFS data with `resolveCid`.
 
 ```graphql
 query {
@@ -104,48 +110,47 @@ query {
 
 ---
 
-## WebSocket (Real-time Streaming)
+## WebSocket (real-time streaming)
 
 Endpoint: `/ws`
 
-HieraChain uses WebSocket to push new data to clients as soon as a block is committed or a new event occurs.
+The server pushes data as soon as a block is committed or an event arrives.
 
-### Main Message Types
+### Main message types
 
-* **Client -> Server**
-    * `subscribe`: Subscribe to notifications from a specific chain or by event type.
-    * `ping`: Keep connection alive.
-* **Server -> Client**
-    * `block_added`: Notification of a new block with condensed data.
-    * `event`: Pushes detailed event information to subscribers.
-    * `subscribed`: Confirms successful subscription.
+* Client to server
+    * `subscribe` subscribes to a chain or event type.
+    * `ping` keeps the connection alive.
+* Server to client
+    * `block_added` notifies about a new block with condensed data.
+    * `event` pushes event details to subscribers.
+    * `subscribed` confirms the subscription.
 
 ---
 
-## Blockchain Explorer
+## Blockchain explorer
 
-Built-in at `blockchain_explorer.py`, the explorer provides a dashboard interface for operators:
+Built in at `blockchain_explorer.py`, the explorer gives operators a dashboard:
 
-* **Monitor**: Track block generation speed and events in real time.
-* **Visualizer**: Visualize the hierarchical tree structure between Main Chain and Sub-Chains.
-* **IPFS Decoder**: Allows authorized administrators to quickly decode CIDs directly in the browser.
+* Monitor shows block production rate and event flow in real time.
+* Visualizer renders the tree between Main Chain and Sub-Chains.
+* IPFS decoder lets authorized admins decode CIDs in the browser.
 
 ---
 
 ## Observability
 
-* **X-Request-ID**: Each request is assigned a unique UUID in the header for log tracing.
-* **Metrics**: Built-in `/metrics` endpoint (Prometheus format) to track:
-
-    * Number of successful/failed requests.
+* `X-Request-ID` adds a UUID to each request for log tracing.
+* `/metrics` exposes Prometheus metrics, including:
+    * Count of successful and failed requests.
     * Average response latency.
-    * API server memory and CPU status.
+    * Memory and CPU status of the API server.
 
 ---
 
-## Quick Usage Guide (curl)
+## Quick usage guide (curl)
 
-### Write an Event to a Chain
+### Write an event to a chain
 
 ```bash
 curl -X POST http://localhost:2661/api/ledger/chains/my_chain/events \
@@ -158,7 +163,7 @@ curl -X POST http://localhost:2661/api/ledger/chains/my_chain/events \
   }'
 ```
 
-### Trace an Entity
+### Trace an entity
 
 ```bash
 curl "http://localhost:2661/api/ledger/entities/ITEM-123/trace?resolve_cid=true"

@@ -1,140 +1,100 @@
 ---
 title: "Domains Module"
-description: "Cung cấp nền tảng nghiệp vụ (Generic Domains): Quản lý vòng đời thực thể, truy vết xuyên chuỗi và kiểm soát tuân thủ."
+description: "Khuôn mẫu nghiệp vụ: DomainChain, sự kiện chuẩn hóa, theo dõi vòng đời thực thể và truy vết liên chuỗi."
 icon: material/folder
 ---
 
 # Domains Module (`hierachain/domains/*`)
 
-## Tổng quan
+## 1. Tổng quan
 
-Module **Domains** là lớp trung gian quan trọng kết nối hạ tầng Blockchain lõi với các quy trình nghiệp vụ thực tế của doanh nghiệp. Nó cung cấp các khuôn mẫu (templates) chuẩn hóa để xây dựng các chuỗi nghiệp vụ (Sub-Chains), quản lý vòng đời của các thực thể (Entities), và đảm bảo tính nhất quán dữ liệu trên toàn hệ thống HieraChain.
+Module `domains` kết nối hạ tầng chuỗi khối cốt lõi với logic nghiệp vụ doanh nghiệp. Module cung cấp các lớp cơ sở cho các Sub-Chain chuyên biệt, hàm tạo sự kiện chuẩn hóa, công cụ hỗ trợ vòng đời thực thể và tiện ích truy vết liên chuỗi.
 
----
+## 2. Các thành phần cốt lõi
 
-## Các thành phần cốt lõi
+Các thành phần được tổ chức thành ba gói con dưới `hierachain/domains/`:
 
-<div class="grid cards" markdown>
+### 2.1 Chuỗi nghiệp vụ (`chains/base_chain.py`, `chains/domain_chain.py`)
 
-*   :material-link-variant:{ .lg .middle } __Business Chains__
+* `BaseChain`: Lớp cơ sở trừu tượng quản lý trạng thái chuỗi, sổ đăng ký thực thể và quy trình xử lý sự kiện.
+* `DomainChain`: Triển khai cụ thể hỗ trợ thao tác nghiệp vụ, kiểm tra tính hợp lệ của thao tác và trình quản lý giao dịch.
+* `chains/metrics.py`: Theo dõi chỉ số vận hành như tỷ lệ thành công và độ trễ thực thi.
 
-    ---
+### 2.2 Sự kiện doanh nghiệp (`events/base_event.py`, `events/event_creators.py`)
 
-    __Files__: `base_chain.py`, `domain_chain.py`
+* `BaseEvent`: Lớp cơ sở cho các sự kiện nghiệp vụ có cấu trúc kèm kiểm tra lược đồ.
+* `event_creators.py`: Các hàm tiện ích tạo dữ liệu hợp lệ cho các thao tác: `create_quality_check`, `create_approval`, `create_resource_allocation` và `create_status_update`.
 
-    * Lớp trừu tượng cho các quy trình nghiệp vụ chuyên biệt.
-    * Tích hợp sẵn quản lý trạng thái thực thể (Registration, Status Update).
-    * Cơ chế **Two-Phase Commit (2PC)** cho giao dịch xuyên chuỗi.
+### 2.3 Tiện ích toàn vẹn (`utils/cross_chain_validator.py`, `utils/entity_tracer.py`)
 
-*   :material-calendar-check:{ .lg .middle } __Enterprise Events__
+* `CrossChainValidator`: Đánh giá tính nhất quán giữa các chuỗi con và kiểm tra thuật ngữ tiền mã hóa bị cấm.
+* `EntityTracer`: Tái hiện đầy đủ lịch sử của thực thể xuyên suốt các chuỗi trong hệ thống.
+* `utils/compliance_checker.py`: Kiểm tra tham số tuân thủ đối chiếu với quy định.
 
-    ---
+## 3. Quản lý nghiệp vụ và vòng đời thực thể
 
-    __Files__: `base_event.py`, `domain_event.py`
+`DomainChain` cung cấp sẵn các bước chuyển vòng đời:
 
-    * Chuẩn hóa sự kiện doanh nghiệp: Approval, Quality Check, Compliance.
-    * Tự động xác thực cấu trúc sự kiện theo quy tắc Ledger.
-    * Factory functions để tạo sự kiện nhanh chóng và chính xác.
+1. Đăng ký: Gắn định danh `entity_id` duy nhất với loại thực thể và thuộc tính metadata.
+2. Cập nhật trạng thái: Theo dõi các trạng thái tuần tự (`in_progress`, `quality_approved`, `completed`).
+3. Phân bổ tài nguyên: Ghi nhận thiết bị, nhân sự hoặc vị trí kho được phân công.
+4. Chỉ số vận hành: `OperationMetricsTracker` tính toán các chỉ số thực thi theo từng loại thao tác.
 
-*   :material-shield-search:{ .lg .middle } __Integrity Utils__
+## 4. Điều phối Two-Phase Commit (2PC)
 
-    ---
-
-    __Files__: `cross_chain_validator.py`, `entity_tracer.py`
-
-    * **Cross-Chain Validator**: Phát hiện mâu thuẫn logic giữa các chuỗi.
-    * **Entity Tracer**: Truy vết toàn bộ lịch sử của một đối tượng trên mọi Sub-Chain.
-    * **Compliance Scanner**: Quét và ngăn chặn thuật ngữ tiền mã hóa.
-
-</div>
-
----
-
-## Quản lý Nghiệp vụ (Domain Management)
-
-### Vòng đời thực thể (Entity Lifecycle)
-
-Mọi `DomainChain` đều hỗ trợ quản lý trạng thái thực thể một cách tự động thông qua các trình xử lý sự kiện (Event Handlers) mặc định:
-
-1.  **Registration**: Đăng ký thực thể mới vào chuỗi nghiệp vụ.
-2.  **Status Tracking**: Theo dõi trạng thái hiện tại (ví dụ: `In Production`, `Quality Passed`, `Shipped`).
-3.  **Resource Allocation**: Gắn kết tài nguyên (nhân lực, máy móc, nguyên liệu) với thực thể.
-4.  **Compliance Monitoring**: Ghi nhận các kết quả kiểm tra tuân thủ quy định.
-
-### Chỉ số vận hành (Operation Metrics)
-
-Hệ thống tự động theo dõi các KPI quan trọng thông qua `OperationMetricsTracker`:
-*   **Success Rate**: Tỷ lệ hoàn thành công việc thành công.
-*   **Quality Pass Rate**: Tỷ lệ đạt kiểm tra chất lượng.
-*   **Approval Rate**: Tỷ lệ phê duyệt từ cấp quản lý.
-*   **Compliance Violations**: Số lượng vi phạm quy trình được phát hiện.
-
----
-
-## Cơ chế Giao dịch Hai pha (Two-Phase Commit - 2PC)
-
-Để đảm bảo tính nhất quán khi thực hiện các hoạt động ảnh hưởng đến nhiều chuỗi khác nhau, `DomainChain` tích hợp giao thức 2PC:
+Các thao tác phối hợp giữa nhiều Sub-Chain thực thi qua giao thức Two-Phase Commit:
 
 ```mermaid
 sequenceDiagram
-    participant Source as Source Chain
-    participant Target as Target Chain
+    participant Source as Source Sub-Chain
+    participant Target as Target Sub-Chain
     
-    Note over Source, Target: Pha 1: Chuẩn bị (Prepare)
-    Source->>Target: Prepare Transaction (ID, Payload)
-    Target-->>Source: Prepared OK / Reject
+    Note over Source, Target: Phase 1: Prepare
+    Source->>Target: Prepare transaction (ID, payload)
+    Target-->>Source: Prepared OK or reject
     
-    Note over Source, Target: Pha 2: Thực thi (Commit/Rollback)
+    Note over Source, Target: Phase 2: Commit or rollback
     alt All chains prepared
-        Source->>Target: Commit Transaction
-        Target->>Target: Execute & Finalize Block
+        Source->>Target: Commit transaction
+        Target->>Target: Finalize block
     else Failure detected
-        Source->>Target: Rollback Transaction
-        Target->>Target: Discard Pending Data
+        Source->>Target: Rollback transaction
+        Target->>Target: Discard pending state
     end
 ```
 
----
+## 5. Tuân thủ và truy vết liên chuỗi
 
-## Kiểm soát Tuân thủ và Bảo mật
+### Lọc thuật ngữ tiền mã hóa
 
-### Ngăn chặn Thuật ngữ Tiền mã hóa (Cryptocurrency Terminology)
+`CrossChainValidator` quét dữ liệu sự kiện để đảm bảo quy định về thuật ngữ doanh nghiệp. Nếu phát hiện các từ như `coin`, `token`, `mining` hoặc `wallet` trong dữ liệu nghiệp vụ, validator sẽ đánh dấu sự kiện vi phạm quy định.
 
-Theo triết lý HieraChain, `CrossChainValidator` thực hiện quét nghiêm ngặt và đánh dấu các vi phạm nếu phát hiện thuật ngữ liên quan đến tiền mã hóa trong dữ liệu sự kiện:
-*   **Danh sách cấm**: `transaction`, `mining`, `coin`, `token`, `wallet`, `address`, `amount`, `fee`, v.v.
-*   **Hành động**: Ghi nhận vi phạm vào báo cáo tuân thủ hệ thống (`Ledger_compliance`).
+### Truy vết thực thể liên chuỗi
 
-### Truy vết xuyên chuỗi (Cross-Chain Tracing)
-
-`EntityTracer` cho phép người quản trị tái hiện lại toàn bộ "hành trình" của một thực thể qua nhiều phòng ban/chuỗi khác nhau:
+`EntityTracer` tổng hợp các sự kiện của một thực thể trên toàn bộ Sub-Chain:
 
 ```python
 from hierachain.domains.utils.entity_tracer import EntityTracer
 
 tracer = EntityTracer(hierarchy_manager)
-# Lấy lịch sử thực thể "ORDER-789" trên toàn bộ hệ thống
-trace_results = tracer.trace_entity_across_chains("ORDER-789")
+trace_results = tracer.trace_entity("ORDER-789")
 
-for chain_name, events in trace_results.items():
-    print(f"Hoạt động tại {chain_name}: {len(events)} sự kiện.")
+print(f"Total events found: {trace_results['total_events']}")
+for chain_name, summary in trace_results.get("chain_summaries", {}).items():
+    print(f"Activity at {chain_name}: {summary['total_events']} events")
 ```
 
----
+## 6. Các loại thao tác chuẩn hóa
 
-## Các loại sự kiện chuẩn hóa
-
-| Loại sự kiện | Vai trò nghiệp vụ | Các trường chi tiết (Details) |
+| Loại thao tác | Vai trò nghiệp vụ | Các trường bắt buộc |
 | :--- | :--- | :--- |
-| `operation_start` | Bắt đầu quy trình | `operation_type`, `operator_id` |
-| `quality_check` | Kiểm tra chất lượng | `check_type`, `check_result`, `inspector_id` |
-| `approval` | Phê duyệt quản lý | `approval_type`, `approval_status`, `approver_id` |
-| `compliance_check` | Kiểm tra tuân thủ | `compliance_type`, `compliance_status`, `regulation_ref` |
-| `resource_assigned` | Phân bổ tài nguyên | `resource_id`, `resource_type`, `allocation_type` |
-
----
+| `quality_check` | Kiểm tra chất lượng | `check_type`, `check_result` |
+| `approval` | Phê duyệt quản lý | `approval_type`, `approver_id` |
+| `resource_allocation` | Phân bổ tài nguyên | `resource_type`, `resource_id` |
+| `compliance_check` | Kiểm tra tuân thủ | `compliance_type` |
 
 ## Liên quan
 
-*   [Hệ thống Phân cấp (Hierarchical)](./hierarchical.md)
-*   [Cấu trúc Blockchain Lõi (Core)](./core.md)
-*   [Hướng dẫn Tích hợp ERP](../workflows/erp-integration.md)
+* [Hierarchical Module](./hierarchical.md)
+* [Xây dựng Logic Miền Nghiệp vụ](../how-to/write-domain-contracts.md)
+* [Tích hợp ERP](../workflows/erp-integration.md)

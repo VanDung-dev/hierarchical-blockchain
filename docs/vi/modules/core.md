@@ -1,126 +1,79 @@
 ---
 title: "Core Module"
-description: "Kiến trúc nền tảng của HieraChain: Block, Blockchain, Apache Arrow, Caching và Parallel Processing."
+description: "Các cấu trúc nền tảng của sổ cái: Block, Blockchain, Merkle Tree và hệ thống Caching đa tầng."
 icon: material/cube
 ---
 
 # Core Module (`hierachain/core/*`)
 
-## Tổng quan
+## 1. Tổng quan
 
-Module **Core** là trái tim của HieraChain Ledger, cung cấp các cấu trúc dữ liệu và công cụ xử lý hiệu năng cao nhất. Tại đây, công nghệ **Apache Arrow** được tích hợp sâu để quản lý hàng triệu sự kiện với tốc độ cực nhanh, kết hợp với hệ thống Caching đa tầng và Parallel Engine để đảm bảo khả năng mở rộng (scalability) ở cấp độ doanh nghiệp.
+Module `core` chứa các cấu trúc dữ liệu nền tảng của sổ cái. Khối lưu trữ các sự kiện trong bảng Apache Arrow giúp lọc dữ liệu trong bộ nhớ với tốc độ cao và tính toán mã băm xác định. Cây Merkle mật mã cung cấp bằng chứng chứng minh sự kiện có mặt trong khối, kết hợp với bộ nhớ đệm đa tầng tăng tốc độ tra cứu khối, sự kiện và thực thể.
 
----
+## 2. Các thành phần nền tảng
 
-## Các thành phần nền tảng
+Toàn bộ thành phần cốt lõi nằm tại `hierachain/core/`.
 
-<div class="grid cards" markdown>
+### 2.1 Khối (`block.py`)
 
-*   :material-database-import:{ .lg .middle } __Block & Apache Arrow__
+* Lưu trữ bản ghi sự kiện trong một `pyarrow.Table`.
+* Truy vấn các trường sự kiện qua biểu thức tính toán của Arrow thay vì vòng lặp Python.
+* Tính toán mã băm khối và Merkle root xác định.
 
-    ---
+### 2.2 Chuỗi khối (`blockchain.py`)
 
-    __File__: `block.py`
+* Quản lý trạng thái chuỗi, khởi tạo khối nguyên thủy (genesis) và hàng đợi sự kiện đang chờ.
+* Thực thi cơ chế khóa an toàn đa luồng kèm phát hiện bế tắc (deadlock).
+* Duy trì chỉ mục thực thể phục vụ tra cứu lịch sử sự kiện nhanh chóng.
 
-    * Lưu trữ sự kiện theo mô hình cột (columnar storage).
-    * Lọc dữ liệu bằng Arrow Compute (nhanh hơn 10-50x so với Python list).
-    * Hashing và Merkle Root xác định (deterministic).
+### 2.3 Cây Merkle (`merkle_tree.py`)
 
-*   :material-link-variant:{ .lg .middle } __Blockchain & Safety__
+* Xây dựng cây Merkle nhị phân từ mã băm các sự kiện.
+* Tạo bằng chứng bao hàm (inclusion proof) phục vụ kiểm toán.
+* Xác thực Merkle root giữa các tầng chuỗi trong kiến trúc phân cấp.
 
-    ---
+### 2.4 Bộ nhớ đệm và Trình quản lý Caching (`cache.py`, `cache_manager.py`)
 
-    __File__: `blockchain.py`
+* Triển khai các thuật toán dọn dẹp cache: LRU, LFU, FIFO và TTL.
+* `BlockchainCacheManager` điều phối lưu cache đồng bộ cho khối, sự kiện và trạng thái thực thể.
 
-    * Quản lý chuỗi khối, genesis và bộ nhớ đệm (pending pool).
-    * **Deadlock Detection**: Tự động phát hiện và xử lý tắc nghẽn khóa (lock contention).
-    * Chỉ mục hóa Entity (Entity Indexing) cho truy vấn O(1).
+## 3. Cấu trúc bộ nhớ và lưu trữ của Block
 
-*   :material-flash:{ .lg .middle } __Parallel Engine__
+Mỗi đối tượng `Block` đóng gói một bảng Arrow cùng metadata có cấu trúc:
 
-    ---
-
-    __File__: `parallel_engine.py`
-
-    * Xử lý song song dựa trên chính sách (Policy-driven).
-    * Worker pools chuyên biệt cho Validation, Indexing và Batch processing.
-    * Tự động chia nhỏ dữ liệu (Chunking) để tối ưu bộ nhớ.
-
-*   :material-speedometer:{ .lg .middle } __Advanced Caching__
-
-    ---
-
-    __File__: `caching.py`
-
-    * Caching 3 tầng: Block, Event và Entity.
-    * Chính sách loại bỏ: **LRU**, **LFU**, **FIFO**, **TTL**.
-    * Tăng tốc truy xuất block lên tới **42 lần**.
-
-</div>
-
----
-
-## Kiến trúc Block (High-Performance Event Storage)
-
-HieraChain không lưu trữ block theo dạng JSON phẳng thông thường. Mỗi block bên trong là một `pyarrow.Table`.
-
-### Ưu điểm vượt trội:
-
-1.  **Hiệu quả bộ nhớ**: Arrow sử dụng bố cục bộ nhớ tối ưu, giảm overhead của Python objects.
-2.  **Truy vấn thần tốc**: Việc tìm kiếm sự kiện theo `entity_id` hoặc `event_type` được thực hiện trực tiếp trong tầng C++ của Arrow.
-3.  **Tính nhất quán**: Trường `data` lưu trữ payload gốc dưới dạng Binary, đảm bảo tính toàn vẹn tuyệt đối khi băm.
+1. Bố cục nhị phân gọn gàng giảm tải bộ nhớ cho các đối tượng Python.
+2. Thao tác lọc theo `entity_id` và `event` chạy trực tiếp trên nhân C++ của Arrow.
+3. Dữ liệu nhị phân tuần tự hóa bảo đảm tính ổn định của mã băm trên mọi nền tảng.
 
 ```python
-# Ví dụ truy vấn nhanh trên Block
+# Query events by entity on a Block instance
 entity_events = block.get_events_by_entity("PROD-123")
 ```
 
----
+## 4. An toàn đa luồng và cơ chế khóa
 
-## Blockchain & Cơ chế Chống Tắc nghẽn (Deadlock Prevention)
+Lớp `Blockchain` điều phối truy cập đồng thời thông qua cơ chế khóa có giới hạn thời gian:
 
-HieraChain được thiết kế để chạy trong môi trường đa luồng (multi-threaded). `Blockchain` tích hợp một **Deadlock Detector** để giám sát các thao tác khóa luồng:
+* Theo dõi thời gian giữ khóa với ngưỡng cấu hình linh hoạt.
+* Hàm `safe_lock(timeout)` ngăn chặn tình trạng treo luồng khi xảy ra tranh chấp ghi đồng thời.
+* Cơ chế callback thông báo cảnh báo tắc nghẽn lên tầng giám sát hệ thống.
 
-*   **Monitor**: Theo dõi thời gian chờ khóa luồng (threshold mặc định 3s).
-*   **Safe Lock**: Cơ chế `safe_lock(timeout)` giúp hệ thống không bị treo vô hạn khi xảy ra tranh chấp tài nguyên.
-*   **Recovery**: Tự động kích hoạt callback khi phát hiện rủi ro deadlock.
+## 5. Hệ thống Caching đa tầng
 
----
+`BlockchainCacheManager` quản lý ba tầng bộ nhớ đệm chuyên biệt:
 
-## Hệ thống Caching đa tầng
-
-Lớp `BlockchainCacheManager` cung cấp khả năng tăng tốc đáng kinh ngạc cho các thao tác đọc:
-
-| Loại Cache | Chính sách mặc định | Hiệu năng cải thiện |
+| Tầng Cache | Chính sách mặc định | Thao tác đích |
 | :--- | :--- | :--- |
-| **Block Cache** | LRU (Least Recently Used) | **~42x** (Truy xuất block theo index) |
-| **Event Cache** | TTL (Time To Live) | Tối ưu cho các API truy vấn sự kiện mới nhất. |
-| **Entity Cache** | LFU (Least Frequently Used) | **~18.9x** (Truy vết lịch sử một đối tượng) |
+| Block Cache | LRU (Least Recently Used) | Truy xuất khối theo chỉ mục hoặc mã băm |
+| Event Cache | TTL (Time To Live) | Truy vấn luồng sự kiện gần đây |
+| Entity Cache | LFU (Least Frequently Used) | Truy vết lịch sử vòng đời thực thể |
 
----
+## 6. Thực thi đồng thời
 
-## Parallel Processing Engine
-
-Để xử lý hàng ngàn sự kiện mỗi giây, Core cung cấp một động cơ xử lý song song thông minh:
-
-*   **Validation Pool**: Chuyên dụng để kiểm tra chữ ký và Merkle root của block.
-*   **CPU Intensive Pool**: Sử dụng `ProcessPoolExecutor` để thực hiện các phép tính băm nặng.
-*   **Policy-driven**: Hệ thống tự động chọn pool phù hợp dựa trên loại tác vụ (ví dụ: tác vụ `indexing` sẽ có ưu tiên thấp hơn tác vụ `priority`).
-
----
-
-## Hợp đồng Miền (Domain Contract)
-
-Lớp `DomainContract` cho phép định nghĩa các quy tắc kinh doanh:
-
-*   **Lifecycle**: Quản lý trạng thái từ `DEVELOPMENT` -> `ACTIVE` -> `DEPRECATED`.
-*   **Versioning**: Hỗ trợ nâng cấp phiên bản hợp đồng và di trú dữ liệu (migration).
-*   **Storage**: Mỗi hợp đồng có không gian lưu trữ key-value riêng biệt.
-
----
+Các tác vụ xác thực mật mã và đồng bộ liên chuỗi chạy đồng thời thông qua các worker `ThreadPoolExecutor` do môi trường thực thi quản lý. Quá trình băm và kiểm tra chữ ký được mở rộng trên nhiều lõi CPU trong khi vẫn bảo toàn thứ tự khối tuần tự.
 
 ## Liên quan
 
-*   [Hierarchical Architecture](../architecture/hierarchy.md)
-*   [Performance Benchmarking](../guides/performance.md)
-*   [Security Verifiers](./security.md)
+* [Kiến trúc phân cấp](../architecture/hierarchy.md)
+* [Storage Module](./storage.md)
+* [Tổng quan bảo mật](./security.md)

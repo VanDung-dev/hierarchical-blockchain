@@ -1,140 +1,100 @@
 ---
 title: "Domains Module"
-description: "Provides business domain platform (Generic Domains): Entity lifecycle management, cross-chain tracing, and compliance control."
+description: "Business domain templates: DomainChain, standardized events, entity lifecycle tracking, and cross-chain tracing."
 icon: material/folder
 ---
 
 # Domains Module (`hierachain/domains/*`)
 
-## Overview
+## 1. Overview
 
-The **Domains** module is a critical intermediary layer connecting the core Blockchain infrastructure with real-world enterprise business processes. It provides standardized templates for building business chains (Sub-Chains), managing entity lifecycles, and ensuring data consistency across the entire HieraChain system.
+The `domains` module bridges the core blockchain infrastructure with enterprise business logic. It provides base classes for domain-specific Sub-Chains, standardized event creators, entity lifecycle helpers, and cross-chain tracing tools.
 
----
+## 2. Core components
 
-## Core Components
+Components are organized into three sub-packages under `hierachain/domains/`:
 
-<div class="grid cards" markdown>
+### 2.1 Business chains (`chains/base_chain.py`, `chains/domain_chain.py`)
 
-*   :material-link-variant:{ .lg .middle } __Business Chains__
+* `BaseChain`: Abstract base class managing chain states, entity registries, and event pipelines.
+* `DomainChain`: Concrete implementation supporting domain operations, operation validation, and transaction managers.
+* `chains/metrics.py`: Tracks operational metrics such as success rates and execution latencies.
 
-    ---
+### 2.2 Enterprise events (`events/base_event.py`, `events/event_creators.py`)
 
-    __Files__: `base_chain.py`, `domain_chain.py`
+* `BaseEvent`: Base class for structured business events with schema validation.
+* `event_creators.py`: Helper factories producing validated dictionaries for operations: `create_quality_check`, `create_approval`, `create_resource_allocation`, and `create_status_update`.
 
-    * Abstract base class for specialized business processes.
-    * Built-in entity state management (Registration, Status Update).
-    * **Two-Phase Commit (2PC)** mechanism for cross-chain transactions.
+### 2.3 Integrity utilities (`utils/cross_chain_validator.py`, `utils/entity_tracer.py`)
 
-*   :material-calendar-check:{ .lg .middle } __Enterprise Events__
+* `CrossChainValidator`: Evaluates consistency across sub-chains and scans for forbidden cryptocurrency terminology.
+* `EntityTracer`: Reconstructs complete entity histories across the chain hierarchy.
+* `utils/compliance_checker.py`: Validates compliance parameters against regulatory rules.
 
-    ---
+## 3. Domain management and entity lifecycle
 
-    __Files__: `base_event.py`, `domain_event.py`
+`DomainChain` provides built-in lifecycle transitions:
 
-    * Standardized enterprise events: Approval, Quality Check, Compliance.
-    * Automatic event structure validation according to Ledger rules.
-    * Factory functions for fast and accurate event creation.
+1. Registration: Links a unique `entity_id` to an entity type and metadata attributes.
+2. Status updates: Tracks sequential states (`in_progress`, `quality_approved`, `completed`).
+3. Resource allocation: Records assigned equipment, personnel, or storage locations.
+4. Operation metrics: `OperationMetricsTracker` calculates execution metrics per operation type.
 
-*   :material-shield-search:{ .lg .middle } __Integrity Utils__
+## 4. Two-Phase Commit (2PC) coordination
 
-    ---
-
-    __Files__: `cross_chain_validator.py`, `entity_tracer.py`
-
-    * **Cross-Chain Validator**: Detects logical inconsistencies between chains.
-    * **Entity Tracer**: Traces the complete history of an object across all Sub-Chains.
-    * **Compliance Scanner**: Scans and blocks cryptocurrency terminology.
-
-</div>
-
----
-
-## Domain Management
-
-### Entity Lifecycle
-
-Every `DomainChain` supports automatic entity state management through default Event Handlers:
-
-1.  **Registration**: Register a new entity in the business chain.
-2.  **Status Tracking**: Track current status (e.g., `In Production`, `Quality Passed`, `Shipped`).
-3.  **Resource Allocation**: Attach resources (personnel, machinery, materials) to an entity.
-4.  **Compliance Monitoring**: Record regulatory compliance check results.
-
-### Operation Metrics
-
-The system automatically tracks key KPIs through `OperationMetricsTracker`:
-*   **Success Rate**: Rate of successful task completion.
-*   **Quality Pass Rate**: Rate of passing quality inspections.
-*   **Approval Rate**: Rate of management approvals.
-*   **Compliance Violations**: Number of detected process violations.
-
----
-
-## Two-Phase Commit (2PC) Mechanism
-
-To ensure consistency when performing operations affecting multiple chains, `DomainChain` integrates the 2PC protocol:
+Cross-chain operations coordinating multiple Sub-Chains execute through the Two-Phase Commit protocol:
 
 ```mermaid
 sequenceDiagram
-    participant Source as Source Chain
-    participant Target as Target Chain
+    participant Source as Source Sub-Chain
+    participant Target as Target Sub-Chain
     
     Note over Source, Target: Phase 1: Prepare
-    Source->>Target: Prepare Transaction (ID, Payload)
-    Target-->>Source: Prepared OK / Reject
+    Source->>Target: Prepare transaction (ID, payload)
+    Target-->>Source: Prepared OK or reject
     
-    Note over Source, Target: Phase 2: Commit/Rollback
+    Note over Source, Target: Phase 2: Commit or rollback
     alt All chains prepared
-        Source->>Target: Commit Transaction
-        Target->>Target: Execute & Finalize Block
+        Source->>Target: Commit transaction
+        Target->>Target: Finalize block
     else Failure detected
-        Source->>Target: Rollback Transaction
-        Target->>Target: Discard Pending Data
+        Source->>Target: Rollback transaction
+        Target->>Target: Discard pending state
     end
 ```
 
----
+## 5. Compliance and cross-chain tracing
 
-## Compliance and Security Control
+### Cryptocurrency term filtration
 
-### Cryptocurrency Terminology Prevention
+`CrossChainValidator` scans event payloads to enforce enterprise terminology rules. If terms such as `coin`, `token`, `mining`, or `wallet` appear in business payloads, the validator flags the event as non-compliant.
 
-According to HieraChain's philosophy, `CrossChainValidator` performs strict scanning and flags violations if cryptocurrency-related terms are detected in event data:
-*   **Banned list**: `transaction`, `mining`, `coin`, `token`, `wallet`, `address`, `amount`, `fee`, etc.
-*   **Action**: Records violations in the system compliance report (`Ledger_compliance`).
+### Cross-chain entity tracing
 
-### Cross-Chain Tracing
-
-`EntityTracer` allows administrators to reconstruct the complete "journey" of an entity across multiple departments or chains:
+`EntityTracer` aggregates events for an entity across all Sub-Chains:
 
 ```python
 from hierachain.domains.utils.entity_tracer import EntityTracer
 
 tracer = EntityTracer(hierarchy_manager)
-# Get the history of entity "ORDER-789" across the entire system
-trace_results = tracer.trace_entity_across_chains("ORDER-789")
+trace_results = tracer.trace_entity("ORDER-789")
 
-for chain_name, events in trace_results.items():
-    print(f"Activity at {chain_name}: {len(events)} events.")
+print(f"Total events found: {trace_results['total_events']}")
+for chain_name, summary in trace_results.get("chain_summaries", {}).items():
+    print(f"Activity at {chain_name}: {summary['total_events']} events")
 ```
 
----
+## 6. Standardized operation types
 
-## Standardized Event Types
-
-| Event Type | Business Role | Details Fields |
+| Operation Type | Business Role | Required Fields |
 | :--- | :--- | :--- |
-| `operation_start` | Start a process | `operation_type`, `operator_id` |
-| `quality_check` | Quality inspection | `check_type`, `check_result`, `inspector_id` |
-| `approval` | Management approval | `approval_type`, `approval_status`, `approver_id` |
-| `compliance_check` | Compliance check | `compliance_type`, `compliance_status`, `regulation_ref` |
-| `resource_assigned` | Resource allocation | `resource_id`, `resource_type`, `allocation_type` |
-
----
+| `quality_check` | Quality inspection | `check_type`, `check_result` |
+| `approval` | Management approval | `approval_type`, `approver_id` |
+| `resource_allocation` | Resource assignment | `resource_type`, `resource_id` |
+| `compliance_check` | Regulatory verification | `compliance_type` |
 
 ## Related
 
-*   [Hierarchical System](./hierarchical.md)
-*   [Core Blockchain Structure](./core.md)
-*   [ERP Integration Guide](../workflows/erp-integration.md)
+* [Hierarchical Module](./hierarchical.md)
+* [Writing Domain Logic](../how-to/write-domain-contracts.md)
+* [ERP Integration](../workflows/erp-integration.md)

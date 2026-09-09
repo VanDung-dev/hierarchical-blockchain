@@ -1,98 +1,54 @@
 ---
-title: "Units & Versioning Module"
-description: "Quản lý phiên bản hệ thống: Tuân thủ PEP 440, Semantic Versioning, và Trạng thái phát triển Project."
+title: "Versioning Module"
+description: "Quản lý phiên bản hệ thống: Tuân thủ PEP 440, tuple phiên bản ngữ nghĩa và định dạng chuỗi phiên bản trong hierachain/config/version.py."
 icon: material/numeric
 ---
 
-# Units Module (`hierachain/units/*`)
+# Versioning Module (`hierachain/config/version.py`)
 
-## Tổng quan
+## 1. Tổng quan
 
-Module **Units** chịu trách nhiệm quản lý hệ thống phiên bản (Versioning) của HieraChain. Nó đảm bảo toàn bộ hệ thống (từ Core, API đến CLI) luôn đồng bộ về mặt phiên bản và tuân thủ các tiêu chuẩn đóng gói phần mềm hiện đại như **PEP 440**.
+Module quản lý phiên bản xác định phiên bản phát hành cho HieraChain. Hệ thống định dạng tuple phiên bản có cấu trúc thành chuỗi chuẩn theo đặc tả PEP 440, đảm bảo các thành phần Core, API, SDK và CLI đồng bộ thông tin phiên bản phát hành.
 
----
+## 2. Cấu trúc tuple phiên bản
 
-## Cấu trúc Phiên bản (Version Tuple)
+HieraChain định nghĩa phiên bản hệ thống dưới dạng tuple 5 phần tử trong `hierachain/config/version.py`:
 
-HieraChain sử dụng một Tuple 5 thành phần để định nghĩa phiên bản một cách chi tiết:
-`VERSION = (major, minor, micro, releaselevel, serial)`
-
-*   **Major**: Phiên bản lớn, thay đổi khi có các cập nhật kiến trúc quan trọng.
-*   **Minor**: Phiên bản nhỏ, thay đổi khi thêm tính năng mới.
-*   **Micro**: Phiên bản sửa lỗi (Bug fix).
-*   **Release Level**: Trạng thái phát triển (`dev`, `alpha`, `beta`, `rc`, `final`).
-*   **Serial**: Số thứ tự của bản release trong cùng một level.
-
----
-
-## Các tính năng chính
-
-<div class="grid cards" markdown>
-
-*   :material-check-decagram:{ .lg .middle } __PEP 440 Compliance__
-
-    ---
-
-    Tự động chuyển đổi Tuple phiên bản sang chuỗi ký tự tiêu chuẩn Python (ví dụ: `0.0.2-beta1` hoặc `0.0.2` cho bản final).
-
-*   :material-compare-remove:{ .lg .middle } __So sánh Phiên bản__
-
-    ---
-
-    Cung cấp hàm `compare_versions` hỗ trợ so sánh cả chuỗi và tuple, giúp hệ thống kiểm tra tính tương thích giữa các thành phần.
-
-*   :material-book-information-variant:{ .lg .middle } __Trạng thái Tài liệu__
-
-    ---
-
-    Xác định trạng thái của dự án (Stable, Under Development, Release Candidate) dựa trên level phiên bản hiện tại.
-
-</div>
-
----
-
-## Ví dụ sử dụng
-
-### 1. Lấy thông tin phiên bản hiện tại
 ```python
-from hierachain.units.version import get_version, VERSION
-
-# Trả về chuỗi PEP 440 (ví dụ: "0.0.2")
-print(f"HieraChain Version: {get_version()}")
-
-# Lấy phiên bản rút gọn (Major.Minor)
-from hierachain.units.version import get_major_version
-print(f"Base Version: {get_major_version()}")
+VERSION: tuple[int, int, int, str, int] = (0, 1, 0, "final", 0)
 ```
 
-### 2. So sánh tính tương thích
+Ý nghĩa các phần tử:
+
+* Major: Tăng khi có thay đổi kiến trúc hoặc API không tương thích ngược.
+* Minor: Tăng khi bổ sung tính năng mới tương thích ngược.
+* Micro: Tăng khi phát hành các bản vá lỗi.
+* Release level: Trạng thái phát triển (`dev`, `alpha`, `beta`, `rc` hoặc `final`).
+* Serial: Số thứ tự bản phát hành thử nghiệm.
+
+## 3. Hàm định dạng phiên bản
+
+Module cung cấp hàm chuyển đổi tuple thành chuỗi phiên bản tiêu chuẩn:
+
+* Bản phát hành `final` bỏ qua hậu tố, trả về chuỗi ngữ nghĩa gọn như `0.1.0`.
+* Các cấp thử nghiệm thêm hậu tố chuẩn PEP 440 như `-alpha1` hoặc `-beta2`.
+* Cấp `dev` định dạng theo mẫu `.devN`.
+
+## 4. Sử dụng trong mã nguồn
+
 ```python
-from hierachain.units.version import compare_versions
+from hierachain.config.version import get_version, VERSION, __version__
 
-required = "0.0.1"
-current = get_version()
+# Chuỗi phiên bản hiện tại
+print(f"HieraChain Version: {__version__}")
 
-if compare_versions(current, required) >= 0:
-    print("Hệ thống tương thích.")
-else:
-    print("Yêu cầu nâng cấp phiên bản!")
+# Định dạng tuple tùy chỉnh
+custom_version = (0, 2, 0, "beta", 1)
+print(f"Formatted Version: {get_version(custom_version)}")
 ```
-
----
-
-## Phân cấp Release Level
-
-Khi so sánh phiên bản, HieraChain tuân theo thứ tự ưu tiên sau (từ thấp đến cao):
-1.  `dev` (Development)
-2.  `alpha` (Alpha testing)
-3.  `beta` (Beta testing)
-4.  `rc` (Release Candidate)
-5.  `final` (Stable Release)
-
----
 
 ## Liên quan
 
-*   [Cấu hình hệ thống (Config)](./config.md)
-*   [API Status admin (Sử dụng versioning)](./api.md)
-*   [CLI (Hiển thị version)](./cli.md)
+* [Cấu hình hệ thống](./config.md)
+* [API Quản trị](./api.md)
+* [Công cụ CLI](./cli.md)

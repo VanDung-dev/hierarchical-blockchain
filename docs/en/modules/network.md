@@ -128,7 +128,7 @@ await secure_node.send_secure("peer_002", payload)
 | :--- | :--- | :--- |
 | `HRC_P2P_TRUST_POLICY` | Trust policy | `strict` |
 | `HRC_P2P_REQUIRE_SIGNATURES` | Require Ed25519 signatures | `true` |
-| `HRC_P2P_ALLOWLIST` | Trusted Peer ID list | (Specific ID list) |
+| `HRC_P2P_PEER_ALLOWLIST` | Trusted Peer ID list | (Specific ID list) |
 
 ---
 

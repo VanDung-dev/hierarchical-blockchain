@@ -1,107 +1,77 @@
 ---
 title: "Integration Module"
-description: "Cầu nối hệ thống doanh nghiệp (ERP Integration) và Apache Arrow Client: Tích hợp SAP, Oracle, Dynamics và tối ưu hóa dữ liệu cột."
+description: "Cầu nối tích hợp hệ thống ERP doanh nghiệp: Các bộ kết nối SAP, Oracle và Dynamics kèm công cụ ánh xạ trường và phát hiện thay đổi."
 icon: material/puzzle
 ---
 
 # Integration Module (`hierachain/integration/*`)
 
-## Tổng quan
+## 1. Tổng quan
 
-Module **Integration** là "cánh cửa" cho phép HieraChain hoạt động như một lớp bổ sung (Plugin Layer) cho hạ tầng Web2 hiện có của doanh nghiệp. Nó cung cấp các công cụ mạnh mẽ để kết nối, trích xuất và chuẩn hóa dữ liệu từ các hệ thống ERP hàng đầu thế giới (SAP, Oracle, Microsoft Dynamics) vào sổ cái blockchain với hiệu suất cao nhất.
+Module `integration` kết nối HieraChain với các hệ thống phần mềm doanh nghiệp như SAP, Oracle và Microsoft Dynamics. Hệ thống trích xuất bản ghi từ ERP bên ngoài, chuẩn hóa dữ liệu thông qua công cụ ánh xạ và ghi nhận các sự kiện trạng thái có thể kiểm chứng lên các chuỗi con nghiệp vụ.
 
----
+## 2. Các thành phần cốt lõi
 
-## Các thành phần cốt lõi
+Toàn bộ thành phần tích hợp nằm tại `hierachain/integration/`.
 
-<div class="grid cards" markdown>
+### 2.1 ERP Integration Ledger (`erp_ledger.py`, `erp/base.py`)
 
-*   :material-sync:{ .lg .middle } __ERP Integration Ledger__
+* Điều phối các đường ống đồng bộ dữ liệu.
+* Tích hợp `MappingEngine` để chuyển đổi các trường dữ liệu.
+* Quản lý `SyncScheduler` để định kỳ thăm dò API bên ngoài theo khoảng thời gian cấu hình.
 
-    ---
+### 2.2 Enterprise Adapters (`enterprise.py`)
 
-    __File__: `erp_ledger.py`
+* Các bộ kết nối cho SAP, Oracle và Microsoft Dynamics.
+* Đọc URL và thông tin đăng nhập từ biến môi trường (`HRC_SAP_*`, `HRC_ORACLE_*`, `HRC_DYNAMICS_*`).
+* Xử lý bắt tay xác thực và vòng đời phiên HTTP.
 
-    * Trung tâm điều phối việc tích hợp với các hệ thống ERP.
-    * **Mapping Engine**: Ánh xạ dữ liệu phức tạp từ ERP sang Blockchain.
-    * **Sync Scheduler**: Lập lịch đồng bộ tự động với cơ chế Retry thông minh.
+### 2.3 Bộ phát hiện thay đổi (`erp/change_detector.py`)
 
-*   :material-factory:{ .lg .middle } __Enterprise Adapters__
+* So sánh dữ liệu ERP mới nhận với ảnh chụp trạng thái trước đó.
+* Tách biệt các thay đổi (delta) nhằm tránh ghi nhận sự kiện dư thừa lên chuỗi.
 
-    ---
+## 3. Công cụ ánh xạ dữ liệu (Mapping Engine)
 
-    __File__: `enterprise.py`
-
-    * Các bộ kết nối (Adapters) chuẩn hóa cho **SAP**, **Oracle**, và **Dynamics**.
-    * Hỗ trợ cấu hình qua biến môi trường để đảm bảo bảo mật thông tin kết nối.
-    * Xử lý xác thực và kết nối đến các API doanh nghiệp.
-
-*   :material-table-column:{ .lg .middle } __Arrow Client__
-
-    ---
-
-    __File__: `arrow_client.py`
-
-    * Tối ưu hóa việc trao đổi dữ liệu khối lượng lớn bằng định dạng cột **Apache Arrow**.
-    * Tăng tốc độ IO và giảm mức tiêu thụ bộ nhớ khi xử lý báo cáo hoặc trích xuất dữ liệu.
-
-*   :material-magnify-scan:{ .lg .middle } __Change Detector__
-
-    ---
-
-    __File__: `erp_ledger.py`
-
-    * Tự động phát hiện sự thay đổi giữa các trạng thái dữ liệu trong ERP.
-    * Chỉ ghi nhận những thay đổi có ý nghĩa (Delta) lên blockchain để tối ưu không gian lưu trữ.
-
-</div>
-
----
-
-## Công cụ Ánh xạ Dữ liệu (Mapping Engine)
-
-Mapping Engine cho phép định nghĩa các quy tắc chuyển đổi linh hoạt cho từng trường dữ liệu:
+`MappingEngine` chuyển đổi các trường dữ liệu doanh nghiệp thành thuộc tính sự kiện chuẩn hóa:
 
 | Transformer | Chức năng | Ví dụ chuyển đổi |
 | :--- | :--- | :--- |
-| `date` | Chuẩn hóa định dạng thời gian | `12/04/2024` → `ISO-8601` |
-| `amount` | Chuyển đổi kiểu số và tiền tệ | `5000` → `5000.0` (Float) |
-| `status` | Ánh xạ trạng thái nghiệp vụ | `REQ` → `REQUESTED` |
-| `id` | Thêm tiền tố định danh | `123` → `ERP_123` |
-| `boolean` | Chuyển đổi logic | `1/Yes/On` → `True` |
+| `date` | Chuẩn hóa định dạng thời gian | `12/04/2024` -> `ISO-8601` |
+| `amount` | Chuẩn hóa số và tiền tệ | `5000` -> `5000.0` (float) |
+| `status` | Ánh xạ mã trạng thái nghiệp vụ | `REQ` -> `REQUESTED` |
+| `id` | Thêm tiền tố định danh | `123` -> `ERP_123` |
+| `boolean` | Chuẩn hóa giá trị logic | `1/Yes/On` -> `True` |
 
----
+## 4. Luồng đồng bộ dữ liệu
 
-## Luồng Đồng bộ dữ liệu (Synchronization Flow)
-
-Hệ thống sử dụng `SyncScheduler` để đảm bảo dữ liệu blockchain luôn được cập nhật từ ERP:
+`SyncScheduler` quản lý việc thăm dò và thử lại với các nguồn dữ liệu bên ngoài:
 
 ```mermaid
 sequenceDiagram
     participant ERP as ERP System (SAP/Oracle)
     participant Sync as SyncScheduler
     participant Map as MappingEngine
-    participant HRC as HieraChain Ledger
+    participant HRC as HieraChain SubChain
 
-    Sync->>ERP: Poll for changes (Interval)
-    ERP-->>Sync: Return ERP Events
+    Sync->>ERP: Poll for changes (interval)
+    ERP-->>Sync: Return ERP records
     
-    loop Per Event
-        Sync->>Map: Translate ERP -> Blockchain
-        Map->>Map: Apply Transformers (ID, Date, etc.)
-        Map-->>Sync: Normalized Event
-        Sync->>HRC: Submit Event to Sub-Chain
+    loop Per Record
+        Sync->>Map: Translate ERP -> Blockchain event
+        Map->>Map: Apply transformers (ID, date, status)
+        Map-->>Sync: Normalized event dict
+        Sync->>HRC: Submit event to Sub-Chain
     end
-    
-    Note over Sync, HRC: Nếu lỗi: Tự động Retry với Exponential Backoff
 ```
 
----
+## 5. Ví dụ sử dụng
 
-## Ví dụ Triển khai
+### Cấu hình ánh xạ và lập lịch đồng bộ
 
-### 1. Cấu hình Mapping cho SAP
 ```python
+from hierachain.integration.erp_ledger import ERPIntegrationLedger
+
 sap_mapping = {
     "entity_id": "material.document_number",
     "event": {
@@ -114,14 +84,9 @@ sap_mapping = {
         "transformer": "amount"
     }
 }
-```
-
-### 2. Khởi chạy Đồng bộ tự động
-```python
-from hierachain.integration.erp_ledger import ERPIntegrationLedger
 
 ledger = ERPIntegrationLedger()
-# Bắt đầu đồng bộ profile 'SAP_Logistics' mỗi 60 giây
+# Start syncing with a domain sub-chain
 ledger.start_scheduled_sync(
     profile_name="SAP_Logistics",
     interval_seconds=60,
@@ -129,18 +94,14 @@ ledger.start_scheduled_sync(
 )
 ```
 
----
+## 6. Tính bền vững và bảo mật
 
-## Hiệu năng và Bảo mật
-
-*   **Hiệu năng**: Sử dụng `ThreadPoolExecutor` để xử lý đồng bộ nhiều profile ERP cùng lúc mà không gây nghẽn.
-*   **Bảo mật**: Thông tin định danh và mật khẩu ERP được quản lý qua biến môi trường (ví dụ: `HRC_SAP_PASSWORD`), tuân thủ nguyên tắc không lưu secret trong mã nguồn.
-*   **Tính bền vững**: Cơ chế Retry với Exponential Backoff giúp hệ thống tự phục hồi khi kết nối ERP bị gián đoạn tạm thời.
-
----
+* Xử lý đa luồng: Sử dụng `ThreadPoolExecutor` để xử lý đồng thời nhiều hồ sơ đồng bộ mà không chặn xử lý sự kiện chính.
+* Phân lập thông tin bí mật: Mật khẩu và thông tin xác thực sử dụng biến môi trường, không lưu trữ trong mã nguồn.
+* Tự động thử lại: Các worker đồng bộ áp dụng cơ chế exponential backoff khi gặp sự cố mạng tạm thời.
 
 ## Liên quan
 
-*   [Hệ thống Phân cấp (Hierarchical)](./hierarchical.md)
-*   [Cấu trúc Blockchain Lõi (Core)](./core.md)
-*   [Xử lý lỗi và Giảm thiểu rủi ro](./error-mitigation.md)
+* [Hệ thống Phân cấp (Hierarchical)](./hierarchical.md)
+* [Cấu trúc Sổ cái Cốt lõi (Core)](./core.md)
+* [Xử lý lỗi và Giảm thiểu rủi ro](./error-mitigation.md)

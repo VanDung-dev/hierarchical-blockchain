@@ -1,68 +1,46 @@
 ---
 title: "Hierarchical Module"
-description: "Kiến trúc đa tầng HieraChain: Main Chain, Sub-Chains, và Hierarchy Manager — Nền tảng cho khả năng mở rộng và bảo mật doanh nghiệp."
+description: "Kiến trúc hai tầng: MainChain, SubChain và HierarchyManager phục vụ mở rộng quy mô doanh nghiệp và phân lập dữ liệu."
 icon: material/layers
 ---
 
 # Hierarchical Module (`hierachain/hierarchical/*`)
 
-## Tổng quan
+## 1. Tổng quan
 
-Module **Hierarchical** là "trái tim" kiến trúc của HieraChain, hiện thực hóa mô hình blockchain hai tầng (Two-Tier Blockchain) được thiết kế riêng cho cấu trúc doanh nghiệp. Nó cho phép tách biệt dữ liệu nghiệp vụ chi tiết (tại Sub-Chains) khỏi bằng chứng xác thực toàn cục (tại Main Chain), đảm bảo tính riêng tư, hiệu năng cao và khả năng mở rộng không giới hạn.
+Module `hierarchical` triển khai kiến trúc sổ cái hai tầng của HieraChain. Các chuỗi con (Sub-Chain) xử lý các sự kiện nghiệp vụ miền và lưu trữ trạng thái chi tiết tại cục bộ. Chuỗi chính (Main Chain) lưu trữ các bằng chứng mật mã và mã băm gốc do Sub-Chain gửi lên. Sự phân tách này duy trì tính riêng tư của dữ liệu nghiệp vụ, giảm tải xác thực cho Main Chain và mở rộng quy mô theo chiều ngang bằng cách phân chia tải giữa các chuỗi.
 
----
+## 2. Các thành phần nền tảng
 
-## Các thành phần nền tảng
+Các thành phần được tổ chức trong các gói chuyên biệt dưới `hierachain/hierarchical/`.
 
-<div class="grid cards" markdown>
+### 2.1 Chuỗi chính Main Chain (`main_chain/base.py`)
 
-*   :material-link-variant:{ .lg .middle } __Main Chain (Root of Trust)__
+* Lưu trữ các bằng chứng khối mật mã thay vì dữ liệu sự kiện thô.
+* Xác thực các bước chuyển trạng thái bằng zero-knowledge proof khi được kích hoạt.
+* Kiểm tra tính hợp lệ của các điểm neo liên chuỗi theo cơ chế đồng thuận thẩm quyền hoặc liên minh.
 
-    ---
+### 2.2 Chuỗi con Sub-Chain (`sub_chain/base.py`)
 
-    __File__: `main_chain.py`
+* Vận hành quy trình nghiệp vụ chuyên biệt cho từng miền hoặc phòng ban.
+* Đóng gói sự kiện nghiệp vụ vào các khối và tính toán Merkle root.
+* Tạo bằng chứng trạng thái định kỳ để gửi lên Main Chain.
 
-    * Đóng vai trò "CEO" của hệ thống, chỉ lưu trữ các bằng chứng (Proofs).
-    * Tích hợp **Zero-Knowledge Proof (ZKP)** để xác thực không cần tiết lộ dữ liệu.
-    * Sử dụng đồng thuận PoA/PoF để tối ưu hóa tốc độ xác thực doanh nghiệp.
+### 2.3 Quản lý phân cấp Hierarchy Manager (`hierarchy_manager/base.py`)
 
-*   :material-source-branch:{ .lg .middle } __Sub-Chain (Execution Layer)__
+* Điều phối vòng đời chuỗi, xác thực liên chuỗi và cấu hình đa tổ chức.
+* Quản lý các kênh trao đổi (channel), bộ sưu tập dữ liệu riêng tư và giao dịch Two-Phase Commit (2PC).
+* Tổng hợp báo cáo tính toàn vẹn hệ thống trên toàn bộ các chuỗi đã đăng ký.
 
-    ---
+### 2.4 Đa tổ chức, kênh và dữ liệu riêng tư
 
-    __File__: `sub_chain.py`
+* `multi_org.py`: Quản lý các tổ chức thành viên, chứng chỉ và định danh MSP.
+* `channel/manager.py`: Phân vùng giao tiếp giữa các nhóm tổ chức cụ thể.
+* `private_data.py`: Lưu trữ dữ liệu nhạy cảm ngoài chuỗi (off-chain) và neo mã băm mật mã lên chuỗi.
 
-    * Mỗi Sub-Chain phục vụ một miền nghiệp vụ (Domain) hoặc một bộ phận cụ thể.
-    * Thực thi logic nghiệp vụ, đóng gói Block và tạo Proof định kỳ.
-    * Đảm bảo dữ liệu domain chi tiết luôn được cô lập cục bộ.
+## 3. Luồng dữ liệu
 
-*   :material-file-tree:{ .lg .middle } __Hierarchy Manager (Orchestrator)__
-
-    ---
-
-    __File__: `hierarchy_manager.py`
-
-    * Điều phối toàn bộ vòng đời của các chuỗi và tổ chức trong mạng lưới.
-    * Quản lý các kênh (Channels), dữ liệu riêng tư và giao dịch xuyên chuỗi.
-    * Cung cấp các báo cáo tổng thể về tính toàn vẹn của toàn hệ thống.
-
-*   :material-shield-account:{ .lg .middle } __Multi-Org & Channels__
-
-    ---
-
-    __Files__: `multi_org.py`, `channel.py`, `private_data.py`
-
-    * **Multi-Org**: Quản lý nhiều tổ chức tham gia với cấu hình MSP riêng.
-    * **Channels**: Cô lập dữ liệu hoàn toàn giữa các nhóm tổ chức cụ thể.
-    * **Private Data**: Lưu trữ dữ liệu nhạy cảm off-chain, chỉ chia sẻ mã băm (hash).
-
-</div>
-
----
-
-## Kiến trúc Luồng Dữ liệu (System Workflow)
-
-Mô hình phân cấp đảm bảo rằng dữ liệu chi tiết không bao giờ bị "rò rỉ" lên lớp xác thực toàn cục:
+Dữ liệu chi tiết được lưu trữ tại Sub-Chain. Chỉ có Merkle root và bằng chứng mật mã được neo lên Main Chain:
 
 ```mermaid
 graph TD
@@ -70,7 +48,7 @@ graph TD
         A[Business Events] --> B[Ordering Service]
         B --> C[Block Builder]
         C --> D[(Local DB)]
-        C --> E[Merkle Tree/ZK Prover]
+        C --> E[Merkle Tree / ZK Prover]
     end
 
     subgraph "Main Chain (Root Authority)"
@@ -89,68 +67,41 @@ graph TD
     I -. "Coordinate" .-> A
 ```
 
----
+## 4. Khả năng mở rộng và quản lý hạ tầng
 
-## Khả năng Mở rộng & Quản lý Hạ tầng
+### Bộ tái cân bằng chuỗi con (`rebalancer/rebalancer.py`)
 
-### 1. Sub-Chain Rebalancer (`rebalancer.py`)
-Tự động giám sát tải hệ thống và thực hiện chia tách (split) Sub-Chain khi lượng giao dịch vượt ngưỡng (Threshold EPS), đảm bảo hiệu năng không bị nghẽn:
- 
-* **Chiến lược**: Hash-based, Time-based, Load-based.
-*   **Cơ chế**: Di chuyển thực thể sang chuỗi mới một cách mượt mà.
+Bộ tái cân bằng theo dõi lưu lượng và tách các Sub-Chain chịu tải cao khi số sự kiện mỗi giây (EPS) vượt ngưỡng vận hành:
 
-### 2. Kubernetes Namespace Manager (`k8s_namespace_manager.py`)
-Tích hợp trực tiếp với hạ tầng Cloud-Native để cô lập hoàn toàn tài nguyên (CPU, RAM, Network) của mỗi Sub-Chain trong một Namespace riêng biệt.
+* Chiến lược: Phân vùng dựa trên mã băm, thời gian hoặc khối lượng dữ liệu.
+* Di chuyển dữ liệu: Chuyển giao trạng thái thực thể sang các chuỗi nhánh mà không làm gián đoạn dịch vụ.
 
----
+### Phân lập namespace Kubernetes (`k8s_namespace_manager/operations.py`)
 
-## Giao dịch Xuyên chuỗi (Cross-Chain Transactions)
+Ánh xạ từng Sub-Chain vào một namespace Kubernetes riêng biệt, áp dụng hạn mức tài nguyên và chính sách mạng độc lập cho từng miền.
 
-HieraChain sử dụng giao thức **Two-Phase Commit (2PC)** thông qua `CrossChainTransactionManager` để đảm bảo tính nguyên tử (Atomicity) khi thực hiện các hoạt động liên quan đến nhiều Sub-Chain:
+## 5. Thao tác liên chuỗi (2PC)
+
+`CrossChainTransactionManager` trong `hierachain/hierarchical/transaction_manager.py` triển khai giao thức Two-Phase Commit để duy trì tính nguyên tử qua các Sub-Chain:
 
 ```python
-# Ví dụ khởi tạo giao dịch xuyên chuỗi
-tx_id = hierarchy_manager.initiate_cross_chain_transaction(
+from hierachain.hierarchical.hierarchy_manager import HierarchyManager
+
+manager = HierarchyManager()
+tx_id = manager.initiate_cross_chain_transaction(
     source_chain_name="supply_chain",
     dest_chain_name="finance_chain",
     payload={"asset_id": "INV-100", "action": "settle_payment"}
 )
 ```
 
----
+## 6. Tính riêng tư và xác thực zero-knowledge
 
-## Bảo mật và Quyền riêng tư nâng cao
-
-### Xác thực không tiết lộ (ZK Proofs)
-Main Chain hỗ trợ chế độ xác thực nghiêm ngặt, yêu cầu mọi Sub-Chain phải gửi kèm bằng chứng ZK. Điều này chứng minh rằng:
-
-1.  Trạng thái mới của Sub-Chain là kết quả hợp lệ từ trạng thái cũ.
-2.  Mọi quy tắc nghiệp vụ đã được tuân thủ mà không cần Main Chain phải đọc dữ liệu thô.
-
-### Dữ liệu riêng tư (Private Data Collections)
-
-Cho phép các thành viên trong một chuỗi chia sẻ dữ liệu nhạy cảm mà ngay cả các thành viên khác trong cùng chuỗi đó (nhưng không thuộc Collection) cũng không thể đọc được.
-
----
-
-## API công khai quan trọng
-
-### HierarchyManager
-
-*   `create_sub_chain(name, domain_type)`: Tạo chuỗi nghiệp vụ mới.
-*   `create_organization(org_id, name)`: Đăng ký tổ chức tham gia mạng lưới.
-*   `create_channel(channel_id, org_ids)`: Thiết lập kênh cô lập dữ liệu.
-*   `get_system_integrity_report()`: Báo cáo sức khỏe toàn hệ thống.
-
-### MainChain
-
-*   `add_proof(sub_chain, proof_hash, metadata, zk_proof)`: Tiếp nhận bằng chứng từ Sub-Chain.
-*   `verify_proof(proof_hash, sub_chain)`: Kiểm tra tính hợp lệ của một bằng chứng.
-
----
+* Xác thực Main Chain: Sub-Chain có thể nộp zero-knowledge proof để chứng minh bước chuyển trạng thái hợp lệ theo quy tắc đồng thuận mà không để lộ nội dung sự kiện thô.
+* Bộ sưu tập dữ liệu riêng tư: Dữ liệu nhạy cảm được giới hạn trong các node thành viên được cấp quyền, chỉ có mã băm được phát tán trên sổ cái chung.
 
 ## Liên quan
 
-*   [Đồng thuận BFT (BFT Consensus)](../consensus/bft_consensus.md)
-*   [Dịch vụ Sắp xếp (Ordering Service)](../consensus/ordering.md)
-*   [Module Domains (Business Logic)](./domains.md)
+* [Consensus Module](./consensus.md)
+* [Domains Module](./domains.md)
+* [Hướng dẫn Two-Phase Commit](../how-to/cross-chain-transactions.md)

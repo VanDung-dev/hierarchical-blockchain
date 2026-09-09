@@ -1,126 +1,79 @@
 ---
 title: "Core Module"
-description: "HieraChain's foundational architecture: Block, Blockchain, Apache Arrow, Caching and Parallel Processing."
+description: "Core ledger primitives: Block, Blockchain, Merkle Tree, and Multi-tier Caching."
 icon: material/cube
 ---
 
 # Core Module (`hierachain/core/*`)
 
-## Overview
+## 1. Overview
 
-The **Core** module is the heart of the HieraChain Ledger, providing the highest-performance data structures and processing tools. Here, **Apache Arrow** technology is deeply integrated to manage millions of events at extreme speed, combined with a multi-tier Caching system and Parallel Engine to ensure enterprise-level scalability.
+The `core` module contains foundational data structures for the ledger. Blocks store events in Apache Arrow tables for fast in-memory filtering and deterministic hashing. Cryptographic Merkle trees prove event inclusion, and a multi-level cache speeds up block, event, and entity lookups.
 
----
+## 2. Foundational components
 
-## Foundational Components
+All core primitives reside in `hierachain/core/`.
 
-<div class="grid cards" markdown>
+### 2.1 Block (`block.py`)
 
-*   :material-database-import:{ .lg .middle } __Block & Apache Arrow__
+* Stores event records in a `pyarrow.Table`.
+* Queries event fields with Arrow compute expressions rather than Python loops.
+* Calculates deterministic block hashes and Merkle roots.
 
-    ---
+### 2.2 Blockchain (`blockchain.py`)
 
-    __File__: `block.py`
+* Coordinates chain state, genesis initialization, and pending event queues.
+* Implements thread-safe locking with deadlock detection.
+* Maintains entity indexes for fast historical event lookups.
 
-    * Stores events in columnar storage model.
-    * Filters data using Arrow Compute (10-50x faster than Python lists).
-    * Deterministic hashing and Merkle Root.
+### 2.3 Merkle tree (`merkle_tree.py`)
 
-*   :material-link-variant:{ .lg .middle } __Blockchain & Safety__
+* Constructs binary Merkle trees from event hashes.
+* Produces cryptographic inclusion proofs for audit verification.
+* Validates Merkle roots across hierarchical chain tiers.
 
-    ---
+### 2.4 Cache and Cache Manager (`cache.py`, `cache_manager.py`)
 
-    __File__: `blockchain.py`
+* Implements cache eviction algorithms: LRU, LFU, FIFO, and TTL.
+* `BlockchainCacheManager` provides coordinated caching for blocks, events, and entity state.
 
-    * Manages the chain, genesis, and pending pool.
-    * **Deadlock Detection**: Automatically detects and handles lock contention.
-    * Entity Indexing for O(1) queries.
+## 3. Block memory and storage layout
 
-*   :material-flash:{ .lg .middle } __Parallel Engine__
+Each `Block` encapsulates an Arrow table with structured metadata:
 
-    ---
-
-    __File__: `parallel_engine.py`
-
-    * Policy-driven parallel processing.
-    * Specialized worker pools for Validation, Indexing, and Batch processing.
-    * Automatic data chunking for memory optimization.
-
-*   :material-speedometer:{ .lg .middle } __Advanced Caching__
-
-    ---
-
-    __File__: `caching.py`
-
-    * 3-tier caching: Block, Event, and Entity.
-    * Eviction policies: **LRU**, **LFU**, **FIFO**, **TTL**.
-    * Speeds up block access by up to **42x**.
-
-</div>
-
----
-
-## Block Architecture (High-Performance Event Storage)
-
-HieraChain does not store blocks in plain JSON format. Each block internally is a `pyarrow.Table`.
-
-### Key Advantages:
-
-1.  **Memory Efficiency**: Arrow uses optimized memory layout, reducing Python object overhead.
-2.  **Blazing Fast Queries**: Searching events by `entity_id` or `event_type` is performed directly in Arrow's C++ layer.
-3.  **Consistency**: The `data` field stores the original payload as Binary, ensuring absolute integrity during hashing.
+1. Compact binary layout reduces Python object overhead.
+2. Filter queries on `entity_id` and `event` execute through native Arrow kernels.
+3. Serialized binary payloads ensure stable hashing across platforms.
 
 ```python
-# Example fast query on a Block
+# Query events by entity on a Block instance
 entity_events = block.get_events_by_entity("PROD-123")
 ```
 
----
+## 4. Blockchain thread safety and locking
 
-## Blockchain & Deadlock Prevention
+The `Blockchain` class coordinates concurrent access through a timeout-guarded lock:
 
-HieraChain is designed to run in multi-threaded environments. The `Blockchain` integrates a **Deadlock Detector** to monitor lock operations:
+* Monitors lock acquisition duration with a configurable threshold.
+* `safe_lock(timeout)` prevents thread hangs under heavy concurrent writes.
+* Callback hooks report contention warnings to the monitoring layer.
 
-*   **Monitor**: Tracks lock wait time (default threshold 3s).
-*   **Safe Lock**: The `safe_lock(timeout)` mechanism prevents infinite hangs during resource contention.
-*   **Recovery**: Automatically triggers a callback when a deadlock risk is detected.
+## 5. Multi-tier caching
 
----
+`BlockchainCacheManager` manages three dedicated cache tiers:
 
-## Multi-tier Caching System
-
-The `BlockchainCacheManager` provides remarkable read operation speedups:
-
-| Cache Type | Default Policy | Performance Improvement |
+| Cache Tier | Default Policy | Target Operation |
 | :--- | :--- | :--- |
-| **Block Cache** | LRU (Least Recently Used) | **~42x** (Block retrieval by index) |
-| **Event Cache** | TTL (Time To Live) | Optimized for latest event query APIs. |
-| **Entity Cache** | LFU (Least Frequently Used) | **~18.9x** (History tracing of an object) |
+| Block Cache | LRU (Least Recently Used) | Block retrieval by index or hash |
+| Event Cache | TTL (Time To Live) | Recent event stream queries |
+| Entity Cache | LFU (Least Frequently Used) | Historical entity lifecycle tracing |
 
----
+## 6. Concurrent execution
 
-## Parallel Processing Engine
-
-To process thousands of events per second, Core provides an intelligent parallel processing engine:
-
-*   **Validation Pool**: Dedicated to checking block signatures and Merkle roots.
-*   **CPU Intensive Pool**: Uses `ProcessPoolExecutor` for heavy hash computations.
-*   **Policy-driven**: The system automatically selects the appropriate pool based on task type (e.g., `indexing` tasks have lower priority than `priority` tasks).
-
----
-
-## Domain Contract
-
-The `DomainContract` class allows defining business rules:
-
-*   **Lifecycle**: Manages states from `DEVELOPMENT` -> `ACTIVE` -> `DEPRECATED`.
-*   **Versioning**: Supports contract version upgrades and data migration.
-*   **Storage**: Each contract has its own key-value storage space.
-
----
+Cryptographic verification tasks and cross-chain synchronization run concurrently via `ThreadPoolExecutor` workers managed by the runtime environment. Hashing and signature checks scale across CPU cores while preserving sequential block order.
 
 ## Related
 
-*   [Hierarchical Architecture](../architecture/hierarchy.md)
-*   [Performance Benchmarking](../guides/performance.md)
-*   [Security Verifiers](./security.md)
+* [Hierarchical Architecture](../architecture/hierarchy.md)
+* [Storage Module](./storage.md)
+* [Security Overview](./security.md)

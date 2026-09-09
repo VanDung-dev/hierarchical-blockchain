@@ -1,98 +1,54 @@
 ---
-title: "Units & Versioning Module"
-description: "System version management: PEP 440 compliance, Semantic Versioning, and Project development status."
+title: "Versioning Module"
+description: "System version management: PEP 440 compliance, semantic versioning tuples, and version formatting in hierachain/config/version.py."
 icon: material/numeric
 ---
 
-# Units Module (`hierachain/units/*`)
+# Versioning Module (`hierachain/config/version.py`)
 
-## Overview
+## 1. Overview
 
-The **Units** module is responsible for managing the HieraChain versioning system. It ensures the entire system (from Core, API to CLI) is always version-synchronized and compliant with modern software packaging standards such as **PEP 440**.
+The versioning module defines the release version for HieraChain. It formats a structured version tuple into a standard string following PEP 440 specifications, keeping Core, API, SDK, and CLI components synchronized on release metadata.
 
----
+## 2. Version tuple structure
 
-## Version Structure (Version Tuple)
+HieraChain defines the current system version as a five-element tuple in `hierachain/config/version.py`:
 
-HieraChain uses a 5-component Tuple to define versions in detail:
-`VERSION = (major, minor, micro, releaselevel, serial)`
-
-*   **Major**: Major version, changes with significant architecture updates.
-*   **Minor**: Minor version, changes when new features are added.
-*   **Micro**: Bug fix version.
-*   **Release Level**: Development status (`dev`, `alpha`, `beta`, `rc`, `final`).
-*   **Serial**: Release sequence number within the same level.
-
----
-
-## Key Features
-
-<div class="grid cards" markdown>
-
-*   :material-check-decagram:{ .lg .middle } __PEP 440 Compliance__
-
-    ---
-
-    Automatically converts the Version Tuple to a standard Python version string (e.g., `0.0.2-beta1` or `0.0.2` for final release).
-
-*   :material-compare-remove:{ .lg .middle } __Version Comparison__
-
-    ---
-
-    Provides the `compare_versions` function supporting comparison of both strings and tuples, helping the system check compatibility between components.
-
-*   :material-book-information-variant:{ .lg .middle } __Documentation Status__
-
-    ---
-
-    Determines the project status (Stable, Under Development, Release Candidate) based on the current version level.
-
-</div>
-
----
-
-## Usage Examples
-
-### 1. Get Current Version Information
 ```python
-from hierachain.units.version import get_version, VERSION
-
-# Returns PEP 440 string (e.g., "0.0.2")
-print(f"HieraChain Version: {get_version()}")
-
-# Get abbreviated version (Major.Minor)
-from hierachain.units.version import get_major_version
-print(f"Base Version: {get_major_version()}")
+VERSION: tuple[int, int, int, str, int] = (0, 1, 0, "final", 0)
 ```
 
-### 2. Check Compatibility
+The tuple elements represent:
+
+* Major: Increments on backward-incompatible API or architecture changes.
+* Minor: Increments when adding backward-compatible features.
+* Micro: Increments for backward-compatible bug fixes.
+* Release level: Development status indicator (`dev`, `alpha`, `beta`, `rc`, or `final`).
+* Serial: Sub-release sequence number for pre-releases.
+
+## 3. Formatting functions
+
+The module provides formatting helpers to convert the tuple into a standard version string:
+
+* `final` releases omit the suffix, producing clean semantic strings such as `0.1.0`.
+* Pre-release levels append standard PEP 440 suffixes, such as `-alpha1` or `-beta2`.
+* `dev` levels format as `.devN`.
+
+## 4. Usage in code
+
 ```python
-from hierachain.units.version import compare_versions
+from hierachain.config.version import get_version, VERSION, __version__
 
-required = "0.0.1"
-current = get_version()
+# Current version string
+print(f"HieraChain Version: {__version__}")
 
-if compare_versions(current, required) >= 0:
-    print("System is compatible.")
-else:
-    print("Version upgrade required!")
+# Explicit tuple formatting
+custom_version = (0, 2, 0, "beta", 1)
+print(f"Formatted Version: {get_version(custom_version)}")
 ```
-
----
-
-## Release Level Hierarchy
-
-When comparing versions, HieraChain follows this priority order (lowest to highest):
-1.  `dev` (Development)
-2.  `alpha` (Alpha testing)
-3.  `beta` (Beta testing)
-4.  `rc` (Release Candidate)
-5.  `final` (Stable Release)
-
----
 
 ## Related
 
-*   [System Configuration](./config.md)
-*   [API Status admin (uses versioning)](./api.md)
-*   [CLI (displays version)](./cli.md)
+* [System Configuration](./config.md)
+* [API Administration](./api.md)
+* [CLI Tool](./cli.md)

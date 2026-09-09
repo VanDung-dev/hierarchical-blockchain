@@ -1,6 +1,6 @@
 ---
 title: "Adapters Module"
-description: "Storage/database adapters: SQLite, File (Parquet/Arrow), Redis — Flexible IO integration following the Adapter Pattern."
+description: "Database adapters for SQLite, PostgreSQL, and Redis in hierachain/adapters/database/."
 icon: material/vector-polyline
 ---
 
@@ -8,94 +8,73 @@ icon: material/vector-polyline
 
 ## 1. Overview
 
-The **Adapters** module serves as the Abstraction Layer for data storage in HieraChain. Instead of binding business logic to a specific database type, HieraChain uses the **Adapter Pattern** to allow switching storage backends flexibly without modifying core source code.
+The `adapters` module provides the persistence layer for HieraChain. The core system defines common interfaces for database operations, allowing operators to select or switch database backends without changing business logic or consensus code.
 
-### Main Roles
+### Main roles
 
-* **IO Standardization**: Provides a unified interface for storing blocks, events, metadata, and proofs.
-* **Deployment Flexibility**: Supports environments from development (SQLite/File) to high-performance production (Redis/Parquet).
-* **Query Optimization**: Each adapter is designed to optimize for a specific query type (e.g., File adapter optimizes for large-scale entity tracing).
+* Standardizes database read and write operations for chains, blocks, events, proofs, and entity state.
+* Supports multiple environments, from local development (SQLite, in-memory) to production clusters (PostgreSQL, Redis).
+* Enforces data isolation and input sanitization across database engines.
 
----
+## 2. Available database adapters
 
-## 2. Available Adapters
+All storage adapters reside in `hierachain/adapters/database/`.
 
-HieraChain provides three main adapters, divided into two groups: `database` and `storage`.
+### 2.1 SQLite Database Adapter (`sqlite_adapter.py`)
 
-### 2.1 SQLite Database Adapter (`adapters/database/sqlite_adapter.py`)
+The default adapter for development, testing, and single-node setups.
 
-Uses SQLite as the backend for systems requiring relational data integrity and flexible SQL queries.
+* Technology: SQLite3 via `sqlite3` and `hierachain/adapters/database/base/sql_base.py`.
+* Schema: Initialized through `sqlite_schema.py`, creating tables for `chains`, `blocks`, `events`, `proofs`, and `chain_state`.
+* Strengths: Zero external service dependencies, ACID guarantees, single-file backups.
+* Indexes: Built on `entity_id`, `event_type`, `block_number`, and `timestamp`.
 
-* **Technology**: SQLite3.
-* **Schema Structure**:
+### 2.2 PostgreSQL Database Adapter (`postgres_adapter.py`)
 
-    * `chains`: Stores chain identity and type (Main/Sub).
-    * `blocks`: Stores block headers, hashes, and metadata.
-    * `events`: Stores business event details in JSON format.
-    * `proofs`: Tracks cross-chain proofs between Sub-Chain and Main Chain.
+The relational database adapter for multi-node and enterprise deployments.
 
-* **Advantages**: ACID support, good entity relationship management, easy backup (single file).
-* **Optimization**: Indexes on `entity_id`, `event_type`, and `timestamp`.
+* Technology: PostgreSQL with connection pooling.
+* Schema: Initialized through `postgres_schema.py` using identical schema semantics to SQLite.
+* Strengths: High concurrent write capacity, connection pooling, enterprise backup tooling.
+* Query features: Partition-aware queries and index scans for high-volume audit logs.
 
-### 2.2 File Storage Adapter (`adapters/storage/file_storage.py`)
+### 2.3 Redis Database Adapter (`redis_adapter.py`)
 
-High-performance adapter for big data, using specialized file formats for analytics.
+An in-memory adapter designed for high-throughput reads and real-time entity state lookups.
 
-* **Technology**: **Apache Parquet** and **PyArrow**.
-* **Storage Structure**:
+* Technology: Redis via `redis-py`.
+* Data structures: Hashes for block headers and event payloads, sorted sets for chronological event ordering and block index ranges, and sets for unique chain identifiers.
+* Strengths: Low-latency point lookups and fast entity tracing.
+* Persistence: Dependent on Redis RDB snapshots and AOF configuration.
 
-    * `blocks/`: Stores blocks as compressed `.parquet` files (Zstd). Each block is an Arrow table.
-    * `events/`: Maintains an Event Index for extremely fast tracing.
-    * `chains/`: Stores chain metadata as JSON.
+## 3. Adapter comparison
 
-* **Advantages**: Very fast read/write speed, good data compression, supports **Column Pruning** (reading only required columns).
-* **Special Features**:
-
-    * `BatchBlockWriter`: Buffers data for batch writing, reducing I/O overhead.
-    * `get_entity_events_optimized`: Uses Arrow Dataset to scan data across multiple block files simultaneously.
-
-### 2.3 Redis Storage Adapter (`adapters/storage/redis_storage.py`)
-
-Suitable for nodes requiring real-time response and hot data access.
-
-* **Technology**: Redis (In-memory data structure).
-* **Data Structures**:
-
-    * **Hashes**: Stores blocks and metadata.
-    * **Sorted Sets (ZSET)**: Stores block index by index and entity events by timestamp.
-    * **Sets**: Manages lists of unique chains and entities.
-
-* **Advantages**: Extremely low latency, supports real-time statistics.
-* **Usage**: Typically used as cache or primary database for high-frequency transaction nodes.
-
----
-
-## 3. Adapter Comparison
-
-| Feature | SQLiteAdapter | FileStorageAdapter | RedisStorageAdapter |
+| Feature | SQLiteAdapter | PostgreSQLAdapter | RedisAdapter |
 | :--- | :--- | :--- | :--- |
-| **Storage Type** | Relational database | File system (Parquet) | In-memory |
-| **Best suited for** | ERP Integration, Audit | Big Data, Trace Analytics | Real-time Dashboard, High-speed Node |
-| **Write Speed** | Medium | Very fast (with Batch) | Extremely fast |
-| **Query Speed** | Fast (SQL) | Extremely fast (Analytical) | Fastest (Point lookup) |
-| **Persistence** | High (ACID) | High (File-based) | Depends on Redis RDB/AOF config |
-| **Dependencies** | None (Built-in Python) | `pyarrow` | `redis-py` |
+| Storage type | Relational file | Relational server | In-memory key-value |
+| Recommended use | Development, testing, edge nodes | Production, multi-node clusters | Low-latency state queries, caches |
+| Write latency | Low | Low to medium | Very low |
+| Query flexibility | Full SQL | Full SQL | Key and index lookups |
+| Persistence | ACID local file | ACID enterprise server | RDB / AOF snapshot |
+| External service | None | PostgreSQL 13+ | Redis 6+ |
 
----
+## 4. Configuration and usage
 
-## 4. Usage Guide
+### Configuration via settings
 
-### Configuration via Settings
-
-You can select the default adapter through environment variables or config file:
+Set the storage backend using environment variables:
 
 ```bash
-# Select storage backend
-export HRC_STORAGE_BACKEND=sqlite  # Or "redis", "file"
-export DATABASE_URL="sqlite:///my_ledger.db"
+# Available backends: sqlite, postgres, redis, memory
+export HRC_STORAGE_BACKEND=sqlite
+export DATABASE_URL="sqlite:///data/ledger.db"
+
+# Or for PostgreSQL
+# export HRC_STORAGE_BACKEND=postgres
+# export DATABASE_URL="postgresql://user:pass@localhost:5432/hierachain"
 ```
 
-### Usage in Code
+### Usage in code
 
 #### Using SQLite
 
@@ -103,50 +82,50 @@ export DATABASE_URL="sqlite:///my_ledger.db"
 from hierachain.adapters.database.sqlite_adapter import SQLiteAdapter
 
 adapter = SQLiteAdapter("data/ledger.db")
-# Get chain statistics
 stats = adapter.get_chain_statistics("supply_chain_ledger")
 print(f"Total blocks: {stats['total_blocks']}")
 ```
 
-#### Using File (Parquet)
+#### Using PostgreSQL
 
 ```python
-from hierachain.adapters.storage.file_storage import FileStorageAdapter, BatchBlockWriter
+from hierachain.adapters.database.postgres_adapter import PostgreSQLAdapter
 
-storage = FileStorageAdapter(storage_path="./blockchain_data")
-
-# Batch write blocks for performance optimization
-with BatchBlockWriter(storage, "main_chain", batch_size=100) as writer:
-    for block in new_blocks:
-        writer.add(block)
+adapter = PostgreSQLAdapter(connection_string="postgresql://user:pass@localhost:5432/hierachain")
+stats = adapter.get_chain_statistics("supply_chain_ledger")
+print(f"Total blocks: {stats['total_blocks']}")
 ```
 
----
+#### Using Redis
 
-## 5. Security & Data Safety
+```python
+from hierachain.adapters.database.redis_adapter import RedisAdapter
 
-### Path Traversal Protection (CWE-22)
+adapter = RedisAdapter(host="localhost", port=6379, db=0)
+stats = adapter.get_chain_statistics("supply_chain_ledger")
+print(f"Total blocks: {stats['total_blocks']}")
+```
 
-All adapters strictly validate chain names and paths:
+## 5. Security and validation
 
-* Only allow alphanumeric characters, underscores `_`, and hyphens `-`.
-* Prevent navigation characters like `..` to ensure data is not written outside the specified directory.
+### Path traversal protection
 
-### Secure Logging
+Adapters validating file paths or chain names enforce strict pattern matching:
 
-Logging in adapters is done via `SecureLogger`, ensuring no sensitive business information is leaked in system log files.
+* Names allow alphanumeric characters, underscores `_`, and hyphens `-`.
+* Path traversal sequences (`..`, `/`, `\`) are rejected before executing filesystem or query commands.
 
----
+### Secure logging
 
-## 6. Error Handling & Maintenance
+Adapters log queries and connection events through `SecureLogger`, redacting database credentials, auth tokens, and sensitive business details.
 
-* **Cleanup**: All three adapters support the `cleanup_old_data(days_to_keep)` method to automatically purge old blocks or unnecessary logs according to enterprise retention policy.
-* **Data Integrity**: When using `FileStorageAdapter`, the block hash is stored directly in the Parquet file metadata, allowing integrity verification immediately upon file load without reading the entire content.
+## 6. Maintenance and retention
 
----
+* Data cleanup: Relational adapters support purging historical event logs beyond retention thresholds set by `HRC_SQL_RETENTION_DAYS`.
+* Logging and journals: Persistent binary journals and forensic error records use `hierachain/core/parquet_log.py` and `hierachain/error_mitigation/journal.py`, keeping chain persistence decoupled from diagnostic logging.
 
 ## Related
 
-* [Core Concepts - Blockchain](../architecture/overview.md)
 * [Storage Module](./storage.md)
+* [Configuration Reference](../reference/config.md)
 * [Security Overview](./security.md)

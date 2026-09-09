@@ -128,7 +128,7 @@ await secure_node.send_secure("peer_002", payload)
 | :--- | :--- | :--- |
 | `HRC_P2P_TRUST_POLICY` | Chính sách tin cậy | `strict` |
 | `HRC_P2P_REQUIRE_SIGNATURES` | Bắt buộc chữ ký Ed25519 | `true` |
-| `HRC_P2P_ALLOWLIST` | Danh sách Peer ID tin cậy | (Danh sách ID cụ thể) |
+| `HRC_P2P_PEER_ALLOWLIST` | Danh sách Peer ID tin cậy | (Danh sách ID cụ thể) |
 
 ---
 

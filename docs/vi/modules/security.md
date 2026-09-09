@@ -8,79 +8,79 @@ icon: material/shield-lock
 
 ## Tổng quan
 
-Module **Security** cung cấp các năng lực bảo mật cấp doanh nghiệp cho HieraChain. Thay vì dựa vào một lớp bảo vệ duy nhất, HieraChain triển khai chiến lược **Phòng thủ đa tầng (Defense-in-Depth)**, bao trùm từ xác thực danh tính, kiểm soát truy cập, bảo vệ tài nguyên cho đến các công nghệ tiên tiến như Zero-Knowledge Proofs.
+Module security cung cấp lớp bảo vệ chính cho HieraChain. Nó không dựa vào một lớp duy nhất. Thay vào đó nó kết hợp danh tính, kiểm soát truy cập, bảo vệ tài nguyên và zero-knowledge proof, nên lỗi ở một chỗ không làm lộ toàn bộ hệ thống.
 
 ---
 
-## 6 Trụ cột Bảo mật chính
+## Sáu nhóm bảo mật
 
-Kiến trúc bảo mật được cấu thành từ 6 luồng chính phối hợp chặt chẽ:
+Thiết kế gom các biện pháp bảo vệ thành sáu nhóm phối hợp với nhau:
 
 <div class="grid cards" markdown>
 
-*   :material-account-lock:{ .lg .middle } __Authorization & Access__
+*   :material-account-lock:{ .lg .middle } __Authorization và access__
 
     ---
 
-    Quản trị danh tính (MSP), xác thực API Key và kiểm soát truy cập dựa trên thuộc tính (ABAC).
+    Quản lý danh tính (MSP), xác thực API key và kiểm soát truy cập theo thuộc tính (ABAC).
     [:octicons-arrow-right-24: Chi tiết](../security/authorization-access-control.md)
 
-*   :material-lock-alert:{ .lg .middle } __Lockdown & Logging__
+*   :material-lock-alert:{ .lg .middle } __Lockdown và logging__
 
     ---
 
-    Cơ chế phong tỏa khẩn cấp cụm (Cluster) và hệ thống ghi nhật ký an toàn chống giả mạo.
+    Phong tỏa cụm khẩn cấp và log chống giả mạo.
     [:octicons-arrow-right-24: Chi tiết](../security/lockdown-logging.md)
 
-*   :material-shield-check:{ .lg .middle } __Integrity & Guard__
+*   :material-shield-check:{ .lg .middle } __Integrity và guard__
 
     ---
 
-    Bảo vệ tài nguyên chống DoS và kiểm tra tính toàn vẹn của mã nguồn/cấu hình khi khởi động.
+    Bảo vệ tài nguyên trước DoS và kiểm tra tính toàn vẹn của code và cấu hình khi khởi động.
     [:octicons-arrow-right-24: Chi tiết](../security/fault-tolerance-integrity.md)
 
-*   :material-security-network:{ .lg .middle } __Risk & Sanitization__
+*   :material-security-network:{ .lg .middle } __Risk và sanitization__
 
     ---
 
-    Phân tích hành vi bất thường (Anomaly Detection) và làm sạch dữ liệu đầu vào chống Injection.
+    Phát hiện bất thường và làm sạch input để chặn injection.
     [:octicons-arrow-right-24: Chi tiết](../security/risk-analyzer.md)
 
-*   :material-key-chain:{ .lg .middle } __Encryption & Keys__
+*   :material-key-chain:{ .lg .middle } __Encryption và keys__
 
     ---
 
-    Quản lý vòng đời khóa mã hóa (Ed25519, AES-GCM) và chứng chỉ số chuẩn doanh nghiệp (X.509).
+    Quản lý vòng đời khóa (Ed25519, AES-GCM) và chứng chỉ X.509.
     [:octicons-arrow-right-24: Chi tiết](../security/encryption-keys.md)
 
-*   :material-brain:{ .lg .middle } __Zero-Knowledge Proofs__
+*   :material-brain:{ .lg .middle } __Zero-knowledge proofs__
 
     ---
 
-    Bảo mật dữ liệu riêng tư xuyên chuỗi bằng công nghệ chứng minh không tiết lộ thông tin (ZKP).
+    Bảo vệ riêng tư xuyên chain bằng zero-knowledge proof (ZKP) để bên xác thực chỉ biết tính hợp lệ, không thấy dữ liệu.
     [:octicons-arrow-right-24: Chi tiết](../security/decentralized-zkp.md)
 
 </div>
 
 ---
 
-## Tích hợp Hệ thống
+## Cách các lớp kết nối
 
-Mọi thành phần của HieraChain đều được bảo vệ bởi các lớp an ninh này:
+Mọi phần của HieraChain đều dùng chung các lớp này:
 
-*   **API Server**: Sử dụng `ResourceGuard` và `APIKeyVerifier` làm middleware bảo vệ đầu tiên.
-*   **Consensus**: Mọi thông điệp đồng thuận đều được ký số và kiểm tra tính toàn vẹn.
-*   **Storage**: Dữ liệu nhạy cảm được mã hóa trước khi lưu và làm sạch khi truy vấn.
+* API server dùng `ResourceGuard` và `APIKeyVerifier` làm middleware. Chúng chạy đầu tiên trên mỗi request.
+* Consensus ký mọi message đồng thuận và kiểm tra tính toàn vẹn trước khi chấp nhận.
+* Storage mã hóa dữ liệu nhạy cảm trước khi ghi và làm sạch input khi truy vấn.
 
 ---
 
-## Cấu hình Bảo mật
+## Cấu hình bảo mật
 
-Các thiết lập quan trọng được quản lý tập trung tại `hierachain/config/settings.py`:
+Các thiết lập chính nằm ở `hierachain/config/settings.py`:
 
-*   `AUTH_ENABLED`: Bật/tắt xác thực API.
-*   `HRC_CLUSTER_SECRET`: Mã bí mật cho các lệnh điều khiển cụm.
-*   `HRC_ENABLE_ZK_PROOFS`: Kích hoạt xác thực bằng chứng ZK.
+* `AUTH_ENABLED` bật hoặc tắt xác thực API.
+* `HRC_CLUSTER_SECRET` là secret cho lệnh điều khiển cụm.
+* `HRC_ENABLE_ZK_PROOFS` bật xác thực bằng ZK proof.
 
 ---
 

@@ -6,126 +6,93 @@ icon: material/bug
 
 # Error Mitigation Module (`hierachain/error_mitigation/*`)
 
-## Tổng quan
+## 1. Tổng quan
 
-Module **Error Mitigation** đóng vai trò là "lưới an toàn" của HieraChain, đảm bảo hệ thống luôn duy trì tính toàn vẹn và khả năng tự phục hồi (resilience) trước các sự cố phần cứng, phần mềm hoặc mạng. Hệ thống này kết hợp các kỹ thuật ghi nhật ký bền vững (Durability), phân loại lỗi thông minh và các kịch bản phục hồi tự động.
+Module `error_mitigation` xử lý khả năng chịu lỗi, xác thực trạng thái và phục hồi hệ thống. Module này cung cấp nhật ký sự kiện ghi tiếp (append-only), phân loại lỗi tự động, snapshot hoàn tác và các bộ máy phục hồi chuyên biệt cho các lỗi mạng, đồng thuận và trạng thái.
 
----
+## 2. Các thành phần lõi
 
-## Kiến trúc Phòng thủ Đa tầng
+Các thành phần nằm trong thư mục `hierachain/error_mitigation/`.
 
-<div class="grid cards" markdown>
+### 2.1 Lớp xác thực (`validator.py`, `data_validator.py`)
 
-*   :material-shield-check:{ .lg .middle } __Validation Layer__
+* `Validator`: Xác thực cấu trúc block và sự kiện theo các quy tắc sổ cái.
+* `DataValidator`: Kiểm tra tính nhất quán của payload sự kiện, sự tương thích với schema Arrow và các ràng buộc đầu vào.
 
-    ---
+### 2.2 Nhật ký bền vững (`journal.py`)
 
-    __Files__: `validator.py`, `data_validator.py`
+* Triển khai `TransactionJournal` sử dụng Apache Parquet và Arrow để ghi nhật ký sự kiện lưu trữ trên đĩa.
+* Áp dụng lưu trữ chỉ ghi tiếp trước khi sự kiện được commit vào trạng thái blockchain.
+* Cung cấp các generator phát lại để tái tạo các sự kiện chưa commit sau các lần tắt máy đột ngột.
 
-    * **Validator**: Kiểm tra cấu trúc Block/Event theo Ledger guidelines.
-    * **DataValidator**: Xác thực sâu logic nghiệp vụ, schema Arrow và tính hợp lệ của dữ liệu đầu vào.
+### 2.3 Quản lý hoàn tác (`rollback_manager.py`)
 
-*   :material-notebook-edit:{ .lg .middle } __Durable Journaling__
+* Tạo và xác minh snapshot trạng thái theo thời điểm (`FULL_SYSTEM`, `CHAIN_STATE`, `CONSENSUS_STATE`, `CONFIGURATION`).
+* Xác thực mã băm SHA-256 của snapshot trước khi áp dụng hoàn tác.
+* Tích hợp cơ chế cách ly cho các block trạng thái bị hỏng.
 
-    ---
+### 2.4 Các hệ thống con phục hồi
 
-    __File__: `journal.py`
+* `backup_recovery.py`: Quản lý lưu trữ sao lưu, khôi phục snapshot và chính sách lưu giữ.
+* `consensus_recovery.py`: Xử lý đồng bộ hóa khi chuyển view, phục hồi khi leader gặp sự cố và khởi động lại vòng BFT.
+* `network_recovery.py`: Phát hiện sự kiện phân đoạn mạng, kích hoạt giãn cách thời gian kết nối lại và quản lý cảnh báo nút mạng.
+* `auto_scaler.py`: Theo dõi mức sử dụng bộ nhớ và CPU để điều chỉnh ngưỡng validator một cách linh hoạt.
 
-    * Sử dụng **Apache Arrow** để ghi nhật ký giao dịch với tốc độ cực cao.
-    * Cơ chế **Append-only** đảm bảo dữ liệu không bị ghi đè.
-    * Đảm bảo tính bền vững (Persistence) trước khi sự kiện được commit vào chuỗi.
+## 3. Chiến lược phân loại lỗi
 
-*   :material-history:{ .lg .middle } __Rollback & Snapshots__
+`ErrorClassifier` trong `error_classifier.py` phân loại lỗi theo mức độ nghiêm trọng và đề xuất hành động xử lý:
 
-    ---
-
-    __File__: `rollback_manager.py`
-
-    * Quản lý các điểm khôi phục (Snapshots) cho toàn bộ hệ thống hoặc từng thành phần.
-    * Tự động tạo snapshot định kỳ (Auto-snapshot).
-    * Xác thực tính toàn vẹn của dữ liệu trước khi thực hiện rollback.
-
-*   :material-auto-fix:{ .lg .middle } __Adaptive Recovery__
-
-    ---
-
-    __File__: `recovery_engine.py`
-
-    * Tự động xử lý lỗi mạng (Network Recovery) và phân đoạn mạng (Partition Detection).
-    * Phục hồi trạng thái đồng thuận (Consensus Recovery) khi Leader gặp sự cố.
-    * Tích hợp **AutoScaler** để mở rộng tài nguyên dựa trên tải hệ thống.
-
-</div>
-
----
-
-## Chiến lược Phân loại Lỗi (Error Classification)
-
-Lớp `ErrorClassifier` không chỉ log lỗi mà còn đưa ra các chiến lược ứng phó (Mitigation Strategies) dựa trên mức độ nghiêm trọng:
-
-| Mức độ | Ý nghĩa | Hành động đề xuất |
+| Mức độ nghiêm trọng | Ý nghĩa | Hành động xử lý |
 | :--- | :--- | :--- |
-| **INFO / WARNING** | Thông tin hoặc lỗi nhẹ | Log & Continue |
-| **ERROR** | Lỗi xử lý giao dịch | RETRY / REJECT |
-| **CRITICAL** | Lỗi dữ liệu / nhất quán | ROLLBACK & QUARANTINE |
-| **FATAL** | Lỗi hệ thống nghiêm trọng | EMERGENCY SHUTDOWN |
+| INFO / WARNING | Bất thường vận hành nhỏ | Ghi log và tiếp tục |
+| ERROR | Lỗi xác thực sự kiện hoặc lỗi xử lý tạm thời | Thử lại kèm giãn cách hoặc từ chối |
+| CRITICAL | Hỏng trạng thái hoặc không khớp Merkle root | Hoàn tác và cách ly |
+| FATAL | Lỗi phần cứng hoặc lỗi đồng thuận không thể phục hồi | Khóa hệ thống khẩn cấp |
 
----
+## 4. Nhật ký sự kiện
 
-## Nhật ký Giao dịch (Transaction Journal)
+`TransactionJournal` cung cấp khả năng lưu trữ ghi trước:
 
-HieraChain sử dụng **Apache Arrow** IPC format cho Journaling để đạt được hiệu năng tối ưu:
-
-1.  **Durable Write**: Sự kiện được ghi xuống disk và thực hiện `fsync` trước khi tiếp tục.
-2.  **Schema Enforcement**: Đảm bảo mọi bản ghi trong journal đều tuân thủ schema sự kiện lõi.
-3.  **Replay Ability**: Khi hệ thống khởi động lại sau sự cố, Journal có thể "diễn lại" (replay) các sự kiện chưa được commit để khôi phục trạng thái.
+1. Ghi bền vững: Ghi các bản ghi vào tệp Parquet trên đĩa trước khi các block hoàn tất.
+2. Thực thi schema: Đảm bảo mọi bản ghi nhật ký khớp với schema sự kiện bắt buộc.
+3. Khả năng phát lại: Phát lại các sự kiện đã ghi từ đĩa vào hàng đợi sắp xếp khi nút khởi động lại.
 
 ```python
 from hierachain.error_mitigation.journal import TransactionJournal
 
-# Khởi tạo journal an toàn (chống Path Traversal)
 journal = TransactionJournal(storage_dir="data/journal")
-
-# Ghi sự kiện bền vững
 journal.log_event(event_dict)
 ```
 
----
-
-## Quy trình Khắc phục Sự cố (Recovery Workflow)
-
-Khi một lỗi được phát hiện, hệ thống sẽ thực hiện luồng xử lý sau:
+## 5. Quy trình phục hồi
 
 ```mermaid
 graph TD
-    A[Sự cố xảy ra] --> B{ErrorClassifier}
-    B -->|Mức độ Thấp| C[Ghi Log & Tiếp tục]
-    B -->|Mức độ Trung bình| D[Tự động Retry / Recovery Engine]
-    B -->|Mức độ Cao| E[Rollback về Snapshot gần nhất]
+    A[Phát hiện sự cố] --> B{ErrorClassifier}
+    B -->|Mức độ Thấp| C[Ghi log và tiếp tục]
+    B -->|Mức độ Trung bình| D[Thử lại / Phục hồi tự động]
+    B -->|Mức độ Cao| E[Hoàn tác về snapshot đã xác minh]
     
-    D --> D1[Network Recovery]
-    D --> D2[Consensus Recovery]
-    D --> D3[Auto Scaling]
+    D --> D1[Phục hồi mạng]
+    D --> D2[Phục hồi đồng thuận]
+    D --> D3[Tự động mở rộng]
     
-    E --> F[Xác thực tính toàn vẹn sau Rollback]
-    F --> G[Replay Journal để khôi phục dữ liệu thiếu]
+    E --> F[Xác thực trạng thái sau hoàn tác]
+    F --> G[Phát lại nhật ký để khôi phục dữ liệu hợp lệ]
 ```
 
----
+## 6. Các loại snapshot
 
-## Quản lý Điểm khôi phục (Snapshot Management)
+`RollbackManager` quản lý 4 phạm vi snapshot:
 
-`RollbackManager` hỗ trợ nhiều loại Snapshot khác nhau:
+* `CONFIGURATION`: Cài đặt nút và các tham số môi trường.
+* `CHAIN_STATE`: Mã băm block và sổ cái trạng thái thế giới trên Main Chain cùng các Sub-Chain.
+* `CONSENSUS_STATE`: Số thứ tự view hiện tại, tập hợp validator và trạng thái leader.
+* `FULL_SYSTEM`: Bản lưu trữ toàn diện kết hợp cấu hình, block chuỗi và trạng thái đồng thuận.
 
-*   **CONFIGURATION**: Chỉ backup các tệp cấu hình hệ thống.
-*   **CHAIN_STATE**: Backup trạng thái của Main Chain và các Sub-Chains.
-*   **CONSENSUS_STATE**: Lưu trữ View Number và thông tin Leader hiện tại.
-*   **FULL_SYSTEM**: Chụp ảnh toàn bộ trạng thái hệ thống.
+## Tài liệu liên quan
 
----
+* [Module Adapters](./adapters.md)
+* [Module Core](./core.md)
+* [Khóa cụm khẩn cấp](./cluster.md)
 
-## Liên quan
-
-*   [Hệ thống Lưu trữ (Storage)](./adapters.md)
-*   [Kiến trúc Lõi (Core)](./core.md)
-*   [Hệ thống Cluster](./cluster.md)

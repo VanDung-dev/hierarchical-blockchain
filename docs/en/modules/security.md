@@ -8,79 +8,79 @@ icon: material/shield-lock
 
 ## Overview
 
-The **Security** module provides enterprise-grade security capabilities for HieraChain. Instead of relying on a single protection layer, HieraChain implements a **Defense-in-Depth** strategy, spanning identity authentication, access control, resource protection, and advanced technologies such as Zero-Knowledge Proofs.
+The security module provides the main protections for HieraChain. It does not rely on one layer. Instead it combines identity, access control, resource protection, and zero-knowledge proofs so that a failure in one area does not expose the whole system.
 
 ---
 
-## 6 Main Security Pillars
+## Six security areas
 
-The security architecture consists of 6 main threads that work closely together:
+The design groups protections into six areas that work together:
 
 <div class="grid cards" markdown>
 
-*   :material-account-lock:{ .lg .middle } __Authorization & Access__
+*   :material-account-lock:{ .lg .middle } __Authorization and access__
 
     ---
 
-    Identity management (MSP), API Key authentication, and attribute-based access control (ABAC).
+    Identity management (MSP), API key authentication, and attribute-based access control (ABAC).
     [:octicons-arrow-right-24: Details](../security/authorization-access-control.md)
 
-*   :material-lock-alert:{ .lg .middle } __Lockdown & Logging__
+*   :material-lock-alert:{ .lg .middle } __Lockdown and logging__
 
     ---
 
-    Emergency cluster lockdown mechanism and tamper-proof secure logging system.
+    Emergency cluster lockdown and tamper-evident logging.
     [:octicons-arrow-right-24: Details](../security/lockdown-logging.md)
 
-*   :material-shield-check:{ .lg .middle } __Integrity & Guard__
+*   :material-shield-check:{ .lg .middle } __Integrity and guard__
 
     ---
 
-    Resource protection against DoS and integrity checks of source code/configuration at startup.
+    Resource protection against DoS and integrity checks for code and configuration at startup.
     [:octicons-arrow-right-24: Details](../security/fault-tolerance-integrity.md)
 
-*   :material-security-network:{ .lg .middle } __Risk & Sanitization__
+*   :material-security-network:{ .lg .middle } __Risk and sanitization__
 
     ---
 
-    Anomaly detection and input data sanitization against injection attacks.
+    Anomaly detection and input sanitization against injection attacks.
     [:octicons-arrow-right-24: Details](../security/risk-analyzer.md)
 
-*   :material-key-chain:{ .lg .middle } __Encryption & Keys__
+*   :material-key-chain:{ .lg .middle } __Encryption and keys__
 
     ---
 
-    Management of encryption key lifecycle (Ed25519, AES-GCM) and enterprise-standard digital certificates (X.509).
+    Key lifecycle management (Ed25519, AES-GCM) and X.509 certificates.
     [:octicons-arrow-right-24: Details](../security/encryption-keys.md)
 
-*   :material-brain:{ .lg .middle } __Zero-Knowledge Proofs__
+*   :material-brain:{ .lg .middle } __Zero-knowledge proofs__
 
     ---
 
-    Cross-chain private data security using zero-disclosure proof technology (ZKP).
+    Cross-chain privacy using zero-knowledge proofs (ZKP) so verifiers learn nothing beyond validity.
     [:octicons-arrow-right-24: Details](../security/decentralized-zkp.md)
 
 </div>
 
 ---
 
-## System Integration
+## How it connects
 
-Every component of HieraChain is protected by these security layers:
+Each part of HieraChain uses the same layers:
 
-*   **API Server**: Uses `ResourceGuard` and `APIKeyVerifier` as the first line of defense middleware.
-*   **Consensus**: All consensus messages are digitally signed and integrity-checked.
-*   **Storage**: Sensitive data is encrypted before storage and sanitized during queries.
+* API server uses `ResourceGuard` and `APIKeyVerifier` as middleware. They run first on every request.
+* Consensus signs every consensus message and checks integrity before accepting it.
+* Storage encrypts sensitive data before write and sanitizes input on queries.
 
 ---
 
-## Security Configuration
+## Security configuration
 
-Key settings are centrally managed in `hierachain/config/settings.py`:
+Main settings live in `hierachain/config/settings.py`:
 
-*   `AUTH_ENABLED`: Enable/disable API authentication.
-*   `HRC_CLUSTER_SECRET`: Secret key for cluster control commands.
-*   `HRC_ENABLE_ZK_PROOFS`: Enable ZK proof verification.
+* `AUTH_ENABLED` turns API authentication on or off.
+* `HRC_CLUSTER_SECRET` is the secret for cluster control commands.
+* `HRC_ENABLE_ZK_PROOFS` enables ZK proof verification.
 
 ---
 

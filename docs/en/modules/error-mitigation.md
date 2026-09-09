@@ -1,131 +1,97 @@
 ---
 title: "Error Mitigation Module"
-description: "Risk mitigation and recovery system: Validation, Journaling, Rollback and Automated Recovery."
+description: "Fault tolerance and recovery: Validation, durable journaling, rollback snapshots, and recovery handlers."
 icon: material/bug
 ---
 
 # Error Mitigation Module (`hierachain/error_mitigation/*`)
 
-## Overview
+## 1. Overview
 
-The **Error Mitigation** module acts as HieraChain's "safety net," ensuring the system always maintains integrity and resilience against hardware, software, or network incidents. This system combines durable journaling techniques, intelligent error classification, and automated recovery scenarios.
+The `error_mitigation` module handles fault tolerance, state validation, and system recovery. It provides append-only event journals, automated error classification, rollback snapshots, and targeted recovery engines for network, consensus, and state failures.
 
----
+## 2. Core components
 
-## Multi-layered Defense Architecture
+Components reside in `hierachain/error_mitigation/`.
 
-<div class="grid cards" markdown>
+### 2.1 Validation layer (`validator.py`, `data_validator.py`)
 
-*   :material-shield-check:{ .lg .middle } __Validation Layer__
+* `Validator`: Validates block and event structure against ledger rules.
+* `DataValidator`: Checks event payload consistency, Arrow schema alignment, and input constraints.
 
-    ---
+### 2.2 Durable journaling (`journal.py`)
 
-    __Files__: `validator.py`, `data_validator.py`
+* Implements `TransactionJournal` using Apache Parquet and Arrow for disk-backed event logging.
+* Enforces append-only storage before events commit to blockchain state.
+* Provides replay generators to reconstruct uncommitted events after ungraceful shutdowns.
 
-    * **Validator**: Checks Block/Event structure according to Ledger guidelines.
-    * **DataValidator**: Deep validation of business logic, Arrow schema, and input data validity.
+### 2.3 Rollback manager (`rollback_manager.py`)
 
-*   :material-notebook-edit:{ .lg .middle } __Durable Journaling__
+* Creates and verifies point-in-time state snapshots (`FULL_SYSTEM`, `CHAIN_STATE`, `CONSENSUS_STATE`, `CONFIGURATION`).
+* Validates SHA-256 snapshot hashes prior to applying rollbacks.
+* Integrates quarantine mechanisms for corrupt state blocks.
 
-    ---
+### 2.4 Recovery subsystems
 
-    __File__: `journal.py`
+* `backup_recovery.py`: Manages backup archives, snapshot restoration, and retention policies.
+* `consensus_recovery.py`: Handles view change synchronization, leader failure recovery, and BFT round restarts.
+* `network_recovery.py`: Detects network partition events, initiates reconnect backoffs, and manages peer alerts.
+* `auto_scaler.py`: Monitors memory and CPU utilization to dynamically scale validator thresholds.
 
-    * Uses **Apache Arrow** for high-speed transaction journaling.
-    * **Append-only** mechanism ensures data is never overwritten.
-    * Guarantees persistence before events are committed to the chain.
+## 3. Error classification strategy
 
-*   :material-history:{ .lg .middle } __Rollback & Snapshots__
+`ErrorClassifier` in `error_classifier.py` categorizes errors by severity and recommends mitigation actions:
 
-    ---
-
-    __File__: `rollback_manager.py`
-
-    * Manages restore points (Snapshots) for the entire system or individual components.
-    * Automatic periodic snapshot creation (Auto-snapshot).
-    * Validates data integrity before performing rollback.
-
-*   :material-auto-fix:{ .lg .middle } __Adaptive Recovery__
-
-    ---
-
-    __File__: `recovery_engine.py`
-
-    * Automatic handling of network errors and partition detection.
-    * Consensus state recovery when a Leader fails.
-    * Integrates **AutoScaler** to scale resources based on system load.
-
-</div>
-
----
-
-## Error Classification Strategy
-
-The `ErrorClassifier` not only logs errors but also proposes mitigation strategies based on severity:
-
-| Level | Meaning | Suggested Action |
+| Severity Level | Category Meaning | Mitigation Action |
 | :--- | :--- | :--- |
-| **INFO / WARNING** | Information or minor error | Log & Continue |
-| **ERROR** | Transaction processing error | RETRY / REJECT |
-| **CRITICAL** | Data / consistency error | ROLLBACK & QUARANTINE |
-| **FATAL** | Critical system error | EMERGENCY SHUTDOWN |
+| INFO / WARNING | Minor operational anomalies | Log and continue |
+| ERROR | Event validation or transient processing failures | Retry with backoff or reject |
+| CRITICAL | State corruption or Merkle root mismatch | Rollback and quarantine |
+| FATAL | Irrecoverable consensus or hardware failure | Emergency lockdown |
 
----
+## 4. Transaction journaling
 
-## Transaction Journal
+The `TransactionJournal` provides write-ahead persistence:
 
-HieraChain uses **Apache Arrow** IPC format for Journaling to achieve optimal performance:
-
-1.  **Durable Write**: Events are written to disk and `fsync` is called before proceeding.
-2.  **Schema Enforcement**: Ensures every journal record conforms to the core event schema.
-3.  **Replay Ability**: When the system restarts after a failure, the Journal can replay uncommitted events to restore state.
+1. Durable writes: Writes records to Parquet files on disk before blocks finalize.
+2. Schema enforcement: Guarantees every journal record matches the required event schema.
+3. Replay ability: Replays logged events from disk into the ordering pipeline during node restart.
 
 ```python
 from hierachain.error_mitigation.journal import TransactionJournal
 
-# Initialize a secure journal (Path Traversal protected)
 journal = TransactionJournal(storage_dir="data/journal")
-
-# Write a durable event
 journal.log_event(event_dict)
 ```
 
----
-
-## Recovery Workflow
-
-When an error is detected, the system follows this processing flow:
+## 5. Recovery workflow
 
 ```mermaid
 graph TD
-    A[Incident occurs] --> B{ErrorClassifier}
-    B -->|Low Level| C[Log & Continue]
-    B -->|Medium Level| D[Auto Retry / Recovery Engine]
-    B -->|High Level| E[Rollback to nearest Snapshot]
+    A[Incident detected] --> B{ErrorClassifier}
+    B -->|Low Severity| C[Log and continue]
+    B -->|Medium Severity| D[Retry / Automated recovery]
+    B -->|High Severity| E[Rollback to verified snapshot]
     
     D --> D1[Network Recovery]
     D --> D2[Consensus Recovery]
     D --> D3[Auto Scaling]
     
-    E --> F[Validate integrity after Rollback]
-    F --> G[Replay Journal to restore missing data]
+    E --> F[Validate post-rollback state]
+    F --> G[Replay journal to restore valid delta]
 ```
 
----
+## 6. Snapshot types
 
-## Snapshot Management
+`RollbackManager` manages four snapshot scopes:
 
-`RollbackManager` supports different Snapshot types:
-
-*   **CONFIGURATION**: Backup only system configuration files.
-*   **CHAIN_STATE**: Backup Main Chain and Sub-Chains state.
-*   **CONSENSUS_STATE**: Stores View Number and current Leader information.
-*   **FULL_SYSTEM**: Snapshot of the entire system state.
-
----
+* `CONFIGURATION`: Node settings and environment parameters.
+* `CHAIN_STATE`: Block hashes and world state registers across Main Chain and Sub-Chains.
+* `CONSENSUS_STATE`: Current view number, validator set, and leader status.
+* `FULL_SYSTEM`: Comprehensive archive combining configuration, chain blocks, and consensus state.
 
 ## Related
 
-*   [Storage System](./adapters.md)
-*   [Core Architecture](./core.md)
-*   [Cluster System](./cluster.md)
+* [Adapters Module](./adapters.md)
+* [Core Module](./core.md)
+* [Cluster Lockdown](./cluster.md)

@@ -8,13 +8,13 @@ icon: material/database
 
 ## Overview
 
-The **Storage** module is responsible for managing all HieraChain data, from block and event history to the current state of business entities (**World State**). The system is designed with a pluggable architecture, allowing flexible switching of storage backends based on enterprise performance and scale requirements.
+The storage module manages all HieraChain data, from block and event history to current entity state (World State). It has a pluggable design, so you can switch backends based on scale and performance needs without changing business logic.
 
 ---
 
-## Multi-tier Storage Architecture
+## Multi-tier storage architecture
 
-HieraChain divides storage into two main layers to optimize between persistence and query speed:
+HieraChain splits storage into layers to balance durability and query speed:
 
 <div class="grid cards" markdown>
 
@@ -22,21 +22,20 @@ HieraChain divides storage into two main layers to optimize between persistence 
 
     ---
 
-    __File__: `world_state.py`
+    __File__: `hierachain/state/world_state.py` (`WorldState.get_entity_state()`)
 
-    * Stores the current value of entities (e.g., the status of a shipment).
-    * Updates in real time from new blocks through event processing mechanisms (`creation`, `update`, `status_change`).
-    * Supports **Caching** and **Indexing** for instant query responses.
+    * Holds current entity state derived from finalized blocks.
+    * Updated when a block commits and supports caching. The codebase does not define implicit `creation/update/status_change` event types.
 
 *   :material-database-sync:{ .lg .middle } __Persistence Layer (Adapters)__
 
     ---
 
-    __File__: `adapters/database/sqlite_adapter.py`, `adapters/database/*`
+    __File__: `hierachain/adapters/database/sqlite_adapter.py`, `postgres_adapter.py`, `redis_adapter.py`, `sqlite_schema.py`/`postgres_schema.py`
 
-    * **SQL Backend**: Durable storage for blocks and events (SQLite via `sqlite_adapter.py`).
-    * **Redis Adapter**: Optimized for entity indexing.
-    * **File Adapter**: Parquet file storage for large data.
+    * **SQLite/Postgres** via `SQLBase` + `init_database_schema()` (`chains`, `blocks`, `events`, `proofs`, `chain_state` tables; composite indexes).
+    * **Redis Adapter**: `hierachain/adapters/database/redis_adapter.py` for entity indexing.
+    * **Memory**: `HRC_STORAGE_BACKEND=memory` for tests. There is no built-in File Adapter. Parquet is for logs and journals (`core/parquet_log.py`, `error_mitigation/journal.py`), not for chain storage.
 
 *   :material-cloud-sync:{ .lg .middle } __Off-chain Storage (IPFS)__
 
@@ -44,15 +43,15 @@ HieraChain divides storage into two main layers to optimize between persistence 
 
     __File__: `api/storage/ipfs_client.py`
 
-    * Stores large data (such as attached documents, complex event details).
-    * Only stores the hash (CID) on the blockchain to save space and optimize performance.
-    * Integrates **AES-256-GCM** encryption before upload.
+    * Holds large payloads such as documents and detailed event data.
+    * Stores only the CID on chain to save space.
+    * Encrypts data with AES-256-GCM before upload.
 
 </div>
 
 ---
 
-## State Update Processing Flow
+## State update flow
 
 ```mermaid
 graph TD
@@ -66,33 +65,30 @@ graph TD
 
 ---
 
-## Core Data Models (`models.py`)
+## Core data models
 
-HieraChain uses SQLAlchemy to define durable data structures:
-
-*   **BlockModel**: Stores block index, hash, previous_hash, and metadata.
-*   **EventModel**: Stores event details, linked to block hash and entity ID.
-*   **ChainStateModel**: Stores Key-Value pairs representing chain state.
+There is no `models.py` or SQLAlchemy `BlockModel`/`EventModel`. Tables are created with raw SQL in `sqlite_schema.py`/`postgres_schema.py:init_database_schema()` with `chains`, `blocks`, `events`, `proofs`, `chain_state`. `Block` and `Blockchain` are plain Python classes in `hierachain/core/`.
 
 ---
 
-## Backend Configuration (Environment Variables)
+## Backend configuration
 
 | Environment Variable | Meaning | Available Values |
 | :--- | :--- | :--- |
-| `HRC_STORAGE_BACKEND` | Storage backend type | `sqlite`, `redis`, `memory`, `file` |
-| `DATABASE_URL` | DB connection string | `sqlite:///hierachain.db`, `postgresql://...` |
-| `LOG_SQL_DETAIL` | Log detailed SQL | `true`, `false` (Recommended `false` for Prod) |
+| `HRC_STORAGE_BACKEND` / `DATABASE_URL`+`HRC_DATABASE_URL` | Storage backend / DB URL | `sqlite`, `postgres` (auto-detected from `postgres://`), `redis`, `memory`, `parquet_only` (via `HRC_STORAGE_BACKEND`/`DATABASE_URL` handling in `config/settings.py:78`) |
+| `HRC_LOG_SQL_DETAIL` / `HRC_LOG_FORMAT` | SQL detail / log format | `true/false`, `text/json` |
 
 ---
 
-## Advanced Features
+## Advanced features
 
-### 1. Integrity and Idempotency
-`SqlStorageBackend` is designed to safely handle duplicate requests (Idempotency) through unique constraint checking, ensuring the system remains stable even when network issues cause block re-submission.
+### Integrity and idempotency
 
-### 2. Indexing Queries
-Every entity in World State is automatically indexed by `entity_id` and `timestamp`. When using the Redis Adapter, these indexes are stored as **Sorted Sets**, enabling extremely fast queries of an entity's change history.
+`SQLiteAdapter` and `PostgresAdapter` (via `SQLBase`) handle `save_block` with checks for duplicate `hash`/`block_hash` and verify `previous_hash` links (`consensus/ordering/storage.py:_verify_chain_links`). `SqlStorageBackend` does not exist in the current code.
+
+### Indexing and queries
+
+World State indexes every entity by `entity_id` and `timestamp`. With the Redis adapter, these indexes are stored as Sorted Sets, which makes history queries for an entity fast.
 
 ---
 

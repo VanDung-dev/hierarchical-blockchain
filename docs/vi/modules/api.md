@@ -8,70 +8,76 @@ icon: material/api
 
 ## Tổng quan
 
-Module **API** là cổng giao tiếp chính giữa thế giới bên ngoài và nhân blockchain HieraChain. Hệ thống được xây dựng trên nền tảng **FastAPI**, cung cấp hiệu năng cực cao và hỗ trợ đồng thời nhiều phương thức tương tác: RESTful, GraphQL và WebSocket.
+Module API xử lý giao tiếp giữa client bên ngoài và lõi HieraChain. Nó chạy trên FastAPI và hỗ trợ REST, GraphQL và WebSocket. Mục tiêu chính là hiệu năng, nên cùng một service có thể phục vụ cả ba giao thức mà không cần triển khai riêng.
 
-### Các thành phần cốt lõi
+### Thành phần cốt lõi
 
-* **FastAPI Server (`server.py`)**: Điểm khởi chạy, cấu hình Middleware, Authentication và tích hợp Router.
-* **Versioned REST API**: Chia làm 3 phiên bản (ledger, business, admin) phục vụ các mục đích khác nhau từ cốt lõi đến quản trị hệ thống.
-* **GraphQL Endpoint**: Cung cấp khả năng truy vấn linh hoạt với cơ chế bảo mật (Depth/Complexity limit).
-* **WebSocket Gateway**: Truyền tải sự kiện (events/blocks) thời gian thực theo mô hình Publish/Subscribe.
-* **IPFS Integration**: Xử lý minh bạch dữ liệu on-chain và off-chain (IPFS + AES-256-GCM).
+* FastAPI server (`server.py`) là điểm khởi chạy. Nó thiết lập middleware, xác thực và router.
+* REST API có ba nhóm (ledger, business, admin) cho thao tác lõi, tính năng nghiệp vụ và quản trị hệ thống.
+* GraphQL endpoint cho phép chọn field linh hoạt với giới hạn depth và complexity.
+* WebSocket gateway truyền block và event tới subscriber theo mô hình publish/subscribe.
+* Tích hợp IPFS xử lý dữ liệu off-chain với mã hóa AES-256-GCM. Payload lớn nằm ngoài chain, chỉ CID được lưu trên chain.
 
 ---
 
-## Kiến trúc & Bảo mật (Middleware Layer)
+## Kiến trúc và bảo mật
 
-HieraChain API triển khai một lớp Middleware bảo mật đa tầng để đảm bảo an toàn cho dữ liệu doanh nghiệp:
+API dùng middleware theo lớp. Mỗi request đi qua cùng một chuỗi kiểm tra trước khi tới handler.
 
 ### Bảo mật HTTP
 
-* **Security Headers**: Tự động thêm các header bảo mật như CSP (Content Security Policy), HSTS, X-Frame-Options (DENY), và X-Content-Type-Options (nosniff).
-* **Payload Limit**: Giới hạn kích thước body request (mặc định 5MB) để ngăn chặn tấn công DoS.
-* **CORS Management**: Kiểm soát truy cập từ các origin không xác định, đặc biệt nghiêm ngặt trong môi trường Production.
+* Header bảo mật được thêm vào mọi response, gồm CSP, HSTS, X-Frame-Options đặt là DENY và X-Content-Type-Options đặt là nosniff.
+* Giới hạn payload chặn body request ở mức 5 MB mặc định. Mức này giúp tránh DoS bằng payload lớn.
+* CORS kiểm soát origin nào được gọi API. Môi trường production yêu cầu danh sách cho phép cụ thể.
 
-### Kiểm soát lưu lượng (Rate Limiting)
+### Rate limiting
 
-Hỗ trợ hai backend lưu trữ cho bộ đếm Rate Limit:
+Rate limiting đếm request theo key và hỗ trợ hai backend:
 
-* **In-memory**: Phù hợp cho node đơn lẻ.
-* **Redis**: Phù hợp cho cụm node (cluster) cần đồng bộ trạng thái giới hạn.
+* In-memory cho triển khai đơn node.
+* Redis cho cụm cần đồng bộ bộ đếm.
 
-*Mặc định*: 60 requests/phút (có thể cấu hình qua `HRC_RATE_LIMIT_REQUESTS_PER_MINUTE`).
+Mặc định là 100 request mỗi phút, được cấu hình qua `HRC_RATE_LIMIT_RPM`.
 
-### Xác thực (Authentication)
+### Xác thực
 
-Sử dụng `APIKeyVerifier` để kiểm tra quyền truy cập dựa trên API Key. Cơ chế này có thể bật/tắt qua biến môi trường `HRC_AUTH_ENABLED`.
+`APIKeyVerifier` kiểm tra header `X-API-Key`. Bật hoặc tắt qua `HRC_AUTH_ENABLED`.
 
 ---
 
-## REST API Reference
+## REST API reference
 
-### ledger: Core Ledger (Cốt lõi)
+### ledger: core ledger
 
-Tập trung vào các hoạt động blockchain cơ bản:
+Các endpoint này tương tác trực tiếp với trạng thái sổ cái:
 
-* `GET /api/ledger/health`: Kiểm tra tình trạng node.
-* `GET /api/ledger/chains`: Liệt kê tất cả Main Chain và Sub-Chains.
-* `POST /api/ledger/chains/{name}/events`: Thêm sự kiện (tự động xử lý IPFS nếu dữ liệu lớn).
-* `GET /api/ledger/entities/{id}/trace`: Truy vết thực thể xuyên suốt các chain trong hệ thống phân cấp.
-* `GET /api/ledger/chains/{name}/blocks`: Lấy danh sách block (hỗ trợ phân trang và giải mã CID IPFS).
+* `GET /api/ledger/health` kiểm tra sức khỏe node.
+* `GET /api/ledger/network/ping/{target_id}` gửi ping trực tiếp đến nút mạng mục tiêu.
+* `GET /api/ledger/chains` liệt kê Main Chain và Sub-Chain.
+* `POST /api/ledger/chains/{chain_name}/create` khởi tạo một sub-chain mới.
+* `GET /api/ledger/chains/{chain_name}/stats` lấy số lượng block, event và proof.
+* `POST /api/ledger/chains/{chain_name}/events` gửi event, chuyển tải dữ liệu quá cỡ sang IPFS.
+* `POST /api/ledger/chains/{chain_name}/submit-proof` gửi bằng chứng mật mã từ sub-chain lên main chain.
+* `GET /api/ledger/chains/{chain_name}/blocks` liệt kê block có phân trang và tùy chọn giải mã CID.
+* `GET /api/ledger/chains/{chain_name}/blocks/{index_or_hash}` lấy thông tin chi tiết một block theo chỉ số hoặc mã băm.
+* `GET /api/ledger/entities/{id}/trace` truy vết entity xuyên suốt hệ thống phân cấp chuỗi.
 
-### business: Enterprise Features (Tính năng doanh nghiệp)
+### business: enterprise features
 
-Cung cấp các công cụ nâng cao cho quy trình kinh doanh phức tạp:
+Các endpoint này hỗ trợ quy trình nghiệp vụ:
 
-* **Channels**: Tạo kênh giao tiếp riêng tư giữa các tổ chức (`POST /api/business/channels`).
-* **Private Data**: Quản lý bộ sưu tập dữ liệu riêng tư (`Private Data Collections`) không công khai trên sổ cái chung.
-* **Domain Contracts**: Triển khai và thực thi hợp đồng thông minh theo nghiệp vụ đặc thù.
-* **Organizations**: Đăng ký và quản lý danh tính tổ chức qua MSP.
+* Channel tạo kênh giao tiếp riêng giữa các tổ chức (`POST /api/business/channels`).
+* Private data collection lưu dữ liệu không chia sẻ trên sổ cái chung.
+* Domain contract triển khai và chạy hợp đồng thông minh theo nghiệp vụ riêng.
+* Organization đăng ký và quản lý danh tính qua MSP.
 
-### admin: System & Admin (Quản trị)
+### admin: system và admin
 
-Dành riêng cho việc quản lý node và vận hành hệ thống:
+Các endpoint này dành cho vận hành node và hệ thống:
 
-* `POST /api/admin/verify-identity`: Node ký một challenge để chứng minh danh tính với hệ thống quản lý.
-* `GET /api/admin/status`: Báo cáo chi tiết uptime, số lượng chain active, phiên bản và tình trạng bản quyền.
+* `POST /api/admin/verify-identity` cho phép node ký challenge để chứng minh danh tính.
+* `GET /api/admin/status` trả về uptime, số lượng chain, phiên bản và trạng thái bản quyền.
+* `POST /api/admin/chains/{chain_name}/secure-events` gửi sự kiện mức tin cậy cao yêu cầu xác thực chữ ký đồng bộ.
 
 ---
 
@@ -79,17 +85,17 @@ Dành riêng cho việc quản lý node và vận hành hệ thống:
 
 Endpoint: `/graphql`
 
-GraphQL được khuyến khích sử dụng khi client cần truy vấn dữ liệu phức tạp hoặc cần tối ưu hóa băng thông (chọn lọc field).
+Dùng GraphQL khi client cần chọn field cụ thể hoặc giảm kích thước payload.
 
-### Cơ chế bảo mật đặc thù
+### Giới hạn bảo mật
 
-* **Query Depth Limit**: Tối đa 10 cấp độ lồng nhau.
-* **Complexity Analysis**: Giới hạn 1000 điểm cho mỗi truy vấn (tính dựa trên số lượng field và phép toán).
-* **Introspection Control**: Tự động tắt tính năng khám phá schema (`__schema`) trong môi trường Production.
+* Depth của query giới hạn ở 10 cấp.
+* Complexity giới hạn ở 1000 điểm mỗi query, tính theo số field và phép toán.
+* Introspection (`__schema`) bị tắt ở production.
 
-### Ví dụ truy vấn (Lazy-loading IPFS)
+### Ví dụ query (lazy-loading IPFS)
 
-Khi truy vấn event, bạn có thể quyết định có giải mã dữ liệu từ IPFS hay không thông qua tham số `resolveCid`.
+Bạn có thể chọn có fetch và giải mã dữ liệu IPFS hay không qua `resolveCid`.
 
 ```graphql
 query {
@@ -104,48 +110,47 @@ query {
 
 ---
 
-## WebSocket (Real-time Streaming)
+## WebSocket (real-time streaming)
 
 Endpoint: `/ws`
 
-HieraChain sử dụng WebSocket để đẩy dữ liệu mới đến client ngay khi block được cam kết hoặc có event mới phát sinh.
+Server đẩy dữ liệu ngay khi block được commit hoặc có event mới.
 
 ### Các loại message chính
 
-* **Client -> Server**
-    * `subscribe`: Đăng ký nhận tin từ một chain cụ thể hoặc theo loại event.
-    * `ping`: Duy trì kết nối.
-* **Server -> Client**
-    * `block_added`: Thông báo có block mới kèm theo data rút gọn.
-    * `event`: Đẩy thông tin event chi tiết đến subscribers.
-    * `subscribed`: Xác nhận đăng ký thành công.
+* Client tới server
+    * `subscribe` đăng ký nhận tin từ một chain cụ thể hoặc theo loại event.
+    * `ping` giữ kết nối.
+* Server tới client
+    * `block_added` báo có block mới kèm dữ liệu rút gọn.
+    * `event` đẩy chi tiết event tới subscriber.
+    * `subscribed` xác nhận đăng ký thành công.
 
 ---
 
-## Blockchain Explorer
+## Blockchain explorer
 
-Tích hợp sẵn tại `blockchain_explorer.py`, explorer cung cấp giao diện dashboard cho các nhà vận hành:
+Tích hợp sẵn tại `blockchain_explorer.py`, explorer cung cấp dashboard cho người vận hành:
 
-* **Monitor**: Theo dõi tốc độ sinh block và event theo thời gian thực.
-* **Visualizer**: Trực quan hóa cấu hình cây phân cấp giữa Main Chain và các Sub-Chains.
-* **IPFS Decoder**: Cho phép người quản trị có quyền truy cập giải mã nhanh các CID trực tiếp trên trình duyệt.
-
----
-
-## Quan sát & Giám sát (Observability)
-
-* **X-Request-ID**: Mỗi request được gán một UUID duy nhất trong header để truy vết log.
-* **Metrics**: Tích hợp sẵn endpoint `/metrics` (Prometheus format) để theo dõi các chỉ số:
-
-    * Số lượng request thành công/thất bại.
-    * Thời gian phản hồi (Latency) trung bình.
-    * Tình trạng bộ nhớ và CPU của API server.
+* Monitor hiển thị tốc độ tạo block và luồng event theo thời gian thực.
+* Visualizer vẽ cây quan hệ giữa Main Chain và Sub-Chain.
+* IPFS decoder cho phép admin có quyền giải mã CID trực tiếp trên trình duyệt.
 
 ---
 
-## Hướng dẫn sử dụng nhanh (curl)
+## Quan sát (observability)
 
-### Ghi sự kiện vào chuỗi
+* `X-Request-ID` gắn UUID cho mỗi request để truy vết log.
+* `/metrics` cung cấp metric dạng Prometheus, gồm:
+    * Số request thành công và thất bại.
+    * Độ trễ trung bình.
+    * Trạng thái bộ nhớ và CPU của API server.
+
+---
+
+## Hướng dẫn nhanh (curl)
+
+### Ghi event vào chain
 
 ```bash
 curl -X POST http://localhost:2661/api/ledger/chains/my_chain/events \
@@ -158,7 +163,7 @@ curl -X POST http://localhost:2661/api/ledger/chains/my_chain/events \
   }'
 ```
 
-### Truy vết thực thể (Trace)
+### Truy vết entity
 
 ```bash
 curl "http://localhost:2661/api/ledger/entities/ITEM-123/trace?resolve_cid=true"
