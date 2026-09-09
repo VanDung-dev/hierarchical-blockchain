@@ -1450,7 +1450,7 @@
   <a href="#flow-diagram-happy-path" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Happy Path
+        Flow diagram: happy path
       </span>
     </span>
   </a>
@@ -1461,7 +1461,7 @@
   <a href="#flow-diagram-failure-paths" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Failure Paths
+        Flow diagram: failure paths
       </span>
     </span>
   </a>
@@ -1472,7 +1472,7 @@
   <a href="#operation-state-machine" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Operation State Machine
+        Operation state machine
       </span>
     </span>
   </a>
@@ -1483,7 +1483,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -1494,7 +1494,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -1502,10 +1502,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4318,7 +4318,7 @@
   <a href="#flow-diagram-happy-path" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Happy Path
+        Flow diagram: happy path
       </span>
     </span>
   </a>
@@ -4329,7 +4329,7 @@
   <a href="#flow-diagram-failure-paths" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Failure Paths
+        Flow diagram: failure paths
       </span>
     </span>
   </a>
@@ -4340,7 +4340,7 @@
   <a href="#operation-state-machine" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Operation State Machine
+        Operation state machine
       </span>
     </span>
   </a>
@@ -4351,7 +4351,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -4362,7 +4362,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -4370,10 +4370,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4422,12 +4422,12 @@
   
 
 
-<h1 id="cross-chain-operation-2pc">Cross-Chain Operation (2PC)</h1>
+<h1 id="cross-chain-operation-2pc">Cross-chain operation (2PC)</h1>
 <h2 id="overview">Overview</h2>
-<p>When a business operation needs to atomically span two Sub-Chains (e.g., an asset moves from the <code>logistics</code> chain to the <code>finance</code> chain), HieraChain uses the <strong>Two-Phase Commit (2PC)</strong> protocol to guarantee atomicity. Either both chains commit the change, or both roll back. No partial state is possible.</p>
-<p><strong>Example real-world trigger</strong>: An inventory item is transferred between departments. The source chain records a <code>deduct</code> event; the destination chain records a <code>receive</code> event. Both must succeed or neither applies.</p>
+<p>When a business operation must span two Sub-Chains atomically, for example when an asset moves from the <code>logistics</code> chain to the <code>finance</code> chain, HieraChain uses Two-Phase Commit. Either both chains commit or both roll back. No partial state is left behind.</p>
+<p>A typical trigger is an inventory transfer between departments. The source chain records a <code>deduct</code> event and the destination chain records a <code>receive</code> event. Both have to succeed.</p>
 <hr />
-<h2 id="flow-diagram-happy-path">Flow Diagram: Happy Path</h2>
+<h2 id="flow-diagram-happy-path">Flow diagram: happy path</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant HM as 🏛️ HierarchyManager
@@ -4462,7 +4462,7 @@
 
     TM--&gt;&gt;HM: op_id (COMMITTED)</code></pre>
 <hr />
-<h2 id="flow-diagram-failure-paths">Flow Diagram: Failure Paths</h2>
+<h2 id="flow-diagram-failure-paths">Flow diagram: failure paths</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant TM as 🔄 CrossChainOperationManager
@@ -4491,7 +4491,7 @@
         Note over TM: Manual reconciliation required&lt;br/&gt;Inspect logs for partial state
     end</code></pre>
 <hr />
-<h2 id="operation-state-machine">Operation State Machine</h2>
+<h2 id="operation-state-machine">Operation state machine</h2>
 <pre class="mermaid"><code>flowchart LR
     P["PENDING"] --&gt; PR["PREPARED"]
     PR --&gt; C["COMMITTED ✅"]
@@ -4499,7 +4499,7 @@
     P --&gt; F["FAILED ❌"]
     PR --&gt; F</code></pre>
 <hr />
-<h2 id="step-by-step-breakdown">Step-by-Step Breakdown</h2>
+<h2 id="step-by-step-breakdown">Step-by-step breakdown</h2>
 <table>
 <thead>
 <tr>
@@ -4539,7 +4539,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="error-handling">Error Handling</h2>
+<h2 id="error-handling">Error handling</h2>
 <table>
 <thead>
 <tr>
@@ -4572,7 +4572,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-classes-methods">Key Classes &amp; Methods</h2>
+<h2 id="key-classes-and-methods">Key classes and methods</h2>
 <table>
 <thead>
 <tr>

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Protecting system resources and verifying source code/data integrity.">
+        <meta name="description" content="Actual resource protection and integrity checks in HieraChain (no separate Resource Guard/Integrity module).">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -2584,10 +2584,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-resource-guard-dos-protection" class="md-nav__link">
+  <a href="#resource-protection-actual" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Resource Guard (DoS Protection)
+        Resource protection (actual)
       </span>
     </span>
   </a>
@@ -2595,32 +2595,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-integrity-manager" class="md-nav__link">
+  <a href="#integrity-checks-actual" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Integrity Manager
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#resource-protection-mechanism-resource-guard" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Resource Protection Mechanism (Resource Guard)
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#integrity-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Integrity Flow
+        Integrity checks (actual)
       </span>
     </span>
   </a>
@@ -4271,10 +4249,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-resource-guard-dos-protection" class="md-nav__link">
+  <a href="#resource-protection-actual" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Resource Guard (DoS Protection)
+        Resource protection (actual)
       </span>
     </span>
   </a>
@@ -4282,32 +4260,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-integrity-manager" class="md-nav__link">
+  <a href="#integrity-checks-actual" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Integrity Manager
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#resource-protection-mechanism-resource-guard" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Resource Protection Mechanism (Resource Guard)
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#integrity-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Integrity Flow
+        Integrity checks (actual)
       </span>
     </span>
   </a>
@@ -4357,66 +4313,31 @@
 
 
 <h1 id="fault-tolerance-integrity">Fault-tolerance &amp; Integrity</h1>
-<p>This security layer ensures the system always operates within safe thresholds and that executed code has not been tampered with.</p>
-<h2 id="1-resource-guard-dos-protection">1. Resource Guard (DoS Protection)</h2>
-<p><strong>File</strong>: <code>hierachain/security/resource_guard.py</code></p>
-<p>The steel shield protecting system resources (CPU, RAM):</p>
+<p>This page previously described <code>security/resource_guard.py</code> and <code>security/integrity.py</code>, which do not exist in <code>hierachain/</code>. Fault tolerance in the codebase is distributed instead.</p>
+<h2 id="resource-protection-actual">Resource protection (actual)</h2>
 <ul>
-<li><strong>Load Shedding</strong>: Automatically rejects new requests when system resources exceed the threshold (e.g., CPU &gt; 90%) to prevent node-wide failure.</li>
-<li><strong>Fast Response</strong>: Immediately returns <code>503 Service Unavailable</code> errors to reduce worker processing load.</li>
-<li><strong>Monitoring Integration</strong>: Uses real-time data from <code>PerformanceMonitor</code> to make protection decisions.</li>
+<li>Rate and payload limits live in <code>hierachain/api/middleware.py</code> (<code>add_rate_limit</code>, <code>add_payload_limit</code> with <code>HRC_RATE_LIMIT</code>, <code>HRC_RATE_LIMIT_RPM</code>, <code>HRC_RATE_LIMIT_BACKEND</code>, <code>HRC_TRUSTED_PROXIES</code>; payload is checked via <code>request.stream()</code> with a 1MB limit).</li>
+<li>Event pool and RAM guards are <code>HRC_EVENT_POOL_MAX_SIZE</code> (10k) and <code>HRC_RAM_CRITICAL_THRESHOLD</code> (95%), checked in ordering and storage paths.</li>
+<li>There is no <code>ResourceGuardMiddleware</code>. The 70%/90% threshold table and the load shedding in <code>monitoring/performance_monitor.py</code> described earlier were fabricated. Use app middleware together with reverse proxy limits.</li>
 </ul>
-<h2 id="2-integrity-manager">2. Integrity Manager</h2>
-<p><strong>File</strong>: <code>hierachain/security/integrity.py</code></p>
-<p>Verifies system integrity at startup:</p>
+<h2 id="integrity-checks-actual">Integrity checks (actual)</h2>
+<p>There is no startup signature scan in <code>security/integrity.py</code>. The actual integrity mechanisms are:</p>
 <ul>
-<li><strong>Executable Signing</strong>: Checks digital signatures or checksums of critical executable and configuration files.</li>
-<li><strong>Startup Verification</strong>: Prevents the system from starting if code has been detected as tampered.</li>
-<li><strong>Runtime Checks</strong>: Performs periodic scans to ensure in-memory components have not been modified.</li>
+<li>Merkle and chain links in <code>hierachain/core/block.py</code> and <code>core/merkle_tree.py</code> (domain-separated <code>0x01</code> prefix) and <code>consensus/ordering/storage.py:_verify_chain_links()</code> (<code>previous_hash</code> chain).</li>
+<li>Proof verification in <code>hierachain/hierarchical/main_chain/proofs.py:_verify_proof_in_main_chain</code> (fallback chain scan) and <code>security/verify/block_verifier.py</code>.</li>
+<li>Rollback integrity in <code>hierachain/error_mitigation/rollback_manager.py:_verify_rollback_integrity</code> (<code>data_hash</code> check) with a path traversal guard.</li>
 </ul>
-<hr />
-<h2 id="resource-protection-mechanism-resource-guard">Resource Protection Mechanism (Resource Guard)</h2>
-<p>The system uses a 3-stage protection mechanism:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">State</th>
-<th style="text-align: left;">Threshold (CPU/RAM)</th>
-<th style="text-align: left;">Action</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>Normal</strong></td>
-<td style="text-align: left;">&lt; 70%</td>
-<td style="text-align: left;">Accept all requests.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Warning</strong></td>
-<td style="text-align: left;">70% - 90%</td>
-<td style="text-align: left;">Begin rate limiting non-priority requests.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Critical</strong></td>
-<td style="text-align: left;">&gt; 90%</td>
-<td style="text-align: left;">Reject all new requests (Load shedding) until resources cool down.</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="integrity-flow">Integrity Flow</h2>
 <pre class="mermaid"><code>graph LR
-    A[System Boot] --&gt; B[Load Manifest]
-    B --&gt; C[Calculate File Hashes]
-    C --&gt; D{Match Signatures?}
-    D -- Yes --&gt; E[Proceed to Start Services]
-    D -- No --&gt; F[Log Security Alert]
-    F --&gt; G[Halt Startup]</code></pre>
+    A[Block finalize] --&gt; B[previous_hash check]
+    B --&gt; C[Merkle root verify]
+    C --&gt; D[Proof verify on MainChain]
+    D --&gt; E[Rollback data_hash if needed]</code></pre>
 <hr />
 <h2 id="related">Related</h2>
 <ul>
-<li><a href="../../modules/monitoring/">Performance monitoring</a></li>
-<li><a href="../../modules/error-mitigation/">System error handling</a></li>
+<li><a href="../../modules/error-mitigation/">Error Mitigation</a></li>
+<li><a href="../../modules/monitoring/">Monitoring</a></li>
+<li><a href=".././lockdown-logging/">Cluster Lockdown</a></li>
 </ul>
 
 

@@ -89,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#gui-su-kien-event-submission" class="md-skip">
+        <a href="#gui-su-kien" class="md-skip">
           Bỏ qua
         </a>
       
@@ -1400,10 +1400,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-buoc-thuc-hien-chi-tiet" class="md-nav__link">
+  <a href="#cac-buoc-chi-tiet" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các bước thực hiện chi tiết
+        Các bước chi tiết
       </span>
     </span>
   </a>
@@ -1411,10 +1411,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cau-truc-su-kien-event" class="md-nav__link">
+  <a href="#cau-truc-su-kien" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cấu trúc Sự kiện (Event)
+        Cấu trúc sự kiện
       </span>
     </span>
   </a>
@@ -1433,10 +1433,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-class-method-quan-trong" class="md-nav__link">
+  <a href="#lop-va-phuong-thuc-chinh" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các Class &amp; Method quan trọng
+        Lớp và phương thức chính
       </span>
     </span>
   </a>
@@ -4315,10 +4315,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-buoc-thuc-hien-chi-tiet" class="md-nav__link">
+  <a href="#cac-buoc-chi-tiet" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các bước thực hiện chi tiết
+        Các bước chi tiết
       </span>
     </span>
   </a>
@@ -4326,10 +4326,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cau-truc-su-kien-event" class="md-nav__link">
+  <a href="#cau-truc-su-kien" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cấu trúc Sự kiện (Event)
+        Cấu trúc sự kiện
       </span>
     </span>
   </a>
@@ -4348,10 +4348,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-class-method-quan-trong" class="md-nav__link">
+  <a href="#lop-va-phuong-thuc-chinh" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các Class &amp; Method quan trọng
+        Lớp và phương thức chính
       </span>
     </span>
   </a>
@@ -4400,10 +4400,10 @@
   
 
 
-<h1 id="gui-su-kien-event-submission">Gửi Sự kiện (Event Submission)</h1>
+<h1 id="gui-su-kien">Gửi sự kiện</h1>
 <h2 id="tong-quan">Tổng quan</h2>
-<p>Các sự kiện đi vào HieraChain dưới dạng các hoạt động nghiệp vụ có cấu trúc, được xác thực, gom nhóm theo lô bởi <code>OrderingService</code> thành các khối, được hoàn thiện bằng cơ chế <strong>Bằng chứng (Proof)</strong> được cấu hình (PoA / PoF / BFT), sau đó được thêm vào Sub-Chain. Cơ chế đồng thuận cho MainChain có thể cấu hình linh hoạt (<code>HRC_MAINCHAIN_CONSENSUS</code>), trong khi SubChain mặc định sử dụng PoA cho các hoạt động nội bộ tốc độ cao. Quy trình tổng thể luôn giống nhau, chỉ khác biệt ở bước <code>finalize_block()</code>.</p>
-<p>Để xem biểu đồ chi tiết của PoA và PoF, vui lòng tham khảo <a href=".././consensus_mechanisms/">Cơ chế Đồng thuận</a>.</p>
+<p>Sự kiện vào HieraChain là thao tác nghiệp vụ. Sự kiện được xác thực, gom nhóm bởi <code>OrderingService</code> thành khối, hoàn thiện bằng cơ chế proof đã cấu hình (PoA, PoF hoặc BFT), rồi nối vào Sub-Chain. Đồng thuận MainChain có thể cắm qua <code>HRC_MAINCHAIN_CONSENSUS</code>, còn SubChain mặc định dùng PoA để xử lý nhanh trong tổ chức. Luồng là như nhau trong mọi trường hợp. Chỉ bước <code>finalize_block()</code> thay đổi.</p>
+<p>Với sơ đồ PoA và PoF, xem <a href=".././consensus_mechanisms/">Cơ chế Đồng thuận</a>.</p>
 <hr />
 <h2 id="bieu-o-luong">Biểu đồ luồng</h2>
 <pre class="mermaid"><code>sequenceDiagram
@@ -4454,7 +4454,7 @@
         Note over SC: → Kích hoạt Neo giữ Bằng chứng
     end</code></pre>
 <hr />
-<h2 id="cac-buoc-thuc-hien-chi-tiet">Các bước thực hiện chi tiết</h2>
+<h2 id="cac-buoc-chi-tiet">Các bước chi tiết</h2>
 <table>
 <thead>
 <tr>
@@ -4464,50 +4464,50 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>1. Nhận sự kiện qua API</strong></td>
-<td style="text-align: left;">FastAPI xác thực cấu trúc yêu cầu, trích xuất dữ liệu <code>event_dict</code>.</td>
+<td style="text-align: left;"><strong>1. Nhận qua API</strong></td>
+<td style="text-align: left;">FastAPI xác thực cấu trúc request, trích xuất <code>event_dict</code>.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>2. Xác thực Chuỗi con (SC)</strong></td>
-<td style="text-align: left;"><code>SubChain.add_event()</code> đóng dấu <code>timestamp</code>, gọi <code>validate_event_for_consensus()</code>: quét các từ khóa cấm về cryptocurrency.</td>
+<td style="text-align: left;"><strong>2. Xác thực SC</strong></td>
+<td style="text-align: left;"><code>SubChain.add_event()</code> đóng dấu <code>timestamp</code>, gọi <code>validate_event_for_consensus()</code>: quét từ cấm liên quan tiền mã hóa.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>3. Đưa vào hàng đợi Sắp xếp (OS)</strong></td>
-<td style="text-align: left;">Sự kiện được đẩy vào <code>event_pool</code> (hàng đợi trong bộ nhớ). <code>OrderingService</code> gom cụm các sự kiện theo bộ hẹn giờ hoặc theo ngưỡng <code>block_size</code>.</td>
+<td style="text-align: left;"><strong>3. Đưa vào hàng đợi OS</strong></td>
+<td style="text-align: left;">Sự kiện được đẩy vào <code>event_pool</code> (hàng đợi trong bộ nhớ). <code>OrderingService</code> gom nhóm theo timer hoặc ngưỡng <code>block_size</code>.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>4. Xây dựng Khối</strong></td>
-<td style="text-align: left;"><code>BlockBuilder.build()</code> lắp ráp khối bao gồm: chỉ số (index), băm khối trước đó (previous_hash), mã băm Merkle root của các sự kiện, dữ liệu đặc tả (metadata).</td>
+<td style="text-align: left;"><strong>4. Dựng khối</strong></td>
+<td style="text-align: left;"><code>BlockBuilder.build()</code> tạo khối: index, previous_hash, Merkle root của sự kiện, metadata.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>5. Hoàn tất</strong></td>
-<td style="text-align: left;"><code>Proof.finalize_block()</code>: PoA ký bằng Ed25519, PoF xác thực luân chuyển leader + bằng chứng ZK, BFT chạy quy trình 3 pha PBFT.</td>
+<td style="text-align: left;"><code>Proof.finalize_block()</code>: PoA ký bằng Ed25519, PoF xác thực luân phiên leader và proof ZK, BFT chạy PBFT 3 pha.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>6. Ghi khối (Commit)</strong></td>
-<td style="text-align: left;">Khối được đẩy vào <code>commit_queue</code>, luồng nền <code>consumer_thread</code> sẽ tiếp nhận để xử lý.</td>
+<td style="text-align: left;"><strong>6. Commit</strong></td>
+<td style="text-align: left;">Khối được đẩy vào <code>commit_queue</code>, luồng nền <code>consumer_thread</code> nhận xử lý.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>7. Liên kết chuỗi băm</strong></td>
-<td style="text-align: left;">Lệnh <code>_process_and_finalize_single_block()</code> tính toán lại <code>previous_hash</code> và <code>hash</code> để đảm bảo tính toàn vẹn của chuỗi.</td>
+<td style="text-align: left;"><strong>7. Chuỗi băm</strong></td>
+<td style="text-align: left;"><code>_process_and_finalize_single_block()</code> tính lại <code>previous_hash</code> và <code>hash</code> để giữ toàn vẹn chuỗi.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>8. Lưu trữ</strong></td>
-<td style="text-align: left;">Khối được ghi vào bộ lưu trữ backend thông qua (<code>SQLiteAdapter</code>, <code>RedisStorageAdapter</code>, hoặc <code>MemoryStorage</code>).</td>
+<td style="text-align: left;">Khối được ghi vào backend lưu trữ (<code>SQLiteAdapter</code>, <code>RedisStorageAdapter</code> hoặc <code>MemoryStorage</code>).</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>9. Kích hoạt Bằng chứng</strong></td>
-<td style="text-align: left;">Lệnh <code>auto_submit_proof_if_needed()</code> kích hoạt Neo giữ Bằng chứng nếu đạt ngưỡng chiều dài chuỗi tối thiểu.</td>
+<td style="text-align: left;"><strong>9. Kích hoạt proof</strong></td>
+<td style="text-align: left;"><code>auto_submit_proof_if_needed()</code> kích hoạt Neo giữ Bằng chứng nếu đạt ngưỡng độ dài chuỗi.</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="cau-truc-su-kien-event">Cấu trúc Sự kiện (Event)</h2>
+<h2 id="cau-truc-su-kien">Cấu trúc sự kiện</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">event</span> <span class="o">=</span> <span class="p">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">"entity_id"</span><span class="p">:</span> <span class="s2">"product-SKU-001"</span><span class="p">,</span>    <span class="c1"># Định danh thực thể nghiệp vụ (Domain entity)</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="s2">"event"</span><span class="p">:</span> <span class="s2">"quality_check"</span><span class="p">,</span>           <span class="c1"># Loại sự kiện (domain-specific)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">"entity_id"</span><span class="p">:</span> <span class="s2">"product-SKU-001"</span><span class="p">,</span>    <span class="c1"># Định danh thực thể nghiệp vụ</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="s2">"event"</span><span class="p">:</span> <span class="s2">"quality_check"</span><span class="p">,</span>           <span class="c1"># Loại sự kiện</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="s2">"timestamp"</span><span class="p">:</span> <span class="mf">1714000000.0</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="s2">"details"</span><span class="p">:</span> <span class="p">{</span>                        <span class="c1"># Dữ liệu nghiệp vụ chi tiết</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="s2">"details"</span><span class="p">:</span> <span class="p">{</span>                        <span class="c1"># Payload nghiệp vụ</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="s2">"check_type"</span><span class="p">:</span> <span class="s2">"visual"</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="s2">"check_result"</span><span class="p">:</span> <span class="s2">"passed"</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="s2">"inspector"</span><span class="p">:</span> <span class="s2">"station-7"</span>
@@ -4515,7 +4515,7 @@
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">}</span>
 </code></pre></div>
 <blockquote>
-<p><strong>Quan trọng</strong>: Tuyệt đối không được sử dụng các thuật ngữ cryptocurrency (<code>transaction</code>, <code>sender</code>, <code>receiver</code>, <code>amount</code>, <code>wallet</code>, <code>fee</code>). Bộ quét <code>validate_event_for_consensus()</code> sẽ từ chối sự kiện ngay lập tức.</p>
+<p><strong>Lưu ý</strong>: không dùng thuật ngữ tiền mã hóa (<code>transaction</code>, <code>sender</code>, <code>receiver</code>, <code>amount</code>, <code>wallet</code>, <code>fee</code>). Hàm <code>validate_event_for_consensus()</code> sẽ từ chối các từ này.</p>
 </blockquote>
 <hr />
 <h2 id="xu-ly-loi">Xử lý lỗi</h2>
@@ -4528,55 +4528,55 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Phát hiện từ khóa cryptocurrency bị cấm</td>
-<td style="text-align: left;">Ném lỗi <code>ValueError</code>, từ chối sự kiện trước khi xếp hàng đợi</td>
+<td style="text-align: left;">Phát hiện từ cấm liên quan tiền mã hóa</td>
+<td style="text-align: left;">Ném <code>ValueError</code>, từ chối sự kiện trước khi vào hàng đợi</td>
 </tr>
 <tr>
-<td style="text-align: left;">Hoàn tất khối thất bại (PoA: quyền không hợp lệ)</td>
-<td style="text-align: left;">Hủy bỏ khối, ghi nhật ký lỗi, đưa sự kiện lại vào hàng đợi</td>
+<td style="text-align: left;">Hoàn tất khối lỗi (PoA: authority không hợp lệ)</td>
+<td style="text-align: left;">Hủy khối, ghi log lỗi, đưa sự kiện lại vào hàng đợi</td>
 </tr>
 <tr>
-<td style="text-align: left;">Hoàn tất khối thất bại (PoF: sai leader)</td>
-<td style="text-align: left;">Từ chối khối, lệnh <code>validate_block_proposer()</code> ném ra lỗi</td>
+<td style="text-align: left;">Hoàn tất khối lỗi (PoF: sai leader)</td>
+<td style="text-align: left;">Từ chối khối, <code>validate_block_proposer()</code> ném lỗi</td>
 </tr>
 <tr>
-<td style="text-align: left;">Lưu trữ thất bại</td>
-<td style="text-align: left;">Rollback session <code>SQLAlchemy</code>; khối vẫn nằm trong commit_queue để thử lại</td>
+<td style="text-align: left;">Ghi storage lỗi</td>
+<td style="text-align: left;">Session <code>SQLAlchemy</code> rollback; khối ở lại <code>commit_queue</code> để thử lại</td>
 </tr>
 <tr>
-<td style="text-align: left;">Lỗi luồng Consumer</td>
-<td style="text-align: left;">Bắt lỗi ngoại lệ ở cấp độ luồng, ghi nhật ký và khởi động lại luồng nền</td>
+<td style="text-align: left;">Lỗi luồng consumer</td>
+<td style="text-align: left;">Bắt exception ở cấp luồng, ghi log, luồng tự khởi động lại</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="cac-class-method-quan-trong">Các Class &amp; Method quan trọng</h2>
+<h2 id="lop-va-phuong-thuc-chinh">Lớp và phương thức chính</h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Bước</th>
-<th style="text-align: left;">Class / Method</th>
-<th style="text-align: left;">File</th>
+<th style="text-align: left;">Lớp / Phương thức</th>
+<th style="text-align: left;">Tệp</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align: left;">Nhận sự kiện</td>
 <td style="text-align: left;"><code>SubChain.add_event()</code></td>
-<td style="text-align: left;"><code>hierarchical/sub_chain.py</code></td>
+<td style="text-align: left;"><code>hierarchical/sub_chain/base.py</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Quét từ khóa cấm</td>
+<td style="text-align: left;">Quét từ cấm</td>
 <td style="text-align: left;"><code>BaseConsensus.validate_event_for_consensus()</code></td>
 <td style="text-align: left;"><code>consensus/base_consensus.py</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Đóng gói &amp; sắp xếp</td>
+<td style="text-align: left;">Gom nhóm và sắp xếp</td>
 <td style="text-align: left;"><code>OrderingService.receive_event()</code></td>
 <td style="text-align: left;"><code>consensus/ordering/service.py</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Xây dựng khối</td>
+<td style="text-align: left;">Dựng khối</td>
 <td style="text-align: left;"><code>BlockBuilder.build()</code></td>
 <td style="text-align: left;"><code>consensus/ordering/block_builder.py</code></td>
 </tr>
@@ -4591,25 +4591,25 @@
 <td style="text-align: left;"><code>consensus/proof_of_federation.py</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Liên kết &amp; Thêm khối</td>
+<td style="text-align: left;">Liên kết và thêm khối</td>
 <td style="text-align: left;"><code>SubChain._process_and_finalize_single_block()</code></td>
-<td style="text-align: left;"><code>hierarchical/sub_chain.py</code></td>
+<td style="text-align: left;"><code>hierarchical/sub_chain/base.py</code></td>
 </tr>
 <tr>
 <td style="text-align: left;">Ghi dữ liệu</td>
 <td style="text-align: left;"><code>SQLiteAdapter</code> / <code>RedisStorageAdapter</code></td>
-<td style="text-align: left;"><code>adapters/storage/</code></td>
+<td style="text-align: left;"><code>adapters/database/</code></td>
 </tr>
 </tbody>
 </table>
 <hr />
 <h2 id="lien-quan">Liên quan</h2>
 <ul>
-<li><a href=".././consensus_mechanisms/">Cơ chế Đồng thuận</a>: Sơ đồ luồng phụ của PoA và PoF</li>
-<li><a href=".././proof-anchoring/">Neo giữ Bằng chứng</a>: Kích hoạt sau khi khối được hoàn tất</li>
-<li><a href=".././bft-consensus/">Đồng thuận BFT</a>: Luồng PBFT 3 pha đầy đủ</li>
-<li><a href=".././policy-enforcement/">Thực thi Chính sách</a>: Kiểm soát quyền truy cập trước khi gọi <code>add_event()</code></li>
-<li><a href=".././msp-identity/">Định danh &amp; Ủy quyền MSP</a>: Gọi <code>authorize_action()</code> trước khi gửi sự kiện</li>
+<li><a href=".././consensus_mechanisms/">Cơ chế Đồng thuận</a>: sơ đồ phụ PoA và PoF</li>
+<li><a href=".././proof-anchoring/">Neo giữ Bằng chứng</a>: kích hoạt sau khi khối hoàn tất</li>
+<li><a href=".././bft-consensus/">Đồng thuận BFT</a>: luồng PBFT 3 pha đầy đủ</li>
+<li><a href=".././policy-enforcement/">Thực thi Chính sách</a>: cổng kiểm soát trước <code>add_event()</code></li>
+<li><a href=".././msp-identity/">Danh tính MSP</a>: gọi <code>authorize_action()</code> trước khi gửi</li>
 </ul>
 
 

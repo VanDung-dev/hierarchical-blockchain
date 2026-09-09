@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Enterprise system bridge (ERP Integration) and Apache Arrow Client: SAP, Oracle, Dynamics integration and columnar data optimization.">
+        <meta name="description" content="Enterprise system bridge for ERP integration: SAP, Oracle, and Dynamics connectors with field mapping and change detection.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -2225,10 +2225,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#1-overview" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Overview
+        1. Overview
       </span>
     </span>
   </a>
@@ -2236,55 +2236,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#core-components" class="md-nav__link">
+  <a href="#2-core-components" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Core Components
+        2. Core components
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mapping-engine" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Mapping Engine
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#synchronization-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Synchronization Flow
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#deployment-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Deployment Example
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Deployment Example">
+    <nav class="md-nav" aria-label="2. Core components">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-configure-sap-mapping" class="md-nav__link">
+  <a href="#21-erp-integration-ledger-erp_ledgerpy-erpbasepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Configure SAP Mapping
+        2.1 ERP Integration Ledger (<code>erp_ledger.py</code>, <code>erp/base.py</code>)
       </span>
     </span>
   </a>
@@ -2292,10 +2259,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-start-automatic-sync" class="md-nav__link">
+  <a href="#22-enterprise-adapters-enterprisepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Start Automatic Sync
+        2.2 Enterprise adapters (<code>enterprise.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-change-detector-erpchange_detectorpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Change detector (<code>erp/change_detector.py</code>)
       </span>
     </span>
   </a>
@@ -2308,10 +2286,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#performance-and-security" class="md-nav__link">
+  <a href="#3-mapping-engine" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Performance and Security
+        3. Mapping engine
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-synchronization-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4. Synchronization flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-usage-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5. Usage example
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Usage example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configure-mapping-and-scheduled-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Configure mapping and scheduled sync
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-resilience-and-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6. Resilience and security
       </span>
     </span>
   </a>
@@ -4321,10 +4349,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#1-overview" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Overview
+        1. Overview
       </span>
     </span>
   </a>
@@ -4332,55 +4360,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#core-components" class="md-nav__link">
+  <a href="#2-core-components" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Core Components
+        2. Core components
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#mapping-engine" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Mapping Engine
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#synchronization-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Synchronization Flow
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#deployment-example" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Deployment Example
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Deployment Example">
+    <nav class="md-nav" aria-label="2. Core components">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-configure-sap-mapping" class="md-nav__link">
+  <a href="#21-erp-integration-ledger-erp_ledgerpy-erpbasepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Configure SAP Mapping
+        2.1 ERP Integration Ledger (<code>erp_ledger.py</code>, <code>erp/base.py</code>)
       </span>
     </span>
   </a>
@@ -4388,10 +4383,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-start-automatic-sync" class="md-nav__link">
+  <a href="#22-enterprise-adapters-enterprisepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Start Automatic Sync
+        2.2 Enterprise adapters (<code>enterprise.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-change-detector-erpchange_detectorpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Change detector (<code>erp/change_detector.py</code>)
       </span>
     </span>
   </a>
@@ -4404,10 +4410,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#performance-and-security" class="md-nav__link">
+  <a href="#3-mapping-engine" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Performance and Security
+        3. Mapping engine
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-synchronization-flow" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4. Synchronization flow
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-usage-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5. Usage example
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Usage example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configure-mapping-and-scheduled-sync" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Configure mapping and scheduled sync
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-resilience-and-security" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6. Resilience and security
       </span>
     </span>
   </a>
@@ -4457,55 +4513,29 @@
 
 
 <h1 id="integration-module-hierachainintegration">Integration Module (<code>hierachain/integration/*</code>)</h1>
-<h2 id="overview">Overview</h2>
-<p>The <strong>Integration</strong> module is the "doorway" that allows HieraChain to operate as a Plugin Layer for existing enterprise Web2 infrastructure. It provides powerful tools to connect, extract, and standardize data from leading ERP systems (SAP, Oracle, Microsoft Dynamics) into the blockchain ledger with maximum performance.</p>
-<hr />
-<h2 id="core-components">Core Components</h2>
-<div class="grid cards">
+<h2 id="1-overview">1. Overview</h2>
+<p>The <code>integration</code> module connects HieraChain to enterprise software systems such as SAP, Oracle, and Microsoft Dynamics. It extracts records from external ERP systems, normalizes data through a mapping engine, and records verifiable state events on domain sub-chains.</p>
+<h2 id="2-core-components">2. Core components</h2>
+<p>All integration components reside in <code>hierachain/integration/</code>.</p>
+<h3 id="21-erp-integration-ledger-erp_ledgerpy-erpbasepy">2.1 ERP Integration Ledger (<code>erp_ledger.py</code>, <code>erp/base.py</code>)</h3>
 <ul>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18a6 6 0 0 1-6-6c0-1 .25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12a8 8 0 0 0 8 8v3l4-4-4-4m0-11V1L8 5l4 4V6a6 6 0 0 1 6 6c0 1-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12a8 8 0 0 0-8-8"/></svg></span> <strong>ERP Integration Ledger</strong></p>
-<hr />
-<p><strong>File</strong>: <code>erp_ledger.py</code></p>
+<li>Coordinates data synchronization pipelines.</li>
+<li>Integrates <code>MappingEngine</code> for field transformations.</li>
+<li>Manages <code>SyncScheduler</code> to poll external APIs on recurring intervals.</li>
+</ul>
+<h3 id="22-enterprise-adapters-enterprisepy">2.2 Enterprise adapters (<code>enterprise.py</code>)</h3>
 <ul>
-<li>Central coordinator for ERP system integration.</li>
-<li><strong>Mapping Engine</strong>: Maps complex data from ERP to Blockchain.</li>
-<li><strong>Sync Scheduler</strong>: Schedules automatic synchronization with smart Retry mechanism.</li>
+<li>Connectors for SAP, Oracle, and Microsoft Dynamics.</li>
+<li>Reads endpoint URLs and credentials from environment variables (<code>HRC_SAP_*</code>, <code>HRC_ORACLE_*</code>, <code>HRC_DYNAMICS_*</code>).</li>
+<li>Handles authentication handshakes and HTTP session lifecycles.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 18v2h4v-2zm0-4v2h10v-2zm6 4v2h4v-2zm6-4v2h4v-2zm0 4v2h4v-2zM2 22V8l5 4V8l5 4V8l5 4 1-10h3l1 10v10z"/></svg></span> <strong>Enterprise Adapters</strong></p>
-<hr />
-<p><strong>File</strong>: <code>enterprise.py</code></p>
+<h3 id="23-change-detector-erpchange_detectorpy">2.3 Change detector (<code>erp/change_detector.py</code>)</h3>
 <ul>
-<li>Standardized connectors for <strong>SAP</strong>, <strong>Oracle</strong>, and <strong>Dynamics</strong>.</li>
-<li>Supports configuration via environment variables for secure connection details.</li>
-<li>Handles authentication and connection to enterprise APIs.</li>
+<li>Compares incoming ERP data against previous state snapshots.</li>
+<li>Isolates delta modifications to avoid recording redundant events.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2m0 8v4h8v-4zm0 6v4h8v-4zM8 4v4h8V4z"/></svg></span> <strong>Arrow Client</strong></p>
-<hr />
-<p><strong>File</strong>: <code>arrow_client.py</code></p>
-<ul>
-<li>Optimizes large-volume data exchange using <strong>Apache Arrow</strong> columnar format.</li>
-<li>Increases IO speed and reduces memory consumption when processing reports or data extraction.</li>
-</ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 22v-2h3v-3h2v3.5c0 .39-.16.74-.46 1.04s-.65.46-1.04.46zM7 22H3.5c-.39 0-.74-.16-1.04-.46S2 20.89 2 20.5V17h2v3h3zM17 2h3.5c.39 0 .74.16 1.04.46s.46.65.46 1.04V7h-2V4h-3zM7 2v2H4v3H2V3.5c0-.39.16-.74.46-1.04S3.11 2 3.5 2zm3.5 4C13 6 15 8 15 10.5c0 .88-.25 1.7-.69 2.4l3.26 3.26-1.41 1.41-3.26-3.26c-.7.44-1.52.69-2.4.69C8 15 6 13 6 10.5S8 6 10.5 6m0 2a2.5 2.5 0 0 0 0 5 2.5 2.5 0 0 0 0-5"/></svg></span> <strong>Change Detector</strong></p>
-<hr />
-<p><strong>File</strong>: <code>erp_ledger.py</code></p>
-<ul>
-<li>Automatically detects changes between data states in ERP.</li>
-<li>Only records meaningful changes (Delta) to the blockchain to optimize storage space.</li>
-</ul>
-</li>
-</ul>
-</div>
-<hr />
-<h2 id="mapping-engine">Mapping Engine</h2>
-<p>The Mapping Engine allows defining flexible transformation rules for each data field:</p>
+<h2 id="3-mapping-engine">3. Mapping engine</h2>
+<p>The <code>MappingEngine</code> transforms enterprise payload fields into standardized event properties:</p>
 <table>
 <thead>
 <tr>
@@ -4517,91 +4547,84 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><code>date</code></td>
-<td style="text-align: left;">Standardizes time format</td>
-<td style="text-align: left;"><code>12/04/2024</code> → <code>ISO-8601</code></td>
+<td style="text-align: left;">Standardizes timestamp formats</td>
+<td style="text-align: left;"><code>12/04/2024</code> -&gt; <code>ISO-8601</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>amount</code></td>
-<td style="text-align: left;">Converts numeric and currency types</td>
-<td style="text-align: left;"><code>5000</code> → <code>5000.0</code> (Float)</td>
+<td style="text-align: left;">Normalizes numbers and currencies</td>
+<td style="text-align: left;"><code>5000</code> -&gt; <code>5000.0</code> (float)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>status</code></td>
-<td style="text-align: left;">Maps business status</td>
-<td style="text-align: left;"><code>REQ</code> → <code>REQUESTED</code></td>
+<td style="text-align: left;">Maps business status codes</td>
+<td style="text-align: left;"><code>REQ</code> -&gt; <code>REQUESTED</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>id</code></td>
-<td style="text-align: left;">Adds identifier prefix</td>
-<td style="text-align: left;"><code>123</code> → <code>ERP_123</code></td>
+<td style="text-align: left;">Prefixes identifiers</td>
+<td style="text-align: left;"><code>123</code> -&gt; <code>ERP_123</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>boolean</code></td>
-<td style="text-align: left;">Logic conversion</td>
-<td style="text-align: left;"><code>1/Yes/On</code> → <code>True</code></td>
+<td style="text-align: left;">Normalizes truth values</td>
+<td style="text-align: left;"><code>1/Yes/On</code> -&gt; <code>True</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h2 id="synchronization-flow">Synchronization Flow</h2>
-<p>The system uses <code>SyncScheduler</code> to ensure blockchain data is always updated from ERP:</p>
+<h2 id="4-synchronization-flow">4. Synchronization flow</h2>
+<p><code>SyncScheduler</code> manages polling and retries for external data sources:</p>
 <pre class="mermaid"><code>sequenceDiagram
     participant ERP as ERP System (SAP/Oracle)
     participant Sync as SyncScheduler
     participant Map as MappingEngine
-    participant HRC as HieraChain Ledger
+    participant HRC as HieraChain SubChain
 
-    Sync-&gt;&gt;ERP: Poll for changes (Interval)
-    ERP--&gt;&gt;Sync: Return ERP Events
+    Sync-&gt;&gt;ERP: Poll for changes (interval)
+    ERP--&gt;&gt;Sync: Return ERP records
 
-    loop Per Event
-        Sync-&gt;&gt;Map: Translate ERP -&gt; Blockchain
-        Map-&gt;&gt;Map: Apply Transformers (ID, Date, etc.)
-        Map--&gt;&gt;Sync: Normalized Event
-        Sync-&gt;&gt;HRC: Submit Event to Sub-Chain
-    end
-
-    Note over Sync, HRC: On error: Auto Retry with Exponential Backoff</code></pre>
-<hr />
-<h2 id="deployment-example">Deployment Example</h2>
-<h3 id="1-configure-sap-mapping">1. Configure SAP Mapping</h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">sap_mapping</span> <span class="o">=</span> <span class="p">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">"entity_id"</span><span class="p">:</span> <span class="s2">"material.document_number"</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="s2">"event"</span><span class="p">:</span> <span class="p">{</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="s2">"source_path"</span><span class="p">:</span> <span class="s2">"material.event_type"</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        <span class="s2">"transformer"</span><span class="p">:</span> <span class="s2">"status"</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="s2">"params"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"mapping"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"GR"</span><span class="p">:</span> <span class="s2">"GOODS_RECEIPT"</span><span class="p">}}</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="p">},</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="s2">"details.quantity"</span><span class="p">:</span> <span class="p">{</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="s2">"source_path"</span><span class="p">:</span> <span class="s2">"material.qty"</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="s2">"transformer"</span><span class="p">:</span> <span class="s2">"amount"</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="p">}</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">}</span>
+    loop Per Record
+        Sync-&gt;&gt;Map: Translate ERP -&gt; Blockchain event
+        Map-&gt;&gt;Map: Apply transformers (ID, date, status)
+        Map--&gt;&gt;Sync: Normalized event dict
+        Sync-&gt;&gt;HRC: Submit event to Sub-Chain
+    end</code></pre>
+<h2 id="5-usage-example">5. Usage example</h2>
+<h3 id="configure-mapping-and-scheduled-sync">Configure mapping and scheduled sync</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.integration.erp_ledger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ERPIntegrationLedger</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">sap_mapping</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="s2">"entity_id"</span><span class="p">:</span> <span class="s2">"material.document_number"</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="s2">"event"</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="s2">"source_path"</span><span class="p">:</span> <span class="s2">"material.event_type"</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="s2">"transformer"</span><span class="p">:</span> <span class="s2">"status"</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="s2">"params"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"mapping"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"GR"</span><span class="p">:</span> <span class="s2">"GOODS_RECEIPT"</span><span class="p">}}</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="p">},</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="s2">"details.quantity"</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="s2">"source_path"</span><span class="p">:</span> <span class="s2">"material.qty"</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="s2">"transformer"</span><span class="p">:</span> <span class="s2">"amount"</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="p">}</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">}</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="n">ledger</span> <span class="o">=</span> <span class="n">ERPIntegrationLedger</span><span class="p">()</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="c1"># Start syncing with a domain sub-chain</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="n">ledger</span><span class="o">.</span><span class="n">start_scheduled_sync</span><span class="p">(</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="n">profile_name</span><span class="o">=</span><span class="s2">"SAP_Logistics"</span><span class="p">,</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="n">interval_seconds</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    <span class="n">chain</span><span class="o">=</span><span class="n">sub_chain_instance</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="p">)</span>
 </code></pre></div>
-<h3 id="2-start-automatic-sync">2. Start Automatic Sync</h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.integration.erp_ledger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ERPIntegrationLedger</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">ledger</span> <span class="o">=</span> <span class="n">ERPIntegrationLedger</span><span class="p">()</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Start syncing 'SAP_Logistics' profile every 60 seconds</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">ledger</span><span class="o">.</span><span class="n">start_scheduled_sync</span><span class="p">(</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">profile_name</span><span class="o">=</span><span class="s2">"SAP_Logistics"</span><span class="p">,</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">interval_seconds</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="n">chain</span><span class="o">=</span><span class="n">sub_chain_instance</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="p">)</span>
-</code></pre></div>
-<hr />
-<h2 id="performance-and-security">Performance and Security</h2>
+<h2 id="6-resilience-and-security">6. Resilience and security</h2>
 <ul>
-<li><strong>Performance</strong>: Uses <code>ThreadPoolExecutor</code> to process multiple ERP profiles simultaneously without congestion.</li>
-<li><strong>Security</strong>: ERP credentials and passwords are managed via environment variables (e.g., <code>HRC_SAP_PASSWORD</code>), following the principle of not storing secrets in source code.</li>
-<li><strong>Resilience</strong>: Retry mechanism with Exponential Backoff helps the system self-recover when the ERP connection is temporarily interrupted.</li>
+<li>Thread concurrency: Uses <code>ThreadPoolExecutor</code> to handle concurrent sync profiles without blocking main event processing.</li>
+<li>Secret isolation: Credentials use environment variables rather than configuration files in version control.</li>
+<li>Automatic retry: Sync workers use exponential backoff when encountering transient network timeouts.</li>
 </ul>
-<hr />
 <h2 id="related">Related</h2>
 <ul>
-<li><a href=".././hierarchical/">Hierarchical System</a></li>
-<li><a href=".././core/">Core Blockchain Structure</a></li>
-<li><a href=".././error-mitigation/">Error Mitigation and Risk Reduction</a></li>
+<li><a href=".././hierarchical/">Hierarchical Module</a></li>
+<li><a href=".././core/">Core Module</a></li>
+<li><a href=".././error-mitigation/">Error Mitigation</a></li>
 </ul>
 
 

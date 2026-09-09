@@ -1479,7 +1479,7 @@
   <a href="#flow-diagram-3-phase-pbft" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: 3-Phase PBFT
+        Flow diagram: 3-phase PBFT
       </span>
     </span>
   </a>
@@ -1490,7 +1490,7 @@
   <a href="#flow-diagram-view-change-leader-failure" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: View Change (Leader Failure)
+        Flow diagram: view change (leader failure)
       </span>
     </span>
   </a>
@@ -1501,7 +1501,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -1512,7 +1512,7 @@
   <a href="#consensus-comparison" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Consensus Comparison
+        Consensus comparison
       </span>
     </span>
   </a>
@@ -1523,7 +1523,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -1531,10 +1531,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4318,7 +4318,7 @@
   <a href="#flow-diagram-3-phase-pbft" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: 3-Phase PBFT
+        Flow diagram: 3-phase PBFT
       </span>
     </span>
   </a>
@@ -4329,7 +4329,7 @@
   <a href="#flow-diagram-view-change-leader-failure" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: View Change (Leader Failure)
+        Flow diagram: view change (leader failure)
       </span>
     </span>
   </a>
@@ -4340,7 +4340,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -4351,7 +4351,7 @@
   <a href="#consensus-comparison" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Consensus Comparison
+        Consensus comparison
       </span>
     </span>
   </a>
@@ -4362,7 +4362,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -4370,10 +4370,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4422,13 +4422,13 @@
   
 
 
-<h1 id="bft-consensus">BFT Consensus</h1>
+<h1 id="bft-consensus">BFT consensus</h1>
 <h2 id="overview">Overview</h2>
-<p>The <strong>Byzantine Fault-Tolerant (BFT)</strong> consensus mechanism runs 3-phase PBFT when blocks are finalized. It requires <code>n ≥ 3f + 1</code> nodes to tolerate <code>f</code> faulty or malicious nodes. This replaces the <code>finalize_block()</code> step in Event Submission for BFT mode.</p>
-<p>For PoA and PoF consensus flows, see <a href=".././consensus_mechanisms/">Consensus Mechanisms</a>.</p>
-<p><strong>Requirement</strong>: Minimum 4 nodes to tolerate 1 Byzantine failure (n=4, f=1: 3×1+1=4).</p>
+<p>The Byzantine Fault Tolerant consensus uses 3-phase PBFT to finalize blocks. It needs <code>n &gt;= 3f + 1</code> nodes to tolerate <code>f</code> faulty or malicious nodes. In BFT mode this replaces the <code>finalize_block()</code> step from event submission.</p>
+<p>For PoA and PoF flows, see <a href=".././consensus_mechanisms/">Consensus Mechanisms</a>.</p>
+<p>You need at least 4 nodes to tolerate 1 Byzantine failure (n=4, f=1: 3×1+1=4).</p>
 <hr />
-<h2 id="flow-diagram-3-phase-pbft">Flow Diagram: 3-Phase PBFT</h2>
+<h2 id="flow-diagram-3-phase-pbft">Flow diagram: 3-phase PBFT</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant OS as ⚙️ OrderingService
@@ -4468,7 +4468,7 @@
         L-&gt;&gt;OS: Block committed → push to commit_queue
     end</code></pre>
 <hr />
-<h2 id="flow-diagram-view-change-leader-failure">Flow Diagram: View Change (Leader Failure)</h2>
+<h2 id="flow-diagram-view-change-leader-failure">Flow diagram: view change (leader failure)</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant ledger as 🖥️ Validator 1
@@ -4485,7 +4485,7 @@
     NEW-&gt;&gt;NEW: Broadcast NEW-VIEW message
     NEW-&gt;&gt;NEW: Restart from Phase 1 — PRE-PREPARE</code></pre>
 <hr />
-<h2 id="step-by-step-breakdown">Step-by-Step Breakdown</h2>
+<h2 id="step-by-step-breakdown">Step-by-step breakdown</h2>
 <table>
 <thead>
 <tr>
@@ -4513,7 +4513,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="consensus-comparison">Consensus Comparison</h2>
+<h2 id="consensus-comparison">Consensus comparison</h2>
 <table>
 <thead>
 <tr>
@@ -4545,7 +4545,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="error-handling">Error Handling</h2>
+<h2 id="error-handling">Error handling</h2>
 <table>
 <thead>
 <tr>
@@ -4573,7 +4573,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-classes-methods">Key Classes &amp; Methods</h2>
+<h2 id="key-classes-and-methods">Key classes and methods</h2>
 <table>
 <thead>
 <tr>

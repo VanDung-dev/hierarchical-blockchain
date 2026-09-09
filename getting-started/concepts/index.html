@@ -4374,7 +4374,7 @@
 <ul>
 <li>Chain: A collection of Blocks linked by <code>previous_hash</code>. HieraChain has two chain layers: <code>Main Chain</code> and domain-specific <code>Sub-Chains</code>.</li>
 <li>Block: A group of Events with metadata (header). See <code>hierachain/core/block.py</code>.</li>
-<li>Event: A business operation (not a cryptocurrency transaction). Stored as Arrow tables per schema in <code>hierachain/core/schemas.py</code>.</li>
+<li>Event: A business operation (not a cryptocurrency transaction). Stored as Arrow tables per schema in <code>hierachain/core/block.py:261</code> (<code>EVENT_SCHEMA</code>).</li>
 <li>Proof: A cryptographic footprint (e.g. Merkle root/hash) representing Sub-Chain state, anchored to the Main Chain.</li>
 <li>Hierarchy: Architecture where Main Chain supervises multiple Sub-Chains. Managed by <code>HierarchyManager</code>.</li>
 </ul>
@@ -4431,9 +4431,9 @@
 </ol>
 <h2 id="related-source-files">Related Source Files</h2>
 <ul>
-<li>Core: <code>hierachain/core/{block.py, blockchain.py, schemas.py}</code></li>
-<li>Hierarchical: <code>hierachain/hierarchical/{main_chain.py, sub_chain.py, hierarchy_manager.py}</code></li>
-<li>API: <code>hierachain/api/ledger/{endpoints.py, schemas.py}</code></li>
+<li>Core: <code>hierachain/core/block.py</code>, <code>hierachain/core/blockchain.py</code></li>
+<li>Hierarchical: <code>hierachain/hierarchical/main_chain/base.py</code>, <code>hierachain/hierarchical/sub_chain/base.py</code>, <code>hierachain/hierarchical/hierarchy_manager/base.py</code></li>
+<li>API: <code>hierachain/api/ledger/router.py</code>, <code>hierachain/api/ledger/schemas.py</code></li>
 <li>Security: <code>hierachain/security/*</code></li>
 <li>Configuration: <code>hierachain/config/settings.py</code></li>
 </ul>

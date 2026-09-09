@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Detailed guide on software design, lifecycle management, and event handling in DomainContract.">
+        <meta name="description" content="Guide to implementing business rules, operation validation, and entity lifecycles using DomainChain.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -33,7 +33,7 @@
     
     
       
-        <title>Writing Domain Contracts - HieraChain Docs</title>
+        <title>Writing Domain Logic - HieraChain Docs</title>
       
     
     
@@ -89,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#writing-domain-contracts" class="md-skip">
+        <a href="#writing-domain-logic" class="md-skip">
           Skip to content
         </a>
       
@@ -123,7 +123,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Writing Domain Contracts
+              Writing Domain Logic
             
           </span>
         </div>
@@ -3505,55 +3505,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#domain-contracts" class="md-nav__link">
+  <a href="#1-domain-chains" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Domain Contracts
+        1. Domain Chains
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Domain Contracts">
+    <nav class="md-nav" aria-label="1. Domain Chains">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-initializing-a-domain-contract" class="md-nav__link">
+  <a href="#initializing-a-domain-chain" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Initializing a Domain Contract
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-lifecycle-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        2. Lifecycle Management
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-versioning" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        3. Versioning
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-registering-event-handlers" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        4. Registering Event Handlers
+        Initializing a Domain Chain
       </span>
     </span>
   </a>
@@ -3562,6 +3529,50 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-operation-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2. Operation validation
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-recording-domain-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3. Recording domain operations
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-entity-lifecycle-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4. Entity lifecycle management
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Related
+      </span>
+    </span>
+  </a>
   
 </li>
       
@@ -4277,55 +4288,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#domain-contracts" class="md-nav__link">
+  <a href="#1-domain-chains" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Domain Contracts
+        1. Domain Chains
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Domain Contracts">
+    <nav class="md-nav" aria-label="1. Domain Chains">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-initializing-a-domain-contract" class="md-nav__link">
+  <a href="#initializing-a-domain-chain" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Initializing a Domain Contract
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-lifecycle-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        2. Lifecycle Management
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-versioning" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        3. Versioning
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-registering-event-handlers" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        4. Registering Event Handlers
+        Initializing a Domain Chain
       </span>
     </span>
   </a>
@@ -4334,6 +4312,50 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-operation-validation" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2. Operation validation
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-recording-domain-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3. Recording domain operations
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-entity-lifecycle-management" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4. Entity lifecycle management
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#related" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Related
+      </span>
+    </span>
+  </a>
   
 </li>
       
@@ -4368,65 +4390,87 @@
   
 
 
-<h1 id="writing-domain-contracts">Writing Domain Contracts</h1>
-<h2 id="domain-contracts">Domain Contracts</h2>
-<p>HieraChain uses a flexible Domain Contracts system that supports processing business logic specific to each type of data or event. The code management system is defined directly in <code>hierachain/domains/domain_contract.py</code>.</p>
-<h3 id="1-initializing-a-domain-contract">1. Initializing a Domain Contract</h3>
-<p>Each contract provides several core properties including an identifier, version, execution callback, and metadata:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.domains.domain_contract</span><span class="w"> </span><span class="kn">import</span> <span class="n">DomainContract</span>
+<h1 id="writing-domain-logic">Writing Domain Logic</h1>
+<h2 id="1-domain-chains">1. Domain Chains</h2>
+<p>HieraChain processes business logic through domain chains. Instead of deploying arbitrary bytecode smart contracts, developers implement domain logic by extending or configuring <code>DomainChain</code> in <code>hierachain/domains/chains/domain_chain.py</code>.</p>
+<h3 id="initializing-a-domain-chain">Initializing a Domain Chain</h3>
+<p><code>DomainChain</code> inherits from <code>BaseChain</code> and provides built-in validation for common operations:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.domains.chains.domain_chain</span><span class="w"> </span><span class="kn">import</span> <span class="n">DomainChain</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">contract</span> <span class="o">=</span> <span class="n">DomainContract</span><span class="p">(</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">contract_id</span><span class="o">=</span><span class="s2">"logistics_tracker_ledger"</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">version</span><span class="o">=</span><span class="s2">"1.0.0"</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">implementation</span><span class="o">=</span><span class="n">my_custom_logic_function</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"department"</span><span class="p">:</span> <span class="s2">"supply_chain"</span><span class="p">}</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">chain</span> <span class="o">=</span> <span class="n">DomainChain</span><span class="p">(</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">"supply_chain_01"</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">domain_type</span><span class="o">=</span><span class="s2">"supply_chain"</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">storage_path</span><span class="o">=</span><span class="s2">"data/ledger.db"</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">)</span>
 </code></pre></div>
-<h3 id="2-lifecycle-management">2. Lifecycle Management</h3>
-<p>Contracts on HieraChain never go straight to production; they go through a quality control cycle (ContractStatus):</p>
+<h2 id="2-operation-validation">2. Operation validation</h2>
+<p><code>DomainChain</code> validates incoming operation payloads against required fields before creating events:</p>
 <ul>
-<li><code>DEVELOPMENT</code>: Default state upon creation. For dev/debugging.</li>
-<li><code>TESTING</code>: QA phase, testing with test data.</li>
-<li><code>ACTIVE</code>: Contract is officially live on the network, allowed to activate transaction processing via <code>activate()</code>.</li>
-<li><code>DEPRECATED</code>: Marked as obsolete but retained to support old blocks via <code>deprecate()</code>.</li>
-<li><code>DISABLED</code>: Emergency disable via <code>disable()</code>.</li>
-<li><code>ARCHIVED</code>: Fully archived, cannot be reactivated.</li>
+<li><code>quality_check</code>: Requires <code>check_type</code> and <code>check_result</code>.</li>
+<li><code>approval</code>: Requires <code>approval_type</code> and <code>approver_id</code>.</li>
+<li><code>resource_allocation</code>: Requires <code>resource_type</code> and <code>resource_id</code>.</li>
+<li><code>compliance_check</code>: Requires <code>compliance_type</code>.</li>
 </ul>
-<pre class="mermaid"><code>stateDiagram-v2
-    [*] --&gt; DEVELOPMENT
-    DEVELOPMENT --&gt; TESTING
-    DEVELOPMENT --&gt; DISABLED
-    TESTING --&gt; ACTIVE
-    TESTING --&gt; DEVELOPMENT
-    TESTING --&gt; DISABLED
-    ACTIVE --&gt; DEPRECATED
-    ACTIVE --&gt; DISABLED
-    DEPRECATED --&gt; DISABLED
-    DEPRECATED --&gt; ARCHIVED
-    DISABLED --&gt; DEVELOPMENT
-    DISABLED --&gt; ARCHIVED
-    ARCHIVED --&gt; [*]</code></pre>
-<h3 id="3-versioning">3. Versioning</h3>
-<p>Instead of overwriting old contracts, which would distort the blockchain history, users can easily upgrade to a new contract logic version while the system still retains <code>previous_versions</code>. This mechanism ensures network maintenance never causes <strong>Downtime</strong>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">contract</span><span class="o">.</span><span class="n">upgrade_to_version</span><span class="p">(</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">new_version</span><span class="o">=</span><span class="s2">"1.1.0"</span><span class="p">,</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">new_implementation</span><span class="o">=</span><span class="n">optimized_logic_function</span><span class="p">,</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"upgrade_reason"</span><span class="p">:</span> <span class="s2">"Performance improvement"</span><span class="p">}</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">)</span>
+<p>Unknown operation types default to allowed, making custom extension straightforward:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.domains.chains.domain_chain</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_operation_data</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="s2">"check_type"</span><span class="p">:</span> <span class="s2">"visual_inspection"</span><span class="p">,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="s2">"check_result"</span><span class="p">:</span> <span class="s2">"passed"</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">is_valid</span> <span class="o">=</span> <span class="n">validate_operation_data</span><span class="p">(</span><span class="s2">"quality_check"</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="k">assert</span> <span class="n">is_valid</span> <span class="ow">is</span> <span class="kc">True</span>
 </code></pre></div>
-<h3 id="4-registering-event-handlers">4. Registering Event Handlers</h3>
-<p>Transactions or Events arriving at a DomainContract can be split and routed to different callback functions depending on the <code>event_type</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">quality_check_handler</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">storage</span><span class="p">):</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="c1"># Reconciliation logic, modify storage as needed...</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"passed"</span><span class="p">}</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Register this handler specifically for the "quality_inspection" event</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">contract</span><span class="o">.</span><span class="n">register_event_handler</span><span class="p">(</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">event_type</span><span class="o">=</span><span class="s2">"quality_inspection"</span><span class="p">,</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">handler</span><span class="o">=</span><span class="n">quality_check_handler</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">)</span>
+<h2 id="3-recording-domain-operations">3. Recording domain operations</h2>
+<p>You record business operations using helper factories from <code>hierachain/domains/events/event_creators.py</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.domains.chains.domain_chain</span><span class="w"> </span><span class="kn">import</span> <span class="n">DomainChain</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.domains.events.event_creators</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_quality_check</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">chain</span> <span class="o">=</span> <span class="n">DomainChain</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"logistics_chain"</span><span class="p">,</span> <span class="n">domain_type</span><span class="o">=</span><span class="s2">"logistics"</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># Create a validated quality check event</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">event</span> <span class="o">=</span> <span class="n">create_quality_check</span><span class="p">(</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">entity_id</span><span class="o">=</span><span class="s2">"CONTAINER-409"</span><span class="p">,</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">check_type</span><span class="o">=</span><span class="s2">"temperature_compliance"</span><span class="p">,</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">check_result</span><span class="o">=</span><span class="s2">"passed"</span><span class="p">,</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"temperature_c"</span><span class="p">:</span> <span class="mf">4.2</span><span class="p">}</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">)</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="c1"># Append event to the domain chain</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="n">chain</span><span class="o">.</span><span class="n">add_domain_event</span><span class="p">(</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>    <span class="n">entity_id</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s2">"entity_id"</span><span class="p">],</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="n">event</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s2">"event"</span><span class="p">],</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="n">details</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s2">"details"</span><span class="p">]</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="p">)</span>
 </code></pre></div>
-<p>This helps clearly separate verification, reconciliation, and approval logic across distinct modules.</p>
+<h2 id="4-entity-lifecycle-management">4. Entity lifecycle management</h2>
+<p><code>DomainChain</code> tracks entity state across operations:</p>
+<ol>
+<li>Registration: Register a new tracked entity on the chain.</li>
+<li>Status updates: Record transition states such as <code>in_progress</code>, <code>quality_approved</code>, and <code>completed</code>.</li>
+<li>Metrics: <code>OperationMetricsTracker</code> records execution latencies and success rates for audit reporting.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Register an entity</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">chain</span><span class="o">.</span><span class="n">register_entity</span><span class="p">(</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">entity_id</span><span class="o">=</span><span class="s2">"CONTAINER-409"</span><span class="p">,</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">entity_type</span><span class="o">=</span><span class="s2">"cargo"</span><span class="p">,</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"origin"</span><span class="p">:</span> <span class="s2">"Port A"</span><span class="p">,</span> <span class="s2">"destination"</span><span class="p">:</span> <span class="s2">"Port B"</span><span class="p">}</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">)</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># Update entity status</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="n">chain</span><span class="o">.</span><span class="n">update_entity_status</span><span class="p">(</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="n">entity_id</span><span class="o">=</span><span class="s2">"CONTAINER-409"</span><span class="p">,</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="n">new_status</span><span class="o">=</span><span class="s2">"in_transit"</span><span class="p">,</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="n">reason</span><span class="o">=</span><span class="s2">"Departed facility"</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="p">)</span>
+</code></pre></div>
+<h2 id="related">Related</h2>
+<ul>
+<li><a href="../../modules/domains/">Domains Module</a></li>
+<li><a href=".././add-domain-chain/">Adding a Domain Chain</a></li>
+<li><a href=".././cross-chain-transactions/">Cross-Chain Operations</a></li>
+</ul>
 
 
 

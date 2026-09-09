@@ -4233,7 +4233,7 @@
 <tr>
 <td>Policy</td>
 <td>Chính sách</td>
-<td>Kiểm soát truy cập/tài nguyên; <code>hierachain/security/policy_engine.py</code>, <code>hierachain/security/resource_guard.py</code>.</td>
+<td>Kiểm soát truy cập/tài nguyên; <code>hierachain/security/policy_engine.py</code>, <code>hierachain/security/policy_types.py</code>. Không có <code>resource_guard.py</code>.</td>
 </tr>
 <tr>
 <td>World State</td>
@@ -4253,7 +4253,7 @@
 <tr>
 <td>Recovery</td>
 <td>Phục hồi</td>
-<td>Cơ chế phục hồi lỗi; <code>hierachain/error_mitigation/recovery_engine.py</code>.</td>
+<td>Phục hồi lỗi qua <code>hierachain/error_mitigation/rollback_manager.py</code>, <code>consensus_recovery.py</code>, <code>network_recovery.py</code> (không có <code>recovery_engine.py</code>).</td>
 </tr>
 <tr>
 <td>Ordering</td>
@@ -4273,12 +4273,12 @@
 <tr>
 <td>Proof of Authority</td>
 <td>PoA</td>
-<td>PoA; đồng thuận Nội bộ 1 Doanh nghiệp; <code>hierachain/consensus/proof_of_authority.py</code>.</td>
+<td>Đồng thuận trong một tổ chức; <code>hierachain/consensus/proof_of_authority.py</code>.</td>
 </tr>
 <tr>
 <td>Proof of Federation</td>
 <td>PoF</td>
-<td>PoF; đồng thuận Liên minh Ngang hàng giữa các MainChain độc lập; <code>hierachain/consensus/proof_of_federation.py</code>.</td>
+<td>Đồng thuận liên minh P2P giữa các MainChain độc lập; <code>hierachain/consensus/proof_of_federation.py</code>.</td>
 </tr>
 <tr>
 <td>API Key</td>
@@ -4303,7 +4303,7 @@
 <tr>
 <td>Proof Aggregation</td>
 <td>Gộp bằng chứng</td>
-<td>Gom nhóm nhiều proof; <code>hierachain/hierarchical/proof_aggregation/aggregator.py</code>.</td>
+<td>Gom nhiều proof; <code>hierachain/hierarchical/proof_aggregation/aggregator.py</code>.</td>
 </tr>
 <tr>
 <td>Rebalancer</td>
@@ -4368,7 +4368,7 @@
 <tr>
 <td>Cross‑level State Sync</td>
 <td>Đồng bộ liên tầng</td>
-<td>Đồng bộ trạng thái đa tầng; <code>hierachain/cluster/state_sync_manager.py</code>.</td>
+<td>Đồng bộ qua <code>hierachain/cluster/state_sync_manager.py</code> + <code>hierarchical/hierarchy_manager/</code> + <code>HRC_CROSS_LEVEL_*</code>.</td>
 </tr>
 <tr>
 <td>Kubernetes Namespace</td>
@@ -4383,7 +4383,7 @@
 <tr>
 <td>Certificate</td>
 <td>Chứng chỉ</td>
-<td>Quản lý chứng chỉ X.509; <code>hierachain/security/certificate.py</code>.</td>
+<td>Dataclass <code>Certificate</code> nội bộ trong <code>hierachain/security/msp.py</code> (không phải X.509, không có <code>certificate.py</code>).</td>
 </tr>
 </tbody>
 </table>

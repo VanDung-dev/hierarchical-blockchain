@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Quản lý phiên bản hệ thống: Tuân thủ PEP 440, Semantic Versioning, và Trạng thái phát triển Project.">
+        <meta name="description" content="Quản lý phiên bản hệ thống: Tuân thủ PEP 440, tuple phiên bản ngữ nghĩa và định dạng chuỗi phiên bản trong hierachain/config/version.py.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -33,7 +33,7 @@
     
     
       
-        <title>Units & Versioning Module - HieraChain Docs</title>
+        <title>Versioning Module - HieraChain Docs</title>
       
     
     
@@ -89,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#units-module-hierachainunits" class="md-skip">
+        <a href="#versioning-module-hierachainconfigversionpy" class="md-skip">
           Bỏ qua
         </a>
       
@@ -123,7 +123,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Units & Versioning Module
+              Versioning Module
             
           </span>
         </div>
@@ -2428,10 +2428,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tong-quan" class="md-nav__link">
+  <a href="#1-tong-quan" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Tổng quan
+        1. Tổng quan
       </span>
     </span>
   </a>
@@ -2439,10 +2439,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cau-truc-phien-ban-version-tuple" class="md-nav__link">
+  <a href="#2-cau-truc-tuple-phien-ban" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cấu trúc Phiên bản (Version Tuple)
+        2. Cấu trúc tuple phiên bản
       </span>
     </span>
   </a>
@@ -2450,10 +2450,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-tinh-nang-chinh" class="md-nav__link">
+  <a href="#3-ham-inh-dang-phien-ban" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các tính năng chính
+        3. Hàm định dạng phiên bản
       </span>
     </span>
   </a>
@@ -2461,49 +2461,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#vi-du-su-dung" class="md-nav__link">
+  <a href="#4-su-dung-trong-ma-nguon" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Ví dụ sử dụng
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Ví dụ sử dụng">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-lay-thong-tin-phien-ban-hien-tai" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        1. Lấy thông tin phiên bản hiện tại
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-so-sanh-tinh-tuong-thich" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        2. So sánh tính tương thích
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#phan-cap-release-level" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Phân cấp Release Level
+        4. Sử dụng trong mã nguồn
       </span>
     </span>
   </a>
@@ -4310,10 +4271,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tong-quan" class="md-nav__link">
+  <a href="#1-tong-quan" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Tổng quan
+        1. Tổng quan
       </span>
     </span>
   </a>
@@ -4321,10 +4282,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cau-truc-phien-ban-version-tuple" class="md-nav__link">
+  <a href="#2-cau-truc-tuple-phien-ban" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cấu trúc Phiên bản (Version Tuple)
+        2. Cấu trúc tuple phiên bản
       </span>
     </span>
   </a>
@@ -4332,10 +4293,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-tinh-nang-chinh" class="md-nav__link">
+  <a href="#3-ham-inh-dang-phien-ban" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các tính năng chính
+        3. Hàm định dạng phiên bản
       </span>
     </span>
   </a>
@@ -4343,49 +4304,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#vi-du-su-dung" class="md-nav__link">
+  <a href="#4-su-dung-trong-ma-nguon" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Ví dụ sử dụng
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Ví dụ sử dụng">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-lay-thong-tin-phien-ban-hien-tai" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        1. Lấy thông tin phiên bản hiện tại
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-so-sanh-tinh-tuong-thich" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        2. So sánh tính tương thích
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#phan-cap-release-level" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Phân cấp Release Level
+        4. Sử dụng trong mã nguồn
       </span>
     </span>
   </a>
@@ -4434,78 +4356,43 @@
   
 
 
-<h1 id="units-module-hierachainunits">Units Module (<code>hierachain/units/*</code>)</h1>
-<h2 id="tong-quan">Tổng quan</h2>
-<p>Module <strong>Units</strong> chịu trách nhiệm quản lý hệ thống phiên bản (Versioning) của HieraChain. Nó đảm bảo toàn bộ hệ thống (từ Core, API đến CLI) luôn đồng bộ về mặt phiên bản và tuân thủ các tiêu chuẩn đóng gói phần mềm hiện đại như <strong>PEP 440</strong>.</p>
-<hr />
-<h2 id="cau-truc-phien-ban-version-tuple">Cấu trúc Phiên bản (Version Tuple)</h2>
-<p>HieraChain sử dụng một Tuple 5 thành phần để định nghĩa phiên bản một cách chi tiết:
-<code>VERSION = (major, minor, micro, releaselevel, serial)</code></p>
-<ul>
-<li><strong>Major</strong>: Phiên bản lớn, thay đổi khi có các cập nhật kiến trúc quan trọng.</li>
-<li><strong>Minor</strong>: Phiên bản nhỏ, thay đổi khi thêm tính năng mới.</li>
-<li><strong>Micro</strong>: Phiên bản sửa lỗi (Bug fix).</li>
-<li><strong>Release Level</strong>: Trạng thái phát triển (<code>dev</code>, <code>alpha</code>, <code>beta</code>, <code>rc</code>, <code>final</code>).</li>
-<li><strong>Serial</strong>: Số thứ tự của bản release trong cùng một level.</li>
-</ul>
-<hr />
-<h2 id="cac-tinh-nang-chinh">Các tính năng chính</h2>
-<div class="grid cards">
-<ul>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m23 12-2.44-2.78.34-3.68-3.61-.82-1.89-3.18L12 3 8.6 1.54 6.71 4.72l-3.61.81.34 3.68L1 12l2.44 2.78-.34 3.69 3.61.82 1.89 3.18L12 21l3.4 1.46 1.89-3.18 3.61-.82-.34-3.68zm-13 5-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9z"/></svg></span> <strong>PEP 440 Compliance</strong></p>
-<hr />
-<p>Tự động chuyển đổi Tuple phiên bản sang chuỗi ký tự tiêu chuẩn Python (ví dụ: <code>0.0.2-beta1</code> hoặc <code>0.0.2</code> cho bản final).</p>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 5h-5V3h5c1.1 0 2 .9 2 2v8.4c-.6-.2-1.3-.4-2-.4zm-9-4h2v22h-2v-2H5c-1.1 0-2-.9-2-2V5c0-1.1.9-2 2-2h5zm0 11-5 6h5zm5.7 2L14 12v3.7c.4-.7 1-1.2 1.7-1.7m5.4 1.5L19 17.6l-2.1-2.1-1.4 1.4 2.1 2.1-2.1 2.1 1.4 1.4 2.1-2.1 2.1 2.1 1.4-1.4-2.1-2.1 2.1-2.1z"/></svg></span> <strong>So sánh Phiên bản</strong></p>
-<hr />
-<p>Cung cấp hàm <code>compare_versions</code> hỗ trợ so sánh cả chuỗi và tuple, giúp hệ thống kiểm tra tính tương thích giữa các thành phần.</p>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 2h-6v7L9.5 7.5 7 9V2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4a2 2 0 0 0-2-2m-.32 16.41c-.11.09-1.21.84-1.63 1.09-.42.29-2.05 1.22-1.79-.58.63-3.64 1.85-5.8.39-4.86-.38.23-.6.37-.74.44-.13.11-.12.1-.23-.09s-.15-.18-.01-.28c0 0 2.23-1.79 3.05-1.85.78-.07.59.89.52 1.33-.46 1.85-1.3 4.54-1.17 4.93.11.39.93-.23 1.37-.54 0 0 .06-.07.17.05.11.17.22.25.07.36m-.71-7.35c-.57 0-1.03-.46-1.03-1.03S16.4 9 16.97 9 18 9.46 18 10.03s-.46 1.03-1.03 1.03"/></svg></span> <strong>Trạng thái Tài liệu</strong></p>
-<hr />
-<p>Xác định trạng thái của dự án (Stable, Under Development, Release Candidate) dựa trên level phiên bản hiện tại.</p>
-</li>
-</ul>
-</div>
-<hr />
-<h2 id="vi-du-su-dung">Ví dụ sử dụng</h2>
-<h3 id="1-lay-thong-tin-phien-ban-hien-tai">1. Lấy thông tin phiên bản hiện tại</h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.units.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_version</span><span class="p">,</span> <span class="n">VERSION</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Trả về chuỗi PEP 440 (ví dụ: "0.0.2")</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"HieraChain Version: </span><span class="si">{</span><span class="n">get_version</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Lấy phiên bản rút gọn (Major.Minor)</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.units.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_major_version</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Base Version: </span><span class="si">{</span><span class="n">get_major_version</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<h1 id="versioning-module-hierachainconfigversionpy">Versioning Module (<code>hierachain/config/version.py</code>)</h1>
+<h2 id="1-tong-quan">1. Tổng quan</h2>
+<p>Module quản lý phiên bản xác định phiên bản phát hành cho HieraChain. Hệ thống định dạng tuple phiên bản có cấu trúc thành chuỗi chuẩn theo đặc tả PEP 440, đảm bảo các thành phần Core, API, SDK và CLI đồng bộ thông tin phiên bản phát hành.</p>
+<h2 id="2-cau-truc-tuple-phien-ban">2. Cấu trúc tuple phiên bản</h2>
+<p>HieraChain định nghĩa phiên bản hệ thống dưới dạng tuple 5 phần tử trong <code>hierachain/config/version.py</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">VERSION</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"final"</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 </code></pre></div>
-<h3 id="2-so-sanh-tinh-tuong-thich">2. So sánh tính tương thích</h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.units.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">compare_versions</span>
+<p>Ý nghĩa các phần tử:</p>
+<ul>
+<li>Major: Tăng khi có thay đổi kiến trúc hoặc API không tương thích ngược.</li>
+<li>Minor: Tăng khi bổ sung tính năng mới tương thích ngược.</li>
+<li>Micro: Tăng khi phát hành các bản vá lỗi.</li>
+<li>Release level: Trạng thái phát triển (<code>dev</code>, <code>alpha</code>, <code>beta</code>, <code>rc</code> hoặc <code>final</code>).</li>
+<li>Serial: Số thứ tự bản phát hành thử nghiệm.</li>
+</ul>
+<h2 id="3-ham-inh-dang-phien-ban">3. Hàm định dạng phiên bản</h2>
+<p>Module cung cấp hàm chuyển đổi tuple thành chuỗi phiên bản tiêu chuẩn:</p>
+<ul>
+<li>Bản phát hành <code>final</code> bỏ qua hậu tố, trả về chuỗi ngữ nghĩa gọn như <code>0.1.0</code>.</li>
+<li>Các cấp thử nghiệm thêm hậu tố chuẩn PEP 440 như <code>-alpha1</code> hoặc <code>-beta2</code>.</li>
+<li>Cấp <code>dev</code> định dạng theo mẫu <code>.devN</code>.</li>
+</ul>
+<h2 id="4-su-dung-trong-ma-nguon">4. Sử dụng trong mã nguồn</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.config.version</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_version</span><span class="p">,</span> <span class="n">VERSION</span><span class="p">,</span> <span class="n">__version__</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">required</span> <span class="o">=</span> <span class="s2">"0.0.1"</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">current</span> <span class="o">=</span> <span class="n">get_version</span><span class="p">()</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="c1"># Chuỗi phiên bản hiện tại</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"HieraChain Version: </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="k">if</span> <span class="n">compare_versions</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="n">required</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"Hệ thống tương thích."</span><span class="p">)</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="k">else</span><span class="p">:</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"Yêu cầu nâng cấp phiên bản!"</span><span class="p">)</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="c1"># Định dạng tuple tùy chỉnh</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="n">custom_version</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"beta"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Formatted Version: </span><span class="si">{</span><span class="n">get_version</span><span class="p">(</span><span class="n">custom_version</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
-<hr />
-<h2 id="phan-cap-release-level">Phân cấp Release Level</h2>
-<p>Khi so sánh phiên bản, HieraChain tuân theo thứ tự ưu tiên sau (từ thấp đến cao):
-1.  <code>dev</code> (Development)
-2.  <code>alpha</code> (Alpha testing)
-3.  <code>beta</code> (Beta testing)
-4.  <code>rc</code> (Release Candidate)
-5.  <code>final</code> (Stable Release)</p>
-<hr />
 <h2 id="lien-quan">Liên quan</h2>
 <ul>
-<li><a href=".././config/">Cấu hình hệ thống (Config)</a></li>
-<li><a href=".././api/">API Status admin (Sử dụng versioning)</a></li>
-<li><a href=".././cli/">CLI (Hiển thị version)</a></li>
+<li><a href=".././config/">Cấu hình hệ thống</a></li>
+<li><a href=".././api/">API Quản trị</a></li>
+<li><a href=".././cli/">Công cụ CLI</a></li>
 </ul>
 
 

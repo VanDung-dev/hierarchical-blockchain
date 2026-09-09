@@ -1352,7 +1352,7 @@
   <a href="#mechanism-comparison" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Mechanism Comparison
+        Mechanism comparison
       </span>
     </span>
   </a>
@@ -1363,19 +1363,19 @@
   <a href="#proof-of-authority-poa" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Proof of Authority (PoA)
+        Proof of authority (PoA)
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Proof of Authority (PoA)">
+    <nav class="md-nav" aria-label="Proof of authority (PoA)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#key-classes-poa" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes: PoA
+        Key classes: PoA
       </span>
     </span>
   </a>
@@ -1391,19 +1391,19 @@
   <a href="#proof-of-federation-pof" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Proof of Federation (PoF)
+        Proof of federation (PoF)
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Proof of Federation (PoF)">
+    <nav class="md-nav" aria-label="Proof of federation (PoF)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#key-classes-pof" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes: PoF
+        Key classes: PoF
       </span>
     </span>
   </a>
@@ -1419,7 +1419,7 @@
   <a href="#byzantine-fault-tolerance-bft-pbft" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Byzantine Fault Tolerance (BFT / PBFT)
+        Byzantine fault tolerance (BFT / PBFT)
       </span>
     </span>
   </a>
@@ -1430,7 +1430,7 @@
   <a href="#configuration-reference" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Configuration Reference
+        Configuration reference
       </span>
     </span>
   </a>
@@ -4308,7 +4308,7 @@
   <a href="#mechanism-comparison" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Mechanism Comparison
+        Mechanism comparison
       </span>
     </span>
   </a>
@@ -4319,19 +4319,19 @@
   <a href="#proof-of-authority-poa" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Proof of Authority (PoA)
+        Proof of authority (PoA)
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Proof of Authority (PoA)">
+    <nav class="md-nav" aria-label="Proof of authority (PoA)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#key-classes-poa" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes: PoA
+        Key classes: PoA
       </span>
     </span>
   </a>
@@ -4347,19 +4347,19 @@
   <a href="#proof-of-federation-pof" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Proof of Federation (PoF)
+        Proof of federation (PoF)
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Proof of Federation (PoF)">
+    <nav class="md-nav" aria-label="Proof of federation (PoF)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#key-classes-pof" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes: PoF
+        Key classes: PoF
       </span>
     </span>
   </a>
@@ -4375,7 +4375,7 @@
   <a href="#byzantine-fault-tolerance-bft-pbft" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Byzantine Fault Tolerance (BFT / PBFT)
+        Byzantine fault tolerance (BFT / PBFT)
       </span>
     </span>
   </a>
@@ -4386,7 +4386,7 @@
   <a href="#configuration-reference" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Configuration Reference
+        Configuration reference
       </span>
     </span>
   </a>
@@ -4424,11 +4424,11 @@
   
 
 
-<h1 id="consensus-mechanisms-reference">Consensus Mechanisms Reference</h1>
+<h1 id="consensus-mechanisms-reference">Consensus mechanisms reference</h1>
 <p><strong>Related workflows</strong>: <a href=".././event-submission/">Event Submission</a> · <a href=".././bft-consensus/">BFT Consensus</a></p>
-<p>HieraChain supports pluggable consensus mechanisms across layers. At the <strong>MainChain (Inter-Organization Alliance)</strong> level, consensus is configured via the <code>HRC_MAINCHAIN_CONSENSUS</code> environment variable (defaults to <code>proof_of_federation</code>). At the <strong>SubChain (Intra-Organization)</strong> level, domain event processing strictly defaults to <strong>Proof of Authority (PoA)</strong> for maximum speed (~0ms latency). The event submission flow (<a href=".././event-submission/">Event Submission</a>) is identical regardless of which mechanism is selected; only the <code>finalize_block()</code> step differs.</p>
+<p>HieraChain has pluggable consensus across layers. The MainChain (inter-organization alliance) is set by <code>HRC_MAINCHAIN_CONSENSUS</code> and defaults to <code>proof_of_federation</code>. SubChains that hold domain events use proof of authority by default for speed. The event submission flow in <a href=".././event-submission/">Event Submission</a> is the same no matter which mechanism you pick. Only <code>finalize_block()</code> is different.</p>
 <hr />
-<h2 id="mechanism-comparison">Mechanism Comparison</h2>
+<h2 id="mechanism-comparison">Mechanism comparison</h2>
 <table>
 <thead>
 <tr>
@@ -4496,7 +4496,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="proof-of-authority-poa">Proof of Authority (PoA)</h2>
+<h2 id="proof-of-authority-poa">Proof of authority (PoA)</h2>
 <blockquote>
 <p>Default for SubChains, or when <code>HRC_MAINCHAIN_CONSENSUS=proof_of_authority</code> on MainChain.
 A single pre-registered authority signs the block with its Ed25519 private key.</p>
@@ -4517,7 +4517,7 @@ A single pre-registered authority signs the block with its Ed25519 private key.<
     Note right of POA: Ed25519 sign(hash + authority_id + timestamp)&lt;br/&gt;Fallback to random KeyPair in test mode
     POA-&gt;&gt;POA: Append consensus_finalization event&lt;br/&gt;{ authority_id, authority_signature, finalized_at }
     POA--&gt;&gt;OS: Finalized Block ✅</code></pre>
-<h3 id="key-classes-poa">Key Classes: PoA</h3>
+<h3 id="key-classes-poa">Key classes: PoA</h3>
 <table>
 <thead>
 <tr>
@@ -4550,7 +4550,7 @@ A single pre-registered authority signs the block with its Ed25519 private key.<
 </tbody>
 </table>
 <hr />
-<h2 id="proof-of-federation-pof">Proof of Federation (PoF)</h2>
+<h2 id="proof-of-federation-pof">Proof of federation (PoF)</h2>
 <blockquote>
 <p>Default for MainChains when <code>HRC_MAINCHAIN_CONSENSUS=proof_of_federation</code>.
 Leader is elected deterministically by block index. ZK proof is enforced.</p>
@@ -4573,7 +4573,7 @@ Leader is elected deterministically by block index. ZK proof is enforced.</p>
     POF-&gt;&gt;POF: _create_federation_signature(block, leader_id)&lt;br/&gt;SHA-256(hash:leader_id:block.index:time)
     POF-&gt;&gt;POF: Append consensus_finalization event&lt;br/&gt;{ leader_id, validators_count, round, signature }
     POF--&gt;&gt;OS: Finalized Block ✅</code></pre>
-<h3 id="key-classes-pof">Key Classes: PoF</h3>
+<h3 id="key-classes-pof">Key classes: PoF</h3>
 <table>
 <thead>
 <tr>
@@ -4611,15 +4611,15 @@ Leader is elected deterministically by block index. ZK proof is enforced.</p>
 </tbody>
 </table>
 <hr />
-<h2 id="byzantine-fault-tolerance-bft-pbft">Byzantine Fault Tolerance (BFT / PBFT)</h2>
+<h2 id="byzantine-fault-tolerance-bft-pbft">Byzantine fault tolerance (BFT / PBFT)</h2>
 <blockquote>
-<p>Activated when <code>HRC_MAINCHAIN_CONSENSUS=byzantine_fault_tolerant</code>.
+<p>Active when <code>HRC_MAINCHAIN_CONSENSUS=byzantine_fault_tolerant</code>.
 Full 3-phase PBFT. See <a href=".././bft-consensus/">BFT Consensus</a> for the complete flow.</p>
 </blockquote>
-<p><strong>Requirements</strong>: n ≥ 3f + 1 nodes to tolerate f faulty nodes.</p>
-<p><strong>View Change</strong>: If the leader fails within timeout, <code>view += 1</code>, new leader = <code>Validators[view % n]</code>, protocol restarts from Phase 1.</p>
+<p>You need n &gt;= 3f + 1 nodes to tolerate f faulty nodes.</p>
+<p>View change: if the leader fails within the timeout, <code>view += 1</code>, new leader is <code>Validators[view % n]</code> and the protocol restarts from phase 1.</p>
 <hr />
-<h2 id="configuration-reference">Configuration Reference</h2>
+<h2 id="configuration-reference">Configuration reference</h2>
 <table>
 <thead>
 <tr>

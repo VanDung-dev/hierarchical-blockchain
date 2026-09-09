@@ -1093,22 +1093,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#architecture-concepts" class="md-nav__link">
+  <a href="#architecture-and-concepts" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Architecture &amp; Concepts
+        Architecture and concepts
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Architecture &amp; Concepts">
+    <nav class="md-nav" aria-label="Architecture and concepts">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#typical-flow" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Typical Flow
+        Typical flow
       </span>
     </span>
   </a>
@@ -1132,10 +1132,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#features-limitations" class="md-nav__link">
+  <a href="#features-and-limitations" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Features &amp; Limitations
+        Features and limitations
       </span>
     </span>
   </a>
@@ -4299,22 +4299,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#architecture-concepts" class="md-nav__link">
+  <a href="#architecture-and-concepts" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Architecture &amp; Concepts
+        Architecture and concepts
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Architecture &amp; Concepts">
+    <nav class="md-nav" aria-label="Architecture and concepts">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#typical-flow" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Typical Flow
+        Typical flow
       </span>
     </span>
   </a>
@@ -4338,10 +4338,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#features-limitations" class="md-nav__link">
+  <a href="#features-and-limitations" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Features &amp; Limitations
+        Features and limitations
       </span>
     </span>
   </a>
@@ -4392,16 +4392,16 @@
 
 <h1 id="consensus-ordering">Consensus &amp; Ordering</h1>
 <h2 id="purpose">Purpose</h2>
-<p>Describes the Consensus mechanisms and Ordering Service used by HieraChain to ensure the integrity, order, and verifiability of Blocks/Events.</p>
-<h2 id="architecture-concepts">Architecture &amp; Concepts</h2>
+<p>This page describes the consensus mechanisms and the Ordering Service that HieraChain uses to keep blocks and events ordered, intact and verifiable.</p>
+<h2 id="architecture-and-concepts">Architecture and concepts</h2>
 <ul>
-<li>Base Consensus: <code>hierachain/consensus/base_consensus.py</code>, base interface/framework for consensus algorithms.</li>
-<li>Proof of Authority (PoA): <code>hierachain/consensus/proof_of_authority.py</code>, Intra-Organization consensus (Single MainChain managing internal domain Sub-Chains).</li>
-<li>Proof of Federation (PoF): <code>hierachain/consensus/proof_of_federation.py</code>, Inter-Organization P2P MainChain Alliance consensus (Consortium without central RootChain).</li>
-<li>BFT Consensus: <code>hierachain/consensus/bft/</code>, Byzantine fault tolerance at the hierarchical level.</li>
-<li>Ordering Service: <code>hierachain/consensus/ordering/</code>, orders Events before block creation; multi-component architecture (Processor, Certifier, BlockBuilder).</li>
+<li>Base Consensus: <code>hierachain/consensus/base_consensus.py</code> defines the base interface and framework for consensus algorithms.</li>
+<li>Proof of Authority (PoA): <code>hierachain/consensus/proof_of_authority.py</code> provides intra-organization consensus with a single MainChain that manages internal domain Sub-Chains.</li>
+<li>Proof of Federation (PoF): <code>hierachain/consensus/proof_of_federation.py</code> provides inter-organization P2P MainChain alliance consensus for a consortium without a central RootChain.</li>
+<li>BFT Consensus: <code>hierachain/consensus/bft/</code> adds Byzantine fault tolerance at the hierarchical level.</li>
+<li>Ordering Service: <code>hierachain/consensus/ordering/</code> orders events before block creation and is built from several components (Processor, Certifier, BlockBuilder).</li>
 </ul>
-<h3 id="typical-flow">Typical Flow</h3>
+<h3 id="typical-flow">Typical flow</h3>
 <pre class="mermaid"><code>sequenceDiagram
     participant SC as Sub-Chain
     participant OS as Ordering Service
@@ -4417,29 +4417,29 @@
     SC-&gt;&gt;MC: 4. Submit Proof (Root Hash)
     MC--&gt;&gt;SC: Acknowledge</code></pre>
 <ol>
-<li>Sub-Chain receives Event → pushes to Ordering Service queue.</li>
-<li>Ordering Service creates batch per policy (size/time threshold) → sends to selected Consensus mechanism.</li>
-<li>Consensus mechanism (PoA/PoF or BFT) confirms batch/Block → Sub-Chain closes Block.</li>
-<li>If Main Chain anchoring is enabled: Sub-Chain sends Proof (Merkle root/hash) for Main Chain recording.</li>
+<li>A Sub-Chain receives an event and pushes it to the Ordering Service queue.</li>
+<li>The Ordering Service builds a batch based on size and time thresholds and sends it to the selected consensus mechanism.</li>
+<li>The consensus mechanism (PoA, PoF or BFT) confirms the batch or block, then the Sub-Chain closes the block.</li>
+<li>If Main Chain anchoring is enabled, the Sub-Chain sends the proof (Merkle root or hash) to the Main Chain for recording.</li>
 </ol>
 <h2 id="configuration">Configuration</h2>
 <p>Variables in <code>hierachain/config/settings.py</code>:</p>
 <ul>
 <li><code>CONSENSUS_TYPE</code>: <code>proof_of_authority</code> (default) or <code>proof_of_federation</code>.</li>
-<li><code>BFT_ENABLED</code>: Enable/disable BFT layer for Byzantine-resistant scenarios.</li>
-<li><code>VALIDATOR_TIMEOUT</code>: Timeout between validators.</li>
-<li><code>CONSENSUS_FEDERATION_CONFIG</code>: federation parameters (e.g. <code>min_validators</code>, <code>block_interval</code>).</li>
+<li><code>BFT_ENABLED</code>: turns the BFT layer on or off for Byzantine-resistant scenarios.</li>
+<li><code>VALIDATOR_TIMEOUT</code>: timeout between validators.</li>
+<li><code>CONSENSUS_FEDERATION_CONFIG</code>: federation parameters (for example <code>min_validators</code> and <code>block_interval</code>).</li>
 </ul>
 <p>Environment example:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>HRC_CONSENSUS_TYPE=proof_of_authority
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>HRC_ZK_REQUIRED_MAINCHAIN=false
 </code></pre></div>
-<h2 id="features-limitations">Features &amp; Limitations</h2>
+<h2 id="features-and-limitations">Features and limitations</h2>
 <ul>
-<li>PoA: simple deployment, low latency; trust dependency on centralized validator.</li>
-<li>PoF: balance between trust and distribution; requires federation membership management.</li>
-<li>BFT: good Byzantine fault tolerance; trades off complexity/higher message overhead.</li>
-<li>Ordering: ensures stable event ordering/batching before block finalization.</li>
+<li>PoA is simple to deploy and has low latency, but it depends on a central validator for trust.</li>
+<li>PoF balances trust and distribution, but it requires federation membership to be managed.</li>
+<li>BFT tolerates Byzantine faults well, but it adds complexity and higher message overhead.</li>
+<li>Ordering keeps event order and batching stable before a block is finalized.</li>
 </ul>
 <h2 id="related">Related</h2>
 <ul>

@@ -1624,7 +1624,7 @@
   <a href="#flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram
+        Flow diagram
       </span>
     </span>
   </a>
@@ -1635,7 +1635,7 @@
   <a href="#tamper-detection-flow" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Tamper Detection Flow
+        Tamper detection flow
       </span>
     </span>
   </a>
@@ -1646,7 +1646,7 @@
   <a href="#integrity-report-structure" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Integrity Report Structure
+        Integrity report structure
       </span>
     </span>
   </a>
@@ -1657,7 +1657,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -1668,7 +1668,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -1676,10 +1676,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4318,7 +4318,7 @@
   <a href="#flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram
+        Flow diagram
       </span>
     </span>
   </a>
@@ -4329,7 +4329,7 @@
   <a href="#tamper-detection-flow" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Tamper Detection Flow
+        Tamper detection flow
       </span>
     </span>
   </a>
@@ -4340,7 +4340,7 @@
   <a href="#integrity-report-structure" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Integrity Report Structure
+        Integrity report structure
       </span>
     </span>
   </a>
@@ -4351,7 +4351,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -4362,7 +4362,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -4370,10 +4370,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4422,12 +4422,12 @@
   
 
 
-<h1 id="system-integrity-validation">System Integrity Validation</h1>
+<h1 id="system-integrity-validation">System integrity validation</h1>
 <h2 id="overview">Overview</h2>
-<p>A system-wide integrity check that validates the <strong>cryptographic consistency</strong> of all chains and verifies that the proofs stored on the Main Chain match the latest blocks on each Sub-Chain. This is the primary mechanism for <strong>tamper detection</strong> and <strong>audit compliance</strong>.</p>
-<p>The check runs three parallel validation layers: Main Chain cryptographic validity, Sub-Chain cryptographic validity, and proof consistency between the two tiers.</p>
+<p>This workflow checks cryptographic consistency across all chains. It verifies that every block links correctly and that proofs stored on the Main Chain match the latest blocks on each Sub-Chain. It is the main way the system detects tampering and stays audit ready.</p>
+<p>The check runs three layers in parallel: Main Chain validity, Sub-Chain validity and proof consistency between the two tiers.</p>
 <hr />
-<h2 id="flow-diagram">Flow Diagram</h2>
+<h2 id="flow-diagram">Flow diagram</h2>
 <pre class="mermaid"><code>flowchart TB
     TRIGGER["🔍 Trigger\nvalidate_cross_chain_consistency()\nor get_system_integrity_report()"]
 
@@ -4454,7 +4454,7 @@
     REPORT --&gt; HEALTHY
     REPORT --&gt; DEGRADED --&gt; ALERT</code></pre>
 <hr />
-<h2 id="tamper-detection-flow">Tamper Detection Flow</h2>
+<h2 id="tamper-detection-flow">Tamper detection flow</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant OP as 👤 Operator / Monitor
@@ -4480,7 +4480,7 @@
 
     HM--&gt;&gt;OP: IntegrityReport { overall_status, per_chain, proof_consistency, issues }</code></pre>
 <hr />
-<h2 id="integrity-report-structure">Integrity Report Structure</h2>
+<h2 id="integrity-report-structure">Integrity report structure</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">"timestamp"</span><span class="p">:</span> <span class="mf">1714000000.0</span><span class="p">,</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="s2">"overall_status"</span><span class="p">:</span> <span class="s2">"HEALTHY"</span><span class="p">,</span>          <span class="c1"># or "DEGRADED"</span>
@@ -4510,7 +4510,7 @@
 <a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="p">}</span>
 </code></pre></div>
 <hr />
-<h2 id="step-by-step-breakdown">Step-by-Step Breakdown</h2>
+<h2 id="step-by-step-breakdown">Step-by-step breakdown</h2>
 <table>
 <thead>
 <tr>
@@ -4550,7 +4550,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="error-handling">Error Handling</h2>
+<h2 id="error-handling">Error handling</h2>
 <table>
 <thead>
 <tr>
@@ -4583,7 +4583,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-classes-methods">Key Classes &amp; Methods</h2>
+<h2 id="key-classes-and-methods">Key classes and methods</h2>
 <table>
 <thead>
 <tr>

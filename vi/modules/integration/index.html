@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Cầu nối hệ thống doanh nghiệp (ERP Integration) và Apache Arrow Client: Tích hợp SAP, Oracle, Dynamics và tối ưu hóa dữ liệu cột.">
+        <meta name="description" content="Cầu nối tích hợp hệ thống ERP doanh nghiệp: Các bộ kết nối SAP, Oracle và Dynamics kèm công cụ ánh xạ trường và phát hiện thay đổi.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -2225,10 +2225,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tong-quan" class="md-nav__link">
+  <a href="#1-tong-quan" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Tổng quan
+        1. Tổng quan
       </span>
     </span>
   </a>
@@ -2236,55 +2236,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-thanh-phan-cot-loi" class="md-nav__link">
+  <a href="#2-cac-thanh-phan-cot-loi" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các thành phần cốt lõi
+        2. Các thành phần cốt lõi
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cong-cu-anh-xa-du-lieu-mapping-engine" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Công cụ Ánh xạ Dữ liệu (Mapping Engine)
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#luong-ong-bo-du-lieu-synchronization-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Luồng Đồng bộ dữ liệu (Synchronization Flow)
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#vi-du-trien-khai" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Ví dụ Triển khai
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Ví dụ Triển khai">
+    <nav class="md-nav" aria-label="2. Các thành phần cốt lõi">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-cau-hinh-mapping-cho-sap" class="md-nav__link">
+  <a href="#21-erp-integration-ledger-erp_ledgerpy-erpbasepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Cấu hình Mapping cho SAP
+        2.1 ERP Integration Ledger (<code>erp_ledger.py</code>, <code>erp/base.py</code>)
       </span>
     </span>
   </a>
@@ -2292,10 +2259,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-khoi-chay-ong-bo-tu-ong" class="md-nav__link">
+  <a href="#22-enterprise-adapters-enterprisepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Khởi chạy Đồng bộ tự động
+        2.2 Enterprise Adapters (<code>enterprise.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-bo-phat-hien-thay-oi-erpchange_detectorpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Bộ phát hiện thay đổi (<code>erp/change_detector.py</code>)
       </span>
     </span>
   </a>
@@ -2308,10 +2286,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hieu-nang-va-bao-mat" class="md-nav__link">
+  <a href="#3-cong-cu-anh-xa-du-lieu-mapping-engine" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Hiệu năng và Bảo mật
+        3. Công cụ ánh xạ dữ liệu (Mapping Engine)
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-luong-ong-bo-du-lieu" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4. Luồng đồng bộ dữ liệu
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-vi-du-su-dung" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5. Ví dụ sử dụng
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Ví dụ sử dụng">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cau-hinh-anh-xa-va-lap-lich-ong-bo" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Cấu hình ánh xạ và lập lịch đồng bộ
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-tinh-ben-vung-va-bao-mat" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6. Tính bền vững và bảo mật
       </span>
     </span>
   </a>
@@ -4321,10 +4349,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tong-quan" class="md-nav__link">
+  <a href="#1-tong-quan" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Tổng quan
+        1. Tổng quan
       </span>
     </span>
   </a>
@@ -4332,55 +4360,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-thanh-phan-cot-loi" class="md-nav__link">
+  <a href="#2-cac-thanh-phan-cot-loi" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các thành phần cốt lõi
+        2. Các thành phần cốt lõi
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cong-cu-anh-xa-du-lieu-mapping-engine" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Công cụ Ánh xạ Dữ liệu (Mapping Engine)
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#luong-ong-bo-du-lieu-synchronization-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Luồng Đồng bộ dữ liệu (Synchronization Flow)
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#vi-du-trien-khai" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Ví dụ Triển khai
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Ví dụ Triển khai">
+    <nav class="md-nav" aria-label="2. Các thành phần cốt lõi">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-cau-hinh-mapping-cho-sap" class="md-nav__link">
+  <a href="#21-erp-integration-ledger-erp_ledgerpy-erpbasepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Cấu hình Mapping cho SAP
+        2.1 ERP Integration Ledger (<code>erp_ledger.py</code>, <code>erp/base.py</code>)
       </span>
     </span>
   </a>
@@ -4388,10 +4383,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-khoi-chay-ong-bo-tu-ong" class="md-nav__link">
+  <a href="#22-enterprise-adapters-enterprisepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Khởi chạy Đồng bộ tự động
+        2.2 Enterprise Adapters (<code>enterprise.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-bo-phat-hien-thay-oi-erpchange_detectorpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Bộ phát hiện thay đổi (<code>erp/change_detector.py</code>)
       </span>
     </span>
   </a>
@@ -4404,10 +4410,60 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hieu-nang-va-bao-mat" class="md-nav__link">
+  <a href="#3-cong-cu-anh-xa-du-lieu-mapping-engine" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Hiệu năng và Bảo mật
+        3. Công cụ ánh xạ dữ liệu (Mapping Engine)
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-luong-ong-bo-du-lieu" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4. Luồng đồng bộ dữ liệu
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-vi-du-su-dung" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5. Ví dụ sử dụng
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Ví dụ sử dụng">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cau-hinh-anh-xa-va-lap-lich-ong-bo" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Cấu hình ánh xạ và lập lịch đồng bộ
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-tinh-ben-vung-va-bao-mat" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        6. Tính bền vững và bảo mật
       </span>
     </span>
   </a>
@@ -4457,55 +4513,29 @@
 
 
 <h1 id="integration-module-hierachainintegration">Integration Module (<code>hierachain/integration/*</code>)</h1>
-<h2 id="tong-quan">Tổng quan</h2>
-<p>Module <strong>Integration</strong> là "cánh cửa" cho phép HieraChain hoạt động như một lớp bổ sung (Plugin Layer) cho hạ tầng Web2 hiện có của doanh nghiệp. Nó cung cấp các công cụ mạnh mẽ để kết nối, trích xuất và chuẩn hóa dữ liệu từ các hệ thống ERP hàng đầu thế giới (SAP, Oracle, Microsoft Dynamics) vào sổ cái blockchain với hiệu suất cao nhất.</p>
-<hr />
-<h2 id="cac-thanh-phan-cot-loi">Các thành phần cốt lõi</h2>
-<div class="grid cards">
+<h2 id="1-tong-quan">1. Tổng quan</h2>
+<p>Module <code>integration</code> kết nối HieraChain với các hệ thống phần mềm doanh nghiệp như SAP, Oracle và Microsoft Dynamics. Hệ thống trích xuất bản ghi từ ERP bên ngoài, chuẩn hóa dữ liệu thông qua công cụ ánh xạ và ghi nhận các sự kiện trạng thái có thể kiểm chứng lên các chuỗi con nghiệp vụ.</p>
+<h2 id="2-cac-thanh-phan-cot-loi">2. Các thành phần cốt lõi</h2>
+<p>Toàn bộ thành phần tích hợp nằm tại <code>hierachain/integration/</code>.</p>
+<h3 id="21-erp-integration-ledger-erp_ledgerpy-erpbasepy">2.1 ERP Integration Ledger (<code>erp_ledger.py</code>, <code>erp/base.py</code>)</h3>
 <ul>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18a6 6 0 0 1-6-6c0-1 .25-1.97.7-2.8L5.24 7.74A7.93 7.93 0 0 0 4 12a8 8 0 0 0 8 8v3l4-4-4-4m0-11V1L8 5l4 4V6a6 6 0 0 1 6 6c0 1-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12a8 8 0 0 0-8-8"/></svg></span> <strong>ERP Integration Ledger</strong></p>
-<hr />
-<p><strong>File</strong>: <code>erp_ledger.py</code></p>
+<li>Điều phối các đường ống đồng bộ dữ liệu.</li>
+<li>Tích hợp <code>MappingEngine</code> để chuyển đổi các trường dữ liệu.</li>
+<li>Quản lý <code>SyncScheduler</code> để định kỳ thăm dò API bên ngoài theo khoảng thời gian cấu hình.</li>
+</ul>
+<h3 id="22-enterprise-adapters-enterprisepy">2.2 Enterprise Adapters (<code>enterprise.py</code>)</h3>
 <ul>
-<li>Trung tâm điều phối việc tích hợp với các hệ thống ERP.</li>
-<li><strong>Mapping Engine</strong>: Ánh xạ dữ liệu phức tạp từ ERP sang Blockchain.</li>
-<li><strong>Sync Scheduler</strong>: Lập lịch đồng bộ tự động với cơ chế Retry thông minh.</li>
+<li>Các bộ kết nối cho SAP, Oracle và Microsoft Dynamics.</li>
+<li>Đọc URL và thông tin đăng nhập từ biến môi trường (<code>HRC_SAP_*</code>, <code>HRC_ORACLE_*</code>, <code>HRC_DYNAMICS_*</code>).</li>
+<li>Xử lý bắt tay xác thực và vòng đời phiên HTTP.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 18v2h4v-2zm0-4v2h10v-2zm6 4v2h4v-2zm6-4v2h4v-2zm0 4v2h4v-2zM2 22V8l5 4V8l5 4V8l5 4 1-10h3l1 10v10z"/></svg></span> <strong>Enterprise Adapters</strong></p>
-<hr />
-<p><strong>File</strong>: <code>enterprise.py</code></p>
+<h3 id="23-bo-phat-hien-thay-oi-erpchange_detectorpy">2.3 Bộ phát hiện thay đổi (<code>erp/change_detector.py</code>)</h3>
 <ul>
-<li>Các bộ kết nối (Adapters) chuẩn hóa cho <strong>SAP</strong>, <strong>Oracle</strong>, và <strong>Dynamics</strong>.</li>
-<li>Hỗ trợ cấu hình qua biến môi trường để đảm bảo bảo mật thông tin kết nối.</li>
-<li>Xử lý xác thực và kết nối đến các API doanh nghiệp.</li>
+<li>So sánh dữ liệu ERP mới nhận với ảnh chụp trạng thái trước đó.</li>
+<li>Tách biệt các thay đổi (delta) nhằm tránh ghi nhận sự kiện dư thừa lên chuỗi.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 2h8a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2m0 8v4h8v-4zm0 6v4h8v-4zM8 4v4h8V4z"/></svg></span> <strong>Arrow Client</strong></p>
-<hr />
-<p><strong>File</strong>: <code>arrow_client.py</code></p>
-<ul>
-<li>Tối ưu hóa việc trao đổi dữ liệu khối lượng lớn bằng định dạng cột <strong>Apache Arrow</strong>.</li>
-<li>Tăng tốc độ IO và giảm mức tiêu thụ bộ nhớ khi xử lý báo cáo hoặc trích xuất dữ liệu.</li>
-</ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 22v-2h3v-3h2v3.5c0 .39-.16.74-.46 1.04s-.65.46-1.04.46zM7 22H3.5c-.39 0-.74-.16-1.04-.46S2 20.89 2 20.5V17h2v3h3zM17 2h3.5c.39 0 .74.16 1.04.46s.46.65.46 1.04V7h-2V4h-3zM7 2v2H4v3H2V3.5c0-.39.16-.74.46-1.04S3.11 2 3.5 2zm3.5 4C13 6 15 8 15 10.5c0 .88-.25 1.7-.69 2.4l3.26 3.26-1.41 1.41-3.26-3.26c-.7.44-1.52.69-2.4.69C8 15 6 13 6 10.5S8 6 10.5 6m0 2a2.5 2.5 0 0 0 0 5 2.5 2.5 0 0 0 0-5"/></svg></span> <strong>Change Detector</strong></p>
-<hr />
-<p><strong>File</strong>: <code>erp_ledger.py</code></p>
-<ul>
-<li>Tự động phát hiện sự thay đổi giữa các trạng thái dữ liệu trong ERP.</li>
-<li>Chỉ ghi nhận những thay đổi có ý nghĩa (Delta) lên blockchain để tối ưu không gian lưu trữ.</li>
-</ul>
-</li>
-</ul>
-</div>
-<hr />
-<h2 id="cong-cu-anh-xa-du-lieu-mapping-engine">Công cụ Ánh xạ Dữ liệu (Mapping Engine)</h2>
-<p>Mapping Engine cho phép định nghĩa các quy tắc chuyển đổi linh hoạt cho từng trường dữ liệu:</p>
+<h2 id="3-cong-cu-anh-xa-du-lieu-mapping-engine">3. Công cụ ánh xạ dữ liệu (Mapping Engine)</h2>
+<p><code>MappingEngine</code> chuyển đổi các trường dữ liệu doanh nghiệp thành thuộc tính sự kiện chuẩn hóa:</p>
 <table>
 <thead>
 <tr>
@@ -4518,89 +4548,82 @@
 <tr>
 <td style="text-align: left;"><code>date</code></td>
 <td style="text-align: left;">Chuẩn hóa định dạng thời gian</td>
-<td style="text-align: left;"><code>12/04/2024</code> → <code>ISO-8601</code></td>
+<td style="text-align: left;"><code>12/04/2024</code> -&gt; <code>ISO-8601</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>amount</code></td>
-<td style="text-align: left;">Chuyển đổi kiểu số và tiền tệ</td>
-<td style="text-align: left;"><code>5000</code> → <code>5000.0</code> (Float)</td>
+<td style="text-align: left;">Chuẩn hóa số và tiền tệ</td>
+<td style="text-align: left;"><code>5000</code> -&gt; <code>5000.0</code> (float)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>status</code></td>
-<td style="text-align: left;">Ánh xạ trạng thái nghiệp vụ</td>
-<td style="text-align: left;"><code>REQ</code> → <code>REQUESTED</code></td>
+<td style="text-align: left;">Ánh xạ mã trạng thái nghiệp vụ</td>
+<td style="text-align: left;"><code>REQ</code> -&gt; <code>REQUESTED</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>id</code></td>
 <td style="text-align: left;">Thêm tiền tố định danh</td>
-<td style="text-align: left;"><code>123</code> → <code>ERP_123</code></td>
+<td style="text-align: left;"><code>123</code> -&gt; <code>ERP_123</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>boolean</code></td>
-<td style="text-align: left;">Chuyển đổi logic</td>
-<td style="text-align: left;"><code>1/Yes/On</code> → <code>True</code></td>
+<td style="text-align: left;">Chuẩn hóa giá trị logic</td>
+<td style="text-align: left;"><code>1/Yes/On</code> -&gt; <code>True</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h2 id="luong-ong-bo-du-lieu-synchronization-flow">Luồng Đồng bộ dữ liệu (Synchronization Flow)</h2>
-<p>Hệ thống sử dụng <code>SyncScheduler</code> để đảm bảo dữ liệu blockchain luôn được cập nhật từ ERP:</p>
+<h2 id="4-luong-ong-bo-du-lieu">4. Luồng đồng bộ dữ liệu</h2>
+<p><code>SyncScheduler</code> quản lý việc thăm dò và thử lại với các nguồn dữ liệu bên ngoài:</p>
 <pre class="mermaid"><code>sequenceDiagram
     participant ERP as ERP System (SAP/Oracle)
     participant Sync as SyncScheduler
     participant Map as MappingEngine
-    participant HRC as HieraChain Ledger
+    participant HRC as HieraChain SubChain
 
-    Sync-&gt;&gt;ERP: Poll for changes (Interval)
-    ERP--&gt;&gt;Sync: Return ERP Events
+    Sync-&gt;&gt;ERP: Poll for changes (interval)
+    ERP--&gt;&gt;Sync: Return ERP records
 
-    loop Per Event
-        Sync-&gt;&gt;Map: Translate ERP -&gt; Blockchain
-        Map-&gt;&gt;Map: Apply Transformers (ID, Date, etc.)
-        Map--&gt;&gt;Sync: Normalized Event
-        Sync-&gt;&gt;HRC: Submit Event to Sub-Chain
-    end
-
-    Note over Sync, HRC: Nếu lỗi: Tự động Retry với Exponential Backoff</code></pre>
-<hr />
-<h2 id="vi-du-trien-khai">Ví dụ Triển khai</h2>
-<h3 id="1-cau-hinh-mapping-cho-sap">1. Cấu hình Mapping cho SAP</h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">sap_mapping</span> <span class="o">=</span> <span class="p">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">"entity_id"</span><span class="p">:</span> <span class="s2">"material.document_number"</span><span class="p">,</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="s2">"event"</span><span class="p">:</span> <span class="p">{</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="s2">"source_path"</span><span class="p">:</span> <span class="s2">"material.event_type"</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        <span class="s2">"transformer"</span><span class="p">:</span> <span class="s2">"status"</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="s2">"params"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"mapping"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"GR"</span><span class="p">:</span> <span class="s2">"GOODS_RECEIPT"</span><span class="p">}}</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="p">},</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="s2">"details.quantity"</span><span class="p">:</span> <span class="p">{</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="s2">"source_path"</span><span class="p">:</span> <span class="s2">"material.qty"</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="s2">"transformer"</span><span class="p">:</span> <span class="s2">"amount"</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="p">}</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">}</span>
+    loop Per Record
+        Sync-&gt;&gt;Map: Translate ERP -&gt; Blockchain event
+        Map-&gt;&gt;Map: Apply transformers (ID, date, status)
+        Map--&gt;&gt;Sync: Normalized event dict
+        Sync-&gt;&gt;HRC: Submit event to Sub-Chain
+    end</code></pre>
+<h2 id="5-vi-du-su-dung">5. Ví dụ sử dụng</h2>
+<h3 id="cau-hinh-anh-xa-va-lap-lich-ong-bo">Cấu hình ánh xạ và lập lịch đồng bộ</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.integration.erp_ledger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ERPIntegrationLedger</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">sap_mapping</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="s2">"entity_id"</span><span class="p">:</span> <span class="s2">"material.document_number"</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="s2">"event"</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="s2">"source_path"</span><span class="p">:</span> <span class="s2">"material.event_type"</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="s2">"transformer"</span><span class="p">:</span> <span class="s2">"status"</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>        <span class="s2">"params"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"mapping"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"GR"</span><span class="p">:</span> <span class="s2">"GOODS_RECEIPT"</span><span class="p">}}</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="p">},</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="s2">"details.quantity"</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="s2">"source_path"</span><span class="p">:</span> <span class="s2">"material.qty"</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="s2">"transformer"</span><span class="p">:</span> <span class="s2">"amount"</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="p">}</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">}</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="n">ledger</span> <span class="o">=</span> <span class="n">ERPIntegrationLedger</span><span class="p">()</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="c1"># Start syncing with a domain sub-chain</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="n">ledger</span><span class="o">.</span><span class="n">start_scheduled_sync</span><span class="p">(</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="n">profile_name</span><span class="o">=</span><span class="s2">"SAP_Logistics"</span><span class="p">,</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="n">interval_seconds</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>    <span class="n">chain</span><span class="o">=</span><span class="n">sub_chain_instance</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="p">)</span>
 </code></pre></div>
-<h3 id="2-khoi-chay-ong-bo-tu-ong">2. Khởi chạy Đồng bộ tự động</h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.integration.erp_ledger</span><span class="w"> </span><span class="kn">import</span> <span class="n">ERPIntegrationLedger</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">ledger</span> <span class="o">=</span> <span class="n">ERPIntegrationLedger</span><span class="p">()</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Bắt đầu đồng bộ profile 'SAP_Logistics' mỗi 60 giây</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">ledger</span><span class="o">.</span><span class="n">start_scheduled_sync</span><span class="p">(</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="n">profile_name</span><span class="o">=</span><span class="s2">"SAP_Logistics"</span><span class="p">,</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>    <span class="n">interval_seconds</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>    <span class="n">chain</span><span class="o">=</span><span class="n">sub_chain_instance</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="p">)</span>
-</code></pre></div>
-<hr />
-<h2 id="hieu-nang-va-bao-mat">Hiệu năng và Bảo mật</h2>
+<h2 id="6-tinh-ben-vung-va-bao-mat">6. Tính bền vững và bảo mật</h2>
 <ul>
-<li><strong>Hiệu năng</strong>: Sử dụng <code>ThreadPoolExecutor</code> để xử lý đồng bộ nhiều profile ERP cùng lúc mà không gây nghẽn.</li>
-<li><strong>Bảo mật</strong>: Thông tin định danh và mật khẩu ERP được quản lý qua biến môi trường (ví dụ: <code>HRC_SAP_PASSWORD</code>), tuân thủ nguyên tắc không lưu secret trong mã nguồn.</li>
-<li><strong>Tính bền vững</strong>: Cơ chế Retry với Exponential Backoff giúp hệ thống tự phục hồi khi kết nối ERP bị gián đoạn tạm thời.</li>
+<li>Xử lý đa luồng: Sử dụng <code>ThreadPoolExecutor</code> để xử lý đồng thời nhiều hồ sơ đồng bộ mà không chặn xử lý sự kiện chính.</li>
+<li>Phân lập thông tin bí mật: Mật khẩu và thông tin xác thực sử dụng biến môi trường, không lưu trữ trong mã nguồn.</li>
+<li>Tự động thử lại: Các worker đồng bộ áp dụng cơ chế exponential backoff khi gặp sự cố mạng tạm thời.</li>
 </ul>
-<hr />
 <h2 id="lien-quan">Liên quan</h2>
 <ul>
 <li><a href=".././hierarchical/">Hệ thống Phân cấp (Hierarchical)</a></li>
-<li><a href=".././core/">Cấu trúc Blockchain Lõi (Core)</a></li>
+<li><a href=".././core/">Cấu trúc Sổ cái Cốt lõi (Core)</a></li>
 <li><a href=".././error-mitigation/">Xử lý lỗi và Giảm thiểu rủi ro</a></li>
 </ul>
 

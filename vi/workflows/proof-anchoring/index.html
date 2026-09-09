@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Neo giữ các bằng chứng mã hóa từ chuỗi con (Sub-Chain) lên chuỗi chính (Main Chain) để đảm bảo tính bất biến toàn cục.">
+        <meta name="description" content="Neo giữ các bằng chứng mã hóa từ chuỗi con lên chuỗi chính để đảm bảo tính bất biến toàn cục.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -33,7 +33,7 @@
     
     
       
-        <title>Neo giữ Bằng chứng (Proof Anchoring) - HieraChain Docs</title>
+        <title>Neo giữ Bằng chứng - HieraChain Docs</title>
       
     
     
@@ -89,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#neo-giu-bang-chung-proof-anchoring" class="md-skip">
+        <a href="#neo-giu-bang-chung" class="md-skip">
           Bỏ qua
         </a>
       
@@ -123,7 +123,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Neo giữ Bằng chứng (Proof Anchoring)
+              Neo giữ Bằng chứng
             
           </span>
         </div>
@@ -1429,10 +1429,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-buoc-thuc-hien-chi-tiet" class="md-nav__link">
+  <a href="#cac-buoc-chi-tiet" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các bước thực hiện chi tiết
+        Các bước chi tiết
       </span>
     </span>
   </a>
@@ -1440,10 +1440,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-che-o-bang-chung-zk" class="md-nav__link">
+  <a href="#che-o-proof-zk" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các chế độ Bằng chứng ZK
+        Chế độ proof ZK
       </span>
     </span>
   </a>
@@ -1473,10 +1473,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-class-method-quan-trong" class="md-nav__link">
+  <a href="#lop-va-phuong-thuc-chinh" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các Class &amp; Method quan trọng
+        Lớp và phương thức chính
       </span>
     </span>
   </a>
@@ -4326,10 +4326,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-buoc-thuc-hien-chi-tiet" class="md-nav__link">
+  <a href="#cac-buoc-chi-tiet" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các bước thực hiện chi tiết
+        Các bước chi tiết
       </span>
     </span>
   </a>
@@ -4337,10 +4337,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-che-o-bang-chung-zk" class="md-nav__link">
+  <a href="#che-o-proof-zk" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các chế độ Bằng chứng ZK
+        Chế độ proof ZK
       </span>
     </span>
   </a>
@@ -4370,10 +4370,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-class-method-quan-trong" class="md-nav__link">
+  <a href="#lop-va-phuong-thuc-chinh" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các Class &amp; Method quan trọng
+        Lớp và phương thức chính
       </span>
     </span>
   </a>
@@ -4422,10 +4422,10 @@
   
 
 
-<h1 id="neo-giu-bang-chung-proof-anchoring">Neo giữ Bằng chứng (Proof Anchoring)</h1>
+<h1 id="neo-giu-bang-chung">Neo giữ bằng chứng</h1>
 <h2 id="tong-quan">Tổng quan</h2>
-<p>Sau khi một khối được hoàn tất trên Chuỗi con (Sub-Chain), Chuỗi con sẽ gửi một <strong>bằng chứng mã hóa</strong> (hash + bằng chứng ZK tùy chọn) lên Chuỗi chính (Main Chain). Chuỗi chính chỉ lưu trữ bằng chứng này, không bao giờ lưu dữ liệu sự kiện thô. Cơ chế này giúp đảm bảo tính bất biến toàn cục mà không cần lưu trữ dữ liệu miền nhạy cảm trên chuỗi gốc.</p>
-<p>Đây là một <strong>cơ chế kích hoạt sau khối (post-block trigger)</strong>, không phải là một lệnh do người dùng yêu cầu. Lệnh này tự động kích hoạt khi <code>chain_length % proof_interval == 0</code>.</p>
+<p>Sau khi khối hoàn tất trên Sub-Chain, Sub-Chain gửi bằng chứng mã hóa (hash và proof ZK tùy chọn) lên Main Chain. Main Chain chỉ lưu bằng chứng này, không lưu dữ liệu sự kiện thô. Cách này giữ tính bất biến toàn cục mà không lưu dữ liệu nhạy cảm trên chuỗi gốc.</p>
+<p>Đây là trigger sau khối, không phải lệnh do người dùng gọi. Nó tự kích hoạt khi <code>chain_length % proof_interval == 0</code>.</p>
 <hr />
 <h2 id="bieu-o-luong">Biểu đồ luồng</h2>
 <pre class="mermaid"><code>sequenceDiagram
@@ -4455,7 +4455,7 @@
     SC-&gt;&gt;SC: Ghi nhận sự kiện nội bộ proof_submitted
     SC-&gt;&gt;SC: Cập nhật timestamp last_proof_submission</code></pre>
 <hr />
-<h2 id="cac-buoc-thuc-hien-chi-tiet">Các bước thực hiện chi tiết</h2>
+<h2 id="cac-buoc-chi-tiet">Các bước chi tiết</h2>
 <table>
 <thead>
 <tr>
@@ -4466,45 +4466,45 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><strong>1. Kiểm tra kích hoạt</strong></td>
-<td style="text-align: left;">Lệnh <code>auto_submit_proof_if_needed()</code> kiểm tra điều kiện <code>len(chain) &gt; 1</code> và khối đã được hoàn tất.</td>
+<td style="text-align: left;"><code>auto_submit_proof_if_needed()</code> kiểm tra <code>len(chain) &gt; 1</code> và khối đã hoàn tất.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>2. Tạo bằng chứng ZK</strong></td>
-<td style="text-align: left;">Nếu <code>HRC_ENABLE_ZK_PROOFS=true</code>: ZKProver tính toán trên <code>(old_state_root, new_state_root, events)</code>. Thử lại tối đa 3 lần nếu lỗi.</td>
+<td style="text-align: left;"><strong>2. Tạo proof ZK</strong></td>
+<td style="text-align: left;">Nếu <code>HRC_ENABLE_ZK_PROOFS=true</code>: ZKProver tính trên <code>(old_state_root, new_state_root, events)</code>. Thử lại tối đa 3 lần nếu lỗi.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>3. Metadata của bằng chứng</strong></td>
-<td style="text-align: left;">Lệnh <code>_generate_default_proof_metadata()</code> xây dựng cấu trúc <code>{ sub_chain_name, block_count, latest_hash, timestamp }</code>.</td>
+<td style="text-align: left;"><strong>3. Metadata proof</strong></td>
+<td style="text-align: left;"><code>_generate_default_proof_metadata()</code> tạo <code>{ sub_chain_name, block_count, latest_hash, timestamp }</code>.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>4. Ghi lên Chuỗi chính</strong></td>
-<td style="text-align: left;">Lệnh <code>MainChain.add_proof()</code> xác thực bằng chứng ZK, sau đó nối thêm khối bằng chứng mới vào Chuỗi chính.</td>
+<td style="text-align: left;"><strong>4. Ghi lên Main Chain</strong></td>
+<td style="text-align: left;"><code>MainChain.add_proof()</code> xác thực proof ZK, rồi nối khối proof mới vào Main Chain.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>5. Ghi nhận</strong></td>
-<td style="text-align: left;">Chuỗi con ghi nhật ký sự kiện nội bộ <code>proof_submitted</code> và cập nhật timestamp <code>last_proof_submission</code>.</td>
+<td style="text-align: left;">Sub-Chain ghi log sự kiện nội bộ <code>proof_submitted</code> và cập nhật <code>last_proof_submission</code>.</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="cac-che-o-bang-chung-zk">Các chế độ Bằng chứng ZK</h2>
+<h2 id="che-o-proof-zk">Chế độ proof ZK</h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Chế độ</th>
 <th style="text-align: left;">Cơ chế</th>
-<th style="text-align: left;">Trường hợp sử dụng</th>
+<th style="text-align: left;">Trường hợp dùng</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align: left;"><code>mock</code></td>
-<td style="text-align: left;">Giả lập mã băm SHA-256</td>
-<td style="text-align: left;">Phát triển / Kiểm thử</td>
+<td style="text-align: left;">Mô phỏng băm SHA-256</td>
+<td style="text-align: left;">Phát triển / kiểm thử</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>production</code></td>
-<td style="text-align: left;">Các mạch ZoKrates ZK-SNARKs</td>
+<td style="text-align: left;">Mạch ZoKrates ZK-SNARKs</td>
 <td style="text-align: left;">Triển khai thực tế</td>
 </tr>
 </tbody>
@@ -4528,12 +4528,12 @@
 <tr>
 <td style="text-align: left;"><code>HRC_ZK_MODE</code></td>
 <td style="text-align: left;"><code>mock</code></td>
-<td style="text-align: left;">Chế độ <code>mock</code> hoặc <code>production</code></td>
+<td style="text-align: left;"><code>mock</code> hoặc <code>production</code></td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>HRC_ZK_PROOF_REQUIRED_FOR_MAINCHAIN</code></td>
+<td style="text-align: left;"><code>HRC_ZK_REQUIRED_MAINCHAIN</code></td>
 <td style="text-align: left;"><code>false</code></td>
-<td style="text-align: left;">Chặn gửi bằng chứng lên Chuỗi chính nếu ZK thất bại</td>
+<td style="text-align: left;">Chặn gửi proof lên Main Chain nếu ZK lỗi</td>
 </tr>
 </tbody>
 </table>
@@ -4548,34 +4548,34 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Lỗi tạo bằng chứng ZK</td>
-<td style="text-align: left;">Thử lại tối đa 3 lần với thời gian chờ tăng dần; nếu <code>HRC_ZK_PROOF_REQUIRED_FOR_MAINCHAIN=true</code>, hủy bỏ quy trình</td>
+<td style="text-align: left;">Lỗi tạo proof ZK</td>
+<td style="text-align: left;">Thử lại tối đa 3 lần với chờ tăng dần; nếu <code>HRC_ZK_REQUIRED_MAINCHAIN=true</code> thì hủy</td>
 </tr>
 <tr>
-<td style="text-align: left;">Ghi lên Chuỗi chính thất bại</td>
-<td style="text-align: left;">Ghi nhật ký ngoại lệ, không cập nhật <code>last_proof_submission</code>; thử lại ở khối tiếp theo</td>
+<td style="text-align: left;">Ghi lên Main Chain lỗi</td>
+<td style="text-align: left;">Ghi log exception, không cập nhật <code>last_proof_submission</code>; thử lại ở khối tiếp theo</td>
 </tr>
 <tr>
-<td style="text-align: left;">Xác thực ZK trên Chuỗi chính thất bại</td>
-<td style="text-align: left;">Lệnh <code>add_proof()</code> ném ra ngoại lệ, khối bằng chứng không được nối vào chuỗi</td>
+<td style="text-align: left;">Xác thực ZK trên Main Chain lỗi</td>
+<td style="text-align: left;"><code>add_proof()</code> ném exception, khối proof không được nối</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="cac-class-method-quan-trong">Các Class &amp; Method quan trọng</h2>
+<h2 id="lop-va-phuong-thuc-chinh">Lớp và phương thức chính</h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Bước</th>
-<th style="text-align: left;">Class / Method</th>
-<th style="text-align: left;">File</th>
+<th style="text-align: left;">Lớp / Phương thức</th>
+<th style="text-align: left;">Tệp</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align: left;">Kích hoạt</td>
 <td style="text-align: left;"><code>SubChain.auto_submit_proof_if_needed()</code></td>
-<td style="text-align: left;"><code>hierarchical/sub_chain.py</code></td>
+<td style="text-align: left;"><code>hierarchical/sub_chain/base.py</code></td>
 </tr>
 <tr>
 <td style="text-align: left;">Tạo ZK</td>
@@ -4583,14 +4583,14 @@
 <td style="text-align: left;"><code>security/zk_prover.py</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Metadata bằng chứng</td>
+<td style="text-align: left;">Metadata proof</td>
 <td style="text-align: left;"><code>_generate_default_proof_metadata()</code></td>
-<td style="text-align: left;"><code>hierarchical/sub_chain.py</code></td>
+<td style="text-align: left;"><code>hierarchical/sub_chain/base.py</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Neo giữ trên Main</td>
+<td style="text-align: left;">Neo lên Main</td>
 <td style="text-align: left;"><code>MainChain.add_proof()</code></td>
-<td style="text-align: left;"><code>hierarchical/main_chain.py</code></td>
+<td style="text-align: left;"><code>hierarchical/main_chain/base.py</code></td>
 </tr>
 <tr>
 <td style="text-align: left;">Xác thực ZK</td>
@@ -4602,8 +4602,8 @@
 <hr />
 <h2 id="lien-quan">Liên quan</h2>
 <ul>
-<li><a href=".././event-submission/">Gửi Sự kiện</a>: luồng công việc kích hoạt quy trình này</li>
-<li><a href=".././integrity-validation/">Xác thực Tính toàn vẹn</a>: kiểm tra tính nhất quán của bằng chứng giữa Chuỗi con và Chuỗi chính</li>
+<li><a href=".././event-submission/">Gửi Sự kiện</a>: luồng kích hoạt quy trình này</li>
+<li><a href=".././integrity-validation/">Xác thực Tính toàn vẹn</a>: kiểm tra nhất quán proof giữa Sub-Chain và Main Chain</li>
 </ul>
 
 

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Kiến trúc đa tầng HieraChain: Main Chain, Sub-Chains, và Hierarchy Manager — Nền tảng cho khả năng mở rộng và bảo mật doanh nghiệp.">
+        <meta name="description" content="Kiến trúc hai tầng: MainChain, SubChain và HierarchyManager phục vụ mở rộng quy mô doanh nghiệp và phân lập dữ liệu.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -1964,10 +1964,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tong-quan" class="md-nav__link">
+  <a href="#1-tong-quan" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Tổng quan
+        1. Tổng quan
       </span>
     </span>
   </a>
@@ -1975,44 +1975,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-thanh-phan-nen-tang" class="md-nav__link">
+  <a href="#2-cac-thanh-phan-nen-tang" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các thành phần nền tảng
+        2. Các thành phần nền tảng
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kien-truc-luong-du-lieu-system-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Kiến trúc Luồng Dữ liệu (System Workflow)
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kha-nang-mo-rong-quan-ly-ha-tang" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Khả năng Mở rộng &amp; Quản lý Hạ tầng
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Khả năng Mở rộng &amp; Quản lý Hạ tầng">
+    <nav class="md-nav" aria-label="2. Các thành phần nền tảng">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-sub-chain-rebalancer-rebalancerpy" class="md-nav__link">
+  <a href="#21-chuoi-chinh-main-chain-main_chainbasepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Sub-Chain Rebalancer (<code>rebalancer.py</code>)
+        2.1 Chuỗi chính Main Chain (<code>main_chain/base.py</code>)
       </span>
     </span>
   </a>
@@ -2020,10 +1998,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-kubernetes-namespace-manager-k8s_namespace_managerpy" class="md-nav__link">
+  <a href="#22-chuoi-con-sub-chain-sub_chainbasepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Kubernetes Namespace Manager (<code>k8s_namespace_manager.py</code>)
+        2.2 Chuỗi con Sub-Chain (<code>sub_chain/base.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-quan-ly-phan-cap-hierarchy-manager-hierarchy_managerbasepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Quản lý phân cấp Hierarchy Manager (<code>hierarchy_manager/base.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-a-to-chuc-kenh-va-du-lieu-rieng-tu" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4 Đa tổ chức, kênh và dữ liệu riêng tư
       </span>
     </span>
   </a>
@@ -2036,10 +2036,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#giao-dich-xuyen-chuoi-cross-chain-transactions" class="md-nav__link">
+  <a href="#3-luong-du-lieu" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Giao dịch Xuyên chuỗi (Cross-Chain Transactions)
+        3. Luồng dữ liệu
       </span>
     </span>
   </a>
@@ -2047,22 +2047,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bao-mat-va-quyen-rieng-tu-nang-cao" class="md-nav__link">
+  <a href="#4-kha-nang-mo-rong-va-quan-ly-ha-tang" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Bảo mật và Quyền riêng tư nâng cao
+        4. Khả năng mở rộng và quản lý hạ tầng
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Bảo mật và Quyền riêng tư nâng cao">
+    <nav class="md-nav" aria-label="4. Khả năng mở rộng và quản lý hạ tầng">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#xac-thuc-khong-tiet-lo-zk-proofs" class="md-nav__link">
+  <a href="#bo-tai-can-bang-chuoi-con-rebalancerrebalancerpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Xác thực không tiết lộ (ZK Proofs)
+        Bộ tái cân bằng chuỗi con (<code>rebalancer/rebalancer.py</code>)
       </span>
     </span>
   </a>
@@ -2070,10 +2070,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#du-lieu-rieng-tu-private-data-collections" class="md-nav__link">
+  <a href="#phan-lap-namespace-kubernetes-k8s_namespace_manageroperationspy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Dữ liệu riêng tư (Private Data Collections)
+        Phân lập namespace Kubernetes (<code>k8s_namespace_manager/operations.py</code>)
       </span>
     </span>
   </a>
@@ -2086,41 +2086,24 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#api-cong-khai-quan-trong" class="md-nav__link">
+  <a href="#5-thao-tac-lien-chuoi-2pc" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        API công khai quan trọng
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="API công khai quan trọng">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#hierarchymanager" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        HierarchyManager
+        5. Thao tác liên chuỗi (2PC)
       </span>
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#mainchain" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#6-tinh-rieng-tu-va-xac-thuc-zero-knowledge" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        MainChain
+        6. Tính riêng tư và xác thực zero-knowledge
       </span>
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -4388,10 +4371,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tong-quan" class="md-nav__link">
+  <a href="#1-tong-quan" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Tổng quan
+        1. Tổng quan
       </span>
     </span>
   </a>
@@ -4399,44 +4382,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-thanh-phan-nen-tang" class="md-nav__link">
+  <a href="#2-cac-thanh-phan-nen-tang" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các thành phần nền tảng
+        2. Các thành phần nền tảng
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kien-truc-luong-du-lieu-system-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Kiến trúc Luồng Dữ liệu (System Workflow)
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kha-nang-mo-rong-quan-ly-ha-tang" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Khả năng Mở rộng &amp; Quản lý Hạ tầng
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Khả năng Mở rộng &amp; Quản lý Hạ tầng">
+    <nav class="md-nav" aria-label="2. Các thành phần nền tảng">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-sub-chain-rebalancer-rebalancerpy" class="md-nav__link">
+  <a href="#21-chuoi-chinh-main-chain-main_chainbasepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Sub-Chain Rebalancer (<code>rebalancer.py</code>)
+        2.1 Chuỗi chính Main Chain (<code>main_chain/base.py</code>)
       </span>
     </span>
   </a>
@@ -4444,10 +4405,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-kubernetes-namespace-manager-k8s_namespace_managerpy" class="md-nav__link">
+  <a href="#22-chuoi-con-sub-chain-sub_chainbasepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Kubernetes Namespace Manager (<code>k8s_namespace_manager.py</code>)
+        2.2 Chuỗi con Sub-Chain (<code>sub_chain/base.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-quan-ly-phan-cap-hierarchy-manager-hierarchy_managerbasepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Quản lý phân cấp Hierarchy Manager (<code>hierarchy_manager/base.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-a-to-chuc-kenh-va-du-lieu-rieng-tu" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4 Đa tổ chức, kênh và dữ liệu riêng tư
       </span>
     </span>
   </a>
@@ -4460,10 +4443,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#giao-dich-xuyen-chuoi-cross-chain-transactions" class="md-nav__link">
+  <a href="#3-luong-du-lieu" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Giao dịch Xuyên chuỗi (Cross-Chain Transactions)
+        3. Luồng dữ liệu
       </span>
     </span>
   </a>
@@ -4471,22 +4454,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#bao-mat-va-quyen-rieng-tu-nang-cao" class="md-nav__link">
+  <a href="#4-kha-nang-mo-rong-va-quan-ly-ha-tang" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Bảo mật và Quyền riêng tư nâng cao
+        4. Khả năng mở rộng và quản lý hạ tầng
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Bảo mật và Quyền riêng tư nâng cao">
+    <nav class="md-nav" aria-label="4. Khả năng mở rộng và quản lý hạ tầng">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#xac-thuc-khong-tiet-lo-zk-proofs" class="md-nav__link">
+  <a href="#bo-tai-can-bang-chuoi-con-rebalancerrebalancerpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Xác thực không tiết lộ (ZK Proofs)
+        Bộ tái cân bằng chuỗi con (<code>rebalancer/rebalancer.py</code>)
       </span>
     </span>
   </a>
@@ -4494,10 +4477,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#du-lieu-rieng-tu-private-data-collections" class="md-nav__link">
+  <a href="#phan-lap-namespace-kubernetes-k8s_namespace_manageroperationspy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Dữ liệu riêng tư (Private Data Collections)
+        Phân lập namespace Kubernetes (<code>k8s_namespace_manager/operations.py</code>)
       </span>
     </span>
   </a>
@@ -4510,41 +4493,24 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#api-cong-khai-quan-trong" class="md-nav__link">
+  <a href="#5-thao-tac-lien-chuoi-2pc" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        API công khai quan trọng
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="API công khai quan trọng">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#hierarchymanager" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        HierarchyManager
+        5. Thao tác liên chuỗi (2PC)
       </span>
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#mainchain" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#6-tinh-rieng-tu-va-xac-thuc-zero-knowledge" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        MainChain
+        6. Tính riêng tư và xác thực zero-knowledge
       </span>
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -4591,63 +4557,42 @@
 
 
 <h1 id="hierarchical-module-hierachainhierarchical">Hierarchical Module (<code>hierachain/hierarchical/*</code>)</h1>
-<h2 id="tong-quan">Tổng quan</h2>
-<p>Module <strong>Hierarchical</strong> là "trái tim" kiến trúc của HieraChain, hiện thực hóa mô hình blockchain hai tầng (Two-Tier Blockchain) được thiết kế riêng cho cấu trúc doanh nghiệp. Nó cho phép tách biệt dữ liệu nghiệp vụ chi tiết (tại Sub-Chains) khỏi bằng chứng xác thực toàn cục (tại Main Chain), đảm bảo tính riêng tư, hiệu năng cao và khả năng mở rộng không giới hạn.</p>
-<hr />
-<h2 id="cac-thanh-phan-nen-tang">Các thành phần nền tảng</h2>
-<div class="grid cards">
+<h2 id="1-tong-quan">1. Tổng quan</h2>
+<p>Module <code>hierarchical</code> triển khai kiến trúc sổ cái hai tầng của HieraChain. Các chuỗi con (Sub-Chain) xử lý các sự kiện nghiệp vụ miền và lưu trữ trạng thái chi tiết tại cục bộ. Chuỗi chính (Main Chain) lưu trữ các bằng chứng mật mã và mã băm gốc do Sub-Chain gửi lên. Sự phân tách này duy trì tính riêng tư của dữ liệu nghiệp vụ, giảm tải xác thực cho Main Chain và mở rộng quy mô theo chiều ngang bằng cách phân chia tải giữa các chuỗi.</p>
+<h2 id="2-cac-thanh-phan-nen-tang">2. Các thành phần nền tảng</h2>
+<p>Các thành phần được tổ chức trong các gói chuyên biệt dưới <code>hierachain/hierarchical/</code>.</p>
+<h3 id="21-chuoi-chinh-main-chain-main_chainbasepy">2.1 Chuỗi chính Main Chain (<code>main_chain/base.py</code>)</h3>
 <ul>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.59 13.41c.41.39.41 1.03 0 1.42-.39.39-1.03.39-1.42 0a5.003 5.003 0 0 1 0-7.07l3.54-3.54a5.003 5.003 0 0 1 7.07 0 5.003 5.003 0 0 1 0 7.07l-1.49 1.49c.01-.82-.12-1.64-.4-2.42l.47-.48a2.98 2.98 0 0 0 0-4.24 2.98 2.98 0 0 0-4.24 0l-3.53 3.53a2.98 2.98 0 0 0 0 4.24m2.82-4.24c.39-.39 1.03-.39 1.42 0a5.003 5.003 0 0 1 0 7.07l-3.54 3.54a5.003 5.003 0 0 1-7.07 0 5.003 5.003 0 0 1 0-7.07l1.49-1.49c-.01.82.12 1.64.4 2.43l-.47.47a2.98 2.98 0 0 0 0 4.24 2.98 2.98 0 0 0 4.24 0l3.53-3.53a2.98 2.98 0 0 0 0-4.24.973.973 0 0 1 0-1.42"/></svg></span> <strong>Main Chain (Root of Trust)</strong></p>
-<hr />
-<p><strong>File</strong>: <code>main_chain.py</code></p>
+<li>Lưu trữ các bằng chứng khối mật mã thay vì dữ liệu sự kiện thô.</li>
+<li>Xác thực các bước chuyển trạng thái bằng zero-knowledge proof khi được kích hoạt.</li>
+<li>Kiểm tra tính hợp lệ của các điểm neo liên chuỗi theo cơ chế đồng thuận thẩm quyền hoặc liên minh.</li>
+</ul>
+<h3 id="22-chuoi-con-sub-chain-sub_chainbasepy">2.2 Chuỗi con Sub-Chain (<code>sub_chain/base.py</code>)</h3>
 <ul>
-<li>Đóng vai trò "CEO" của hệ thống, chỉ lưu trữ các bằng chứng (Proofs).</li>
-<li>Tích hợp <strong>Zero-Knowledge Proof (ZKP)</strong> để xác thực không cần tiết lộ dữ liệu.</li>
-<li>Sử dụng đồng thuận PoA/PoF để tối ưu hóa tốc độ xác thực doanh nghiệp.</li>
+<li>Vận hành quy trình nghiệp vụ chuyên biệt cho từng miền hoặc phòng ban.</li>
+<li>Đóng gói sự kiện nghiệp vụ vào các khối và tính toán Merkle root.</li>
+<li>Tạo bằng chứng trạng thái định kỳ để gửi lên Main Chain.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14c-3.36 0-4.46 1.35-4.82 2.24C9.25 16.7 10 17.76 10 19a3 3 0 0 1-3 3 3 3 0 0 1-3-3c0-1.31.83-2.42 2-2.83V7.83A2.99 2.99 0 0 1 4 5a3 3 0 0 1 3-3 3 3 0 0 1 3 3c0 1.31-.83 2.42-2 2.83v5.29c.88-.65 2.16-1.12 4-1.12 2.67 0 3.56-1.34 3.85-2.23A3.01 3.01 0 0 1 14 7a3 3 0 0 1 3-3 3 3 0 0 1 3 3c0 1.34-.88 2.5-2.09 2.86C17.65 11.29 16.68 14 13 14m-6 4a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1M7 4a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1m10 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1"/></svg></span> <strong>Sub-Chain (Execution Layer)</strong></p>
-<hr />
-<p><strong>File</strong>: <code>sub_chain.py</code></p>
+<h3 id="23-quan-ly-phan-cap-hierarchy-manager-hierarchy_managerbasepy">2.3 Quản lý phân cấp Hierarchy Manager (<code>hierarchy_manager/base.py</code>)</h3>
 <ul>
-<li>Mỗi Sub-Chain phục vụ một miền nghiệp vụ (Domain) hoặc một bộ phận cụ thể.</li>
-<li>Thực thi logic nghiệp vụ, đóng gói Block và tạo Proof định kỳ.</li>
-<li>Đảm bảo dữ liệu domain chi tiết luôn được cô lập cục bộ.</li>
+<li>Điều phối vòng đời chuỗi, xác thực liên chuỗi và cấu hình đa tổ chức.</li>
+<li>Quản lý các kênh trao đổi (channel), bộ sưu tập dữ liệu riêng tư và giao dịch Two-Phase Commit (2PC).</li>
+<li>Tổng hợp báo cáo tính toàn vẹn hệ thống trên toàn bộ các chuỗi đã đăng ký.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3h6v4H3zm12 7h6v4h-6zm0 7h6v4h-6zm-2-4H7v5h6v2H5V9h2v2h6z"/></svg></span> <strong>Hierarchy Manager (Orchestrator)</strong></p>
-<hr />
-<p><strong>File</strong>: <code>hierarchy_manager.py</code></p>
+<h3 id="24-a-to-chuc-kenh-va-du-lieu-rieng-tu">2.4 Đa tổ chức, kênh và dữ liệu riêng tư</h3>
 <ul>
-<li>Điều phối toàn bộ vòng đời của các chuỗi và tổ chức trong mạng lưới.</li>
-<li>Quản lý các kênh (Channels), dữ liệu riêng tư và giao dịch xuyên chuỗi.</li>
-<li>Cung cấp các báo cáo tổng thể về tính toàn vẹn của toàn hệ thống.</li>
+<li><code>multi_org.py</code>: Quản lý các tổ chức thành viên, chứng chỉ và định danh MSP.</li>
+<li><code>channel/manager.py</code>: Phân vùng giao tiếp giữa các nhóm tổ chức cụ thể.</li>
+<li><code>private_data.py</code>: Lưu trữ dữ liệu nhạy cảm ngoài chuỗi (off-chain) và neo mã băm mật mã lên chuỗi.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5zm0 4a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m5.13 12A9.7 9.7 0 0 1 12 20.92 9.7 9.7 0 0 1 6.87 17c-.34-.5-.63-1-.87-1.53 0-1.65 2.71-3 6-3s6 1.32 6 3c-.24.53-.53 1.03-.87 1.53"/></svg></span> <strong>Multi-Org &amp; Channels</strong></p>
-<hr />
-<p><strong>Files</strong>: <code>multi_org.py</code>, <code>channel.py</code>, <code>private_data.py</code></p>
-<ul>
-<li><strong>Multi-Org</strong>: Quản lý nhiều tổ chức tham gia với cấu hình MSP riêng.</li>
-<li><strong>Channels</strong>: Cô lập dữ liệu hoàn toàn giữa các nhóm tổ chức cụ thể.</li>
-<li><strong>Private Data</strong>: Lưu trữ dữ liệu nhạy cảm off-chain, chỉ chia sẻ mã băm (hash).</li>
-</ul>
-</li>
-</ul>
-</div>
-<hr />
-<h2 id="kien-truc-luong-du-lieu-system-workflow">Kiến trúc Luồng Dữ liệu (System Workflow)</h2>
-<p>Mô hình phân cấp đảm bảo rằng dữ liệu chi tiết không bao giờ bị "rò rỉ" lên lớp xác thực toàn cục:</p>
+<h2 id="3-luong-du-lieu">3. Luồng dữ liệu</h2>
+<p>Dữ liệu chi tiết được lưu trữ tại Sub-Chain. Chỉ có Merkle root và bằng chứng mật mã được neo lên Main Chain:</p>
 <pre class="mermaid"><code>graph TD
     subgraph "Sub-Chain (Logistics/Finance/...)"
         A[Business Events] --&gt; B[Ordering Service]
         B --&gt; C[Block Builder]
         C --&gt; D[(Local DB)]
-        C --&gt; E[Merkle Tree/ZK Prover]
+        C --&gt; E[Merkle Tree / ZK Prover]
     end
 
     subgraph "Main Chain (Root Authority)"
@@ -4664,56 +4609,36 @@
     end
 
     I -. "Coordinate" .-&gt; A</code></pre>
-<hr />
-<h2 id="kha-nang-mo-rong-quan-ly-ha-tang">Khả năng Mở rộng &amp; Quản lý Hạ tầng</h2>
-<h3 id="1-sub-chain-rebalancer-rebalancerpy">1. Sub-Chain Rebalancer (<code>rebalancer.py</code>)</h3>
-<p>Tự động giám sát tải hệ thống và thực hiện chia tách (split) Sub-Chain khi lượng giao dịch vượt ngưỡng (Threshold EPS), đảm bảo hiệu năng không bị nghẽn:</p>
+<h2 id="4-kha-nang-mo-rong-va-quan-ly-ha-tang">4. Khả năng mở rộng và quản lý hạ tầng</h2>
+<h3 id="bo-tai-can-bang-chuoi-con-rebalancerrebalancerpy">Bộ tái cân bằng chuỗi con (<code>rebalancer/rebalancer.py</code>)</h3>
+<p>Bộ tái cân bằng theo dõi lưu lượng và tách các Sub-Chain chịu tải cao khi số sự kiện mỗi giây (EPS) vượt ngưỡng vận hành:</p>
 <ul>
-<li><strong>Chiến lược</strong>: Hash-based, Time-based, Load-based.</li>
-<li><strong>Cơ chế</strong>: Di chuyển thực thể sang chuỗi mới một cách mượt mà.</li>
+<li>Chiến lược: Phân vùng dựa trên mã băm, thời gian hoặc khối lượng dữ liệu.</li>
+<li>Di chuyển dữ liệu: Chuyển giao trạng thái thực thể sang các chuỗi nhánh mà không làm gián đoạn dịch vụ.</li>
 </ul>
-<h3 id="2-kubernetes-namespace-manager-k8s_namespace_managerpy">2. Kubernetes Namespace Manager (<code>k8s_namespace_manager.py</code>)</h3>
-<p>Tích hợp trực tiếp với hạ tầng Cloud-Native để cô lập hoàn toàn tài nguyên (CPU, RAM, Network) của mỗi Sub-Chain trong một Namespace riêng biệt.</p>
-<hr />
-<h2 id="giao-dich-xuyen-chuoi-cross-chain-transactions">Giao dịch Xuyên chuỗi (Cross-Chain Transactions)</h2>
-<p>HieraChain sử dụng giao thức <strong>Two-Phase Commit (2PC)</strong> thông qua <code>CrossChainTransactionManager</code> để đảm bảo tính nguyên tử (Atomicity) khi thực hiện các hoạt động liên quan đến nhiều Sub-Chain:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Ví dụ khởi tạo giao dịch xuyên chuỗi</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">tx_id</span> <span class="o">=</span> <span class="n">hierarchy_manager</span><span class="o">.</span><span class="n">initiate_cross_chain_transaction</span><span class="p">(</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">source_chain_name</span><span class="o">=</span><span class="s2">"supply_chain"</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">dest_chain_name</span><span class="o">=</span><span class="s2">"finance_chain"</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">payload</span><span class="o">=</span><span class="p">{</span><span class="s2">"asset_id"</span><span class="p">:</span> <span class="s2">"INV-100"</span><span class="p">,</span> <span class="s2">"action"</span><span class="p">:</span> <span class="s2">"settle_payment"</span><span class="p">}</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span>
+<h3 id="phan-lap-namespace-kubernetes-k8s_namespace_manageroperationspy">Phân lập namespace Kubernetes (<code>k8s_namespace_manager/operations.py</code>)</h3>
+<p>Ánh xạ từng Sub-Chain vào một namespace Kubernetes riêng biệt, áp dụng hạn mức tài nguyên và chính sách mạng độc lập cho từng miền.</p>
+<h2 id="5-thao-tac-lien-chuoi-2pc">5. Thao tác liên chuỗi (2PC)</h2>
+<p><code>CrossChainTransactionManager</code> trong <code>hierachain/hierarchical/transaction_manager.py</code> triển khai giao thức Two-Phase Commit để duy trì tính nguyên tử qua các Sub-Chain:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.hierarchical.hierarchy_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">HierarchyManager</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">manager</span> <span class="o">=</span> <span class="n">HierarchyManager</span><span class="p">()</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">tx_id</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">initiate_cross_chain_transaction</span><span class="p">(</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">source_chain_name</span><span class="o">=</span><span class="s2">"supply_chain"</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">dest_chain_name</span><span class="o">=</span><span class="s2">"finance_chain"</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">payload</span><span class="o">=</span><span class="p">{</span><span class="s2">"asset_id"</span><span class="p">:</span> <span class="s2">"INV-100"</span><span class="p">,</span> <span class="s2">"action"</span><span class="p">:</span> <span class="s2">"settle_payment"</span><span class="p">}</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">)</span>
 </code></pre></div>
-<hr />
-<h2 id="bao-mat-va-quyen-rieng-tu-nang-cao">Bảo mật và Quyền riêng tư nâng cao</h2>
-<h3 id="xac-thuc-khong-tiet-lo-zk-proofs">Xác thực không tiết lộ (ZK Proofs)</h3>
-<p>Main Chain hỗ trợ chế độ xác thực nghiêm ngặt, yêu cầu mọi Sub-Chain phải gửi kèm bằng chứng ZK. Điều này chứng minh rằng:</p>
-<ol>
-<li>Trạng thái mới của Sub-Chain là kết quả hợp lệ từ trạng thái cũ.</li>
-<li>Mọi quy tắc nghiệp vụ đã được tuân thủ mà không cần Main Chain phải đọc dữ liệu thô.</li>
-</ol>
-<h3 id="du-lieu-rieng-tu-private-data-collections">Dữ liệu riêng tư (Private Data Collections)</h3>
-<p>Cho phép các thành viên trong một chuỗi chia sẻ dữ liệu nhạy cảm mà ngay cả các thành viên khác trong cùng chuỗi đó (nhưng không thuộc Collection) cũng không thể đọc được.</p>
-<hr />
-<h2 id="api-cong-khai-quan-trong">API công khai quan trọng</h2>
-<h3 id="hierarchymanager">HierarchyManager</h3>
+<h2 id="6-tinh-rieng-tu-va-xac-thuc-zero-knowledge">6. Tính riêng tư và xác thực zero-knowledge</h2>
 <ul>
-<li><code>create_sub_chain(name, domain_type)</code>: Tạo chuỗi nghiệp vụ mới.</li>
-<li><code>create_organization(org_id, name)</code>: Đăng ký tổ chức tham gia mạng lưới.</li>
-<li><code>create_channel(channel_id, org_ids)</code>: Thiết lập kênh cô lập dữ liệu.</li>
-<li><code>get_system_integrity_report()</code>: Báo cáo sức khỏe toàn hệ thống.</li>
+<li>Xác thực Main Chain: Sub-Chain có thể nộp zero-knowledge proof để chứng minh bước chuyển trạng thái hợp lệ theo quy tắc đồng thuận mà không để lộ nội dung sự kiện thô.</li>
+<li>Bộ sưu tập dữ liệu riêng tư: Dữ liệu nhạy cảm được giới hạn trong các node thành viên được cấp quyền, chỉ có mã băm được phát tán trên sổ cái chung.</li>
 </ul>
-<h3 id="mainchain">MainChain</h3>
-<ul>
-<li><code>add_proof(sub_chain, proof_hash, metadata, zk_proof)</code>: Tiếp nhận bằng chứng từ Sub-Chain.</li>
-<li><code>verify_proof(proof_hash, sub_chain)</code>: Kiểm tra tính hợp lệ của một bằng chứng.</li>
-</ul>
-<hr />
 <h2 id="lien-quan">Liên quan</h2>
 <ul>
-<li><a href="../../consensus/bft_consensus/">Đồng thuận BFT (BFT Consensus)</a></li>
-<li><a href="../../consensus/ordering/">Dịch vụ Sắp xếp (Ordering Service)</a></li>
-<li><a href=".././domains/">Module Domains (Business Logic)</a></li>
+<li><a href=".././consensus/">Consensus Module</a></li>
+<li><a href=".././domains/">Domains Module</a></li>
+<li><a href="../../how-to/cross-chain-transactions/">Hướng dẫn Two-Phase Commit</a></li>
 </ul>
 
 

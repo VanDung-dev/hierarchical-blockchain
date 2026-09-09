@@ -1740,7 +1740,7 @@
   <a href="#flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram
+        Flow diagram
       </span>
     </span>
   </a>
@@ -1751,7 +1751,7 @@
   <a href="#alert-severity-levels" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Alert Severity Levels
+        Alert severity levels
       </span>
     </span>
   </a>
@@ -1762,7 +1762,7 @@
   <a href="#risk-domains" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Risk Domains
+        Risk domains
       </span>
     </span>
   </a>
@@ -1773,7 +1773,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -1784,7 +1784,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -1792,10 +1792,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4318,7 +4318,7 @@
   <a href="#flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram
+        Flow diagram
       </span>
     </span>
   </a>
@@ -4329,7 +4329,7 @@
   <a href="#alert-severity-levels" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Alert Severity Levels
+        Alert severity levels
       </span>
     </span>
   </a>
@@ -4340,7 +4340,7 @@
   <a href="#risk-domains" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Risk Domains
+        Risk domains
       </span>
     </span>
   </a>
@@ -4351,7 +4351,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -4362,7 +4362,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -4370,10 +4370,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4422,11 +4422,11 @@
   
 
 
-<h1 id="risk-alerts">Risk Alerts</h1>
+<h1 id="risk-alerts">Risk alerts</h1>
 <h2 id="overview">Overview</h2>
-<p>HieraChain continuously monitors system health across <strong>4 risk domains</strong> (Consensus, Security, Performance, Storage). When thresholds are breached, <code>AlertManager</code> creates alerts, suppresses duplicates via cooldown, notifies via Email/Webhook, and auto-escalates unacknowledged alerts after a configurable timeout.</p>
+<p>HieraChain monitors health across four risk domains: consensus, security, performance and storage. When a metric crosses its threshold, <code>AlertManager</code> creates an alert, suppresses duplicates during cooldown, sends notifications by email or webhook, and escalates alerts that stay unacknowledged past the timeout.</p>
 <hr />
-<h2 id="flow-diagram">Flow Diagram</h2>
+<h2 id="flow-diagram">Flow diagram</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant PM as 📊 PerformanceMonitor
@@ -4475,7 +4475,7 @@
     AM-&gt;&gt;AM: acknowledge_alert(alert_id) → ACKNOWLEDGED
     AM-&gt;&gt;AM: resolve_alert(alert_id) → RESOLVED + remove from active_alerts</code></pre>
 <hr />
-<h2 id="alert-severity-levels">Alert Severity Levels</h2>
+<h2 id="alert-severity-levels">Alert severity levels</h2>
 <table>
 <thead>
 <tr>
@@ -4508,7 +4508,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="risk-domains">Risk Domains</h2>
+<h2 id="risk-domains">Risk domains</h2>
 <table>
 <thead>
 <tr>
@@ -4536,7 +4536,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="step-by-step-breakdown">Step-by-Step Breakdown</h2>
+<h2 id="step-by-step-breakdown">Step-by-step breakdown</h2>
 <table>
 <thead>
 <tr>
@@ -4580,7 +4580,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="error-handling">Error Handling</h2>
+<h2 id="error-handling">Error handling</h2>
 <table>
 <thead>
 <tr>
@@ -4608,7 +4608,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-classes-methods">Key Classes &amp; Methods</h2>
+<h2 id="key-classes-and-methods">Key classes and methods</h2>
 <table>
 <thead>
 <tr>

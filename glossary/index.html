@@ -4225,7 +4225,7 @@
 </tr>
 <tr>
 <td>Policy</td>
-<td>Access/resource control; <code>hierachain/security/policy_engine.py</code>, <code>hierachain/security/resource_guard.py</code>.</td>
+<td>Access/resource control; <code>hierachain/security/policy_engine.py</code>, <code>hierachain/security/policy_types.py</code>. No <code>resource_guard.py</code> (fabricated).</td>
 </tr>
 <tr>
 <td>World State</td>
@@ -4241,7 +4241,7 @@
 </tr>
 <tr>
 <td>Recovery</td>
-<td>Error recovery mechanism; <code>hierachain/error_mitigation/recovery_engine.py</code>.</td>
+<td>Error recovery via <code>hierachain/error_mitigation/rollback_manager.py</code>, <code>consensus_recovery.py</code>, <code>network_recovery.py</code> (no <code>recovery_engine.py</code>).</td>
 </tr>
 <tr>
 <td>Ordering</td>
@@ -4333,7 +4333,7 @@
 </tr>
 <tr>
 <td>Cross-level State Sync</td>
-<td>Cross-tier state synchronization; <code>hierachain/cluster/state_sync_manager.py</code>.</td>
+<td>Cross-tier sync via <code>hierachain/cluster/state_sync_manager.py</code> + <code>hierachain/hierarchical/hierarchy_manager/</code> + <code>HRC_CROSS_LEVEL_*</code> settings.</td>
 </tr>
 <tr>
 <td>Kubernetes Namespace</td>
@@ -4345,7 +4345,7 @@
 </tr>
 <tr>
 <td>Certificate</td>
-<td>X.509 certificate management; <code>hierachain/security/certificate.py</code>.</td>
+<td>Internal <code>Certificate</code> dataclass in <code>hierachain/security/msp.py</code> (not X.509, no <code>certificate.py</code>).</td>
 </tr>
 </tbody>
 </table>

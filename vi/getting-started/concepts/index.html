@@ -4374,7 +4374,7 @@
 <ul>
 <li>Chain: Tập hợp các Block được liên kết bằng <code>previous_hash</code>. HieraChain có hai lớp chuỗi: <code>Main Chain</code> và các <code>Sub-Chain</code> theo domain.</li>
 <li>Block: Nhóm nhiều Event và siêu dữ liệu (header). Xem <code>hierachain/core/block.py</code>.</li>
-<li>Event: Hoạt động nghiệp vụ (không phải giao dịch tiền mã hóa). Được lưu dưới dạng bảng Arrow theo schema trong <code>hierachain/core/schemas.py</code>.</li>
+<li>Event: Hoạt động nghiệp vụ (không phải giao dịch tiền mã hóa). Được lưu dưới dạng bảng Arrow theo schema trong <code>hierachain/core/block.py:261</code>.</li>
 <li>Proof: Dấu vết mật mã (ví dụ Merkle root/hash) đại diện cho trạng thái Sub-Chain, được neo lên Main Chain.</li>
 <li>Hierarchy: Kiến trúc Main Chain giám sát nhiều Sub-Chain. Quản lý bởi <code>HierarchyManager</code>.</li>
 </ul>
@@ -4431,9 +4431,9 @@
 </ol>
 <h2 id="tep-ma-nguon-lien-quan">Tệp mã nguồn liên quan</h2>
 <ul>
-<li>Core: <code>hierachain/core/{block.py, blockchain.py, schemas.py}</code></li>
-<li>Phân cấp: <code>hierachain/hierarchical/{main_chain.py, sub_chain.py, hierarchy_manager.py}</code></li>
-<li>API: <code>hierachain/api/ledger/{endpoints.py, schemas.py}</code></li>
+<li>Core: <code>hierachain/core/block.py</code>, <code>hierachain/core/blockchain.py</code></li>
+<li>Phân cấp: <code>hierachain/hierarchical/main_chain/base.py</code>, <code>hierachain/hierarchical/sub_chain/base.py</code>, <code>hierachain/hierarchical/hierarchy_manager/base.py</code></li>
+<li>API: <code>hierachain/api/ledger/router.py</code>, <code>hierachain/api/ledger/schemas.py</code></li>
 <li>Bảo mật: <code>hierachain/security/*</code></li>
 <li>Cấu hình: <code>hierachain/config/settings.py</code></li>
 </ul>

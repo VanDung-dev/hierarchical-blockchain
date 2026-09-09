@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Hướng dẫn chi tiết thiết kế phần mềm, quản lý vòng đời và xử lý sự kiện trong DomainContract.">
+        <meta name="description" content="Hướng dẫn triển khai quy tắc nghiệp vụ, kiểm tra tính hợp lệ của thao tác và vòng đời thực thể bằng DomainChain.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -33,7 +33,7 @@
     
     
       
-        <title>Viết Hợp đồng Miền (Domain Contracts) - HieraChain Docs</title>
+        <title>Xây dựng Logic Miền Nghiệp vụ - HieraChain Docs</title>
       
     
     
@@ -89,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#viet-hop-ong-mien-domain-contracts" class="md-skip">
+        <a href="#xay-dung-logic-mien-nghiep-vu" class="md-skip">
           Bỏ qua
         </a>
       
@@ -123,7 +123,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Viết Hợp đồng Miền (Domain Contracts)
+              Xây dựng Logic Miền Nghiệp vụ
             
           </span>
         </div>
@@ -3505,55 +3505,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#hop-ong-mien" class="md-nav__link">
+  <a href="#1-chuoi-nghiep-vu-domain-chains" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Hợp đồng Miền
+        1. Chuỗi nghiệp vụ (Domain Chains)
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Hợp đồng Miền">
+    <nav class="md-nav" aria-label="1. Chuỗi nghiệp vụ (Domain Chains)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-khoi-tao-mot-domain-contract" class="md-nav__link">
+  <a href="#khoi-tao-mot-domain-chain" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Khởi tạo một Domain Contract
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-quan-ly-vong-oi-lifecycle" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        2. Quản lý Vòng đời (Lifecycle)
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-nang-cap-phien-ban-versioning" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        3. Nâng cấp Phiên bản (Versioning)
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-ang-ky-bo-xu-ly-su-kien-event-handlers" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        4. Đăng ký Bộ xử lý Sự kiện (Event Handlers)
+        Khởi tạo một Domain Chain
       </span>
     </span>
   </a>
@@ -3562,6 +3529,50 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-kiem-tra-tinh-hop-le-cua-thao-tac" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2. Kiểm tra tính hợp lệ của thao tác
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-ghi-nhan-thao-tac-nghiep-vu" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3. Ghi nhận thao tác nghiệp vụ
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-quan-ly-vong-oi-thuc-the" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4. Quản lý vòng đời thực thể
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lien-quan" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Liên quan
+      </span>
+    </span>
+  </a>
   
 </li>
       
@@ -4277,55 +4288,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#hop-ong-mien" class="md-nav__link">
+  <a href="#1-chuoi-nghiep-vu-domain-chains" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Hợp đồng Miền
+        1. Chuỗi nghiệp vụ (Domain Chains)
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Hợp đồng Miền">
+    <nav class="md-nav" aria-label="1. Chuỗi nghiệp vụ (Domain Chains)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-khoi-tao-mot-domain-contract" class="md-nav__link">
+  <a href="#khoi-tao-mot-domain-chain" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Khởi tạo một Domain Contract
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-quan-ly-vong-oi-lifecycle" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        2. Quản lý Vòng đời (Lifecycle)
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-nang-cap-phien-ban-versioning" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        3. Nâng cấp Phiên bản (Versioning)
-      </span>
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-ang-ky-bo-xu-ly-su-kien-event-handlers" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        4. Đăng ký Bộ xử lý Sự kiện (Event Handlers)
+        Khởi tạo một Domain Chain
       </span>
     </span>
   </a>
@@ -4334,6 +4312,50 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-kiem-tra-tinh-hop-le-cua-thao-tac" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2. Kiểm tra tính hợp lệ của thao tác
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-ghi-nhan-thao-tac-nghiep-vu" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3. Ghi nhận thao tác nghiệp vụ
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-quan-ly-vong-oi-thuc-the" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        4. Quản lý vòng đời thực thể
+      </span>
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lien-quan" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Liên quan
+      </span>
+    </span>
+  </a>
   
 </li>
       
@@ -4368,65 +4390,87 @@
   
 
 
-<h1 id="viet-hop-ong-mien-domain-contracts">Viết Hợp đồng Miền (Domain Contracts)</h1>
-<h2 id="hop-ong-mien">Hợp đồng Miền</h2>
-<p>HieraChain sử dụng hệ thống Domain Contracts linh hoạt hỗ trợ xử lý logic nghiệp vụ riêng cho từng loại dữ liệu hoặc sự kiện. Hệ thống mã quản lý được định nghĩa trực tiếp tại <code>hierachain/domains/domain_contract.py</code>.</p>
-<h3 id="1-khoi-tao-mot-domain-contract">1. Khởi tạo một Domain Contract</h3>
-<p>Mỗi hợp đồng cung cấp nhiều thuộc tính cốt lõi gồm mã định danh, phiên bản, callback thực thi và metadata:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.domains.domain_contract</span><span class="w"> </span><span class="kn">import</span> <span class="n">DomainContract</span>
+<h1 id="xay-dung-logic-mien-nghiep-vu">Xây dựng Logic Miền Nghiệp vụ</h1>
+<h2 id="1-chuoi-nghiep-vu-domain-chains">1. Chuỗi nghiệp vụ (Domain Chains)</h2>
+<p>HieraChain xử lý logic nghiệp vụ thông qua các chuỗi nghiệp vụ. Thay vì triển khai các hợp đồng thông minh bytecode tùy ý, nhà phát triển thực hiện logic nghiệp vụ bằng cách mở rộng hoặc cấu hình <code>DomainChain</code> trong <code>hierachain/domains/chains/domain_chain.py</code>.</p>
+<h3 id="khoi-tao-mot-domain-chain">Khởi tạo một Domain Chain</h3>
+<p><code>DomainChain</code> kế thừa từ <code>BaseChain</code> và cung cấp sẵn cơ chế kiểm tra tính hợp lệ cho các thao tác phổ biến:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.domains.chains.domain_chain</span><span class="w"> </span><span class="kn">import</span> <span class="n">DomainChain</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">contract</span> <span class="o">=</span> <span class="n">DomainContract</span><span class="p">(</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">contract_id</span><span class="o">=</span><span class="s2">"logistics_tracker_ledger"</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">version</span><span class="o">=</span><span class="s2">"1.0.0"</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">implementation</span><span class="o">=</span><span class="n">my_custom_logic_function</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"department"</span><span class="p">:</span> <span class="s2">"supply_chain"</span><span class="p">}</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">chain</span> <span class="o">=</span> <span class="n">DomainChain</span><span class="p">(</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">"supply_chain_01"</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">domain_type</span><span class="o">=</span><span class="s2">"supply_chain"</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">storage_path</span><span class="o">=</span><span class="s2">"data/ledger.db"</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">)</span>
 </code></pre></div>
-<h3 id="2-quan-ly-vong-oi-lifecycle">2. Quản lý Vòng đời (Lifecycle)</h3>
-<p>Các hợp đồng trên HieraChain không bao giờ khởi chạy trực tiếp ra ngay production mà đi qua một chu trình kiểm soát chất lượng (ContractStatus):</p>
+<h2 id="2-kiem-tra-tinh-hop-le-cua-thao-tac">2. Kiểm tra tính hợp lệ của thao tác</h2>
+<p><code>DomainChain</code> kiểm tra các trường bắt buộc trong dữ liệu thao tác trước khi tạo sự kiện:</p>
 <ul>
-<li><code>DEVELOPMENT</code>: Mặc định khi vừa khởi tạo. Dành cho dev/gỡ lỗi.</li>
-<li><code>TESTING</code>: Giai đoạn QA, thử nghiệm với test data.</li>
-<li><code>ACTIVE</code>: Hợp đồng chính thức live trên mạng, được phép kích hoạt xử lý giao dịch qua <code>activate()</code>.</li>
-<li><code>DEPRECATED</code>: Đánh dấu là lỗi thời nhưng vẫn giữ để hỗ trợ khối block cũ thông qua <code>deprecate()</code>.</li>
-<li><code>DISABLED</code>: Vô hiệu hóa khẩn cấp bằng <code>disable()</code>.</li>
-<li><code>ARCHIVED</code>: Đã cất gọn hoàn toàn, không thể kích hoạt lại.</li>
+<li><code>quality_check</code>: Yêu cầu <code>check_type</code> và <code>check_result</code>.</li>
+<li><code>approval</code>: Yêu cầu <code>approval_type</code> và <code>approver_id</code>.</li>
+<li><code>resource_allocation</code>: Yêu cầu <code>resource_type</code> và <code>resource_id</code>.</li>
+<li><code>compliance_check</code>: Yêu cầu <code>compliance_type</code>.</li>
 </ul>
-<pre class="mermaid"><code>stateDiagram-v2
-    [*] --&gt; DEVELOPMENT
-    DEVELOPMENT --&gt; TESTING
-    DEVELOPMENT --&gt; DISABLED
-    TESTING --&gt; ACTIVE
-    TESTING --&gt; DEVELOPMENT
-    TESTING --&gt; DISABLED
-    ACTIVE --&gt; DEPRECATED
-    ACTIVE --&gt; DISABLED
-    DEPRECATED --&gt; DISABLED
-    DEPRECATED --&gt; ARCHIVED
-    DISABLED --&gt; DEVELOPMENT
-    DISABLED --&gt; ARCHIVED
-    ARCHIVED --&gt; [*]</code></pre>
-<h3 id="3-nang-cap-phien-ban-versioning">3. Nâng cấp Phiên bản (Versioning)</h3>
-<p>Thay vì ghi đè lên những hợp đồng cũ, gây sai lệch lịch sử chuỗi khối, người dùng dễ dàng nâng cấp một phiên bản hợp đồng logic mới mà hệ thống vẫn lưu trữ lại <code>previous_versions</code>. Cơ chế này cho phép các hoạt động bảo trì mạng không bao giờ bị <strong>Downtime</strong>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">contract</span><span class="o">.</span><span class="n">upgrade_to_version</span><span class="p">(</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="n">new_version</span><span class="o">=</span><span class="s2">"1.1.0"</span><span class="p">,</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>    <span class="n">new_implementation</span><span class="o">=</span><span class="n">optimized_logic_function</span><span class="p">,</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"upgrade_reason"</span><span class="p">:</span> <span class="s2">"Performance improvement"</span><span class="p">}</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p">)</span>
+<p>Các loại thao tác chưa định nghĩa mặc định được chấp thuận, giúp mở rộng tùy chỉnh dễ dàng:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.domains.chains.domain_chain</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_operation_data</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="s2">"check_type"</span><span class="p">:</span> <span class="s2">"visual_inspection"</span><span class="p">,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="s2">"check_result"</span><span class="p">:</span> <span class="s2">"passed"</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="n">is_valid</span> <span class="o">=</span> <span class="n">validate_operation_data</span><span class="p">(</span><span class="s2">"quality_check"</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="k">assert</span> <span class="n">is_valid</span> <span class="ow">is</span> <span class="kc">True</span>
 </code></pre></div>
-<h3 id="4-ang-ky-bo-xu-ly-su-kien-event-handlers">4. Đăng ký Bộ xử lý Sự kiện (Event Handlers)</h3>
-<p>Giao dịch hoặc Event khi cập bến DomainContract có thể được chẻ luồng ra và gọi nhiều hàm callback khác nhau tùy thuộc vào loại <code>event_type</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">quality_check_handler</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="n">storage</span><span class="p">):</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="c1"># Logic đối chiếu, thay đổi storage tuỳ ý...</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">"status"</span><span class="p">:</span> <span class="s2">"passed"</span><span class="p">}</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Đăng ký handler này riêng cho event "quality_inspection"</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">contract</span><span class="o">.</span><span class="n">register_event_handler</span><span class="p">(</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="n">event_type</span><span class="o">=</span><span class="s2">"quality_inspection"</span><span class="p">,</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">handler</span><span class="o">=</span><span class="n">quality_check_handler</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="p">)</span>
+<h2 id="3-ghi-nhan-thao-tac-nghiep-vu">3. Ghi nhận thao tác nghiệp vụ</h2>
+<p>Sử dụng các hàm tạo sự kiện từ <code>hierachain/domains/events/event_creators.py</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.domains.chains.domain_chain</span><span class="w"> </span><span class="kn">import</span> <span class="n">DomainChain</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.domains.events.event_creators</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_quality_check</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">chain</span> <span class="o">=</span> <span class="n">DomainChain</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"logistics_chain"</span><span class="p">,</span> <span class="n">domain_type</span><span class="o">=</span><span class="s2">"logistics"</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># Tạo sự kiện kiểm tra chất lượng đã qua kiểm thực</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="n">event</span> <span class="o">=</span> <span class="n">create_quality_check</span><span class="p">(</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="n">entity_id</span><span class="o">=</span><span class="s2">"CONTAINER-409"</span><span class="p">,</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>    <span class="n">check_type</span><span class="o">=</span><span class="s2">"temperature_compliance"</span><span class="p">,</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>    <span class="n">check_result</span><span class="o">=</span><span class="s2">"passed"</span><span class="p">,</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"temperature_c"</span><span class="p">:</span> <span class="mf">4.2</span><span class="p">}</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="p">)</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="c1"># Nạp sự kiện vào chuỗi nghiệp vụ</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="n">chain</span><span class="o">.</span><span class="n">add_domain_event</span><span class="p">(</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>    <span class="n">entity_id</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s2">"entity_id"</span><span class="p">],</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>    <span class="n">event</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s2">"event"</span><span class="p">],</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="n">details</span><span class="o">=</span><span class="n">event</span><span class="p">[</span><span class="s2">"details"</span><span class="p">]</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="p">)</span>
 </code></pre></div>
-<p>Điều này giúp tách biệt rõ ràng việc kiểm tra, đối soát và phê duyệt (approval) qua từng module riêng rẽ.</p>
+<h2 id="4-quan-ly-vong-oi-thuc-the">4. Quản lý vòng đời thực thể</h2>
+<p><code>DomainChain</code> theo dõi trạng thái thực thể qua các thao tác:</p>
+<ol>
+<li>Đăng ký: Đăng ký thực thể mới cần theo dõi trên chuỗi.</li>
+<li>Cập nhật trạng thái: Ghi nhận các trạng thái chuyển giao như <code>in_progress</code>, <code>quality_approved</code> và <code>completed</code>.</li>
+<li>Chỉ số đo lường: <code>OperationMetricsTracker</code> ghi nhận độ trễ thực thi và tỷ lệ thành công phục vụ báo cáo kiểm toán.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Đăng ký thực thể</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">chain</span><span class="o">.</span><span class="n">register_entity</span><span class="p">(</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>    <span class="n">entity_id</span><span class="o">=</span><span class="s2">"CONTAINER-409"</span><span class="p">,</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="n">entity_type</span><span class="o">=</span><span class="s2">"cargo"</span><span class="p">,</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"origin"</span><span class="p">:</span> <span class="s2">"Port A"</span><span class="p">,</span> <span class="s2">"destination"</span><span class="p">:</span> <span class="s2">"Port B"</span><span class="p">}</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="p">)</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="c1"># Cập nhật trạng thái thực thể</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="n">chain</span><span class="o">.</span><span class="n">update_entity_status</span><span class="p">(</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>    <span class="n">entity_id</span><span class="o">=</span><span class="s2">"CONTAINER-409"</span><span class="p">,</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>    <span class="n">new_status</span><span class="o">=</span><span class="s2">"in_transit"</span><span class="p">,</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="n">reason</span><span class="o">=</span><span class="s2">"Departed facility"</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="p">)</span>
+</code></pre></div>
+<h2 id="lien-quan">Liên quan</h2>
+<ul>
+<li><a href="../../modules/domains/">Domains Module</a></li>
+<li><a href=".././add-domain-chain/">Thêm một chuỗi nghiệp vụ</a></li>
+<li><a href=".././cross-chain-transactions/">Thao tác liên chuỗi</a></li>
+</ul>
 
 
 

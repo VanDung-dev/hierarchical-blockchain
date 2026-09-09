@@ -1711,7 +1711,7 @@
   <a href="#flow-diagram-upload-encrypt-store-pin" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Upload (Encrypt → Store → Pin)
+        Flow diagram: upload (encrypt, store, pin)
       </span>
     </span>
   </a>
@@ -1722,7 +1722,7 @@
   <a href="#flow-diagram-download-retrieve-decrypt" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Download (Retrieve → Decrypt)
+        Flow diagram: download (retrieve, decrypt)
       </span>
     </span>
   </a>
@@ -1733,7 +1733,7 @@
   <a href="#error-handling-ipfs-unavailable" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling: IPFS Unavailable
+        Error handling: IPFS unavailable
       </span>
     </span>
   </a>
@@ -1744,7 +1744,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -1755,7 +1755,7 @@
   <a href="#security-properties" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Security Properties
+        Security properties
       </span>
     </span>
   </a>
@@ -1763,10 +1763,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4318,7 +4318,7 @@
   <a href="#flow-diagram-upload-encrypt-store-pin" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Upload (Encrypt → Store → Pin)
+        Flow diagram: upload (encrypt, store, pin)
       </span>
     </span>
   </a>
@@ -4329,7 +4329,7 @@
   <a href="#flow-diagram-download-retrieve-decrypt" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Download (Retrieve → Decrypt)
+        Flow diagram: download (retrieve, decrypt)
       </span>
     </span>
   </a>
@@ -4340,7 +4340,7 @@
   <a href="#error-handling-ipfs-unavailable" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling: IPFS Unavailable
+        Error handling: IPFS unavailable
       </span>
     </span>
   </a>
@@ -4351,7 +4351,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -4362,7 +4362,7 @@
   <a href="#security-properties" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Security Properties
+        Security properties
       </span>
     </span>
   </a>
@@ -4370,10 +4370,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4422,12 +4422,12 @@
   
 
 
-<h1 id="ipfs-encrypted-storage">IPFS Encrypted Storage</h1>
+<h1 id="ipfs-encrypted-storage">IPFS encrypted storage</h1>
 <h2 id="overview">Overview</h2>
-<p>Large or sensitive off-chain data (e.g., document attachments, audit evidence, binary assets) is stored on a private IPFS swarm with <strong>mandatory AES-256-GCM encryption</strong>. Only nodes sharing the same encryption key can decrypt. The CID returned by IPFS is stored on-chain as a reference; the plaintext never leaves the encrypted boundary.</p>
-<p><strong>Key property</strong>: Even if IPFS storage is compromised, data is unreadable without the AES-256-GCM key.</p>
+<p>Large or sensitive off-chain data such as document attachments, audit evidence or binary assets is kept on a private IPFS swarm with mandatory AES-256-GCM encryption. Only nodes that share the same encryption key can decrypt the data. IPFS returns a CID that is stored on-chain as a reference. Plaintext never leaves the encrypted boundary.</p>
+<p>Even if IPFS storage is compromised, the data is unreadable without the AES-256-GCM key.</p>
 <hr />
-<h2 id="flow-diagram-upload-encrypt-store-pin">Flow Diagram: Upload (Encrypt → Store → Pin)</h2>
+<h2 id="flow-diagram-upload-encrypt-store-pin">Flow diagram: upload (encrypt, store, pin)</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant Caller as 🖥️ API / SubChain
@@ -4453,7 +4453,7 @@
     IC--&gt;&gt;Caller: { cid, size, encrypted: True, nonce: hex(nonce) }
     Note over Caller: Store CID + nonce on-chain for later retrieval</code></pre>
 <hr />
-<h2 id="flow-diagram-download-retrieve-decrypt">Flow Diagram: Download (Retrieve → Decrypt)</h2>
+<h2 id="flow-diagram-download-retrieve-decrypt">Flow diagram: download (retrieve, decrypt)</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant Caller as 🖥️ API / SubChain
@@ -4472,7 +4472,7 @@
     IC-&gt;&gt;IC: json.loads(plaintext) → dict
     IC--&gt;&gt;Caller: Decrypted data ✅</code></pre>
 <hr />
-<h2 id="error-handling-ipfs-unavailable">Error Handling: IPFS Unavailable</h2>
+<h2 id="error-handling-ipfs-unavailable">Error handling: IPFS unavailable</h2>
 <pre class="mermaid"><code>flowchart LR
     CALL["upload_json(data)"]
     CONN["Connect to IPFS daemon\n(HRC_IPFS_HOST)"]
@@ -4487,7 +4487,7 @@
     RETRY --&gt;|Max retries| ERR
     RETRY --&gt;|Reconnected| OK</code></pre>
 <hr />
-<h2 id="step-by-step-breakdown">Step-by-Step Breakdown</h2>
+<h2 id="step-by-step-breakdown">Step-by-step breakdown</h2>
 <table>
 <thead>
 <tr>
@@ -4523,7 +4523,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="security-properties">Security Properties</h2>
+<h2 id="security-properties">Security properties</h2>
 <table>
 <thead>
 <tr>
@@ -4555,7 +4555,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-classes-methods">Key Classes &amp; Methods</h2>
+<h2 id="key-classes-and-methods">Key classes and methods</h2>
 <table>
 <thead>
 <tr>

@@ -89,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#nap-lai-trang-thai-chuoi-chain-rehydration" class="md-skip">
+        <a href="#nap-lai-trang-thai-chuoi" class="md-skip">
           Bỏ qua
         </a>
       
@@ -1603,10 +1603,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-kich-ban-sai-lech-trang-thai" class="md-nav__link">
+  <a href="#cac-kich-ban-lech-trang-thai" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các kịch bản sai lệch trạng thái
+        Các kịch bản lệch trạng thái
       </span>
     </span>
   </a>
@@ -1614,10 +1614,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-buoc-thuc-hien-chi-tiet" class="md-nav__link">
+  <a href="#cac-buoc-chi-tiet" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các bước thực hiện chi tiết
+        Các bước chi tiết
       </span>
     </span>
   </a>
@@ -1636,10 +1636,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-class-method-quan-trong" class="md-nav__link">
+  <a href="#lop-va-phuong-thuc-chinh" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các Class &amp; Method quan trọng
+        Lớp và phương thức chính
       </span>
     </span>
   </a>
@@ -4315,10 +4315,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-kich-ban-sai-lech-trang-thai" class="md-nav__link">
+  <a href="#cac-kich-ban-lech-trang-thai" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các kịch bản sai lệch trạng thái
+        Các kịch bản lệch trạng thái
       </span>
     </span>
   </a>
@@ -4326,10 +4326,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-buoc-thuc-hien-chi-tiet" class="md-nav__link">
+  <a href="#cac-buoc-chi-tiet" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các bước thực hiện chi tiết
+        Các bước chi tiết
       </span>
     </span>
   </a>
@@ -4348,10 +4348,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-class-method-quan-trong" class="md-nav__link">
+  <a href="#lop-va-phuong-thuc-chinh" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các Class &amp; Method quan trọng
+        Lớp và phương thức chính
       </span>
     </span>
   </a>
@@ -4400,10 +4400,10 @@
   
 
 
-<h1 id="nap-lai-trang-thai-chuoi-chain-rehydration">Nạp lại Trạng thái Chuỗi (Chain Rehydration)</h1>
+<h1 id="nap-lai-trang-thai-chuoi">Nạp lại trạng thái chuỗi</h1>
 <h2 id="tong-quan">Tổng quan</h2>
-<p>Khi một nút Chuỗi con (Sub-Chain) <strong>khởi động lại</strong> hoặc phát hiện <strong>lệch trạng thái</strong> (mã băm cục bộ không trùng khớp với mã băm trong DB), nút đó sẽ nạp lại chuỗi trong bộ nhớ từ cơ sở dữ liệu lưu trữ backend. Cơ chế này đảm bảo tính nhất quán tuyệt đối của sổ cái sau khi gặp sự cố crash, restart nút hoặc phân mảnh mạng.</p>
-<p>Cơ sở dữ liệu lưu trữ (DB) luôn là <strong>nguồn chân lý tối cao (authoritative source of truth)</strong>. Nếu trạng thái cục bộ bị sai lệch, nó sẽ bị loại bỏ và xây dựng lại hoàn toàn từ dữ liệu trong DB.</p>
+<p>Khi node Sub-Chain khởi động lại hoặc phát hiện lệch trạng thái (hash cục bộ không khớp hash trong DB), node nạp lại chuỗi trong bộ nhớ từ backend lưu trữ. Cơ chế này giữ sổ cái nhất quán sau crash, restart hoặc chia mạng.</p>
+<p>DB là nguồn chân lý có thẩm quyền. Nếu trạng thái cục bộ lệch, nó bị bỏ và dựng lại hoàn toàn từ DB.</p>
 <hr />
 <h2 id="bieu-o-luong">Biểu đồ luồng</h2>
 <pre class="mermaid"><code>sequenceDiagram
@@ -4449,45 +4449,45 @@
     SC-&gt;&gt;SC: _reset_ordering_service_state()
     Note over SC: Trạng thái chuỗi đã nhất quán với DB lưu trữ</code></pre>
 <hr />
-<h2 id="cac-kich-ban-sai-lech-trang-thai">Các kịch bản sai lệch trạng thái</h2>
+<h2 id="cac-kich-ban-lech-trang-thai">Các kịch bản lệch trạng thái</h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Kịch bản</th>
-<th style="text-align: left;">Cách thức phát hiện</th>
+<th style="text-align: left;">Cách phát hiện</th>
 <th style="text-align: left;">Hành động khắc phục</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Khởi động nguội (Cold start)</strong></td>
+<td style="text-align: left;"><strong>Khởi động lạnh</strong></td>
 <td style="text-align: left;"><code>local.index == 0</code></td>
-<td style="text-align: left;">Nạp toàn bộ danh sách khối dữ liệu từ DB</td>
+<td style="text-align: left;">Nạp toàn bộ danh sách khối từ DB</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Phục hồi sau sự cố crash</strong></td>
+<td style="text-align: left;"><strong>Phục hồi sau crash</strong></td>
 <td style="text-align: left;"><code>local.index &lt; db.index</code></td>
-<td style="text-align: left;">Chỉ lấy và ghép thêm các khối bị thiếu</td>
+<td style="text-align: left;">Chỉ lấy và ghép thêm khối thiếu</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Lệch mã băm (Hash mismatch)</strong></td>
-<td style="text-align: left;"><code>local.hash != db.hash</code> (cùng chỉ số index)</td>
-<td style="text-align: left;">Bắt buộc nạp lại toàn bộ từ cơ sở dữ liệu</td>
+<td style="text-align: left;"><strong>Lệch hash</strong></td>
+<td style="text-align: left;"><code>local.hash != db.hash</code> (cùng index)</td>
+<td style="text-align: left;">Buộc nạp lại toàn bộ từ DB</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>Đã đồng bộ</strong></td>
-<td style="text-align: left;">Cùng chỉ số index VÀ mã băm trùng khớp</td>
-<td style="text-align: left;">Không thực hiện gì thêm (No-op)</td>
+<td style="text-align: left;">Cùng index và hash khớp</td>
+<td style="text-align: left;">Không làm gì (No-op)</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>Cục bộ chạy trước DB</strong></td>
 <td style="text-align: left;"><code>local.index &gt; db.index</code></td>
-<td style="text-align: left;">CẢNH BÁO: DB là nguồn dữ liệu chuẩn; ép buộc nạp lại từ DB</td>
+<td style="text-align: left;">Cảnh báo: DB là chuẩn; buộc nạp lại từ DB</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="cac-buoc-thuc-hien-chi-tiet">Các bước thực hiện chi tiết</h2>
+<h2 id="cac-buoc-chi-tiet">Các bước chi tiết</h2>
 <table>
 <thead>
 <tr>
@@ -4498,35 +4498,35 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><strong>1. Kích hoạt</strong></td>
-<td style="text-align: left;">Nút khởi động gọi hàm <code>sync_chain()</code>, hoặc bộ hẹn giờ <code>auto_sync</code> tự động kích hoạt.</td>
+<td style="text-align: left;">Node khởi động gọi <code>sync_chain()</code>, hoặc timer <code>auto_sync</code> tự kích hoạt.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>2. Truy vấn DB</strong></td>
-<td style="text-align: left;">Lệnh <code>OrderingService.get_latest_block()</code> lấy thông tin khối được ghi nhận mới nhất từ cơ sở dữ liệu.</td>
+<td style="text-align: left;"><code>OrderingService.get_latest_block()</code> lấy khối mới nhất từ DB.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>3. So sánh đối chiếu</strong></td>
-<td style="text-align: left;">So sánh cặp giá trị <code>(index, hash)</code> của chuỗi cục bộ với dữ liệu nhận từ DB.</td>
+<td style="text-align: left;"><strong>3. So sánh</strong></td>
+<td style="text-align: left;">So sánh cặp <code>(index, hash)</code> của chuỗi cục bộ với DB.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>4. Đồng bộ hoàn tất</strong></td>
-<td style="text-align: left;">Nếu trùng khớp hoàn toàn: bỏ qua. Tiếp tục hoạt động nghiệp vụ bình thường.</td>
+<td style="text-align: left;"><strong>4. Đã đồng bộ</strong></td>
+<td style="text-align: left;">Nếu khớp hoàn toàn: bỏ qua và tiếp tục hoạt động bình thường.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>5. Đồng bộ một phần</strong></td>
-<td style="text-align: left;">Nếu <code>local &lt; db</code>: chỉ tải về các khối dữ liệu còn thiếu. Tiến hành lấy khóa ghi để tránh xung đột luồng.</td>
+<td style="text-align: left;">Nếu <code>local &lt; db</code>: chỉ tải khối thiếu. Lấy khóa ghi để tránh xung đột luồng.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>6. Nạp lại toàn bộ</strong></td>
-<td style="text-align: left;">Nếu phát hiện lệch mã băm hoặc chỉ số cục bộ lớn hơn DB: xóa bỏ bộ nhớ cục bộ, dựng lại toàn bộ từ DB.</td>
+<td style="text-align: left;">Nếu lệch hash hoặc local lớn hơn DB: xóa bộ nhớ cục bộ, dựng lại toàn bộ từ DB.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>7. Đặt lại chỉ mục</strong></td>
-<td style="text-align: left;">Lệnh <code>_update_event_statistics()</code> xây dựng lại chỉ mục tìm kiếm <code>entity_event_index</code> từ các khối vừa nạp.</td>
+<td style="text-align: left;"><code>_update_event_statistics()</code> dựng lại <code>entity_event_index</code> từ khối vừa nạp.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>8. Đồng bộ bộ đếm</strong></td>
-<td style="text-align: left;">Đồng bộ lại các bộ đếm số lượng khối giữa chuỗi hoạt động và dịch vụ sắp xếp thứ tự.</td>
+<td style="text-align: left;">Đồng bộ lại bộ đếm khối giữa chuỗi và ordering service.</td>
 </tr>
 </tbody>
 </table>
@@ -4541,38 +4541,38 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Lỗi đọc DB trong quá trình nạp lại</td>
-<td style="text-align: left;">Ghi nhận lỗi ngoại lệ, thử lại ở chu kỳ đồng bộ tiếp theo</td>
+<td style="text-align: left;">Lỗi đọc DB khi nạp lại</td>
+<td style="text-align: left;">Ghi log exception, thử lại ở chu kỳ đồng bộ tiếp theo</td>
 </tr>
 <tr>
-<td style="text-align: left;">Khóa ghi bị giữ quá lâu</td>
-<td style="text-align: left;">Tự động hết hạn (timeout) sau <code>lock_timeout</code> giây; gửi cảnh báo nguy hiểm qua Risk Alerts</td>
+<td style="text-align: left;">Khóa ghi giữ quá lâu</td>
+<td style="text-align: left;">Tự hết hạn sau <code>lock_timeout</code> giây; gửi cảnh báo qua Risk Alerts</td>
 </tr>
 <tr>
-<td style="text-align: left;">Chỉ mục <code>entity_event_index</code> không nhất quán sau khi nạp</td>
+<td style="text-align: left;"><code>entity_event_index</code> không nhất quán sau nạp</td>
 <td style="text-align: left;">Kích hoạt dựng lại chỉ mục toàn phần</td>
 </tr>
 <tr>
-<td style="text-align: left;">Cơ sở dữ liệu lưu trữ không thể kết nối</td>
-<td style="text-align: left;">Nút chuyển sang chế độ Chỉ đọc (Read-only); sự kiện mới được đưa vào hàng đợi nhưng không ghi xuống đĩa</td>
+<td style="text-align: left;">DB không kết nối được</td>
+<td style="text-align: left;">Node chuyển sang chỉ đọc; sự kiện mới vào hàng đợi nhưng không ghi xuống đĩa</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="cac-class-method-quan-trong">Các Class &amp; Method quan trọng</h2>
+<h2 id="lop-va-phuong-thuc-chinh">Lớp và phương thức chính</h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Bước</th>
-<th style="text-align: left;">Class / Method</th>
-<th style="text-align: left;">File</th>
+<th style="text-align: left;">Lớp / Phương thức</th>
+<th style="text-align: left;">Tệp</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align: left;">Hàm khởi tạo</td>
 <td style="text-align: left;"><code>SubChain.sync_chain()</code></td>
-<td style="text-align: left;"><code>hierarchical/sub_chain.py</code></td>
+<td style="text-align: left;"><code>hierarchical/sub_chain/base.py</code></td>
 </tr>
 <tr>
 <td style="text-align: left;">Đọc khối mới nhất từ DB</td>
@@ -4587,20 +4587,20 @@
 <tr>
 <td style="text-align: left;">Cập nhật chỉ mục</td>
 <td style="text-align: left;"><code>SubChain._update_event_statistics()</code></td>
-<td style="text-align: left;"><code>hierarchical/sub_chain.py</code></td>
+<td style="text-align: left;"><code>hierarchical/sub_chain/base.py</code></td>
 </tr>
 <tr>
 <td style="text-align: left;">Đặt lại bộ đếm OS</td>
 <td style="text-align: left;"><code>SubChain._reset_ordering_service_state()</code></td>
-<td style="text-align: left;"><code>hierarchical/sub_chain.py</code></td>
+<td style="text-align: left;"><code>hierarchical/sub_chain/base.py</code></td>
 </tr>
 </tbody>
 </table>
 <hr />
 <h2 id="lien-quan">Liên quan</h2>
 <ul>
-<li><a href=".././error-recovery/">Giảm thiểu Lỗi &amp; Phục hồi</a>: Việc khôi phục ảnh chụp trạng thái lỗi sẽ kích hoạt nạp lại chuỗi</li>
-<li><a href=".././integrity-validation/">Xác thực Tính toàn vẹn</a>: Kiểm tra tính nhất quán của chuỗi sau khi nạp lại trạng thái</li>
+<li><a href=".././error-recovery/">Giảm thiểu Lỗi &amp; Phục hồi</a>: khôi phục snapshot lỗi kích hoạt nạp lại chuỗi</li>
+<li><a href=".././integrity-validation/">Xác thực Tính toàn vẹn</a>: kiểm tra nhất quán chuỗi sau khi nạp lại</li>
 </ul>
 
 

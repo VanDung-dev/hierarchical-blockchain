@@ -2642,10 +2642,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-key-manager-key-providers" class="md-nav__link">
+  <a href="#key-manager-va-key-provider" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Key Manager &amp; Key Providers
+        Key manager và key provider
       </span>
     </span>
   </a>
@@ -2653,10 +2653,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-certificate-management-x509" class="md-nav__link">
+  <a href="#chung-chi-va-inh-danh-msp" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Certificate Management (X.509)
+        Chứng chỉ và định danh (MSP)
       </span>
     </span>
   </a>
@@ -2664,10 +2664,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-key-backup-recovery" class="md-nav__link">
+  <a href="#sao-luu-va-khoi-phuc-khoa" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        3. Key Backup &amp; Recovery
+        Sao lưu và khôi phục khóa
       </span>
     </span>
   </a>
@@ -2675,10 +2675,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phan-cap-quan-ly-khoa" class="md-nav__link">
+  <a href="#pham-vi-khoa-thuc-te" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Phân cấp Quản lý Khóa
+        Phạm vi khóa (thực tế)
       </span>
     </span>
   </a>
@@ -2686,10 +2686,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#luong-khoi-tao-chung-chi" class="md-nav__link">
+  <a href="#luong-khoi-tao-chung-chi-thuc-te" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Luồng Khởi tạo Chứng chỉ
+        Luồng khởi tạo chứng chỉ (thực tế)
       </span>
     </span>
   </a>
@@ -4282,10 +4282,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-key-manager-key-providers" class="md-nav__link">
+  <a href="#key-manager-va-key-provider" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Key Manager &amp; Key Providers
+        Key manager và key provider
       </span>
     </span>
   </a>
@@ -4293,10 +4293,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-certificate-management-x509" class="md-nav__link">
+  <a href="#chung-chi-va-inh-danh-msp" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Certificate Management (X.509)
+        Chứng chỉ và định danh (MSP)
       </span>
     </span>
   </a>
@@ -4304,10 +4304,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#3-key-backup-recovery" class="md-nav__link">
+  <a href="#sao-luu-va-khoi-phuc-khoa" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        3. Key Backup &amp; Recovery
+        Sao lưu và khôi phục khóa
       </span>
     </span>
   </a>
@@ -4315,10 +4315,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#phan-cap-quan-ly-khoa" class="md-nav__link">
+  <a href="#pham-vi-khoa-thuc-te" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Phân cấp Quản lý Khóa
+        Phạm vi khóa (thực tế)
       </span>
     </span>
   </a>
@@ -4326,10 +4326,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#luong-khoi-tao-chung-chi" class="md-nav__link">
+  <a href="#luong-khoi-tao-chung-chi-thuc-te" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Luồng Khởi tạo Chứng chỉ
+        Luồng khởi tạo chứng chỉ (thực tế)
       </span>
     </span>
   </a>
@@ -4379,55 +4379,53 @@
 
 
 <h1 id="encryption-keys">Encryption &amp; Keys</h1>
-<p>Lớp bảo mật này quản lý toàn bộ "bí mật" của hệ thống, bao gồm các khóa mã hóa, cặp khóa ký và chứng chỉ định danh.</p>
-<h2 id="1-key-manager-key-providers">1. Key Manager &amp; Key Providers</h2>
-<p><strong>File</strong>: <code>hierachain/security/key_manager.py</code>, <code>key_provider.py</code></p>
-<p>Quản lý việc tạo và sử dụng các cặp khóa:</p>
+<p>Lớp bảo mật này quản lý secret của hệ thống. Bao gồm khóa mã hóa, cặp khóa ký và chứng chỉ định danh.</p>
+<h2 id="key-manager-va-key-provider">Key manager và key provider</h2>
+<p>File: <code>hierachain/security/key_manager.py</code>, <code>key_provider.py</code></p>
+<p>Đoạn code này tạo và sử dụng cặp khóa:</p>
 <ul>
-<li><strong>Ed25519 Support</strong>: Sử dụng thuật toán Ed25519 cho chữ ký số tốc độ cao và bảo mật.</li>
+<li>Hỗ trợ Ed25519 dùng Ed25519 cho chữ ký số nhanh và an toàn.</li>
 <li>
-<p><strong>Pluggable Providers</strong>: Hỗ trợ nhiều nguồn cung cấp khóa khác nhau:</p>
+<p>Provider có thể thay thế hỗ trợ nhiều nguồn khóa:</p>
 <ul>
-<li><code>LocalKeyProvider</code>: Lưu trữ tại chỗ (In-memory).</li>
-<li><code>FileVaultProvider</code>: Lưu trữ mã hóa trên ổ đĩa bằng <strong>AES-256-GCM</strong>.</li>
+<li><code>LocalKeyProvider</code> giữ khóa trong bộ nhớ cục bộ.</li>
+<li><code>FileVaultProvider</code> giữ dữ liệu mã hóa trên đĩa với AES-256-GCM.</li>
 </ul>
 </li>
 <li>
-<p><strong>API Key Lifecycle</strong>: Quản lý vòng đời đầy đủ của API Key từ lúc khởi tạo đến khi thu hồi.</p>
+<p>Vòng đời API key bao phủ toàn bộ vòng đời API key từ lúc tạo đến khi thu hồi.</p>
 </li>
 </ul>
-<h2 id="2-certificate-management-x509">2. Certificate Management (X.509)</h2>
-<p><strong>File</strong>: <code>hierachain/security/certificate.py</code></p>
-<p>Quản lý danh tính số cho các nút và dịch vụ:</p>
+<h2 id="chung-chi-va-inh-danh-msp">Chứng chỉ và định danh (MSP)</h2>
+<p>File: <code>hierachain/security/msp.py</code> (<code>Certificate</code>, <code>CertificateAuthority</code>, <code>HierarchicalMSP</code>)</p>
+<p>Đoạn code này quản lý định danh nội bộ nhẹ, không phải X.509:</p>
 <ul>
-<li><strong>X.509 Standards</strong>: Tuân thủ tiêu chuẩn chứng chỉ số doanh nghiệp.</li>
-<li><strong>mTLS Support</strong>: Cung cấp các chứng chỉ cần thiết cho xác thực hai chiều (Mutual TLS) giữa các thành phần.</li>
-<li><strong>CRL (Certificate Revocation List)</strong>: Quản lý danh sách các chứng chỉ đã bị thu hồi để đảm bảo an ninh.</li>
+<li>Chứng chỉ nội bộ là dataclass <code>Certificate</code> với <code>cert_id</code>, <code>subject</code>, <code>public_key</code>, <code>signature</code> (ký Ed25519 qua <code>_sign_certificate</code>) và kiểm tra thời hạn <code>is_valid()</code>. Không có ASN.1 X.509 và không có mTLS.</li>
+<li>Vận hành CA gồm <code>CertificateAuthority.issue_certificate()</code>, <code>revoke_certificate()</code> và <code>verify_certificate()</code> với tập <code>issued_certificates</code> và <code>revoked_certificates</code> lưu trong bộ nhớ. <code>HierarchicalMSP</code> dùng cơ chế này để đăng ký org và entity.</li>
+<li>Hạn chế: thu hồi chỉ tồn tại trong bộ nhớ. Không có phân phối CRL, không có xác thực chuỗi X.509 và không có mutual TLS giữa các component. TLS được đặt ở reverse proxy theo quy tắc kiến trúc.</li>
 </ul>
-<h2 id="3-key-backup-recovery">3. Key Backup &amp; Recovery</h2>
-<p><strong>File</strong>: <code>hierachain/security/key_backup_manager.py</code></p>
-<p>Đảm bảo khả năng phục hồi sau sự cố:</p>
+<h2 id="sao-luu-va-khoi-phuc-khoa">Sao lưu và khôi phục khóa</h2>
+<p>File: <code>hierachain/cli/key.py</code>, <code>hierachain/security/key_provider.py</code> (<code>FileVaultProvider</code>)</p>
+<p>Không có <code>key_backup_manager.py</code> riêng. Cơ chế thực tế tối giản:</p>
 <ul>
-<li><strong>Encrypted Backups</strong>: Sao lưu khóa dưới dạng mã hóa với kiểm tra tính toàn vẹn bằng Hash.</li>
-<li><strong>Multi-location Storage</strong>: Hỗ trợ sao lưu tại nhiều vị trí để tránh mất mát dữ liệu.</li>
-<li><strong>Secure Cleanup</strong>: Quy trình xóa bỏ các bản sao lưu cũ một cách an toàn để tránh rò rỉ.</li>
+<li>Tạo khóa chạy <code>python -m hierachain key generate --output validator_key.json</code> (CLI) để tạo cặp Ed25519 qua <code>Ed25519PrivateKey.generate()</code> và ghi JSON <code>{private_key, public_key}</code> dạng hex. Lệnh <code>show</code> và <code>verify</code> dùng để kiểm tra kết quả.</li>
+<li>Vault mã hóa (chỉ cho dev và test) dùng <code>FileVaultProvider</code> để mã hóa file vault bằng <code>PBKDF2HMAC(SHA256, 310_000 iter)</code> và <code>Fernet</code>. Phần này phù hợp cho dev và test và được ghi rõ không dùng cho production. Với production hãy dùng HSM hoặc KMS qua interface <code>KeyProvider</code> và <code>HRC_VAULT_*</code>.</li>
+<li>Không có sao lưu đa vị trí, không có kiểm tra toàn vẹn SHA-512 và không có tự động phân phối hay dọn dẹp. Operator phải tự sao chép <code>validator_key.json</code> hoặc <code>.vault</code> bằng công cụ sao lưu ngoài.</li>
 </ul>
 <hr />
-<h2 id="phan-cap-quan-ly-khoa">Phân cấp Quản lý Khóa</h2>
-<p>HieraChain sử dụng mô hình phân cấp khóa để tối ưu bảo mật:</p>
-<ol>
-<li><strong>Master Key</strong>: Khóa gốc dùng để mã hóa các khóa khác (thường được lưu trong môi trường bảo mật cao).</li>
-<li><strong>Domain Keys</strong>: Các khóa dùng cho từng chuỗi con (Sub-Chains).</li>
-<li><strong>Entity/User Keys</strong>: Các cặp khóa ký cho từng thực thể hoặc người dùng cuối.</li>
-</ol>
+<h2 id="pham-vi-khoa-thuc-te">Phạm vi khóa (thực tế)</h2>
+<ul>
+<li>Khóa validator và node là một <code>KeyPair</code> Ed25519 cho mỗi node (qua <code>LocalKeyProvider</code> hoặc <code>FileVaultProvider</code>), được tham chiếu bởi <code>HRC_VALIDATOR_IDENTITY</code> và <code>HRC_MASTER_KEY_FILE</code>/<code>HRC_MASTER_KEY_SOURCE</code>.</li>
+<li>API key được quản lý bởi <code>KeyManager</code> (tạo, thu hồi, phân quyền, cache qua <code>KeyStorage</code>/<code>KeyCacheManager</code>), không phải khóa ký cho từng entity.</li>
+<li>Không có phân cấp sẵn như Master tới Domain tới Entity. Cách ly domain dựa trên việc tách Sub-Chain và role của MSP.</li>
+</ul>
 <hr />
-<h2 id="luong-khoi-tao-chung-chi">Luồng Khởi tạo Chứng chỉ</h2>
+<h2 id="luong-khoi-tao-chung-chi-thuc-te">Luồng khởi tạo chứng chỉ (thực tế)</h2>
 <pre class="mermaid"><code>graph LR
-    A[Generate Ed25519 Key Pair] --&gt; B[Create CSR - Certificate Signing Request]
-    B --&gt; C[Hierarchical MSP Review]
-    C --&gt; D[Sign with MSP Root CA]
-    D --&gt; E[Distribute X.509 Certificate]
-    E --&gt; F[Use for Secure Communication]</code></pre>
+    A[Generate Ed25519 Key Pair&lt;br/&gt;cli/key.py] --&gt; B[HierarchicalMSP.register_entity&lt;br/&gt;msp.py]
+    B --&gt; C[CA.issue_certificate&lt;br/&gt;Ed25519 sign]
+    C --&gt; D[Store in issued_certificates]
+    D --&gt; E[verify_certificate / revoke_certificate]</code></pre>
 <hr />
 <h2 id="lien-quan">Liên quan</h2>
 <ul>

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Quy trình sao lưu mật mã của các khóa riêng tư trình xác thực quan trọng và quy trình khôi phục hệ thống.">
+        <meta name="description" content="Actual key backup/restore paths in HieraChain: CLI-generated Ed25519 keys and FileVaultProvider.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -33,7 +33,7 @@
     
     
       
-        <title>Sao lưu & Khôi phục Khóa - HieraChain Docs</title>
+        <title>Key Backup & Restoration - HieraChain Docs</title>
       
     
     
@@ -89,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#sao-luu-khoi-phuc-khoa" class="md-skip">
+        <a href="#key-backup-restoration" class="md-skip">
           Bỏ qua
         </a>
       
@@ -123,7 +123,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Sao lưu & Khôi phục Khóa
+              Key Backup & Restoration
             
           </span>
         </div>
@@ -1813,10 +1813,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tong-quan" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Tổng quan
+        Overview
       </span>
     </span>
   </a>
@@ -1824,10 +1824,49 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#so-o-luong-sao-luu" class="md-nav__link">
+  <a href="#actual-paths" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Sơ đồ Luồng: Sao lưu
+        Actual Paths
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Actual Paths">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-cli-plain-backup-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        1. CLI Plain Backup (default)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-encrypted-vault-devtest" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2. Encrypted Vault (dev/test)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-not-implemented" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        What Is NOT Implemented
       </span>
     </span>
   </a>
@@ -1835,10 +1874,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#so-o-luong-khoi-phuc" class="md-nav__link">
+  <a href="#operator-checklist" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Sơ đồ Luồng: Khôi phục
+        Operator Checklist
       </span>
     </span>
   </a>
@@ -1846,65 +1885,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#co-che-du-phong-a-kho-multi-vault-failover" class="md-nav__link">
+  <a href="#related" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cơ chế Dự phòng Đa Kho (Multi-Vault Failover)
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#chi-tiet-tung-buoc" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Chi tiết Từng Bước
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cau-hinh-sao-luu" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Cấu hình Sao lưu
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#xu-ly-loi" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Xử lý Lỗi
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cac-lop-phuong-thuc-quan-trong" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Các Lớp &amp; Phương thức Quan trọng
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#lien-ket-lien-quan" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Liên kết liên quan
+        Related
       </span>
     </span>
   </a>
@@ -4315,10 +4299,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tong-quan" class="md-nav__link">
+  <a href="#overview" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Tổng quan
+        Overview
       </span>
     </span>
   </a>
@@ -4326,10 +4310,49 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#so-o-luong-sao-luu" class="md-nav__link">
+  <a href="#actual-paths" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Sơ đồ Luồng: Sao lưu
+        Actual Paths
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Actual Paths">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-cli-plain-backup-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        1. CLI Plain Backup (default)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-encrypted-vault-devtest" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2. Encrypted Vault (dev/test)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-not-implemented" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        What Is NOT Implemented
       </span>
     </span>
   </a>
@@ -4337,10 +4360,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#so-o-luong-khoi-phuc" class="md-nav__link">
+  <a href="#operator-checklist" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Sơ đồ Luồng: Khôi phục
+        Operator Checklist
       </span>
     </span>
   </a>
@@ -4348,65 +4371,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#co-che-du-phong-a-kho-multi-vault-failover" class="md-nav__link">
+  <a href="#related" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cơ chế Dự phòng Đa Kho (Multi-Vault Failover)
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#chi-tiet-tung-buoc" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Chi tiết Từng Bước
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cau-hinh-sao-luu" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Cấu hình Sao lưu
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#xu-ly-loi" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Xử lý Lỗi
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#cac-lop-phuong-thuc-quan-trong" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Các Lớp &amp; Phương thức Quan trọng
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#lien-ket-lien-quan" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Liên kết liên quan
+        Related
       </span>
     </span>
   </a>
@@ -4444,282 +4412,79 @@
   
 
 
-<h1 id="sao-luu-khoi-phuc-khoa">Sao lưu &amp; Khôi phục Khóa</h1>
-<h2 id="tong-quan">Tổng quan</h2>
-<p>Các khóa mật mã (khóa đồng thuận, khóa danh tính, khóa mã hóa) được sao lưu tự động sau mỗi sự kiện tạo mới hoặc xoay vòng khóa. Mỗi bản sao lưu được <strong>mã hóa bằng AES-256-GCM</strong> và được phân phối đến nhiều vị trí kho lưu trữ (vault). Khi khôi phục, <code>restore_keys()</code> sẽ xác thực <strong>tính toàn vẹn bằng SHA-512</strong> trước khi giải mã và áp dụng các khóa vào hệ thống.</p>
-<p><strong>Đặc tính quan trọng</strong>: Ngay cả khi một kho lưu trữ bị xâm nhập, các khóa văn bản thô (plaintext keys) vẫn được bảo vệ bằng AES-256-GCM. Ngay cả khi bản mã (ciphertext) bị thay đổi, việc kiểm tra tính toàn vẹn SHA-512 sẽ ngăn chặn giải mã dữ liệu bị hỏng.</p>
+<h1 id="key-backup-restoration">Key Backup &amp; Restoration</h1>
+<h2 id="overview">Overview</h2>
+<p>HieraChain does <strong>not</strong> have a <code>security/key_backup_manager.py</code> or <code>MasterKeyProvider</code>. Key backup is operator-managed via two real paths: plain JSON key files produced by the CLI and the optional encrypted <code>FileVaultProvider</code> vault. No automatic AES-256-GCM multi-vault distribution or SHA-512 integrity chain exists in code.</p>
 <hr />
-<h2 id="so-o-luong-sao-luu">Sơ đồ Luồng: Sao lưu</h2>
-<pre class="mermaid"><code>sequenceDiagram
-    autonumber
-    participant Trigger as ⚙️ Tạo / Xoay vòng Khóa
-    participant KBM as 🔑 KeyBackupManager
-    participant AES as 🔐 AES-256-GCM
-    participant FS as 📁 Hệ thống Tệp / Kho lưu trữ
-
-    Note over Trigger: Khóa mới được tạo (cấp chứng chỉ MSP, xoay vòng đồng thuận)
-
-    Trigger-&gt;&gt;KBM: backup_keys(public_key, private_key, key_type)
-    KBM-&gt;&gt;KBM: Chuẩn hóa key_type → backup_id = "{key_type}_{timestamp}"
-
-    rect rgb(0, 0, 0, 0)
-        Note over KBM,AES: Giai đoạn 1 — Mã hóa
-        KBM-&gt;&gt;AES: _encrypt_backup_data({ public_key, private_key, ... }, encryption_key)
-        Note right of AES: nonce = secrets.token_bytes(12)&lt;br/&gt;ciphertext = AESGCM.encrypt(nonce, json_data, aad)&lt;br/&gt;output = nonce || ciphertext
-        AES--&gt;&gt;KBM: encrypted_data (bytes)
-    end
-
-    rect rgb(0, 0, 0, 0)
-        Note over KBM,FS: Giai đoạn 2 — Ghi &amp; Xác thực Tính Toàn vẹn
-        KBM-&gt;&gt;FS: ghi {backup_id}.enc vào kho lưu trữ chính
-        KBM-&gt;&gt;KBM: _calculate_integrity_hash(encrypted_data) → SHA-512
-        KBM-&gt;&gt;KBM: _verify_integrity(backup_file, expected_hash) → xác nhận ghi OK
-    end
-
-    rect rgb(0, 0, 0, 0)
-        Note over KBM,FS: Giai đoạn 3 — Phân phối &amp; Siêu dữ liệu
-        KBM-&gt;&gt;FS: _distribute_to_locations(file, backup_id, locations)
-        Note right of FS: Sao chép sang kho phụ, kho thứ ba, ...&lt;br/&gt;Mỗi kho = một thư mục riêng biệt / đường dẫn từ xa
-        FS--&gt;&gt;KBM: distributed_locations []
-
-        KBM-&gt;&gt;KBM: _update_metadata(backup_id, { timestamp, key_type, hash, locations, file_path })
-        KBM-&gt;&gt;KBM: _cleanup_old_backups() — xóa bản sao lưu cũ hơn retention_period ngày
-    end
-    KBM--&gt;&gt;Trigger: backup_id ✅</code></pre>
-<hr />
-<h2 id="so-o-luong-khoi-phuc">Sơ đồ Luồng: Khôi phục</h2>
-<pre class="mermaid"><code>sequenceDiagram
-    autonumber
-    participant Trigger as ⚙️ Khắc phục Thảm họa
-    participant KBM as 🔑 KeyBackupManager
-    participant AES as 🔐 AES-256-GCM
-    participant FS as 📁 Hệ thống Tệp / Kho lưu trữ
-
-    Trigger-&gt;&gt;KBM: restore_keys(backup_id)
-    rect rgb(0, 0, 0, 0)
-        Note over KBM,FS: Giai đoạn 1 — Định vị &amp; Kiểm tra Tính Toàn vẹn
-        KBM-&gt;&gt;FS: _find_backup_file(backup_id)&lt;br/&gt;Tìm kiếm ở kho chính, sau đó đến các kho phân phối
-        FS--&gt;&gt;KBM: đường dẫn backup_file
-
-        KBM-&gt;&gt;KBM: _get_backup_hash(backup_id) → expected_hash từ metadata
-        KBM-&gt;&gt;KBM: _calculate_integrity_hash(file_content) → actual_hash
-    end
-
-    alt Tính toàn vẹn OK (actual == expected)
-        KBM-&gt;&gt;AES: _decrypt_backup_data(encrypted_data, encryption_key)
-        AES--&gt;&gt;KBM: { public_key, private_key, key_type }
-        KBM-&gt;&gt;KBM: _validate_keys(public_key, private_key, key_type)
-        KBM-&gt;&gt;KBM: _apply_restored_keys(public_key, private_key, key_type)
-        KBM--&gt;&gt;Trigger: { public_key, private_key } ✅
-    else Tính toàn vẹn THẤT BẠI (bị thay đổi hoặc lỗi)
-        KBM--&gt;&gt;Trigger: báo lỗi IntegrityError ❌
-        Note over KBM: Ghi log lỗi dữ liệu, thử vị trí kho tiếp theo
-    end</code></pre>
-<hr />
-<h2 id="co-che-du-phong-a-kho-multi-vault-failover">Cơ chế Dự phòng Đa Kho (Multi-Vault Failover)</h2>
-<pre class="mermaid"><code>flowchart LR
-    RESTORE["restore_keys(backup_id)"]
-    ledger["📁 Kho chính\n_find_backup_file()"]
-    business["📁 Kho phụ\n(dự phòng)"]
-    admin["📁 Kho thứ ba\n(dự phòng)"]
-    OK["✅ Khóa được giải mã"]
-    ERR["❌ IntegrityError\nTất cả các kho đều thất bại"]
-
-    RESTORE --&gt; ledger
-    ledger --&gt;|Tìm thấy + nguyên vẹn| OK
-    ledger --&gt;|Không tìm thấy / bị lỗi| business
-    business --&gt;|Tìm thấy + nguyên vẹn| OK
-    business --&gt;|Không tìm thấy / bị lỗi| admin
-    admin --&gt;|Tìm thấy + nguyên vẹn| OK
-    admin --&gt;|Không tìm thấy / bị lỗi| ERR</code></pre>
-<hr />
-<h2 id="chi-tiet-tung-buoc">Chi tiết Từng Bước</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Bước</th>
-<th style="text-align: left;">Mô tả</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>1. Kích hoạt</strong></td>
-<td style="text-align: left;">Khóa được tạo (cấp chứng chỉ MSP) hoặc xoay vòng (theo lịch trình)</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>2. ID Sao lưu</strong></td>
-<td style="text-align: left;"><code>backup_id = "{sanitized_key_type}_{unix_timestamp}"</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>3. Mã hóa</strong></td>
-<td style="text-align: left;">AES-256-GCM với nonce 96-bit ngẫu nhiên. Kết quả = <code>nonce \|\| ciphertext</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>4. Ghi + xác thực</strong></td>
-<td style="text-align: left;">Ghi vào kho chính; mã băm SHA-512 của tệp được xác minh ngay lập tức</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>5. Phân phối</strong></td>
-<td style="text-align: left;">Sao chép đến tất cả các kho lưu trữ được cấu hình</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>6. Siêu dữ liệu</strong></td>
-<td style="text-align: left;">Cập nhật <code>metadata.json</code>: backup_id, key_type, hash, locations, timestamp</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>7. Dọn dẹp</strong></td>
-<td style="text-align: left;">Xóa các bản sao lưu cũ hơn <code>retention_period</code> (mặc định là 365 ngày)</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>8. Khôi phục</strong></td>
-<td style="text-align: left;">Tìm tệp $\rightarrow$ xác thực SHA-512 $\rightarrow$ giải mã $\rightarrow$ xác thực cặp khóa $\rightarrow$ áp dụng</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="cau-hinh-sao-luu">Cấu hình Sao lưu</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Tham số</th>
-<th style="text-align: left;">Mặc định</th>
-<th style="text-align: left;">Mô tả</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>frequency</code></td>
-<td style="text-align: left;"><code>daily</code></td>
-<td style="text-align: left;">Lịch trình sao lưu</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>encryption_algorithm</code></td>
-<td style="text-align: left;"><code>AES-256-GCM</code></td>
-<td style="text-align: left;">Thuật toán mã hóa</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>integrity_check</code></td>
-<td style="text-align: left;"><code>sha512</code></td>
-<td style="text-align: left;">Thuật toán băm để xác thực tính toàn vẹn khi ghi</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>retention_period</code></td>
-<td style="text-align: left;"><code>365</code> ngày</td>
-<td style="text-align: left;">Thời gian giữ lại trước khi tự động dọn dẹp</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>locations</code></td>
-<td style="text-align: left;"><code>[primary_vault]</code></td>
-<td style="text-align: left;">Mục tiêu phân phối sao lưu</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>auto_restore_threshold</code></td>
-<td style="text-align: left;"><code>1</code></td>
-<td style="text-align: left;">Số bản sao tối thiểu trước khi tự động kích hoạt khôi phục</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="xu-ly-loi">Xử lý Lỗi</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Điều kiện</th>
-<th style="text-align: left;">Hành vi</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">Xác thực tính toàn vẹn thất bại ngay sau khi ghi</td>
-<td style="text-align: left;">Báo lỗi <code>ValueError</code>; dừng quy trình sao lưu và thử lại</td>
-</tr>
-<tr>
-<td style="text-align: left;">Tất cả các kho lưu trữ đều không thể truy cập</td>
-<td style="text-align: left;">Báo lỗi <code>IOError</code>; phát cảnh báo khẩn cấp thông qua Cảnh báo Rủi ro</td>
-</tr>
-<tr>
-<td style="text-align: left;">Không trùng khớp SHA-512 khi khôi phục</td>
-<td style="text-align: left;">Báo lỗi <code>IntegrityError</code>; thử kho lưu trữ tiếp theo</td>
-</tr>
-<tr>
-<td style="text-align: left;">Giải mã thất bại (sai khóa)</td>
-<td style="text-align: left;">Báo lỗi <code>CryptographyError</code>; quy trình bị hủy bỏ</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>_apply_restored_keys()</code> thất bại</td>
-<td style="text-align: left;">Hệ thống giữ nguyên các khóa hiện có; ghi log lỗi và gửi cảnh báo</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="cac-lop-phuong-thuc-quan-trong">Các Lớp &amp; Phương thức Quan trọng</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Bước</th>
-<th style="text-align: left;">Lớp / Phương thức</th>
-<th style="text-align: left;">Tệp</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">Khởi đầu sao lưu</td>
-<td style="text-align: left;"><code>KeyBackupManager.backup_keys()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Mã hóa</td>
-<td style="text-align: left;"><code>_encrypt_backup_data()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Băm tính toàn vẹn</td>
-<td style="text-align: left;"><code>_calculate_integrity_hash()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Xác minh ghi</td>
-<td style="text-align: left;"><code>_verify_integrity()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Phân phối</td>
-<td style="text-align: left;"><code>_distribute_to_locations()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Khởi đầu khôi phục</td>
-<td style="text-align: left;"><code>KeyBackupManager.restore_keys()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Tìm tệp sao lưu</td>
-<td style="text-align: left;"><code>_find_backup_file()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Giải mã</td>
-<td style="text-align: left;"><code>_decrypt_backup_data()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Xác thực khóa</td>
-<td style="text-align: left;"><code>_validate_keys()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Cung cấp khóa chính</td>
-<td style="text-align: left;"><code>MasterKeyProvider.get_master_key()</code></td>
-<td style="text-align: left;"><code>security/master_key_provider.py</code></td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="lien-ket-lien-quan">Liên kết liên quan</h2>
+<h2 id="actual-paths">Actual Paths</h2>
+<h3 id="1-cli-plain-backup-default">1. CLI Plain Backup (default)</h3>
+<p><strong>File</strong>: <code>hierachain/cli/key.py</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>-m<span class="w"> </span>hierachain<span class="w"> </span>key<span class="w"> </span>generate<span class="w"> </span>--output<span class="w"> </span>validator_key.json<span class="w">  </span><span class="c1"># Ed25519 hex JSON</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>python<span class="w"> </span>-m<span class="w"> </span>hierachain<span class="w"> </span>key<span class="w"> </span>show<span class="w"> </span>--input<span class="w"> </span>validator_key.json
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>python<span class="w"> </span>-m<span class="w"> </span>hierachain<span class="w"> </span>key<span class="w"> </span>verify<span class="w"> </span>--input<span class="w"> </span>validator_key.json
+</code></pre></div>
 <ul>
-<li><a href=".././msp-identity/">Danh tính MSP</a>: phát hành chứng chỉ mới sẽ kích hoạt việc sao lưu khóa</li>
-<li><a href=".././cluster-lockdown/">Khóa băng Cụm</a>: việc khóa băng có thể yêu cầu xoay vòng khóa, kích hoạt luồng công việc này</li>
-<li><a href=".././ipfs-storage/">Lưu trữ IPFS</a>: sử dụng cùng một cơ chế mã hóa AES-256-GCM</li>
+<li>Output is <code>{private_key, public_key}</code> hex. Backup = copy <code>validator_key.json</code> to secure external storage. Restore = copy back and set <code>HRC_VALIDATOR_IDENTITY=validator_key.json</code>.</li>
+<li>No encryption, no hash, no auto-rotation. Operator handles rotation by re-running <code>generate</code>.</li>
+</ul>
+<h3 id="2-encrypted-vault-devtest">2. Encrypted Vault (dev/test)</h3>
+<p><strong>File</strong>: <code>hierachain/security/key_provider.py</code> (<code>FileVaultProvider</code>)</p>
+<ul>
+<li>Creates a <code>.vault</code> file encrypted with <code>PBKDF2HMAC(SHA256, 310k iter)</code> → <code>Fernet</code> (AES-128-CBC+HMAC, not AES-256-GCM). Password is <code>HRC_VAULT_*</code> / constructor arg.</li>
+<li>Explicitly documented as <em>dev/test only</em>, production should implement <code>KeyProvider</code> via HSM/KMS.</li>
+<li>No distribution to multiple vaults, no <code>metadata.json</code>, no <code>retention_period</code>, no <code>auto_restore_threshold</code>.</li>
+</ul>
+<pre class="mermaid"><code>sequenceDiagram
+    participant CLI as CLI generate
+    participant File as validator_key.json / .vault
+    participant Op as Operator / HSM
+
+    CLI-&gt;&gt;File: write private_key/public_key hex
+    File-&gt;&gt;Op: manual copy to backup / KMS
+    Op--&gt;&gt;File: restore copy back
+    File-&gt;&gt;CLI: verify / LocalKeyProvider.from_file()</code></pre>
+<hr />
+<h2 id="what-is-not-implemented">What Is NOT Implemented</h2>
+<table>
+<thead>
+<tr>
+<th>Documented claim (removed)</th>
+<th>Reality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>KeyBackupManager.backup_keys()</code> / <code>_encrypt_backup_data()</code> / <code>SHA-512</code> / <code>_distribute_to_locations()</code></td>
+<td>No such class/methods exist</td>
+</tr>
+<tr>
+<td>AES-256-GCM + nonce||ciphertext + 3-vault failover</td>
+<td>Vault uses <code>Fernet</code>; multi-location is manual copy</td>
+</tr>
+<tr>
+<td><code>MasterKeyProvider.get_master_key()</code></td>
+<td>No such provider; master key is <code>HRC_MASTER_KEY_FILE</code>/<code>HRC_MASTER_KEY_SOURCE</code> + <code>HRC_VAULT_TOKEN</code>/<code>HRC_VAULT_PATH</code> envs</td>
+</tr>
+<tr>
+<td>Auto backup on MSP cert issue or consensus rotation</td>
+<td>No hook; certs in <code>security/msp.py</code> are in-memory only</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="operator-checklist">Operator Checklist</h2>
+<ol>
+<li>Generate: <code>python -m hierachain key generate -o validator_key.json</code></li>
+<li>Backup: <code>cp validator_key.json /secure/backup/</code> (+ encrypt externally if needed)</li>
+<li>Restore: <code>cp /secure/backup/validator_key.json ./ &amp;&amp; python -m hierachain key verify</code></li>
+<li>For encrypted vault: <code>FileVaultProvider.create_vault(vault_path, password)</code> then store password in vault/KMS at <code>HRC_VAULT_TOKEN</code>.</li>
+</ol>
+<hr />
+<h2 id="related">Related</h2>
+<ul>
+<li><a href=".././msp-identity/">MSP Identity</a>: <code>security/msp.py</code> issues in-memory certs; no trigger to key backup</li>
+<li><a href=".././cluster-lockdown/">Cluster Lockdown</a>: no automatic key rotation</li>
+<li><a href="../../security/encryption-keys/">Encryption &amp; Keys</a>: corrected description of <code>msp.py</code>/<code>key_provider.py</code></li>
 </ul>
 
 

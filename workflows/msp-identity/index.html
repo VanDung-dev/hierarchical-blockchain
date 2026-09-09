@@ -89,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#msp-identity-authorization" class="md-skip">
+        <a href="#msp-identity-and-authorization" class="md-skip">
           Skip to content
         </a>
       
@@ -1798,7 +1798,7 @@
   <a href="#flow-diagram-entity-onboarding-enterprise-msp" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Entity Onboarding (Enterprise MSP)
+        Flow diagram: entity onboarding (enterprise MSP)
       </span>
     </span>
   </a>
@@ -1809,7 +1809,7 @@
   <a href="#flow-diagram-runtime-authorization" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Runtime Authorization
+        Flow diagram: runtime authorization
       </span>
     </span>
   </a>
@@ -1820,7 +1820,7 @@
   <a href="#flow-diagram-certificate-revocation" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Certificate Revocation
+        Flow diagram: certificate revocation
       </span>
     </span>
   </a>
@@ -1831,7 +1831,7 @@
   <a href="#default-roles" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Default Roles
+        Default roles
       </span>
     </span>
   </a>
@@ -1842,7 +1842,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -1853,7 +1853,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -1861,10 +1861,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4329,7 +4329,7 @@
   <a href="#flow-diagram-entity-onboarding-enterprise-msp" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Entity Onboarding (Enterprise MSP)
+        Flow diagram: entity onboarding (enterprise MSP)
       </span>
     </span>
   </a>
@@ -4340,7 +4340,7 @@
   <a href="#flow-diagram-runtime-authorization" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Runtime Authorization
+        Flow diagram: runtime authorization
       </span>
     </span>
   </a>
@@ -4351,7 +4351,7 @@
   <a href="#flow-diagram-certificate-revocation" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Certificate Revocation
+        Flow diagram: certificate revocation
       </span>
     </span>
   </a>
@@ -4362,7 +4362,7 @@
   <a href="#default-roles" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Default Roles
+        Default roles
       </span>
     </span>
   </a>
@@ -4373,7 +4373,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -4384,7 +4384,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -4392,10 +4392,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4444,7 +4444,7 @@
   
 
 
-<h1 id="msp-identity-authorization">MSP Identity &amp; Authorization</h1>
+<h1 id="msp-identity-and-authorization">MSP identity and authorization</h1>
 <h2 id="overview">Overview</h2>
 <p>HieraChain uses two identity layers:</p>
 <table>
@@ -4468,9 +4468,9 @@
 </tr>
 </tbody>
 </table>
-<p>Every entity must be registered and have its identity validated before being permitted to call <code>PolicyEngine</code> (Policy Enforcement) or submit events (Event Submission).</p>
+<p>Every entity must be registered and have its identity validated before the system allows it to call <code>PolicyEngine</code> or submit events.</p>
 <hr />
-<h2 id="flow-diagram-entity-onboarding-enterprise-msp">Flow Diagram: Entity Onboarding (Enterprise MSP)</h2>
+<h2 id="flow-diagram-entity-onboarding-enterprise-msp">Flow diagram: entity onboarding (enterprise MSP)</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant Admin as 🏢 Enterprise Admin
@@ -4497,7 +4497,7 @@
         MSP--&gt;&gt;Admin: True ✅
     end</code></pre>
 <hr />
-<h2 id="flow-diagram-runtime-authorization">Flow Diagram: Runtime Authorization</h2>
+<h2 id="flow-diagram-runtime-authorization">Flow diagram: runtime authorization</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant Caller as 🖥️ API Client
@@ -4528,7 +4528,7 @@
         Note right of PE: Policy Enforcement flow continues here
     end</code></pre>
 <hr />
-<h2 id="flow-diagram-certificate-revocation">Flow Diagram: Certificate Revocation</h2>
+<h2 id="flow-diagram-certificate-revocation">Flow diagram: certificate revocation</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant Admin as 🏢 Enterprise Admin
@@ -4544,7 +4544,7 @@
 
     Note over CA: All future validate_identity() calls for this entity&lt;br/&gt;will fail at CA.verify_certificate()</code></pre>
 <hr />
-<h2 id="default-roles">Default Roles</h2>
+<h2 id="default-roles">Default roles</h2>
 <table>
 <thead>
 <tr>
@@ -4568,7 +4568,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="step-by-step-breakdown">Step-by-Step Breakdown</h2>
+<h2 id="step-by-step-breakdown">Step-by-step breakdown</h2>
 <table>
 <thead>
 <tr>
@@ -4612,7 +4612,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="error-handling">Error Handling</h2>
+<h2 id="error-handling">Error handling</h2>
 <table>
 <thead>
 <tr>
@@ -4644,7 +4644,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-classes-methods">Key Classes &amp; Methods</h2>
+<h2 id="key-classes-and-methods">Key classes and methods</h2>
 <table>
 <thead>
 <tr>

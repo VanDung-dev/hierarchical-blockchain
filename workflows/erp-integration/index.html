@@ -1769,7 +1769,7 @@
   <a href="#flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram
+        Flow diagram
       </span>
     </span>
   </a>
@@ -1780,7 +1780,7 @@
   <a href="#flow-diagram-retry-on-failure" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Retry on Failure
+        Flow diagram: retry on failure
       </span>
     </span>
   </a>
@@ -1791,7 +1791,7 @@
   <a href="#erp-event-translation-example" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        ERP Event Translation Example
+        ERP event translation example
       </span>
     </span>
   </a>
@@ -1802,7 +1802,7 @@
   <a href="#supported-erp-systems" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Supported ERP Systems
+        Supported ERP systems
       </span>
     </span>
   </a>
@@ -1813,7 +1813,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -1824,7 +1824,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -1832,10 +1832,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4329,7 +4329,7 @@
   <a href="#flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram
+        Flow diagram
       </span>
     </span>
   </a>
@@ -4340,7 +4340,7 @@
   <a href="#flow-diagram-retry-on-failure" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Retry on Failure
+        Flow diagram: retry on failure
       </span>
     </span>
   </a>
@@ -4351,7 +4351,7 @@
   <a href="#erp-event-translation-example" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        ERP Event Translation Example
+        ERP event translation example
       </span>
     </span>
   </a>
@@ -4362,7 +4362,7 @@
   <a href="#supported-erp-systems" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Supported ERP Systems
+        Supported ERP systems
       </span>
     </span>
   </a>
@@ -4373,7 +4373,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -4384,7 +4384,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -4392,10 +4392,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4444,12 +4444,12 @@
   
 
 
-<h1 id="erp-integration-sync">ERP Integration Sync</h1>
+<h1 id="erp-integration-sync">ERP integration sync</h1>
 <h2 id="overview">Overview</h2>
-<p>HieraChain integrates with enterprise ERP systems (SAP, Oracle, Dynamics) via an <strong>adapter + mapping engine</strong> architecture. The <code>SyncScheduler</code> polls ERP adapters on a configurable interval, translates native ERP events into HieraChain event format via <code>EventTranslator</code>, detects meaningful field changes, and submits them as business events. Failed syncs use exponential backoff retry.</p>
-<p>This workflow acts as the <strong>ingestion bridge</strong> between Web2 ERP systems and the HieraChain ledger.</p>
+<p>HieraChain connects to ERP systems (SAP, Oracle, Dynamics) through an adapter and mapping engine. <code>SyncScheduler</code> polls ERP adapters on a fixed interval, converts native ERP events into HieraChain event format with <code>EventTranslator</code>, detects changed fields, and submits the result as a business event. Failed syncs are retried with exponential backoff.</p>
+<p>This workflow is the bridge between Web2 ERP systems and the HieraChain ledger.</p>
 <hr />
-<h2 id="flow-diagram">Flow Diagram</h2>
+<h2 id="flow-diagram">Flow diagram</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant ERP as 🏢 ERP System (SAP / Oracle)
@@ -4493,7 +4493,7 @@
         SS-&gt;&gt;SS: schedule_retry(profile_name)&lt;br/&gt;Exponential backoff: min(300, 30 × 2^retry_count)
     end</code></pre>
 <hr />
-<h2 id="flow-diagram-retry-on-failure">Flow Diagram: Retry on Failure</h2>
+<h2 id="flow-diagram-retry-on-failure">Flow diagram: retry on failure</h2>
 <pre class="mermaid"><code>flowchart LR
     SYNC["_execute_sync()"] --&gt;|Success| UPD["update_last_sync()\nnext = now + interval"]
     SYNC --&gt;|Exception| RETRY["schedule_retry(profile)\nbackoff = min(300s, 30 × 2^n)"]
@@ -4501,7 +4501,7 @@
     WAIT --&gt; SYNC
     RETRY --&gt;|retry_count &gt; max| ALERT["Alert via Risk Alerts\nSync failure escalation"]</code></pre>
 <hr />
-<h2 id="erp-event-translation-example">ERP Event Translation Example</h2>
+<h2 id="erp-event-translation-example">ERP event translation example</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Raw SAP event (before translation)</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">erp_event</span> <span class="o">=</span> <span class="p">{</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="s2">"MBLNR"</span><span class="p">:</span> <span class="s2">"5000012345"</span><span class="p">,</span>       <span class="c1"># Material document number</span>
@@ -4529,7 +4529,7 @@
 <a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="p">}</span>
 </code></pre></div>
 <hr />
-<h2 id="supported-erp-systems">Supported ERP Systems</h2>
+<h2 id="supported-erp-systems">Supported ERP systems</h2>
 <table>
 <thead>
 <tr>
@@ -4562,7 +4562,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="step-by-step-breakdown">Step-by-Step Breakdown</h2>
+<h2 id="step-by-step-breakdown">Step-by-step breakdown</h2>
 <table>
 <thead>
 <tr>
@@ -4606,7 +4606,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="error-handling">Error Handling</h2>
+<h2 id="error-handling">Error handling</h2>
 <table>
 <thead>
 <tr>
@@ -4634,7 +4634,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-classes-methods">Key Classes &amp; Methods</h2>
+<h2 id="key-classes-and-methods">Key classes and methods</h2>
 <table>
 <thead>
 <tr>

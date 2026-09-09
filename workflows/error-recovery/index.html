@@ -89,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#error-mitigation-recovery" class="md-skip">
+        <a href="#error-mitigation-and-recovery" class="md-skip">
           Skip to content
         </a>
       
@@ -1537,7 +1537,7 @@
   <a href="#6a-network-recovery" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        6A: Network Recovery
+        6A: Network recovery
       </span>
     </span>
   </a>
@@ -1548,7 +1548,7 @@
   <a href="#6b-consensus-recovery-leader-failure" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        6B: Consensus Recovery (Leader Failure)
+        6B: Consensus recovery (leader failure)
       </span>
     </span>
   </a>
@@ -1559,7 +1559,7 @@
   <a href="#6c-state-rollback" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        6C: State Rollback
+        6C: State rollback
       </span>
     </span>
   </a>
@@ -1570,7 +1570,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -1581,7 +1581,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -1589,10 +1589,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4318,7 +4318,7 @@
   <a href="#6a-network-recovery" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        6A: Network Recovery
+        6A: Network recovery
       </span>
     </span>
   </a>
@@ -4329,7 +4329,7 @@
   <a href="#6b-consensus-recovery-leader-failure" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        6B: Consensus Recovery (Leader Failure)
+        6B: Consensus recovery (leader failure)
       </span>
     </span>
   </a>
@@ -4340,7 +4340,7 @@
   <a href="#6c-state-rollback" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        6C: State Rollback
+        6C: State rollback
       </span>
     </span>
   </a>
@@ -4351,7 +4351,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -4362,7 +4362,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -4370,10 +4370,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4422,11 +4422,11 @@
   
 
 
-<h1 id="error-mitigation-recovery">Error Mitigation &amp; Recovery</h1>
+<h1 id="error-mitigation-and-recovery">Error mitigation and recovery</h1>
 <h2 id="overview">Overview</h2>
-<p>HieraChain provides layered, automated recovery mechanisms across three dimensions: <strong>network resilience</strong>, <strong>consensus leader recovery</strong>, and <strong>state rollback</strong>. These operate independently and can be active simultaneously.</p>
+<p>HieraChain has layered recovery for three areas: network resilience, consensus leader recovery and state rollback. These run independently and can be active at the same time.</p>
 <hr />
-<h2 id="6a-network-recovery">6A: Network Recovery</h2>
+<h2 id="6a-network-recovery">6A: Network recovery</h2>
 <pre class="mermaid"><code>flowchart TB
     NET["🌐 Network Issue Detected"]
     LAT["📊 Collect Latency History"]
@@ -4440,9 +4440,9 @@
     RED --&gt; PART
     PART --&gt;|Yes| VC
     PART --&gt;|No| FIRST</code></pre>
-<p><strong>Strategy</strong>: <code>send_with_redundancy()</code> dispatches the same message over N parallel network paths simultaneously. The first successful response wins and remaining in-flight calls are cancelled. This handles intermittent path failures without explicit retry logic.</p>
+<p><code>send_with_redundancy()</code> sends the same message over N parallel paths at once. The first successful response wins and the remaining in flight calls are cancelled. This hides intermittent path failures without explicit retries.</p>
 <hr />
-<h2 id="6b-consensus-recovery-leader-failure">6B: Consensus Recovery (Leader Failure)</h2>
+<h2 id="6b-consensus-recovery-leader-failure">6B: Consensus recovery (leader failure)</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant CRE as 🔧 ConsensusRecoveryEngine
@@ -4458,7 +4458,7 @@
     NEW-&gt;&gt;NEW: Restart PRE-PREPARE phase
     CRE-&gt;&gt;CRE: Clear recovery_attempts on success</code></pre>
 <hr />
-<h2 id="6c-state-rollback">6C: State Rollback</h2>
+<h2 id="6c-state-rollback">6C: State rollback</h2>
 <pre class="mermaid"><code>flowchart LR
     ERR["❌ Critical Error\nor Integrity Failure"]
     SNAP["📸 Load Snapshot\n(RollbackManager)"]
@@ -4470,13 +4470,15 @@
     ERR --&gt; SNAP --&gt; JRNL --&gt; VER
     VER --&gt;|Valid| OK
     VER --&gt;|Invalid| ALERT</code></pre>
-<p><strong>Rollback steps</strong>:
-1. <code>RollbackManager.load_snapshot()</code>: load the most recent consistent snapshot
-2. <code>EventJournal.replay()</code>: replay committed journal entries since the snapshot
-3. <code>DataValidator.validate()</code>: verify the restored state against cryptographic checksums
-4. If validation fails: escalation alert sent via Risk Alerts; manual intervention required</p>
+<p>Rollback does four things in order:</p>
+<ol>
+<li><code>RollbackManager.load_snapshot()</code> loads the most recent consistent snapshot</li>
+<li><code>EventJournal.replay()</code> replays committed journal entries since that snapshot</li>
+<li><code>DataValidator.validate()</code> checks the restored state against cryptographic checksums</li>
+<li>If validation fails, an escalation alert is sent via Risk Alerts and manual intervention is needed</li>
+</ol>
 <hr />
-<h2 id="step-by-step-breakdown">Step-by-Step Breakdown</h2>
+<h2 id="step-by-step-breakdown">Step-by-step breakdown</h2>
 <table>
 <thead>
 <tr>
@@ -4514,7 +4516,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="error-handling">Error Handling</h2>
+<h2 id="error-handling">Error handling</h2>
 <table>
 <thead>
 <tr>
@@ -4542,7 +4544,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-classes-methods">Key Classes &amp; Methods</h2>
+<h2 id="key-classes-and-methods">Key classes and methods</h2>
 <table>
 <thead>
 <tr>

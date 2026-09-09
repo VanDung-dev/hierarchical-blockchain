@@ -4392,14 +4392,14 @@
 
 <h1 id="ong-thuan-sap-xep-consensus-ordering">Đồng thuận &amp; Sắp xếp (Consensus &amp; Ordering)</h1>
 <h2 id="muc-ich">Mục đích</h2>
-<p>Mô tả các cơ chế Consensus và Ordering Service được HieraChain sử dụng để đảm bảo tính toàn vẹn, thứ tự và khả năng xác minh của Block/Event.</p>
+<p>Phần này mô tả cơ chế consensus và Ordering Service mà HieraChain dùng để giữ block và event được sắp xếp, toàn vẹn và có thể xác minh.</p>
 <h2 id="kien-truc-khai-niem">Kiến trúc &amp; khái niệm</h2>
 <ul>
-<li>Base Consensus: <code>hierachain/consensus/base_consensus.py</code>, giao diện/khung cơ bản cho các thuật toán đồng thuận.</li>
-<li>Proof of Authority (PoA): <code>hierachain/consensus/proof_of_authority.py</code>, đồng thuận Nội bộ Tổ chức (1 MainChain quản lý các Sub-Chains thuộc phân khu nội bộ).</li>
-<li>Proof of Federation (PoF): <code>hierachain/consensus/proof_of_federation.py</code>, đồng thuận Liên minh Ngang hàng giữa các MainChain độc lập (Consortium không cần RootChain trung tâm).</li>
-<li>BFT Consensus: <code>hierachain/consensus/bft/</code>, chống lỗi Byzantine ở lớp phân cấp.</li>
-<li>Ordering Service: <code>hierachain/consensus/ordering/</code>, sắp xếp Event trước khi đóng Block; kiến trúc đa thành phần (Processor, Certifier, BlockBuilder).</li>
+<li>Base Consensus: <code>hierachain/consensus/base_consensus.py</code> định nghĩa interface và khung chung cho các thuật toán đồng thuận.</li>
+<li>Proof of Authority (PoA): <code>hierachain/consensus/proof_of_authority.py</code> xử lý đồng thuận trong một organization, một MainChain quản lý các Sub-Chain nội bộ.</li>
+<li>Proof of Federation (PoF): <code>hierachain/consensus/proof_of_federation.py</code> xử lý đồng thuận liên minh P2P giữa các MainChain độc lập, không cần RootChain trung tâm.</li>
+<li>BFT Consensus: <code>hierachain/consensus/bft/</code> bổ sung khả năng chịu lỗi Byzantine ở tầng phân cấp.</li>
+<li>Ordering Service: <code>hierachain/consensus/ordering/</code> sắp xếp event trước khi tạo block và gồm nhiều thành phần (Processor, Certifier, BlockBuilder).</li>
 </ul>
 <h3 id="luong-ien-hinh">Luồng điển hình</h3>
 <pre class="mermaid"><code>sequenceDiagram
@@ -4417,18 +4417,18 @@
     SC-&gt;&gt;MC: 4. Submit Proof (Root Hash)
     MC--&gt;&gt;SC: Acknowledge</code></pre>
 <ol>
-<li>Sub‑Chain nhận Event → đẩy vào hàng đợi của Ordering Service.</li>
-<li>Ordering Service tạo batch theo chính sách (kích thước/ngưỡng thời gian) → gửi cho cơ chế Consensus đã chọn.</li>
-<li>Cơ chế Consensus (PoA/PoF hoặc BFT) xác nhận batch/Block → Sub‑Chain đóng Block.</li>
-<li>Nếu bật neo lên Main Chain: Sub‑Chain gửi Proof (Merkle root/hash) để Main Chain ghi nhận.</li>
+<li>Sub-Chain nhận event và đẩy vào hàng đợi của Ordering Service.</li>
+<li>Ordering Service gom batch theo ngưỡng kích thước và thời gian rồi gửi cho cơ chế consensus đã chọn.</li>
+<li>Cơ chế consensus (PoA, PoF hoặc BFT) xác nhận batch hoặc block, sau đó Sub-Chain đóng block.</li>
+<li>Nếu bật neo lên Main Chain, Sub-Chain gửi proof (Merkle root hoặc hash) để Main Chain ghi nhận.</li>
 </ol>
 <h2 id="cau-hinh">Cấu hình</h2>
 <p>Các biến trong <code>hierachain/config/settings.py</code>:</p>
 <ul>
 <li><code>CONSENSUS_TYPE</code>: <code>proof_of_authority</code> (mặc định) hoặc <code>proof_of_federation</code>.</li>
-<li><code>BFT_ENABLED</code>: Bật/tắt lớp BFT cho kịch bản cần chống Byzantine.</li>
-<li><code>VALIDATOR_TIMEOUT</code>: Thời gian timeout giữa các validator.</li>
-<li><code>CONSENSUS_FEDERATION_CONFIG</code>: tham số liên minh (ví dụ <code>min_validators</code>, <code>block_interval</code>).</li>
+<li><code>BFT_ENABLED</code>: bật hoặc tắt lớp BFT cho các kịch bản cần chịu lỗi Byzantine.</li>
+<li><code>VALIDATOR_TIMEOUT</code>: timeout giữa các validator.</li>
+<li><code>CONSENSUS_FEDERATION_CONFIG</code>: tham số liên minh (ví dụ <code>min_validators</code> và <code>block_interval</code>).</li>
 </ul>
 <p>Ví dụ môi trường:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>HRC_CONSENSUS_TYPE=proof_of_authority
@@ -4436,10 +4436,10 @@
 </code></pre></div>
 <h2 id="tinh-nang-han-che">Tính năng &amp; hạn chế</h2>
 <ul>
-<li>PoA: triển khai đơn giản, độ trễ thấp; phụ thuộc niềm tin vào validator tập trung.</li>
-<li>PoF: cân bằng giữa tin cậy và phân tán; cần quản trị thành viên liên minh.</li>
-<li>BFT: chịu lỗi Byzantine tốt; đổi lại phức tạp/chi phí thông điệp cao hơn.</li>
-<li>Ordering: đảm bảo thứ tự/nhóm sự kiện ổn định trước khi đóng block.</li>
+<li>PoA triển khai đơn giản và độ trễ thấp, nhưng phụ thuộc vào validator tập trung để bảo đảm tin cậy.</li>
+<li>PoF cân bằng giữa tin cậy và phân tán, nhưng cần quản lý thành viên liên minh.</li>
+<li>BFT chịu lỗi Byzantine tốt, nhưng làm tăng độ phức tạp và chi phí thông điệp.</li>
+<li>Ordering giữ thứ tự event và việc gom batch ổn định trước khi đóng block.</li>
 </ul>
 <h2 id="lien-quan">Liên quan</h2>
 <ul>

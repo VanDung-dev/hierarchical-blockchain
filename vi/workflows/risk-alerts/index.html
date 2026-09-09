@@ -89,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#canh-bao-rui-ro-risk-alerts" class="md-skip">
+        <a href="#canh-bao-rui-ro" class="md-skip">
           Bỏ qua
         </a>
       
@@ -1748,10 +1748,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-cap-o-nghiem-trong-cua-canh-bao" class="md-nav__link">
+  <a href="#cap-o-nghiem-trong" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các cấp độ nghiêm trọng của Cảnh báo
+        Cấp độ nghiêm trọng
       </span>
     </span>
   </a>
@@ -1759,10 +1759,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-linh-vuc-giam-sat-rui-ro" class="md-nav__link">
+  <a href="#linh-vuc-giam-sat-rui-ro" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các lĩnh vực Giám sát Rủi ro
+        Lĩnh vực giám sát rủi ro
       </span>
     </span>
   </a>
@@ -1770,10 +1770,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-buoc-thuc-hien-chi-tiet" class="md-nav__link">
+  <a href="#cac-buoc-chi-tiet" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các bước thực hiện chi tiết
+        Các bước chi tiết
       </span>
     </span>
   </a>
@@ -1792,10 +1792,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-class-method-quan-trong" class="md-nav__link">
+  <a href="#lop-va-phuong-thuc-chinh" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các Class &amp; Method quan trọng
+        Lớp và phương thức chính
       </span>
     </span>
   </a>
@@ -4326,10 +4326,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-cap-o-nghiem-trong-cua-canh-bao" class="md-nav__link">
+  <a href="#cap-o-nghiem-trong" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các cấp độ nghiêm trọng của Cảnh báo
+        Cấp độ nghiêm trọng
       </span>
     </span>
   </a>
@@ -4337,10 +4337,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-linh-vuc-giam-sat-rui-ro" class="md-nav__link">
+  <a href="#linh-vuc-giam-sat-rui-ro" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các lĩnh vực Giám sát Rủi ro
+        Lĩnh vực giám sát rủi ro
       </span>
     </span>
   </a>
@@ -4348,10 +4348,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-buoc-thuc-hien-chi-tiet" class="md-nav__link">
+  <a href="#cac-buoc-chi-tiet" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các bước thực hiện chi tiết
+        Các bước chi tiết
       </span>
     </span>
   </a>
@@ -4370,10 +4370,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-class-method-quan-trong" class="md-nav__link">
+  <a href="#lop-va-phuong-thuc-chinh" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các Class &amp; Method quan trọng
+        Lớp và phương thức chính
       </span>
     </span>
   </a>
@@ -4422,9 +4422,9 @@
   
 
 
-<h1 id="canh-bao-rui-ro-risk-alerts">Cảnh báo Rủi ro (Risk Alerts)</h1>
+<h1 id="canh-bao-rui-ro">Cảnh báo rủi ro</h1>
 <h2 id="tong-quan">Tổng quan</h2>
-<p>HieraChain liên tục theo dõi sức khỏe của toàn bộ hệ thống trên <strong>4 lĩnh vực rủi ro</strong> chính (Đồng thuận, Bảo mật, Hiệu năng, Lưu trữ). Khi các số liệu đo lường vượt ngưỡng quy định, bộ quản lý <code>AlertManager</code> sẽ tạo cảnh báo, kiểm soát chống lặp bằng khoảng thời gian làm dịu (cooldown), gửi thông báo qua Email/Webhook và tự động leo thang cảnh báo (escalate) nếu không được xác nhận sau khoảng thời gian chờ cấu hình.</p>
+<p>HieraChain theo dõi sức khỏe hệ thống trên 4 lĩnh vực rủi ro (đồng thuận, bảo mật, hiệu năng, lưu trữ). Khi chỉ số vượt ngưỡng, <code>AlertManager</code> tạo cảnh báo, áp dụng cooldown để chống lặp, gửi qua Email/Webhook và tự leo thang nếu không được xác nhận sau thời gian cấu hình.</p>
 <hr />
 <h2 id="bieu-o-luong">Biểu đồ luồng</h2>
 <pre class="mermaid"><code>sequenceDiagram
@@ -4475,68 +4475,68 @@
     AM-&gt;&gt;AM: acknowledge_alert(alert_id) → ACKNOWLEDGED (Đã xác nhận)
     AM-&gt;&gt;AM: resolve_alert(alert_id) → RESOLVED (Đã xử lý) + xóa khỏi active_alerts</code></pre>
 <hr />
-<h2 id="cac-cap-o-nghiem-trong-cua-canh-bao">Các cấp độ nghiêm trọng của Cảnh báo</h2>
+<h2 id="cap-o-nghiem-trong">Cấp độ nghiêm trọng</h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Cấp độ</th>
-<th style="text-align: left;">Ví dụ chỉ số kích hoạt</th>
-<th style="text-align: left;">Tự động leo thang sau</th>
+<th style="text-align: left;">Ví dụ chỉ số</th>
+<th style="text-align: left;">Tự leo thang sau</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align: left;"><code>INFO</code></td>
 <td style="text-align: left;">Chỉ số dao động bình thường</td>
-<td style="text-align: left;">Không bao giờ</td>
+<td style="text-align: left;">Không</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>WARNING</code></td>
-<td style="text-align: left;">CPU &gt; 85%, phát hiện rủi ro nhỏ</td>
+<td style="text-align: left;">CPU &gt; 85%, rủi ro nhỏ</td>
 <td style="text-align: left;">30 phút</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>CRITICAL</code></td>
-<td style="text-align: left;">CPU &gt; 95%, tỷ lệ đồng thuận thành công &lt; 95%</td>
-<td style="text-align: left;">Ngay lập tức (5 phút)</td>
+<td style="text-align: left;">CPU &gt; 95%, tỷ lệ đồng thuận &lt; 95%</td>
+<td style="text-align: left;">5 phút</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>EMERGENCY</code></td>
-<td style="text-align: left;">Người vận hành khai báo thủ công hoặc lỗi kép</td>
-<td style="text-align: left;">Ngay lập tức</td>
+<td style="text-align: left;">Khai báo thủ công hoặc lỗi kép</td>
+<td style="text-align: left;">Ngay</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="cac-linh-vuc-giam-sat-rui-ro">Các lĩnh vực Giám sát Rủi ro</h2>
+<h2 id="linh-vuc-giam-sat-rui-ro">Lĩnh vực giám sát rủi ro</h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Lĩnh vực</th>
-<th style="text-align: left;">Các chỉ số chính được kiểm tra</th>
+<th style="text-align: left;">Chỉ số chính</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Đồng thuận (Consensus)</strong></td>
-<td style="text-align: left;">Số lượng nút hoạt động <code>node_count &gt;= 3f+1</code>, thời gian bầu leader, tỷ lệ xác thực thông điệp</td>
+<td style="text-align: left;"><strong>Đồng thuận</strong></td>
+<td style="text-align: left;"><code>node_count &gt;= 3f+1</code>, thời gian bầu leader, tỷ lệ xác thực thông điệp</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Bảo mật (Security)</strong></td>
-<td style="text-align: left;">Thời hạn chứng chỉ (số ngày còn lại), tỷ lệ xác thực thất bại, độ mạnh của thuật toán mã hóa</td>
+<td style="text-align: left;"><strong>Bảo mật</strong></td>
+<td style="text-align: left;">Thời hạn chứng chỉ (ngày còn lại), tỷ lệ xác thực lỗi, độ mạnh mã hóa</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Hiệu năng (Performance)</strong></td>
-<td style="text-align: left;">Tỷ lệ sử dụng CPU %, RAM %, kích thước hàng đợi sự kiện, độ trễ hoàn tất khối dữ liệu</td>
+<td style="text-align: left;"><strong>Hiệu năng</strong></td>
+<td style="text-align: left;">CPU %, RAM %, kích thước hàng đợi sự kiện, độ trễ hoàn tất khối</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Lưu trữ (Storage)</strong></td>
-<td style="text-align: left;">Kích thước cơ sở dữ liệu sổ cái, độ cũ của bản sao lưu (số giờ kể từ lần sao lưu cuối)</td>
+<td style="text-align: left;"><strong>Lưu trữ</strong></td>
+<td style="text-align: left;">Kích thước DB sổ cái, tuổi bản sao lưu (giờ kể từ lần cuối)</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="cac-buoc-thuc-hien-chi-tiet">Các bước thực hiện chi tiết</h2>
+<h2 id="cac-buoc-chi-tiet">Các bước chi tiết</h2>
 <table>
 <thead>
 <tr>
@@ -4547,35 +4547,35 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><strong>1. Phân tích</strong></td>
-<td style="text-align: left;">Hàm <code>RiskAnalyzer.perform_comprehensive_analysis()</code> chạy song song 4 lĩnh vực kiểm tra rủi ro.</td>
+<td style="text-align: left;"><code>RiskAnalyzer.perform_comprehensive_analysis()</code> chạy song song 4 lĩnh vực.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>2. Kiểm tra chỉ số</strong></td>
-<td style="text-align: left;">Bộ quản lý <code>AlertManager.check_metric()</code> đánh giá từng số liệu nhận về so với các quy tắc thiết lập.</td>
+<td style="text-align: left;"><code>AlertManager.check_metric()</code> so sánh từng chỉ số với quy tắc.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>3. Phát hiện bất thường</strong></td>
-<td style="text-align: left;">Bộ phát hiện <code>AnomalyDetector</code> sử dụng baseline thống kê để gắn cờ các điểm dữ liệu bất thường.</td>
+<td style="text-align: left;"><code>AnomalyDetector</code> dùng baseline thống kê để gắn cờ điểm bất thường.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>4. Kiểm tra làm dịu</strong></td>
-<td style="text-align: left;">Các quy tắc cảnh báo có cấu hình khoảng thời gian làm dịu (cooldown) để tránh hiện tượng bão cảnh báo (alert storm).</td>
+<td style="text-align: left;"><strong>4. Kiểm tra cooldown</strong></td>
+<td style="text-align: left;">Quy tắc có cooldown để tránh bão cảnh báo.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>5. Kiểm tra trùng lặp</strong></td>
-<td style="text-align: left;">Hàm <code>_is_duplicate_alert()</code> triệt tiêu thông báo nếu cùng quy tắc + cùng nguồn phát hiện đã có cảnh báo đang hoạt động.</td>
+<td style="text-align: left;"><code>_is_duplicate_alert()</code> loại bỏ nếu cùng quy tắc và cùng nguồn đã có cảnh báo đang hoạt động.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>6. Gửi thông báo</strong></td>
-<td style="text-align: left;">Tiến hành gửi đồng thời thông báo tới Email và/hoặc các Webhook đã được đăng ký cấu hình.</td>
+<td style="text-align: left;">Gửi đồng thời tới Email và/hoặc Webhook đã cấu hình.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>7. Leo thang</strong></td>
-<td style="text-align: left;">Các cảnh báo không được xác nhận kịp thời sẽ tự động tăng mức độ nguy hiểm: <code>escalation_level += 1</code> và gửi lại thông tin.</td>
+<td style="text-align: left;">Cảnh báo không xác nhận sẽ tăng <code>escalation_level += 1</code> và gửi lại.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>8. Hoàn tất vòng đời</strong></td>
-<td style="text-align: left;">Người vận hành xác nhận $\rightarrow$ <code>ACKNOWLEDGED</code>; chỉ số hồi phục về mức an toàn $\rightarrow$ <code>RESOLVED</code>.</td>
+<td style="text-align: left;">Vận hành xác nhận thành <code>ACKNOWLEDGED</code>; chỉ số về mức an toàn thành <code>RESOLVED</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -4590,31 +4590,31 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Lỗi gửi Email thông báo</td>
-<td style="text-align: left;">Đánh dấu cảnh báo cảnh báo; vẫn cố gắng thực hiện gửi thông điệp qua Webhook</td>
+<td style="text-align: left;">Lỗi gửi Email</td>
+<td style="text-align: left;">Ghi log; vẫn cố gửi qua Webhook</td>
 </tr>
 <tr>
-<td style="text-align: left;">Endpoint Webhook ngoại tuyến</td>
-<td style="text-align: left;">Thử lại 1 lần; ghi nhận lỗi; đánh dấu cảnh báo là <code>notification_failed</code></td>
+<td style="text-align: left;">Webhook offline</td>
+<td style="text-align: left;">Thử lại 1 lần; ghi log; đánh dấu <code>notification_failed</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Bão cảnh báo (quá nhiều tin trùng lặp)</td>
-<td style="text-align: left;">Cơ chế cooldown tự động triệt tiêu các cảnh báo trùng lặp phát ra từ cùng quy tắc</td>
+<td style="text-align: left;">Bão cảnh báo (quá nhiều trùng lặp)</td>
+<td style="text-align: left;">Cooldown tự loại bỏ cảnh báo trùng từ cùng quy tắc</td>
 </tr>
 <tr>
-<td style="text-align: left;">RiskAnalyzer ném ra ngoại lệ lỗi</td>
-<td style="text-align: left;">Bắt lỗi ngoại lệ, trả về dữ liệu rủi ro một phần, kích hoạt cảnh báo rủi ro về lỗi phân tích</td>
+<td style="text-align: left;">RiskAnalyzer ném exception</td>
+<td style="text-align: left;">Bắt exception, trả về dữ liệu rủi ro một phần, kích hoạt cảnh báo lỗi phân tích</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="cac-class-method-quan-trong">Các Class &amp; Method quan trọng</h2>
+<h2 id="lop-va-phuong-thuc-chinh">Lớp và phương thức chính</h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Bước</th>
-<th style="text-align: left;">Class / Method</th>
-<th style="text-align: left;">File</th>
+<th style="text-align: left;">Lớp / Phương thức</th>
+<th style="text-align: left;">Tệp</th>
 </tr>
 </thead>
 <tbody>
@@ -4634,7 +4634,7 @@
 <td style="text-align: left;"><code>monitoring/alert_system.py</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Khởi tạo cảnh báo</td>
+<td style="text-align: left;">Tạo cảnh báo</td>
 <td style="text-align: left;"><code>AlertManager._create_alert()</code></td>
 <td style="text-align: left;"><code>monitoring/alert_system.py</code></td>
 </tr>
@@ -4649,12 +4649,12 @@
 <td style="text-align: left;"><code>monitoring/alert_system.py</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Leo thang cảnh báo</td>
+<td style="text-align: left;">Leo thang</td>
 <td style="text-align: left;"><code>AlertManager._escalate_alert()</code></td>
 <td style="text-align: left;"><code>monitoring/alert_system.py</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Xác nhận cảnh báo</td>
+<td style="text-align: left;">Xác nhận</td>
 <td style="text-align: left;"><code>AlertManager.acknowledge_alert()</code></td>
 <td style="text-align: left;"><code>monitoring/alert_system.py</code></td>
 </tr>
@@ -4663,8 +4663,8 @@
 <hr />
 <h2 id="lien-quan">Liên quan</h2>
 <ul>
-<li><a href=".././cluster-lockdown/">Khóa băng Cụm</a>: Các cảnh báo CRITICAL không được xử lý kịp thời có thể tự động kích hoạt khóa băng cụm</li>
-<li><a href=".././integrity-validation/">Xác thực Tính toàn vẹn</a>: Trạng thái toàn vẹn bị DEGRADED sẽ kích hoạt phát cảnh báo tại đây</li>
+<li><a href=".././cluster-lockdown/">Khóa băng Cụm</a>: cảnh báo CRITICAL không xử lý có thể kích hoạt khóa băng</li>
+<li><a href=".././integrity-validation/">Xác thực Tính toàn vẹn</a>: trạng thái DEGRADED kích hoạt cảnh báo tại đây</li>
 </ul>
 
 

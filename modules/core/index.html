@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="HieraChain's foundational architecture: Block, Blockchain, Apache Arrow, Caching and Parallel Processing.">
+        <meta name="description" content="Core ledger primitives: Block, Blockchain, Merkle Tree, and Multi-tier Caching.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -1935,10 +1935,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#1-overview" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Overview
+        1. Overview
       </span>
     </span>
   </a>
@@ -1946,33 +1946,55 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#foundational-components" class="md-nav__link">
+  <a href="#2-foundational-components" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Foundational Components
+        2. Foundational components
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#block-architecture-high-performance-event-storage" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Block Architecture (High-Performance Event Storage)
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Block Architecture (High-Performance Event Storage)">
+    <nav class="md-nav" aria-label="2. Foundational components">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#key-advantages" class="md-nav__link">
+  <a href="#21-block-blockpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Advantages:
+        2.1 Block (<code>block.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-blockchain-blockchainpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2 Blockchain (<code>blockchain.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-merkle-tree-merkle_treepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Merkle tree (<code>merkle_tree.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-cache-and-cache-manager-cachepy-cache_managerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4 Cache and Cache Manager (<code>cache.py</code>, <code>cache_manager.py</code>)
       </span>
     </span>
   </a>
@@ -1985,10 +2007,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#blockchain-deadlock-prevention" class="md-nav__link">
+  <a href="#3-block-memory-and-storage-layout" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Blockchain &amp; Deadlock Prevention
+        3. Block memory and storage layout
       </span>
     </span>
   </a>
@@ -1996,10 +2018,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#multi-tier-caching-system" class="md-nav__link">
+  <a href="#4-blockchain-thread-safety-and-locking" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Multi-tier Caching System
+        4. Blockchain thread safety and locking
       </span>
     </span>
   </a>
@@ -2007,10 +2029,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#parallel-processing-engine" class="md-nav__link">
+  <a href="#5-multi-tier-caching" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Parallel Processing Engine
+        5. Multi-tier caching
       </span>
     </span>
   </a>
@@ -2018,10 +2040,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#domain-contract" class="md-nav__link">
+  <a href="#6-concurrent-execution" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Domain Contract
+        6. Concurrent execution
       </span>
     </span>
   </a>
@@ -4321,10 +4343,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#1-overview" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Overview
+        1. Overview
       </span>
     </span>
   </a>
@@ -4332,33 +4354,55 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#foundational-components" class="md-nav__link">
+  <a href="#2-foundational-components" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Foundational Components
+        2. Foundational components
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#block-architecture-high-performance-event-storage" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Block Architecture (High-Performance Event Storage)
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Block Architecture (High-Performance Event Storage)">
+    <nav class="md-nav" aria-label="2. Foundational components">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#key-advantages" class="md-nav__link">
+  <a href="#21-block-blockpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Advantages:
+        2.1 Block (<code>block.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-blockchain-blockchainpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2 Blockchain (<code>blockchain.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-merkle-tree-merkle_treepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Merkle tree (<code>merkle_tree.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-cache-and-cache-manager-cachepy-cache_managerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4 Cache and Cache Manager (<code>cache.py</code>, <code>cache_manager.py</code>)
       </span>
     </span>
   </a>
@@ -4371,10 +4415,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#blockchain-deadlock-prevention" class="md-nav__link">
+  <a href="#3-block-memory-and-storage-layout" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Blockchain &amp; Deadlock Prevention
+        3. Block memory and storage layout
       </span>
     </span>
   </a>
@@ -4382,10 +4426,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#multi-tier-caching-system" class="md-nav__link">
+  <a href="#4-blockchain-thread-safety-and-locking" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Multi-tier Caching System
+        4. Blockchain thread safety and locking
       </span>
     </span>
   </a>
@@ -4393,10 +4437,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#parallel-processing-engine" class="md-nav__link">
+  <a href="#5-multi-tier-caching" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Parallel Processing Engine
+        5. Multi-tier caching
       </span>
     </span>
   </a>
@@ -4404,10 +4448,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#domain-contract" class="md-nav__link">
+  <a href="#6-concurrent-execution" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Domain Contract
+        6. Concurrent execution
       </span>
     </span>
   </a>
@@ -4457,125 +4501,85 @@
 
 
 <h1 id="core-module-hierachaincore">Core Module (<code>hierachain/core/*</code>)</h1>
-<h2 id="overview">Overview</h2>
-<p>The <strong>Core</strong> module is the heart of the HieraChain Ledger, providing the highest-performance data structures and processing tools. Here, <strong>Apache Arrow</strong> technology is deeply integrated to manage millions of events at extreme speed, combined with a multi-tier Caching system and Parallel Engine to ensure enterprise-level scalability.</p>
-<hr />
-<h2 id="foundational-components">Foundational Components</h2>
-<div class="grid cards">
+<h2 id="1-overview">1. Overview</h2>
+<p>The <code>core</code> module contains foundational data structures for the ledger. Blocks store events in Apache Arrow tables for fast in-memory filtering and deterministic hashing. Cryptographic Merkle trees prove event inclusion, and a multi-level cache speeds up block, event, and entity lookups.</p>
+<h2 id="2-foundational-components">2. Foundational components</h2>
+<p>All core primitives reside in <code>hierachain/core/</code>.</p>
+<h3 id="21-block-blockpy">2.1 Block (<code>block.py</code>)</h3>
 <ul>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3C8.59 3 5.69 4.07 4.54 5.57l5.25 5.25c.71.11 1.43.18 2.21.18 4.42 0 8-1.79 8-4s-3.58-4-8-4M3.92 7.08 2.5 8.5 5 11H0v2h5l-2.5 2.5 1.42 1.42L8.84 12M20 9c0 2.21-3.58 4-8 4-.66 0-1.3-.05-1.91-.13l-2.47 2.47c1.26.41 2.76.66 4.38.66 4.42 0 8-1.79 8-4m0 2c0 2.21-3.58 4-8 4-2.28 0-4.33-.5-5.79-1.25l-1.68 1.68C5.68 19.93 8.59 21 12 21c4.42 0 8-1.79 8-4"/></svg></span> <strong>Block &amp; Apache Arrow</strong></p>
-<hr />
-<p><strong>File</strong>: <code>block.py</code></p>
+<li>Stores event records in a <code>pyarrow.Table</code>.</li>
+<li>Queries event fields with Arrow compute expressions rather than Python loops.</li>
+<li>Calculates deterministic block hashes and Merkle roots.</li>
+</ul>
+<h3 id="22-blockchain-blockchainpy">2.2 Blockchain (<code>blockchain.py</code>)</h3>
 <ul>
-<li>Stores events in columnar storage model.</li>
-<li>Filters data using Arrow Compute (10-50x faster than Python lists).</li>
-<li>Deterministic hashing and Merkle Root.</li>
+<li>Coordinates chain state, genesis initialization, and pending event queues.</li>
+<li>Implements thread-safe locking with deadlock detection.</li>
+<li>Maintains entity indexes for fast historical event lookups.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.59 13.41c.41.39.41 1.03 0 1.42-.39.39-1.03.39-1.42 0a5.003 5.003 0 0 1 0-7.07l3.54-3.54a5.003 5.003 0 0 1 7.07 0 5.003 5.003 0 0 1 0 7.07l-1.49 1.49c.01-.82-.12-1.64-.4-2.42l.47-.48a2.98 2.98 0 0 0 0-4.24 2.98 2.98 0 0 0-4.24 0l-3.53 3.53a2.98 2.98 0 0 0 0 4.24m2.82-4.24c.39-.39 1.03-.39 1.42 0a5.003 5.003 0 0 1 0 7.07l-3.54 3.54a5.003 5.003 0 0 1-7.07 0 5.003 5.003 0 0 1 0-7.07l1.49-1.49c-.01.82.12 1.64.4 2.43l-.47.47a2.98 2.98 0 0 0 0 4.24 2.98 2.98 0 0 0 4.24 0l3.53-3.53a2.98 2.98 0 0 0 0-4.24.973.973 0 0 1 0-1.42"/></svg></span> <strong>Blockchain &amp; Safety</strong></p>
-<hr />
-<p><strong>File</strong>: <code>blockchain.py</code></p>
+<h3 id="23-merkle-tree-merkle_treepy">2.3 Merkle tree (<code>merkle_tree.py</code>)</h3>
 <ul>
-<li>Manages the chain, genesis, and pending pool.</li>
-<li><strong>Deadlock Detection</strong>: Automatically detects and handles lock contention.</li>
-<li>Entity Indexing for O(1) queries.</li>
+<li>Constructs binary Merkle trees from event hashes.</li>
+<li>Produces cryptographic inclusion proofs for audit verification.</li>
+<li>Validates Merkle roots across hierarchical chain tiers.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg></span> <strong>Parallel Engine</strong></p>
-<hr />
-<p><strong>File</strong>: <code>parallel_engine.py</code></p>
+<h3 id="24-cache-and-cache-manager-cachepy-cache_managerpy">2.4 Cache and Cache Manager (<code>cache.py</code>, <code>cache_manager.py</code>)</h3>
 <ul>
-<li>Policy-driven parallel processing.</li>
-<li>Specialized worker pools for Validation, Indexing, and Batch processing.</li>
-<li>Automatic data chunking for memory optimization.</li>
+<li>Implements cache eviction algorithms: LRU, LFU, FIFO, and TTL.</li>
+<li><code>BlockchainCacheManager</code> provides coordinated caching for blocks, events, and entity state.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 16a3 3 0 0 1-3-3c0-1.12.61-2.1 1.5-2.61l9.71-5.62-5.53 9.58c-.5.98-1.51 1.65-2.68 1.65m0-13c1.81 0 3.5.5 4.97 1.32l-2.1 1.21C14 5.19 13 5 12 5a8 8 0 0 0-8 8c0 2.21.89 4.21 2.34 5.65h.01c.39.39.39 1.02 0 1.41s-1.03.39-1.42.01A9.97 9.97 0 0 1 2 13 10 10 0 0 1 12 3m10 10c0 2.76-1.12 5.26-2.93 7.07-.39.38-1.02.38-1.41-.01a.996.996 0 0 1 0-1.41A7.95 7.95 0 0 0 20 13c0-1-.19-2-.54-2.9L20.67 8C21.5 9.5 22 11.18 22 13"/></svg></span> <strong>Advanced Caching</strong></p>
-<hr />
-<p><strong>File</strong>: <code>caching.py</code></p>
-<ul>
-<li>3-tier caching: Block, Event, and Entity.</li>
-<li>Eviction policies: <strong>LRU</strong>, <strong>LFU</strong>, <strong>FIFO</strong>, <strong>TTL</strong>.</li>
-<li>Speeds up block access by up to <strong>42x</strong>.</li>
-</ul>
-</li>
-</ul>
-</div>
-<hr />
-<h2 id="block-architecture-high-performance-event-storage">Block Architecture (High-Performance Event Storage)</h2>
-<p>HieraChain does not store blocks in plain JSON format. Each block internally is a <code>pyarrow.Table</code>.</p>
-<h3 id="key-advantages">Key Advantages:</h3>
+<h2 id="3-block-memory-and-storage-layout">3. Block memory and storage layout</h2>
+<p>Each <code>Block</code> encapsulates an Arrow table with structured metadata:</p>
 <ol>
-<li><strong>Memory Efficiency</strong>: Arrow uses optimized memory layout, reducing Python object overhead.</li>
-<li><strong>Blazing Fast Queries</strong>: Searching events by <code>entity_id</code> or <code>event_type</code> is performed directly in Arrow's C++ layer.</li>
-<li><strong>Consistency</strong>: The <code>data</code> field stores the original payload as Binary, ensuring absolute integrity during hashing.</li>
+<li>Compact binary layout reduces Python object overhead.</li>
+<li>Filter queries on <code>entity_id</code> and <code>event</code> execute through native Arrow kernels.</li>
+<li>Serialized binary payloads ensure stable hashing across platforms.</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Example fast query on a Block</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Query events by entity on a Block instance</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">entity_events</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_events_by_entity</span><span class="p">(</span><span class="s2">"PROD-123"</span><span class="p">)</span>
 </code></pre></div>
-<hr />
-<h2 id="blockchain-deadlock-prevention">Blockchain &amp; Deadlock Prevention</h2>
-<p>HieraChain is designed to run in multi-threaded environments. The <code>Blockchain</code> integrates a <strong>Deadlock Detector</strong> to monitor lock operations:</p>
+<h2 id="4-blockchain-thread-safety-and-locking">4. Blockchain thread safety and locking</h2>
+<p>The <code>Blockchain</code> class coordinates concurrent access through a timeout-guarded lock:</p>
 <ul>
-<li><strong>Monitor</strong>: Tracks lock wait time (default threshold 3s).</li>
-<li><strong>Safe Lock</strong>: The <code>safe_lock(timeout)</code> mechanism prevents infinite hangs during resource contention.</li>
-<li><strong>Recovery</strong>: Automatically triggers a callback when a deadlock risk is detected.</li>
+<li>Monitors lock acquisition duration with a configurable threshold.</li>
+<li><code>safe_lock(timeout)</code> prevents thread hangs under heavy concurrent writes.</li>
+<li>Callback hooks report contention warnings to the monitoring layer.</li>
 </ul>
-<hr />
-<h2 id="multi-tier-caching-system">Multi-tier Caching System</h2>
-<p>The <code>BlockchainCacheManager</code> provides remarkable read operation speedups:</p>
+<h2 id="5-multi-tier-caching">5. Multi-tier caching</h2>
+<p><code>BlockchainCacheManager</code> manages three dedicated cache tiers:</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Cache Type</th>
+<th style="text-align: left;">Cache Tier</th>
 <th style="text-align: left;">Default Policy</th>
-<th style="text-align: left;">Performance Improvement</th>
+<th style="text-align: left;">Target Operation</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Block Cache</strong></td>
+<td style="text-align: left;">Block Cache</td>
 <td style="text-align: left;">LRU (Least Recently Used)</td>
-<td style="text-align: left;"><strong>~42x</strong> (Block retrieval by index)</td>
+<td style="text-align: left;">Block retrieval by index or hash</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Event Cache</strong></td>
+<td style="text-align: left;">Event Cache</td>
 <td style="text-align: left;">TTL (Time To Live)</td>
-<td style="text-align: left;">Optimized for latest event query APIs.</td>
+<td style="text-align: left;">Recent event stream queries</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Entity Cache</strong></td>
+<td style="text-align: left;">Entity Cache</td>
 <td style="text-align: left;">LFU (Least Frequently Used)</td>
-<td style="text-align: left;"><strong>~18.9x</strong> (History tracing of an object)</td>
+<td style="text-align: left;">Historical entity lifecycle tracing</td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h2 id="parallel-processing-engine">Parallel Processing Engine</h2>
-<p>To process thousands of events per second, Core provides an intelligent parallel processing engine:</p>
-<ul>
-<li><strong>Validation Pool</strong>: Dedicated to checking block signatures and Merkle roots.</li>
-<li><strong>CPU Intensive Pool</strong>: Uses <code>ProcessPoolExecutor</code> for heavy hash computations.</li>
-<li><strong>Policy-driven</strong>: The system automatically selects the appropriate pool based on task type (e.g., <code>indexing</code> tasks have lower priority than <code>priority</code> tasks).</li>
-</ul>
-<hr />
-<h2 id="domain-contract">Domain Contract</h2>
-<p>The <code>DomainContract</code> class allows defining business rules:</p>
-<ul>
-<li><strong>Lifecycle</strong>: Manages states from <code>DEVELOPMENT</code> -&gt; <code>ACTIVE</code> -&gt; <code>DEPRECATED</code>.</li>
-<li><strong>Versioning</strong>: Supports contract version upgrades and data migration.</li>
-<li><strong>Storage</strong>: Each contract has its own key-value storage space.</li>
-</ul>
-<hr />
+<h2 id="6-concurrent-execution">6. Concurrent execution</h2>
+<p>Cryptographic verification tasks and cross-chain synchronization run concurrently via <code>ThreadPoolExecutor</code> workers managed by the runtime environment. Hashing and signature checks scale across CPU cores while preserving sequential block order.</p>
 <h2 id="related">Related</h2>
 <ul>
 <li><a href="../../architecture/hierarchy/">Hierarchical Architecture</a></li>
-<li><a href="../../guides/performance/">Performance Benchmarking</a></li>
-<li><a href=".././security/">Security Verifiers</a></li>
+<li><a href=".././storage/">Storage Module</a></li>
+<li><a href=".././security/">Security Overview</a></li>
 </ul>
 
 

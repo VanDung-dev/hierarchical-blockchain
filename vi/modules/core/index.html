@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Kiến trúc nền tảng của HieraChain: Block, Blockchain, Apache Arrow, Caching và Parallel Processing.">
+        <meta name="description" content="Các cấu trúc nền tảng của sổ cái: Block, Blockchain, Merkle Tree và hệ thống Caching đa tầng.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -1935,10 +1935,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tong-quan" class="md-nav__link">
+  <a href="#1-tong-quan" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Tổng quan
+        1. Tổng quan
       </span>
     </span>
   </a>
@@ -1946,33 +1946,55 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-thanh-phan-nen-tang" class="md-nav__link">
+  <a href="#2-cac-thanh-phan-nen-tang" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các thành phần nền tảng
+        2. Các thành phần nền tảng
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kien-truc-block-high-performance-event-storage" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Kiến trúc Block (High-Performance Event Storage)
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Kiến trúc Block (High-Performance Event Storage)">
+    <nav class="md-nav" aria-label="2. Các thành phần nền tảng">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#uu-iem-vuot-troi" class="md-nav__link">
+  <a href="#21-khoi-blockpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Ưu điểm vượt trội:
+        2.1 Khối (<code>block.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-chuoi-khoi-blockchainpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2 Chuỗi khối (<code>blockchain.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-cay-merkle-merkle_treepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Cây Merkle (<code>merkle_tree.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-bo-nho-em-va-trinh-quan-ly-caching-cachepy-cache_managerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4 Bộ nhớ đệm và Trình quản lý Caching (<code>cache.py</code>, <code>cache_manager.py</code>)
       </span>
     </span>
   </a>
@@ -1985,10 +2007,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#blockchain-co-che-chong-tac-nghen-deadlock-prevention" class="md-nav__link">
+  <a href="#3-cau-truc-bo-nho-va-luu-tru-cua-block" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Blockchain &amp; Cơ chế Chống Tắc nghẽn (Deadlock Prevention)
+        3. Cấu trúc bộ nhớ và lưu trữ của Block
       </span>
     </span>
   </a>
@@ -1996,10 +2018,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#he-thong-caching-a-tang" class="md-nav__link">
+  <a href="#4-an-toan-a-luong-va-co-che-khoa" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Hệ thống Caching đa tầng
+        4. An toàn đa luồng và cơ chế khóa
       </span>
     </span>
   </a>
@@ -2007,10 +2029,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#parallel-processing-engine" class="md-nav__link">
+  <a href="#5-he-thong-caching-a-tang" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Parallel Processing Engine
+        5. Hệ thống Caching đa tầng
       </span>
     </span>
   </a>
@@ -2018,10 +2040,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hop-ong-mien-domain-contract" class="md-nav__link">
+  <a href="#6-thuc-thi-ong-thoi" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Hợp đồng Miền (Domain Contract)
+        6. Thực thi đồng thời
       </span>
     </span>
   </a>
@@ -4321,10 +4343,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tong-quan" class="md-nav__link">
+  <a href="#1-tong-quan" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Tổng quan
+        1. Tổng quan
       </span>
     </span>
   </a>
@@ -4332,33 +4354,55 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-thanh-phan-nen-tang" class="md-nav__link">
+  <a href="#2-cac-thanh-phan-nen-tang" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các thành phần nền tảng
+        2. Các thành phần nền tảng
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#kien-truc-block-high-performance-event-storage" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Kiến trúc Block (High-Performance Event Storage)
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Kiến trúc Block (High-Performance Event Storage)">
+    <nav class="md-nav" aria-label="2. Các thành phần nền tảng">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#uu-iem-vuot-troi" class="md-nav__link">
+  <a href="#21-khoi-blockpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Ưu điểm vượt trội:
+        2.1 Khối (<code>block.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-chuoi-khoi-blockchainpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2 Chuỗi khối (<code>blockchain.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-cay-merkle-merkle_treepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Cây Merkle (<code>merkle_tree.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-bo-nho-em-va-trinh-quan-ly-caching-cachepy-cache_managerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4 Bộ nhớ đệm và Trình quản lý Caching (<code>cache.py</code>, <code>cache_manager.py</code>)
       </span>
     </span>
   </a>
@@ -4371,10 +4415,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#blockchain-co-che-chong-tac-nghen-deadlock-prevention" class="md-nav__link">
+  <a href="#3-cau-truc-bo-nho-va-luu-tru-cua-block" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Blockchain &amp; Cơ chế Chống Tắc nghẽn (Deadlock Prevention)
+        3. Cấu trúc bộ nhớ và lưu trữ của Block
       </span>
     </span>
   </a>
@@ -4382,10 +4426,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#he-thong-caching-a-tang" class="md-nav__link">
+  <a href="#4-an-toan-a-luong-va-co-che-khoa" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Hệ thống Caching đa tầng
+        4. An toàn đa luồng và cơ chế khóa
       </span>
     </span>
   </a>
@@ -4393,10 +4437,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#parallel-processing-engine" class="md-nav__link">
+  <a href="#5-he-thong-caching-a-tang" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Parallel Processing Engine
+        5. Hệ thống Caching đa tầng
       </span>
     </span>
   </a>
@@ -4404,10 +4448,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#hop-ong-mien-domain-contract" class="md-nav__link">
+  <a href="#6-thuc-thi-ong-thoi" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Hợp đồng Miền (Domain Contract)
+        6. Thực thi đồng thời
       </span>
     </span>
   </a>
@@ -4457,125 +4501,85 @@
 
 
 <h1 id="core-module-hierachaincore">Core Module (<code>hierachain/core/*</code>)</h1>
-<h2 id="tong-quan">Tổng quan</h2>
-<p>Module <strong>Core</strong> là trái tim của HieraChain Ledger, cung cấp các cấu trúc dữ liệu và công cụ xử lý hiệu năng cao nhất. Tại đây, công nghệ <strong>Apache Arrow</strong> được tích hợp sâu để quản lý hàng triệu sự kiện với tốc độ cực nhanh, kết hợp với hệ thống Caching đa tầng và Parallel Engine để đảm bảo khả năng mở rộng (scalability) ở cấp độ doanh nghiệp.</p>
-<hr />
-<h2 id="cac-thanh-phan-nen-tang">Các thành phần nền tảng</h2>
-<div class="grid cards">
+<h2 id="1-tong-quan">1. Tổng quan</h2>
+<p>Module <code>core</code> chứa các cấu trúc dữ liệu nền tảng của sổ cái. Khối lưu trữ các sự kiện trong bảng Apache Arrow giúp lọc dữ liệu trong bộ nhớ với tốc độ cao và tính toán mã băm xác định. Cây Merkle mật mã cung cấp bằng chứng chứng minh sự kiện có mặt trong khối, kết hợp với bộ nhớ đệm đa tầng tăng tốc độ tra cứu khối, sự kiện và thực thể.</p>
+<h2 id="2-cac-thanh-phan-nen-tang">2. Các thành phần nền tảng</h2>
+<p>Toàn bộ thành phần cốt lõi nằm tại <code>hierachain/core/</code>.</p>
+<h3 id="21-khoi-blockpy">2.1 Khối (<code>block.py</code>)</h3>
 <ul>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3C8.59 3 5.69 4.07 4.54 5.57l5.25 5.25c.71.11 1.43.18 2.21.18 4.42 0 8-1.79 8-4s-3.58-4-8-4M3.92 7.08 2.5 8.5 5 11H0v2h5l-2.5 2.5 1.42 1.42L8.84 12M20 9c0 2.21-3.58 4-8 4-.66 0-1.3-.05-1.91-.13l-2.47 2.47c1.26.41 2.76.66 4.38.66 4.42 0 8-1.79 8-4m0 2c0 2.21-3.58 4-8 4-2.28 0-4.33-.5-5.79-1.25l-1.68 1.68C5.68 19.93 8.59 21 12 21c4.42 0 8-1.79 8-4"/></svg></span> <strong>Block &amp; Apache Arrow</strong></p>
-<hr />
-<p><strong>File</strong>: <code>block.py</code></p>
+<li>Lưu trữ bản ghi sự kiện trong một <code>pyarrow.Table</code>.</li>
+<li>Truy vấn các trường sự kiện qua biểu thức tính toán của Arrow thay vì vòng lặp Python.</li>
+<li>Tính toán mã băm khối và Merkle root xác định.</li>
+</ul>
+<h3 id="22-chuoi-khoi-blockchainpy">2.2 Chuỗi khối (<code>blockchain.py</code>)</h3>
 <ul>
-<li>Lưu trữ sự kiện theo mô hình cột (columnar storage).</li>
-<li>Lọc dữ liệu bằng Arrow Compute (nhanh hơn 10-50x so với Python list).</li>
-<li>Hashing và Merkle Root xác định (deterministic).</li>
+<li>Quản lý trạng thái chuỗi, khởi tạo khối nguyên thủy (genesis) và hàng đợi sự kiện đang chờ.</li>
+<li>Thực thi cơ chế khóa an toàn đa luồng kèm phát hiện bế tắc (deadlock).</li>
+<li>Duy trì chỉ mục thực thể phục vụ tra cứu lịch sử sự kiện nhanh chóng.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.59 13.41c.41.39.41 1.03 0 1.42-.39.39-1.03.39-1.42 0a5.003 5.003 0 0 1 0-7.07l3.54-3.54a5.003 5.003 0 0 1 7.07 0 5.003 5.003 0 0 1 0 7.07l-1.49 1.49c.01-.82-.12-1.64-.4-2.42l.47-.48a2.98 2.98 0 0 0 0-4.24 2.98 2.98 0 0 0-4.24 0l-3.53 3.53a2.98 2.98 0 0 0 0 4.24m2.82-4.24c.39-.39 1.03-.39 1.42 0a5.003 5.003 0 0 1 0 7.07l-3.54 3.54a5.003 5.003 0 0 1-7.07 0 5.003 5.003 0 0 1 0-7.07l1.49-1.49c-.01.82.12 1.64.4 2.43l-.47.47a2.98 2.98 0 0 0 0 4.24 2.98 2.98 0 0 0 4.24 0l3.53-3.53a2.98 2.98 0 0 0 0-4.24.973.973 0 0 1 0-1.42"/></svg></span> <strong>Blockchain &amp; Safety</strong></p>
-<hr />
-<p><strong>File</strong>: <code>blockchain.py</code></p>
+<h3 id="23-cay-merkle-merkle_treepy">2.3 Cây Merkle (<code>merkle_tree.py</code>)</h3>
 <ul>
-<li>Quản lý chuỗi khối, genesis và bộ nhớ đệm (pending pool).</li>
-<li><strong>Deadlock Detection</strong>: Tự động phát hiện và xử lý tắc nghẽn khóa (lock contention).</li>
-<li>Chỉ mục hóa Entity (Entity Indexing) cho truy vấn O(1).</li>
+<li>Xây dựng cây Merkle nhị phân từ mã băm các sự kiện.</li>
+<li>Tạo bằng chứng bao hàm (inclusion proof) phục vụ kiểm toán.</li>
+<li>Xác thực Merkle root giữa các tầng chuỗi trong kiến trúc phân cấp.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg></span> <strong>Parallel Engine</strong></p>
-<hr />
-<p><strong>File</strong>: <code>parallel_engine.py</code></p>
+<h3 id="24-bo-nho-em-va-trinh-quan-ly-caching-cachepy-cache_managerpy">2.4 Bộ nhớ đệm và Trình quản lý Caching (<code>cache.py</code>, <code>cache_manager.py</code>)</h3>
 <ul>
-<li>Xử lý song song dựa trên chính sách (Policy-driven).</li>
-<li>Worker pools chuyên biệt cho Validation, Indexing và Batch processing.</li>
-<li>Tự động chia nhỏ dữ liệu (Chunking) để tối ưu bộ nhớ.</li>
+<li>Triển khai các thuật toán dọn dẹp cache: LRU, LFU, FIFO và TTL.</li>
+<li><code>BlockchainCacheManager</code> điều phối lưu cache đồng bộ cho khối, sự kiện và trạng thái thực thể.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 16a3 3 0 0 1-3-3c0-1.12.61-2.1 1.5-2.61l9.71-5.62-5.53 9.58c-.5.98-1.51 1.65-2.68 1.65m0-13c1.81 0 3.5.5 4.97 1.32l-2.1 1.21C14 5.19 13 5 12 5a8 8 0 0 0-8 8c0 2.21.89 4.21 2.34 5.65h.01c.39.39.39 1.02 0 1.41s-1.03.39-1.42.01A9.97 9.97 0 0 1 2 13 10 10 0 0 1 12 3m10 10c0 2.76-1.12 5.26-2.93 7.07-.39.38-1.02.38-1.41-.01a.996.996 0 0 1 0-1.41A7.95 7.95 0 0 0 20 13c0-1-.19-2-.54-2.9L20.67 8C21.5 9.5 22 11.18 22 13"/></svg></span> <strong>Advanced Caching</strong></p>
-<hr />
-<p><strong>File</strong>: <code>caching.py</code></p>
-<ul>
-<li>Caching 3 tầng: Block, Event và Entity.</li>
-<li>Chính sách loại bỏ: <strong>LRU</strong>, <strong>LFU</strong>, <strong>FIFO</strong>, <strong>TTL</strong>.</li>
-<li>Tăng tốc truy xuất block lên tới <strong>42 lần</strong>.</li>
-</ul>
-</li>
-</ul>
-</div>
-<hr />
-<h2 id="kien-truc-block-high-performance-event-storage">Kiến trúc Block (High-Performance Event Storage)</h2>
-<p>HieraChain không lưu trữ block theo dạng JSON phẳng thông thường. Mỗi block bên trong là một <code>pyarrow.Table</code>.</p>
-<h3 id="uu-iem-vuot-troi">Ưu điểm vượt trội:</h3>
+<h2 id="3-cau-truc-bo-nho-va-luu-tru-cua-block">3. Cấu trúc bộ nhớ và lưu trữ của Block</h2>
+<p>Mỗi đối tượng <code>Block</code> đóng gói một bảng Arrow cùng metadata có cấu trúc:</p>
 <ol>
-<li><strong>Hiệu quả bộ nhớ</strong>: Arrow sử dụng bố cục bộ nhớ tối ưu, giảm overhead của Python objects.</li>
-<li><strong>Truy vấn thần tốc</strong>: Việc tìm kiếm sự kiện theo <code>entity_id</code> hoặc <code>event_type</code> được thực hiện trực tiếp trong tầng C++ của Arrow.</li>
-<li><strong>Tính nhất quán</strong>: Trường <code>data</code> lưu trữ payload gốc dưới dạng Binary, đảm bảo tính toàn vẹn tuyệt đối khi băm.</li>
+<li>Bố cục nhị phân gọn gàng giảm tải bộ nhớ cho các đối tượng Python.</li>
+<li>Thao tác lọc theo <code>entity_id</code> và <code>event</code> chạy trực tiếp trên nhân C++ của Arrow.</li>
+<li>Dữ liệu nhị phân tuần tự hóa bảo đảm tính ổn định của mã băm trên mọi nền tảng.</li>
 </ol>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Ví dụ truy vấn nhanh trên Block</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Query events by entity on a Block instance</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">entity_events</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_events_by_entity</span><span class="p">(</span><span class="s2">"PROD-123"</span><span class="p">)</span>
 </code></pre></div>
-<hr />
-<h2 id="blockchain-co-che-chong-tac-nghen-deadlock-prevention">Blockchain &amp; Cơ chế Chống Tắc nghẽn (Deadlock Prevention)</h2>
-<p>HieraChain được thiết kế để chạy trong môi trường đa luồng (multi-threaded). <code>Blockchain</code> tích hợp một <strong>Deadlock Detector</strong> để giám sát các thao tác khóa luồng:</p>
+<h2 id="4-an-toan-a-luong-va-co-che-khoa">4. An toàn đa luồng và cơ chế khóa</h2>
+<p>Lớp <code>Blockchain</code> điều phối truy cập đồng thời thông qua cơ chế khóa có giới hạn thời gian:</p>
 <ul>
-<li><strong>Monitor</strong>: Theo dõi thời gian chờ khóa luồng (threshold mặc định 3s).</li>
-<li><strong>Safe Lock</strong>: Cơ chế <code>safe_lock(timeout)</code> giúp hệ thống không bị treo vô hạn khi xảy ra tranh chấp tài nguyên.</li>
-<li><strong>Recovery</strong>: Tự động kích hoạt callback khi phát hiện rủi ro deadlock.</li>
+<li>Theo dõi thời gian giữ khóa với ngưỡng cấu hình linh hoạt.</li>
+<li>Hàm <code>safe_lock(timeout)</code> ngăn chặn tình trạng treo luồng khi xảy ra tranh chấp ghi đồng thời.</li>
+<li>Cơ chế callback thông báo cảnh báo tắc nghẽn lên tầng giám sát hệ thống.</li>
 </ul>
-<hr />
-<h2 id="he-thong-caching-a-tang">Hệ thống Caching đa tầng</h2>
-<p>Lớp <code>BlockchainCacheManager</code> cung cấp khả năng tăng tốc đáng kinh ngạc cho các thao tác đọc:</p>
+<h2 id="5-he-thong-caching-a-tang">5. Hệ thống Caching đa tầng</h2>
+<p><code>BlockchainCacheManager</code> quản lý ba tầng bộ nhớ đệm chuyên biệt:</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Loại Cache</th>
+<th style="text-align: left;">Tầng Cache</th>
 <th style="text-align: left;">Chính sách mặc định</th>
-<th style="text-align: left;">Hiệu năng cải thiện</th>
+<th style="text-align: left;">Thao tác đích</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Block Cache</strong></td>
+<td style="text-align: left;">Block Cache</td>
 <td style="text-align: left;">LRU (Least Recently Used)</td>
-<td style="text-align: left;"><strong>~42x</strong> (Truy xuất block theo index)</td>
+<td style="text-align: left;">Truy xuất khối theo chỉ mục hoặc mã băm</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Event Cache</strong></td>
+<td style="text-align: left;">Event Cache</td>
 <td style="text-align: left;">TTL (Time To Live)</td>
-<td style="text-align: left;">Tối ưu cho các API truy vấn sự kiện mới nhất.</td>
+<td style="text-align: left;">Truy vấn luồng sự kiện gần đây</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Entity Cache</strong></td>
+<td style="text-align: left;">Entity Cache</td>
 <td style="text-align: left;">LFU (Least Frequently Used)</td>
-<td style="text-align: left;"><strong>~18.9x</strong> (Truy vết lịch sử một đối tượng)</td>
+<td style="text-align: left;">Truy vết lịch sử vòng đời thực thể</td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h2 id="parallel-processing-engine">Parallel Processing Engine</h2>
-<p>Để xử lý hàng ngàn sự kiện mỗi giây, Core cung cấp một động cơ xử lý song song thông minh:</p>
-<ul>
-<li><strong>Validation Pool</strong>: Chuyên dụng để kiểm tra chữ ký và Merkle root của block.</li>
-<li><strong>CPU Intensive Pool</strong>: Sử dụng <code>ProcessPoolExecutor</code> để thực hiện các phép tính băm nặng.</li>
-<li><strong>Policy-driven</strong>: Hệ thống tự động chọn pool phù hợp dựa trên loại tác vụ (ví dụ: tác vụ <code>indexing</code> sẽ có ưu tiên thấp hơn tác vụ <code>priority</code>).</li>
-</ul>
-<hr />
-<h2 id="hop-ong-mien-domain-contract">Hợp đồng Miền (Domain Contract)</h2>
-<p>Lớp <code>DomainContract</code> cho phép định nghĩa các quy tắc kinh doanh:</p>
-<ul>
-<li><strong>Lifecycle</strong>: Quản lý trạng thái từ <code>DEVELOPMENT</code> -&gt; <code>ACTIVE</code> -&gt; <code>DEPRECATED</code>.</li>
-<li><strong>Versioning</strong>: Hỗ trợ nâng cấp phiên bản hợp đồng và di trú dữ liệu (migration).</li>
-<li><strong>Storage</strong>: Mỗi hợp đồng có không gian lưu trữ key-value riêng biệt.</li>
-</ul>
-<hr />
+<h2 id="6-thuc-thi-ong-thoi">6. Thực thi đồng thời</h2>
+<p>Các tác vụ xác thực mật mã và đồng bộ liên chuỗi chạy đồng thời thông qua các worker <code>ThreadPoolExecutor</code> do môi trường thực thi quản lý. Quá trình băm và kiểm tra chữ ký được mở rộng trên nhiều lõi CPU trong khi vẫn bảo toàn thứ tự khối tuần tự.</p>
 <h2 id="lien-quan">Liên quan</h2>
 <ul>
-<li><a href="../../architecture/hierarchy/">Hierarchical Architecture</a></li>
-<li><a href="../../guides/performance/">Performance Benchmarking</a></li>
-<li><a href=".././security/">Security Verifiers</a></li>
+<li><a href="../../architecture/hierarchy/">Kiến trúc phân cấp</a></li>
+<li><a href=".././storage/">Storage Module</a></li>
+<li><a href=".././security/">Tổng quan bảo mật</a></li>
 </ul>
 
 

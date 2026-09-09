@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Bảo vệ tài nguyên hệ thống và kiểm tra tính toàn vẹn của mã nguồn/dữ liệu.">
+        <meta name="description" content="Bảo vệ tài nguyên và kiểm tra toàn vẹn thực tế trong HieraChain (không có Resource Guard/Integrity riêng).">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -2584,10 +2584,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-resource-guard-dos-protection" class="md-nav__link">
+  <a href="#bao-ve-tai-nguyen-thuc-te" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Resource Guard (DoS Protection)
+        Bảo vệ tài nguyên (thực tế)
       </span>
     </span>
   </a>
@@ -2595,32 +2595,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-integrity-manager" class="md-nav__link">
+  <a href="#kiem-tra-toan-ven-thuc-te" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Integrity Manager
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#co-che-bao-ve-tai-nguyen-resource-guard" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Cơ chế Bảo vệ Tài nguyên (Resource Guard)
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#luong-kiem-tra-toan-ven-integrity-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Luồng Kiểm tra Toàn vẹn (Integrity Flow)
+        Kiểm tra toàn vẹn (thực tế)
       </span>
     </span>
   </a>
@@ -4271,10 +4249,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#1-resource-guard-dos-protection" class="md-nav__link">
+  <a href="#bao-ve-tai-nguyen-thuc-te" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Resource Guard (DoS Protection)
+        Bảo vệ tài nguyên (thực tế)
       </span>
     </span>
   </a>
@@ -4282,32 +4260,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-integrity-manager" class="md-nav__link">
+  <a href="#kiem-tra-toan-ven-thuc-te" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Integrity Manager
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#co-che-bao-ve-tai-nguyen-resource-guard" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Cơ chế Bảo vệ Tài nguyên (Resource Guard)
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#luong-kiem-tra-toan-ven-integrity-flow" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Luồng Kiểm tra Toàn vẹn (Integrity Flow)
+        Kiểm tra toàn vẹn (thực tế)
       </span>
     </span>
   </a>
@@ -4357,66 +4313,31 @@
 
 
 <h1 id="fault-tolerance-integrity">Fault-tolerance &amp; Integrity</h1>
-<p>Lớp bảo mật này đảm bảo hệ thống luôn hoạt động trong ngưỡng an toàn và mã nguồn thực thi không bị thay đổi trái phép.</p>
-<h2 id="1-resource-guard-dos-protection">1. Resource Guard (DoS Protection)</h2>
-<p><strong>File</strong>: <code>hierachain/security/resource_guard.py</code></p>
-<p>Lá chắn thép bảo vệ tài nguyên hệ thống (CPU, RAM):</p>
+<p>Trang này trước đây mô tả <code>security/resource_guard.py</code> và <code>security/integrity.py</code>, các file này không tồn tại trong <code>hierachain/</code>. Khả năng chịu lỗi trong codebase được phân tán ở nhiều nơi khác.</p>
+<h2 id="bao-ve-tai-nguyen-thuc-te">Bảo vệ tài nguyên (thực tế)</h2>
 <ul>
-<li><strong>Load Shedding</strong>: Tự động từ chối các yêu cầu mới khi tài nguyên hệ thống vượt ngưỡng (ví dụ: CPU &gt; 90%) để tránh sập toàn bộ nút.</li>
-<li><strong>Fast Response</strong>: Trả về lỗi <code>503 Service Unavailable</code> ngay lập tức để giảm tải cho worker xử lý.</li>
-<li><strong>Monitoring Integration</strong>: Sử dụng dữ liệu thời gian thực từ <code>PerformanceMonitor</code> để đưa ra quyết định bảo vệ.</li>
+<li>Giới hạn rate và payload nằm trong <code>hierachain/api/middleware.py</code> (<code>add_rate_limit</code>, <code>add_payload_limit</code> với <code>HRC_RATE_LIMIT</code>, <code>HRC_RATE_LIMIT_RPM</code>, <code>HRC_RATE_LIMIT_BACKEND</code>, <code>HRC_TRUSTED_PROXIES</code>; payload được kiểm tra qua <code>request.stream()</code> với giới hạn 1MB).</li>
+<li>Guard cho event pool và RAM là <code>HRC_EVENT_POOL_MAX_SIZE</code> (10k) và <code>HRC_RAM_CRITICAL_THRESHOLD</code> (95%), được kiểm tra trong các đường dẫn ordering và storage.</li>
+<li>Không có <code>ResourceGuardMiddleware</code>. Bảng ngưỡng 70%/90% và việc shed tải trong <code>monitoring/performance_monitor.py</code> mô tả trước đây là bịa. Hãy dùng middleware của app kết hợp với giới hạn ở reverse proxy.</li>
 </ul>
-<h2 id="2-integrity-manager">2. Integrity Manager</h2>
-<p><strong>File</strong>: <code>hierachain/security/integrity.py</code></p>
-<p>Kiểm tra tính toàn vẹn của hệ thống từ lúc khởi động:</p>
+<h2 id="kiem-tra-toan-ven-thuc-te">Kiểm tra toàn vẹn (thực tế)</h2>
+<p>Không có quét chữ ký lúc khởi động trong <code>security/integrity.py</code>. Cơ chế toàn vẹn thực tế là:</p>
 <ul>
-<li><strong>Executable Signing</strong>: Kiểm tra chữ ký số hoặc mã băm (checksum) của các tệp thực thi và cấu hình quan trọng.</li>
-<li><strong>Startup Verification</strong>: Ngăn chặn hệ thống khởi động nếu phát hiện mã nguồn đã bị thay đổi trái phép (Tampered).</li>
-<li><strong>Runtime Checks</strong>: Thực hiện quét định kỳ để đảm bảo các thành phần trong bộ nhớ không bị sửa đổi.</li>
+<li>Merkle và chain link trong <code>hierachain/core/block.py</code> và <code>core/merkle_tree.py</code> (tiền tố phân tách domain <code>0x01</code>) và <code>consensus/ordering/storage.py:_verify_chain_links()</code> (chuỗi <code>previous_hash</code>).</li>
+<li>Xác minh proof trong <code>hierachain/hierarchical/main_chain/proofs.py:_verify_proof_in_main_chain</code> (quét fallback) và <code>security/verify/block_verifier.py</code>.</li>
+<li>Tính toàn vẹn rollback trong <code>hierachain/error_mitigation/rollback_manager.py:_verify_rollback_integrity</code> (kiểm tra <code>data_hash</code>) kèm guard chống path traversal.</li>
 </ul>
-<hr />
-<h2 id="co-che-bao-ve-tai-nguyen-resource-guard">Cơ chế Bảo vệ Tài nguyên (Resource Guard)</h2>
-<p>Hệ thống sử dụng cơ chế bảo vệ 3 giai đoạn:</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Trạng thái</th>
-<th style="text-align: left;">Ngưỡng (CPU/RAM)</th>
-<th style="text-align: left;">Hành động</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>Normal</strong></td>
-<td style="text-align: left;">&lt; 70%</td>
-<td style="text-align: left;">Chấp nhận tất cả yêu cầu.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Warning</strong></td>
-<td style="text-align: left;">70% - 90%</td>
-<td style="text-align: left;">Bắt đầu giới hạn (Rate limit) các yêu cầu không ưu tiên.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Critical</strong></td>
-<td style="text-align: left;">&gt; 90%</td>
-<td style="text-align: left;">Từ chối toàn bộ yêu cầu mới (Load shedding) cho đến khi tài nguyên hạ nhiệt.</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="luong-kiem-tra-toan-ven-integrity-flow">Luồng Kiểm tra Toàn vẹn (Integrity Flow)</h2>
 <pre class="mermaid"><code>graph LR
-    A[System Boot] --&gt; B[Load Manifest]
-    B --&gt; C[Calculate File Hashes]
-    C --&gt; D{Match Signatures?}
-    D -- Yes --&gt; E[Proceed to Start Services]
-    D -- No --&gt; F[Log Security Alert]
-    F --&gt; G[Halt Startup]</code></pre>
+    A[Block finalize] --&gt; B[previous_hash check]
+    B --&gt; C[Merkle root verify]
+    C --&gt; D[Proof verify on MainChain]
+    D --&gt; E[Rollback data_hash nếu cần]</code></pre>
 <hr />
 <h2 id="lien-quan">Liên quan</h2>
 <ul>
-<li><a href="../../modules/monitoring/">Giám sát hiệu năng</a></li>
-<li><a href="../../modules/error-mitigation/">Xử lý lỗi hệ thống</a></li>
+<li><a href="../../modules/error-mitigation/">Xử lý lỗi</a></li>
+<li><a href="../../modules/monitoring/">Giám sát</a></li>
+<li><a href=".././lockdown-logging/">Cluster Lockdown</a></li>
 </ul>
 
 

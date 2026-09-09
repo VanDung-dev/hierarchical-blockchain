@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Cryptographic backup of critical validator private keys and system restoration procedures.">
+        <meta name="description" content="Actual key backup/restore paths in HieraChain: CLI-generated Ed25519 keys and FileVaultProvider.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -89,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#key-backup-restoration" class="md-skip">
+        <a href="#key-backup-and-restoration" class="md-skip">
           Skip to content
         </a>
       
@@ -1824,10 +1824,49 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#flow-diagram-backup" class="md-nav__link">
+  <a href="#actual-paths" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Backup
+        Actual paths
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Actual paths">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-cli-plain-backup-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        1. CLI plain backup (default)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-encrypted-vault-devtest" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2. Encrypted vault (dev/test)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-not-implemented" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        What is not implemented
       </span>
     </span>
   </a>
@@ -1835,65 +1874,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#flow-diagram-restoration" class="md-nav__link">
+  <a href="#operator-checklist" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Restoration
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#multi-vault-failover" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Multi-Vault Failover
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-by-step-breakdown" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Step-by-Step Breakdown
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#backup-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Backup Configuration
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#error-handling" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Error Handling
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Key Classes &amp; Methods
+        Operator checklist
       </span>
     </span>
   </a>
@@ -4326,10 +4310,49 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#flow-diagram-backup" class="md-nav__link">
+  <a href="#actual-paths" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Backup
+        Actual paths
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Actual paths">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-cli-plain-backup-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        1. CLI plain backup (default)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-encrypted-vault-devtest" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2. Encrypted vault (dev/test)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-not-implemented" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        What is not implemented
       </span>
     </span>
   </a>
@@ -4337,65 +4360,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#flow-diagram-restoration" class="md-nav__link">
+  <a href="#operator-checklist" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Restoration
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#multi-vault-failover" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Multi-Vault Failover
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-by-step-breakdown" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Step-by-Step Breakdown
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#backup-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Backup Configuration
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#error-handling" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Error Handling
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Key Classes &amp; Methods
+        Operator checklist
       </span>
     </span>
   </a>
@@ -4444,282 +4412,79 @@
   
 
 
-<h1 id="key-backup-restoration">Key Backup &amp; Restoration</h1>
+<h1 id="key-backup-and-restoration">Key backup and restoration</h1>
 <h2 id="overview">Overview</h2>
-<p>Cryptographic keys (consensus keys, identity keys, encryption keys) are backed up automatically after each generation or rotation event. Each backup is <strong>AES-256-GCM encrypted</strong> and distributed to multiple vault locations. When restoring, <code>restore_keys()</code> verifies <strong>SHA-512 integrity</strong> before decrypting and applying keys to the system.</p>
-<p><strong>Key property</strong>: Even if one vault is compromised, the plaintext keys are protected by AES-256-GCM. Even if the ciphertext is tampered, the SHA-512 integrity check prevents decryption of corrupted data.</p>
+<p>HieraChain does not have a <code>security/key_backup_manager.py</code> or <code>MasterKeyProvider</code>. Key backup is operator managed and has two real paths: plain JSON key files created by the CLI and the optional encrypted <code>FileVaultProvider</code> vault. There is no automatic AES-256-GCM multi-vault distribution or SHA-512 integrity chain in the code.</p>
 <hr />
-<h2 id="flow-diagram-backup">Flow Diagram: Backup</h2>
+<h2 id="actual-paths">Actual paths</h2>
+<h3 id="1-cli-plain-backup-default">1. CLI plain backup (default)</h3>
+<p><strong>File</strong>: <code>hierachain/cli/key.py</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>-m<span class="w"> </span>hierachain<span class="w"> </span>key<span class="w"> </span>generate<span class="w"> </span>--output<span class="w"> </span>validator_key.json<span class="w">  </span><span class="c1"># Ed25519 hex JSON</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>python<span class="w"> </span>-m<span class="w"> </span>hierachain<span class="w"> </span>key<span class="w"> </span>show<span class="w"> </span>--input<span class="w"> </span>validator_key.json
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>python<span class="w"> </span>-m<span class="w"> </span>hierachain<span class="w"> </span>key<span class="w"> </span>verify<span class="w"> </span>--input<span class="w"> </span>validator_key.json
+</code></pre></div>
+<ul>
+<li>Output is <code>{private_key, public_key}</code> hex. Backup means copying <code>validator_key.json</code> to secure external storage. Restore means copying it back and setting <code>HRC_VALIDATOR_IDENTITY=validator_key.json</code>.</li>
+<li>No encryption, no hash, no auto-rotation. The operator handles rotation by running <code>generate</code> again.</li>
+</ul>
+<h3 id="2-encrypted-vault-devtest">2. Encrypted vault (dev/test)</h3>
+<p><strong>File</strong>: <code>hierachain/security/key_provider.py</code> (<code>FileVaultProvider</code>)</p>
+<ul>
+<li>Creates a <code>.vault</code> file encrypted with <code>PBKDF2HMAC(SHA256, 310k iter)</code> that leads to <code>Fernet</code> (AES-128-CBC with HMAC, not AES-256-GCM). The password comes from <code>HRC_VAULT_*</code> or the constructor argument.</li>
+<li>This provider is documented as dev/test only. Production should implement <code>KeyProvider</code> with HSM or KMS.</li>
+<li>There is no distribution to multiple vaults, no <code>metadata.json</code>, no <code>retention_period</code> and no <code>auto_restore_threshold</code>.</li>
+</ul>
 <pre class="mermaid"><code>sequenceDiagram
-    autonumber
-    participant Trigger as ⚙️ Key Generation / Rotation
-    participant KBM as 🔑 KeyBackupManager
-    participant AES as 🔐 AES-256-GCM
-    participant FS as 📁 File System / Vault
+    participant CLI as CLI generate
+    participant File as validator_key.json / .vault
+    participant Op as Operator / HSM
 
-    Note over Trigger: New key created (MSP cert issue, consensus rotation)
-
-    Trigger-&gt;&gt;KBM: backup_keys(public_key, private_key, key_type)
-    KBM-&gt;&gt;KBM: Sanitize key_type → backup_id = "{key_type}_{timestamp}"
-
-    rect rgb(0, 0, 0, 0)
-        Note over KBM,AES: Phase 1 — Encryption
-        KBM-&gt;&gt;AES: _encrypt_backup_data({ public_key, private_key, ... }, encryption_key)
-        Note right of AES: nonce = secrets.token_bytes(12)&lt;br/&gt;ciphertext = AESGCM.encrypt(nonce, json_data, aad)&lt;br/&gt;output = nonce || ciphertext
-        AES--&gt;&gt;KBM: encrypted_data (bytes)
-    end
-
-    rect rgb(0, 0, 0, 0)
-        Note over KBM,FS: Phase 2 — Write &amp; Integrity Verify
-        KBM-&gt;&gt;FS: write {backup_id}.enc to primary vault
-        KBM-&gt;&gt;KBM: _calculate_integrity_hash(encrypted_data) → SHA-512
-        KBM-&gt;&gt;KBM: _verify_integrity(backup_file, expected_hash) → confirm write OK
-    end
-
-    rect rgb(0, 0, 0, 0)
-        Note over KBM,FS: Phase 3 — Distribution &amp; Metadata
-        KBM-&gt;&gt;FS: _distribute_to_locations(file, backup_id, locations)
-        Note right of FS: Copy to secondary_vault, tertiary_vault, ...&lt;br/&gt;Each = separate directory / remote path
-        FS--&gt;&gt;KBM: distributed_locations []
-
-        KBM-&gt;&gt;KBM: _update_metadata(backup_id, { timestamp, key_type, hash, locations, file_path })
-        KBM-&gt;&gt;KBM: _cleanup_old_backups() — remove backups older than retention_period days
-    end
-    KBM--&gt;&gt;Trigger: backup_id ✅</code></pre>
+    CLI-&gt;&gt;File: write private_key/public_key hex
+    File-&gt;&gt;Op: manual copy to backup / KMS
+    Op--&gt;&gt;File: restore copy back
+    File-&gt;&gt;CLI: verify / LocalKeyProvider.from_file()</code></pre>
 <hr />
-<h2 id="flow-diagram-restoration">Flow Diagram: Restoration</h2>
-<pre class="mermaid"><code>sequenceDiagram
-    autonumber
-    participant Trigger as ⚙️ Disaster Recovery
-    participant KBM as 🔑 KeyBackupManager
-    participant AES as 🔐 AES-256-GCM
-    participant FS as 📁 File System / Vault
-
-    Trigger-&gt;&gt;KBM: restore_keys(backup_id)
-    rect rgb(0, 0, 0, 0)
-        Note over KBM,FS: Phase 1 — Locate &amp; Integrity Check
-        KBM-&gt;&gt;FS: _find_backup_file(backup_id)&lt;br/&gt;Search primary vault, then distributed locations
-        FS--&gt;&gt;KBM: backup_file path
-
-        KBM-&gt;&gt;KBM: _get_backup_hash(backup_id) → expected_hash from metadata
-        KBM-&gt;&gt;KBM: _calculate_integrity_hash(file_content) → actual_hash
-    end
-
-    alt Integrity OK (actual == expected)
-        KBM-&gt;&gt;AES: _decrypt_backup_data(encrypted_data, encryption_key)
-        AES--&gt;&gt;KBM: { public_key, private_key, key_type }
-        KBM-&gt;&gt;KBM: _validate_keys(public_key, private_key, key_type)
-        KBM-&gt;&gt;KBM: _apply_restored_keys(public_key, private_key, key_type)
-        KBM--&gt;&gt;Trigger: { public_key, private_key } ✅
-    else Integrity FAIL (tampered or corrupted)
-        KBM--&gt;&gt;Trigger: raise IntegrityError ❌
-        Note over KBM: Log corruption, try next vault location
-    end</code></pre>
-<hr />
-<h2 id="multi-vault-failover">Multi-Vault Failover</h2>
-<pre class="mermaid"><code>flowchart LR
-    RESTORE["restore_keys(backup_id)"]
-    ledger["📁 Primary Vault\n_find_backup_file()"]
-    business["📁 Secondary Vault\n(fallback)"]
-    admin["📁 Tertiary Vault\n(fallback)"]
-    OK["✅ Decrypted Keys"]
-    ERR["❌ IntegrityError\nAll vaults failed"]
-
-    RESTORE --&gt; ledger
-    ledger --&gt;|Found + intact| OK
-    ledger --&gt;|Not found / tampered| business
-    business --&gt;|Found + intact| OK
-    business --&gt;|Not found / tampered| admin
-    admin --&gt;|Found + intact| OK
-    admin --&gt;|Not found / tampered| ERR</code></pre>
-<hr />
-<h2 id="step-by-step-breakdown">Step-by-Step Breakdown</h2>
+<h2 id="what-is-not-implemented">What is not implemented</h2>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Step</th>
-<th style="text-align: left;">Description</th>
+<th>Documented claim (removed)</th>
+<th>Reality</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>1. Trigger</strong></td>
-<td style="text-align: left;">Key generated (MSP cert issue) or rotated (scheduled rotation)</td>
+<td><code>KeyBackupManager.backup_keys()</code> / <code>_encrypt_backup_data()</code> / <code>SHA-512</code> / <code>_distribute_to_locations()</code></td>
+<td>No such class/methods exist</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>2. Backup ID</strong></td>
-<td style="text-align: left;"><code>backup_id = "{sanitized_key_type}_{unix_timestamp}"</code></td>
+<td>AES-256-GCM + nonce||ciphertext + 3-vault failover</td>
+<td>Vault uses <code>Fernet</code>; multi-location is manual copy</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>3. Encrypt</strong></td>
-<td style="text-align: left;">AES-256-GCM with random 96-bit nonce. Output = <code>nonce \|\| ciphertext</code></td>
+<td><code>MasterKeyProvider.get_master_key()</code></td>
+<td>No such provider; master key is <code>HRC_MASTER_KEY_FILE</code>/<code>HRC_MASTER_KEY_SOURCE</code> + <code>HRC_VAULT_TOKEN</code>/<code>HRC_VAULT_PATH</code> envs</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>4. Write + verify</strong></td>
-<td style="text-align: left;">Write to primary vault; SHA-512 hash of file verified immediately</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>5. Distribute</strong></td>
-<td style="text-align: left;">Copy to all configured vault locations</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>6. Metadata</strong></td>
-<td style="text-align: left;"><code>metadata.json</code> updated: backup_id, key_type, hash, locations, timestamp</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>7. Cleanup</strong></td>
-<td style="text-align: left;">Backups older than <code>retention_period</code> (default 365 days) deleted</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>8. Restore</strong></td>
-<td style="text-align: left;">Find file → verify SHA-512 → decrypt → validate key pair → apply</td>
+<td>Auto backup on MSP cert issue or consensus rotation</td>
+<td>No hook; certs in <code>security/msp.py</code> are in-memory only</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="backup-configuration">Backup Configuration</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Parameter</th>
-<th style="text-align: left;">Default</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><code>frequency</code></td>
-<td style="text-align: left;"><code>daily</code></td>
-<td style="text-align: left;">Backup schedule</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>encryption_algorithm</code></td>
-<td style="text-align: left;"><code>AES-256-GCM</code></td>
-<td style="text-align: left;">Cipher</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>integrity_check</code></td>
-<td style="text-align: left;"><code>sha512</code></td>
-<td style="text-align: left;">Hash algorithm for write verification</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>retention_period</code></td>
-<td style="text-align: left;"><code>365</code> days</td>
-<td style="text-align: left;">Auto-cleanup threshold</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>locations</code></td>
-<td style="text-align: left;"><code>[primary_vault]</code></td>
-<td style="text-align: left;">Distribution targets</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>auto_restore_threshold</code></td>
-<td style="text-align: left;"><code>1</code></td>
-<td style="text-align: left;">Min available copies before auto-restore triggered</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="error-handling">Error Handling</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Condition</th>
-<th style="text-align: left;">Behavior</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">Integrity check fails immediately after write</td>
-<td style="text-align: left;"><code>ValueError</code> raised; backup aborted, retried</td>
-</tr>
-<tr>
-<td style="text-align: left;">All vault locations unreachable</td>
-<td style="text-align: left;"><code>IOError</code> raised; critical alert via Risk Alerts</td>
-</tr>
-<tr>
-<td style="text-align: left;">SHA-512 mismatch on restore</td>
-<td style="text-align: left;"><code>IntegrityError</code> raised; next vault location tried</td>
-</tr>
-<tr>
-<td style="text-align: left;">Decryption fails (wrong key)</td>
-<td style="text-align: left;"><code>CryptographyError</code> raised; process aborted</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>_apply_restored_keys()</code> fails</td>
-<td style="text-align: left;">System remains on existing keys; error logged and alerted</td>
-</tr>
-</tbody>
-</table>
-<hr />
-<h2 id="key-classes-methods">Key Classes &amp; Methods</h2>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Step</th>
-<th style="text-align: left;">Class / Method</th>
-<th style="text-align: left;">File</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;">Backup entry</td>
-<td style="text-align: left;"><code>KeyBackupManager.backup_keys()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Encrypt</td>
-<td style="text-align: left;"><code>_encrypt_backup_data()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Integrity hash</td>
-<td style="text-align: left;"><code>_calculate_integrity_hash()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Verify write</td>
-<td style="text-align: left;"><code>_verify_integrity()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Distribute</td>
-<td style="text-align: left;"><code>_distribute_to_locations()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Restore entry</td>
-<td style="text-align: left;"><code>KeyBackupManager.restore_keys()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Find file</td>
-<td style="text-align: left;"><code>_find_backup_file()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Decrypt</td>
-<td style="text-align: left;"><code>_decrypt_backup_data()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Validate keys</td>
-<td style="text-align: left;"><code>_validate_keys()</code></td>
-<td style="text-align: left;"><code>security/key_backup_manager.py</code></td>
-</tr>
-<tr>
-<td style="text-align: left;">Master key</td>
-<td style="text-align: left;"><code>MasterKeyProvider.get_master_key()</code></td>
-<td style="text-align: left;"><code>security/master_key_provider.py</code></td>
-</tr>
-</tbody>
-</table>
+<h2 id="operator-checklist">Operator checklist</h2>
+<ol>
+<li>Generate: <code>python -m hierachain key generate -o validator_key.json</code></li>
+<li>Backup: <code>cp validator_key.json /secure/backup/</code> (encrypt externally if needed)</li>
+<li>Restore: <code>cp /secure/backup/validator_key.json ./ &amp;&amp; python -m hierachain key verify</code></li>
+<li>For encrypted vault: <code>FileVaultProvider.create_vault(vault_path, password)</code> then store password in vault/KMS at <code>HRC_VAULT_TOKEN</code>.</li>
+</ol>
 <hr />
 <h2 id="related">Related</h2>
 <ul>
-<li><a href=".././msp-identity/">MSP Identity</a>: certificate issuance triggers key backup</li>
-<li><a href=".././cluster-lockdown/">Cluster Lockdown</a>: lockdown may require key rotation, triggering this workflow</li>
-<li><a href=".././ipfs-storage/">IPFS Storage</a>: uses the same AES-256-GCM encryption pattern</li>
+<li><a href=".././msp-identity/">MSP Identity</a>: <code>security/msp.py</code> issues in-memory certs; no trigger to key backup</li>
+<li><a href=".././cluster-lockdown/">Cluster Lockdown</a>: no automatic key rotation</li>
+<li><a href="../../security/encryption-keys/">Encryption &amp; Keys</a>: corrected description of <code>msp.py</code>/<code>key_provider.py</code></li>
 </ul>
 
 

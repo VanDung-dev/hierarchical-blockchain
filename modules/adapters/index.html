@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Storage/database adapters: SQLite, File (Parquet/Arrow), Redis — Flexible IO integration following the Adapter Pattern.">
+        <meta name="description" content="Database adapters for SQLite, PostgreSQL, and Redis in hierachain/adapters/database/.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -2182,7 +2182,7 @@
   <a href="#main-roles" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Main Roles
+        Main roles
       </span>
     </span>
   </a>
@@ -2195,22 +2195,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-available-adapters" class="md-nav__link">
+  <a href="#2-available-database-adapters" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Available Adapters
+        2. Available database adapters
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="2. Available Adapters">
+    <nav class="md-nav" aria-label="2. Available database adapters">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#21-sqlite-database-adapter-adaptersdatabasesqlite_adapterpy" class="md-nav__link">
+  <a href="#21-sqlite-database-adapter-sqlite_adapterpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2.1 SQLite Database Adapter (<code>adapters/database/sqlite_adapter.py</code>)
+        2.1 SQLite Database Adapter (<code>sqlite_adapter.py</code>)
       </span>
     </span>
   </a>
@@ -2218,10 +2218,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#22-file-storage-adapter-adaptersstoragefile_storagepy" class="md-nav__link">
+  <a href="#22-postgresql-database-adapter-postgres_adapterpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2.2 File Storage Adapter (<code>adapters/storage/file_storage.py</code>)
+        2.2 PostgreSQL Database Adapter (<code>postgres_adapter.py</code>)
       </span>
     </span>
   </a>
@@ -2229,10 +2229,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#23-redis-storage-adapter-adaptersstorageredis_storagepy" class="md-nav__link">
+  <a href="#23-redis-database-adapter-redis_adapterpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2.3 Redis Storage Adapter (<code>adapters/storage/redis_storage.py</code>)
+        2.3 Redis Database Adapter (<code>redis_adapter.py</code>)
       </span>
     </span>
   </a>
@@ -2248,7 +2248,7 @@
   <a href="#3-adapter-comparison" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        3. Adapter Comparison
+        3. Adapter comparison
       </span>
     </span>
   </a>
@@ -2256,22 +2256,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-usage-guide" class="md-nav__link">
+  <a href="#4-configuration-and-usage" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        4. Usage Guide
+        4. Configuration and usage
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="4. Usage Guide">
+    <nav class="md-nav" aria-label="4. Configuration and usage">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#configuration-via-settings" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Configuration via Settings
+        Configuration via settings
       </span>
     </span>
   </a>
@@ -2282,12 +2282,12 @@
   <a href="#usage-in-code" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Usage in Code
+        Usage in code
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Usage in Code">
+    <nav class="md-nav" aria-label="Usage in code">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2302,10 +2302,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#using-file-parquet" class="md-nav__link">
+  <a href="#using-postgresql" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Using File (Parquet)
+        Using PostgreSQL
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Using Redis
       </span>
     </span>
   </a>
@@ -2323,22 +2334,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-security-data-safety" class="md-nav__link">
+  <a href="#5-security-and-validation" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        5. Security &amp; Data Safety
+        5. Security and validation
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="5. Security &amp; Data Safety">
+    <nav class="md-nav" aria-label="5. Security and validation">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#path-traversal-protection-cwe-22" class="md-nav__link">
+  <a href="#path-traversal-protection" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Path Traversal Protection (CWE-22)
+        Path traversal protection
       </span>
     </span>
   </a>
@@ -2349,7 +2360,7 @@
   <a href="#secure-logging" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Secure Logging
+        Secure logging
       </span>
     </span>
   </a>
@@ -2362,10 +2373,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-error-handling-maintenance" class="md-nav__link">
+  <a href="#6-maintenance-and-retention" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        6. Error Handling &amp; Maintenance
+        6. Maintenance and retention
       </span>
     </span>
   </a>
@@ -4448,7 +4459,7 @@
   <a href="#main-roles" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Main Roles
+        Main roles
       </span>
     </span>
   </a>
@@ -4461,22 +4472,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-available-adapters" class="md-nav__link">
+  <a href="#2-available-database-adapters" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Available Adapters
+        2. Available database adapters
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="2. Available Adapters">
+    <nav class="md-nav" aria-label="2. Available database adapters">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#21-sqlite-database-adapter-adaptersdatabasesqlite_adapterpy" class="md-nav__link">
+  <a href="#21-sqlite-database-adapter-sqlite_adapterpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2.1 SQLite Database Adapter (<code>adapters/database/sqlite_adapter.py</code>)
+        2.1 SQLite Database Adapter (<code>sqlite_adapter.py</code>)
       </span>
     </span>
   </a>
@@ -4484,10 +4495,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#22-file-storage-adapter-adaptersstoragefile_storagepy" class="md-nav__link">
+  <a href="#22-postgresql-database-adapter-postgres_adapterpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2.2 File Storage Adapter (<code>adapters/storage/file_storage.py</code>)
+        2.2 PostgreSQL Database Adapter (<code>postgres_adapter.py</code>)
       </span>
     </span>
   </a>
@@ -4495,10 +4506,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#23-redis-storage-adapter-adaptersstorageredis_storagepy" class="md-nav__link">
+  <a href="#23-redis-database-adapter-redis_adapterpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2.3 Redis Storage Adapter (<code>adapters/storage/redis_storage.py</code>)
+        2.3 Redis Database Adapter (<code>redis_adapter.py</code>)
       </span>
     </span>
   </a>
@@ -4514,7 +4525,7 @@
   <a href="#3-adapter-comparison" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        3. Adapter Comparison
+        3. Adapter comparison
       </span>
     </span>
   </a>
@@ -4522,22 +4533,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-usage-guide" class="md-nav__link">
+  <a href="#4-configuration-and-usage" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        4. Usage Guide
+        4. Configuration and usage
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="4. Usage Guide">
+    <nav class="md-nav" aria-label="4. Configuration and usage">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#configuration-via-settings" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Configuration via Settings
+        Configuration via settings
       </span>
     </span>
   </a>
@@ -4548,12 +4559,12 @@
   <a href="#usage-in-code" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Usage in Code
+        Usage in code
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Usage in Code">
+    <nav class="md-nav" aria-label="Usage in code">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -4568,10 +4579,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#using-file-parquet" class="md-nav__link">
+  <a href="#using-postgresql" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Using File (Parquet)
+        Using PostgreSQL
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Using Redis
       </span>
     </span>
   </a>
@@ -4589,22 +4611,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-security-data-safety" class="md-nav__link">
+  <a href="#5-security-and-validation" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        5. Security &amp; Data Safety
+        5. Security and validation
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="5. Security &amp; Data Safety">
+    <nav class="md-nav" aria-label="5. Security and validation">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#path-traversal-protection-cwe-22" class="md-nav__link">
+  <a href="#path-traversal-protection" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Path Traversal Protection (CWE-22)
+        Path traversal protection
       </span>
     </span>
   </a>
@@ -4615,7 +4637,7 @@
   <a href="#secure-logging" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Secure Logging
+        Secure logging
       </span>
     </span>
   </a>
@@ -4628,10 +4650,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-error-handling-maintenance" class="md-nav__link">
+  <a href="#6-maintenance-and-retention" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        6. Error Handling &amp; Maintenance
+        6. Maintenance and retention
       </span>
     </span>
   </a>
@@ -4682,172 +4704,139 @@
 
 <h1 id="adapters-module-hierachainadapters">Adapters Module (<code>hierachain/adapters/*</code>)</h1>
 <h2 id="1-overview">1. Overview</h2>
-<p>The <strong>Adapters</strong> module serves as the Abstraction Layer for data storage in HieraChain. Instead of binding business logic to a specific database type, HieraChain uses the <strong>Adapter Pattern</strong> to allow switching storage backends flexibly without modifying core source code.</p>
-<h3 id="main-roles">Main Roles</h3>
+<p>The <code>adapters</code> module provides the persistence layer for HieraChain. The core system defines common interfaces for database operations, allowing operators to select or switch database backends without changing business logic or consensus code.</p>
+<h3 id="main-roles">Main roles</h3>
 <ul>
-<li><strong>IO Standardization</strong>: Provides a unified interface for storing blocks, events, metadata, and proofs.</li>
-<li><strong>Deployment Flexibility</strong>: Supports environments from development (SQLite/File) to high-performance production (Redis/Parquet).</li>
-<li><strong>Query Optimization</strong>: Each adapter is designed to optimize for a specific query type (e.g., File adapter optimizes for large-scale entity tracing).</li>
+<li>Standardizes database read and write operations for chains, blocks, events, proofs, and entity state.</li>
+<li>Supports multiple environments, from local development (SQLite, in-memory) to production clusters (PostgreSQL, Redis).</li>
+<li>Enforces data isolation and input sanitization across database engines.</li>
 </ul>
-<hr />
-<h2 id="2-available-adapters">2. Available Adapters</h2>
-<p>HieraChain provides three main adapters, divided into two groups: <code>database</code> and <code>storage</code>.</p>
-<h3 id="21-sqlite-database-adapter-adaptersdatabasesqlite_adapterpy">2.1 SQLite Database Adapter (<code>adapters/database/sqlite_adapter.py</code>)</h3>
-<p>Uses SQLite as the backend for systems requiring relational data integrity and flexible SQL queries.</p>
+<h2 id="2-available-database-adapters">2. Available database adapters</h2>
+<p>All storage adapters reside in <code>hierachain/adapters/database/</code>.</p>
+<h3 id="21-sqlite-database-adapter-sqlite_adapterpy">2.1 SQLite Database Adapter (<code>sqlite_adapter.py</code>)</h3>
+<p>The default adapter for development, testing, and single-node setups.</p>
 <ul>
-<li><strong>Technology</strong>: SQLite3.</li>
-<li>
-<p><strong>Schema Structure</strong>:</p>
+<li>Technology: SQLite3 via <code>sqlite3</code> and <code>hierachain/adapters/database/base/sql_base.py</code>.</li>
+<li>Schema: Initialized through <code>sqlite_schema.py</code>, creating tables for <code>chains</code>, <code>blocks</code>, <code>events</code>, <code>proofs</code>, and <code>chain_state</code>.</li>
+<li>Strengths: Zero external service dependencies, ACID guarantees, single-file backups.</li>
+<li>Indexes: Built on <code>entity_id</code>, <code>event_type</code>, <code>block_number</code>, and <code>timestamp</code>.</li>
+</ul>
+<h3 id="22-postgresql-database-adapter-postgres_adapterpy">2.2 PostgreSQL Database Adapter (<code>postgres_adapter.py</code>)</h3>
+<p>The relational database adapter for multi-node and enterprise deployments.</p>
 <ul>
-<li><code>chains</code>: Stores chain identity and type (Main/Sub).</li>
-<li><code>blocks</code>: Stores block headers, hashes, and metadata.</li>
-<li><code>events</code>: Stores business event details in JSON format.</li>
-<li><code>proofs</code>: Tracks cross-chain proofs between Sub-Chain and Main Chain.</li>
+<li>Technology: PostgreSQL with connection pooling.</li>
+<li>Schema: Initialized through <code>postgres_schema.py</code> using identical schema semantics to SQLite.</li>
+<li>Strengths: High concurrent write capacity, connection pooling, enterprise backup tooling.</li>
+<li>Query features: Partition-aware queries and index scans for high-volume audit logs.</li>
 </ul>
-</li>
-<li>
-<p><strong>Advantages</strong>: ACID support, good entity relationship management, easy backup (single file).</p>
-</li>
-<li><strong>Optimization</strong>: Indexes on <code>entity_id</code>, <code>event_type</code>, and <code>timestamp</code>.</li>
-</ul>
-<h3 id="22-file-storage-adapter-adaptersstoragefile_storagepy">2.2 File Storage Adapter (<code>adapters/storage/file_storage.py</code>)</h3>
-<p>High-performance adapter for big data, using specialized file formats for analytics.</p>
+<h3 id="23-redis-database-adapter-redis_adapterpy">2.3 Redis Database Adapter (<code>redis_adapter.py</code>)</h3>
+<p>An in-memory adapter designed for high-throughput reads and real-time entity state lookups.</p>
 <ul>
-<li><strong>Technology</strong>: <strong>Apache Parquet</strong> and <strong>PyArrow</strong>.</li>
-<li>
-<p><strong>Storage Structure</strong>:</p>
-<ul>
-<li><code>blocks/</code>: Stores blocks as compressed <code>.parquet</code> files (Zstd). Each block is an Arrow table.</li>
-<li><code>events/</code>: Maintains an Event Index for extremely fast tracing.</li>
-<li><code>chains/</code>: Stores chain metadata as JSON.</li>
+<li>Technology: Redis via <code>redis-py</code>.</li>
+<li>Data structures: Hashes for block headers and event payloads, sorted sets for chronological event ordering and block index ranges, and sets for unique chain identifiers.</li>
+<li>Strengths: Low-latency point lookups and fast entity tracing.</li>
+<li>Persistence: Dependent on Redis RDB snapshots and AOF configuration.</li>
 </ul>
-</li>
-<li>
-<p><strong>Advantages</strong>: Very fast read/write speed, good data compression, supports <strong>Column Pruning</strong> (reading only required columns).</p>
-</li>
-<li>
-<p><strong>Special Features</strong>:</p>
-<ul>
-<li><code>BatchBlockWriter</code>: Buffers data for batch writing, reducing I/O overhead.</li>
-<li><code>get_entity_events_optimized</code>: Uses Arrow Dataset to scan data across multiple block files simultaneously.</li>
-</ul>
-</li>
-</ul>
-<h3 id="23-redis-storage-adapter-adaptersstorageredis_storagepy">2.3 Redis Storage Adapter (<code>adapters/storage/redis_storage.py</code>)</h3>
-<p>Suitable for nodes requiring real-time response and hot data access.</p>
-<ul>
-<li><strong>Technology</strong>: Redis (In-memory data structure).</li>
-<li>
-<p><strong>Data Structures</strong>:</p>
-<ul>
-<li><strong>Hashes</strong>: Stores blocks and metadata.</li>
-<li><strong>Sorted Sets (ZSET)</strong>: Stores block index by index and entity events by timestamp.</li>
-<li><strong>Sets</strong>: Manages lists of unique chains and entities.</li>
-</ul>
-</li>
-<li>
-<p><strong>Advantages</strong>: Extremely low latency, supports real-time statistics.</p>
-</li>
-<li><strong>Usage</strong>: Typically used as cache or primary database for high-frequency transaction nodes.</li>
-</ul>
-<hr />
-<h2 id="3-adapter-comparison">3. Adapter Comparison</h2>
+<h2 id="3-adapter-comparison">3. Adapter comparison</h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Feature</th>
 <th style="text-align: left;">SQLiteAdapter</th>
-<th style="text-align: left;">FileStorageAdapter</th>
-<th style="text-align: left;">RedisStorageAdapter</th>
+<th style="text-align: left;">PostgreSQLAdapter</th>
+<th style="text-align: left;">RedisAdapter</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Storage Type</strong></td>
-<td style="text-align: left;">Relational database</td>
-<td style="text-align: left;">File system (Parquet)</td>
-<td style="text-align: left;">In-memory</td>
+<td style="text-align: left;">Storage type</td>
+<td style="text-align: left;">Relational file</td>
+<td style="text-align: left;">Relational server</td>
+<td style="text-align: left;">In-memory key-value</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Best suited for</strong></td>
-<td style="text-align: left;">ERP Integration, Audit</td>
-<td style="text-align: left;">Big Data, Trace Analytics</td>
-<td style="text-align: left;">Real-time Dashboard, High-speed Node</td>
+<td style="text-align: left;">Recommended use</td>
+<td style="text-align: left;">Development, testing, edge nodes</td>
+<td style="text-align: left;">Production, multi-node clusters</td>
+<td style="text-align: left;">Low-latency state queries, caches</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Write Speed</strong></td>
-<td style="text-align: left;">Medium</td>
-<td style="text-align: left;">Very fast (with Batch)</td>
-<td style="text-align: left;">Extremely fast</td>
+<td style="text-align: left;">Write latency</td>
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;">Low to medium</td>
+<td style="text-align: left;">Very low</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Query Speed</strong></td>
-<td style="text-align: left;">Fast (SQL)</td>
-<td style="text-align: left;">Extremely fast (Analytical)</td>
-<td style="text-align: left;">Fastest (Point lookup)</td>
+<td style="text-align: left;">Query flexibility</td>
+<td style="text-align: left;">Full SQL</td>
+<td style="text-align: left;">Full SQL</td>
+<td style="text-align: left;">Key and index lookups</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Persistence</strong></td>
-<td style="text-align: left;">High (ACID)</td>
-<td style="text-align: left;">High (File-based)</td>
-<td style="text-align: left;">Depends on Redis RDB/AOF config</td>
+<td style="text-align: left;">Persistence</td>
+<td style="text-align: left;">ACID local file</td>
+<td style="text-align: left;">ACID enterprise server</td>
+<td style="text-align: left;">RDB / AOF snapshot</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Dependencies</strong></td>
-<td style="text-align: left;">None (Built-in Python)</td>
-<td style="text-align: left;"><code>pyarrow</code></td>
-<td style="text-align: left;"><code>redis-py</code></td>
+<td style="text-align: left;">External service</td>
+<td style="text-align: left;">None</td>
+<td style="text-align: left;">PostgreSQL 13+</td>
+<td style="text-align: left;">Redis 6+</td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h2 id="4-usage-guide">4. Usage Guide</h2>
-<h3 id="configuration-via-settings">Configuration via Settings</h3>
-<p>You can select the default adapter through environment variables or config file:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Select storage backend</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">HRC_STORAGE_BACKEND</span><span class="o">=</span>sqlite<span class="w">  </span><span class="c1"># Or "redis", "file"</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">DATABASE_URL</span><span class="o">=</span><span class="s2">"sqlite:///my_ledger.db"</span>
+<h2 id="4-configuration-and-usage">4. Configuration and usage</h2>
+<h3 id="configuration-via-settings">Configuration via settings</h3>
+<p>Set the storage backend using environment variables:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Available backends: sqlite, postgres, redis, memory</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">HRC_STORAGE_BACKEND</span><span class="o">=</span>sqlite
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">DATABASE_URL</span><span class="o">=</span><span class="s2">"sqlite:///data/ledger.db"</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Or for PostgreSQL</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># export HRC_STORAGE_BACKEND=postgres</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># export DATABASE_URL="postgresql://user:pass@localhost:5432/hierachain"</span>
 </code></pre></div>
-<h3 id="usage-in-code">Usage in Code</h3>
+<h3 id="usage-in-code">Usage in code</h3>
 <h4 id="using-sqlite">Using SQLite</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.adapters.database.sqlite_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteAdapter</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">adapter</span> <span class="o">=</span> <span class="n">SQLiteAdapter</span><span class="p">(</span><span class="s2">"data/ledger.db"</span><span class="p">)</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Get chain statistics</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">stats</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">get_chain_statistics</span><span class="p">(</span><span class="s2">"supply_chain_ledger"</span><span class="p">)</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total blocks: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">'total_blocks'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">stats</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">get_chain_statistics</span><span class="p">(</span><span class="s2">"supply_chain_ledger"</span><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total blocks: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">'total_blocks'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
-<h4 id="using-file-parquet">Using File (Parquet)</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.adapters.storage.file_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileStorageAdapter</span><span class="p">,</span> <span class="n">BatchBlockWriter</span>
+<h4 id="using-postgresql">Using PostgreSQL</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.adapters.database.postgres_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">PostgreSQLAdapter</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">storage</span> <span class="o">=</span> <span class="n">FileStorageAdapter</span><span class="p">(</span><span class="n">storage_path</span><span class="o">=</span><span class="s2">"./blockchain_data"</span><span class="p">)</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Batch write blocks for performance optimization</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="k">with</span> <span class="n">BatchBlockWriter</span><span class="p">(</span><span class="n">storage</span><span class="p">,</span> <span class="s2">"main_chain"</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">new_blocks</span><span class="p">:</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="n">writer</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">adapter</span> <span class="o">=</span> <span class="n">PostgreSQLAdapter</span><span class="p">(</span><span class="n">connection_string</span><span class="o">=</span><span class="s2">"postgresql://user:pass@localhost:5432/hierachain"</span><span class="p">)</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">stats</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">get_chain_statistics</span><span class="p">(</span><span class="s2">"supply_chain_ledger"</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total blocks: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">'total_blocks'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
-<hr />
-<h2 id="5-security-data-safety">5. Security &amp; Data Safety</h2>
-<h3 id="path-traversal-protection-cwe-22">Path Traversal Protection (CWE-22)</h3>
-<p>All adapters strictly validate chain names and paths:</p>
+<h4 id="using-redis">Using Redis</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.adapters.database.redis_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">RedisAdapter</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">adapter</span> <span class="o">=</span> <span class="n">RedisAdapter</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">stats</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">get_chain_statistics</span><span class="p">(</span><span class="s2">"supply_chain_ledger"</span><span class="p">)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total blocks: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">'total_blocks'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="5-security-and-validation">5. Security and validation</h2>
+<h3 id="path-traversal-protection">Path traversal protection</h3>
+<p>Adapters validating file paths or chain names enforce strict pattern matching:</p>
 <ul>
-<li>Only allow alphanumeric characters, underscores <code>_</code>, and hyphens <code>-</code>.</li>
-<li>Prevent navigation characters like <code>..</code> to ensure data is not written outside the specified directory.</li>
+<li>Names allow alphanumeric characters, underscores <code>_</code>, and hyphens <code>-</code>.</li>
+<li>Path traversal sequences (<code>..</code>, <code>/</code>, <code>\</code>) are rejected before executing filesystem or query commands.</li>
 </ul>
-<h3 id="secure-logging">Secure Logging</h3>
-<p>Logging in adapters is done via <code>SecureLogger</code>, ensuring no sensitive business information is leaked in system log files.</p>
-<hr />
-<h2 id="6-error-handling-maintenance">6. Error Handling &amp; Maintenance</h2>
+<h3 id="secure-logging">Secure logging</h3>
+<p>Adapters log queries and connection events through <code>SecureLogger</code>, redacting database credentials, auth tokens, and sensitive business details.</p>
+<h2 id="6-maintenance-and-retention">6. Maintenance and retention</h2>
 <ul>
-<li><strong>Cleanup</strong>: All three adapters support the <code>cleanup_old_data(days_to_keep)</code> method to automatically purge old blocks or unnecessary logs according to enterprise retention policy.</li>
-<li><strong>Data Integrity</strong>: When using <code>FileStorageAdapter</code>, the block hash is stored directly in the Parquet file metadata, allowing integrity verification immediately upon file load without reading the entire content.</li>
+<li>Data cleanup: Relational adapters support purging historical event logs beyond retention thresholds set by <code>HRC_SQL_RETENTION_DAYS</code>.</li>
+<li>Logging and journals: Persistent binary journals and forensic error records use <code>hierachain/core/parquet_log.py</code> and <code>hierachain/error_mitigation/journal.py</code>, keeping chain persistence decoupled from diagnostic logging.</li>
 </ul>
-<hr />
 <h2 id="related">Related</h2>
 <ul>
-<li><a href="../../architecture/overview/">Core Concepts - Blockchain</a></li>
 <li><a href=".././storage/">Storage Module</a></li>
+<li><a href="../../reference/config/">Configuration Reference</a></li>
 <li><a href=".././security/">Security Overview</a></li>
 </ul>
 

@@ -1566,7 +1566,7 @@
   <a href="#flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram
+        Flow diagram
       </span>
     </span>
   </a>
@@ -1577,7 +1577,7 @@
   <a href="#real-world-example" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Real-World Example
+        Real-world example
       </span>
     </span>
   </a>
@@ -1588,7 +1588,7 @@
   <a href="#entity-index-structure" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Entity Index Structure
+        Entity index structure
       </span>
     </span>
   </a>
@@ -1599,7 +1599,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -1610,7 +1610,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -1618,10 +1618,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4318,7 +4318,7 @@
   <a href="#flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram
+        Flow diagram
       </span>
     </span>
   </a>
@@ -4329,7 +4329,7 @@
   <a href="#real-world-example" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Real-World Example
+        Real-world example
       </span>
     </span>
   </a>
@@ -4340,7 +4340,7 @@
   <a href="#entity-index-structure" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Entity Index Structure
+        Entity index structure
       </span>
     </span>
   </a>
@@ -4351,7 +4351,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -4362,7 +4362,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -4370,10 +4370,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4422,12 +4422,12 @@
   
 
 
-<h1 id="entity-tracing">Entity Tracing</h1>
+<h1 id="entity-tracing">Entity tracing</h1>
 <h2 id="overview">Overview</h2>
-<p>Since the same physical entity (e.g., product <code>SKU-001</code>, contract <code>C-2024</code>) may generate events across multiple Sub-Chains over its lifecycle, HieraChain provides <strong>cross-chain entity tracing</strong> to reconstruct a complete, immutable audit trail for any <code>entity_id</code>.</p>
-<p>Each Sub-Chain maintains an in-memory <code>entity_event_index</code> keyed by <code>entity_id</code>, enabling <strong>O(1) lookup</strong> without full chain scan.</p>
+<p>The same physical entity (for example product <code>SKU-001</code> or contract <code>C-2024</code>) can produce events on several Sub-Chains during its lifecycle. HieraChain provides cross-chain tracing to rebuild a complete and immutable audit trail for any <code>entity_id</code>.</p>
+<p>Each Sub-Chain keeps an in-memory <code>entity_event_index</code> keyed by <code>entity_id</code>, so lookup is O(1) without scanning the whole chain.</p>
 <hr />
-<h2 id="flow-diagram">Flow Diagram</h2>
+<h2 id="flow-diagram">Flow diagram</h2>
 <pre class="mermaid"><code>flowchart TB
     CLIENT["🖥️ Client / Auditor\ntrace_entity_across_chains(entity_id)"]
     HM["🏛️ HierarchyManager"]
@@ -4454,7 +4454,7 @@
     SCN --&gt; AGG
     AGG --&gt; SORT --&gt; OUT</code></pre>
 <hr />
-<h2 id="real-world-example">Real-World Example</h2>
+<h2 id="real-world-example">Real-world example</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Entity: product-SKU-001 (Industrial sensor batch)
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Timeline reconstructed across chains:
@@ -4468,8 +4468,8 @@
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>────────────────────────────────────────────────────────
 </code></pre></div>
 <hr />
-<h2 id="entity-index-structure">Entity Index Structure</h2>
-<p>Each Sub-Chain maintains an in-memory <code>entity_event_index</code>:</p>
+<h2 id="entity-index-structure">Entity index structure</h2>
+<p>Each Sub-Chain keeps an in-memory <code>entity_event_index</code>:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">entity_event_index</span> <span class="o">=</span> <span class="p">{</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="s2">"product-SKU-001"</span><span class="p">:</span> <span class="p">[</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>        <span class="p">{</span><span class="s2">"block_index"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"event"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"event"</span><span class="p">:</span> <span class="s2">"quality_check"</span><span class="p">,</span> <span class="s2">"timestamp"</span><span class="p">:</span> <span class="mf">1714000000.0</span><span class="p">,</span> <span class="o">...</span><span class="p">}},</span>
@@ -4477,9 +4477,9 @@
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="p">]</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
 </code></pre></div>
-<p>Events are indexed on write (<code>add_block()</code>), so reads are O(1) per chain. Aggregation across n chains is O(n).</p>
+<p>Events are indexed on write in <code>add_block()</code>, so reads are O(1) per chain. Aggregation across n chains is O(n).</p>
 <hr />
-<h2 id="step-by-step-breakdown">Step-by-Step Breakdown</h2>
+<h2 id="step-by-step-breakdown">Step-by-step breakdown</h2>
 <table>
 <thead>
 <tr>
@@ -4515,7 +4515,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="error-handling">Error Handling</h2>
+<h2 id="error-handling">Error handling</h2>
 <table>
 <thead>
 <tr>
@@ -4539,7 +4539,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-classes-methods">Key Classes &amp; Methods</h2>
+<h2 id="key-classes-and-methods">Key classes and methods</h2>
 <table>
 <thead>
 <tr>

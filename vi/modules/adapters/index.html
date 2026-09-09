@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Các adapter lưu trữ/cơ sở dữ liệu: SQLite, File (Parquet/Arrow), Redis — Tích hợp IO linh hoạt theo mô hình Adapter Pattern.">
+        <meta name="description" content="Các adapter cơ sở dữ liệu SQLite, PostgreSQL và Redis trong hierachain/adapters/database/.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -2195,22 +2195,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-cac-adapter-hien-co" class="md-nav__link">
+  <a href="#2-cac-adapter-co-so-du-lieu-hien-co" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Các Adapter hiện có
+        2. Các adapter cơ sở dữ liệu hiện có
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="2. Các Adapter hiện có">
+    <nav class="md-nav" aria-label="2. Các adapter cơ sở dữ liệu hiện có">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#21-sqlite-database-adapter-adaptersdatabasesqlite_adapterpy" class="md-nav__link">
+  <a href="#21-sqlite-database-adapter-sqlite_adapterpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2.1 SQLite Database Adapter (<code>adapters/database/sqlite_adapter.py</code>)
+        2.1 SQLite Database Adapter (<code>sqlite_adapter.py</code>)
       </span>
     </span>
   </a>
@@ -2218,10 +2218,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#22-file-storage-adapter-adaptersstoragefile_storagepy" class="md-nav__link">
+  <a href="#22-postgresql-database-adapter-postgres_adapterpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2.2 File Storage Adapter (<code>adapters/storage/file_storage.py</code>)
+        2.2 PostgreSQL Database Adapter (<code>postgres_adapter.py</code>)
       </span>
     </span>
   </a>
@@ -2229,10 +2229,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#23-redis-storage-adapter-adaptersstorageredis_storagepy" class="md-nav__link">
+  <a href="#23-redis-database-adapter-redis_adapterpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2.3 Redis Storage Adapter (<code>adapters/storage/redis_storage.py</code>)
+        2.3 Redis Database Adapter (<code>redis_adapter.py</code>)
       </span>
     </span>
   </a>
@@ -2248,7 +2248,7 @@
   <a href="#3-so-sanh-cac-adapter" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        3. So sánh các Adapter
+        3. So sánh các adapter
       </span>
     </span>
   </a>
@@ -2256,22 +2256,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-huong-dan-su-dung" class="md-nav__link">
+  <a href="#4-cau-hinh-va-su-dung" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        4. Hướng dẫn sử dụng
+        4. Cấu hình và sử dụng
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="4. Hướng dẫn sử dụng">
+    <nav class="md-nav" aria-label="4. Cấu hình và sử dụng">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#cau-hinh-qua-settings" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cấu hình qua Settings
+        Cấu hình qua settings
       </span>
     </span>
   </a>
@@ -2302,10 +2302,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#su-dung-file-parquet" class="md-nav__link">
+  <a href="#su-dung-postgresql" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Sử dụng File (Parquet)
+        Sử dụng PostgreSQL
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#su-dung-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Sử dụng Redis
       </span>
     </span>
   </a>
@@ -2323,22 +2334,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-bao-mat-an-toan-du-lieu" class="md-nav__link">
+  <a href="#5-bao-mat-va-xac-thuc" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        5. Bảo mật &amp; An toàn dữ liệu
+        5. Bảo mật và xác thực
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="5. Bảo mật &amp; An toàn dữ liệu">
+    <nav class="md-nav" aria-label="5. Bảo mật và xác thực">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#chong-tan-cong-path-traversal-cwe-22" class="md-nav__link">
+  <a href="#ngan-chan-loi-path-traversal" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Chống tấn công Path Traversal (CWE-22)
+        Ngăn chặn lỗi Path Traversal
       </span>
     </span>
   </a>
@@ -2346,10 +2357,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#secure-logging" class="md-nav__link">
+  <a href="#ghi-log-an-toan" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Secure Logging
+        Ghi log an toàn
       </span>
     </span>
   </a>
@@ -2362,10 +2373,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-xu-ly-loi-bao-tri" class="md-nav__link">
+  <a href="#6-bao-tri-va-luu-giu-du-lieu" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        6. Xử lý lỗi &amp; Bảo trì
+        6. Bảo trì và lưu giữ dữ liệu
       </span>
     </span>
   </a>
@@ -4461,22 +4472,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#2-cac-adapter-hien-co" class="md-nav__link">
+  <a href="#2-cac-adapter-co-so-du-lieu-hien-co" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Các Adapter hiện có
+        2. Các adapter cơ sở dữ liệu hiện có
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="2. Các Adapter hiện có">
+    <nav class="md-nav" aria-label="2. Các adapter cơ sở dữ liệu hiện có">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#21-sqlite-database-adapter-adaptersdatabasesqlite_adapterpy" class="md-nav__link">
+  <a href="#21-sqlite-database-adapter-sqlite_adapterpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2.1 SQLite Database Adapter (<code>adapters/database/sqlite_adapter.py</code>)
+        2.1 SQLite Database Adapter (<code>sqlite_adapter.py</code>)
       </span>
     </span>
   </a>
@@ -4484,10 +4495,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#22-file-storage-adapter-adaptersstoragefile_storagepy" class="md-nav__link">
+  <a href="#22-postgresql-database-adapter-postgres_adapterpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2.2 File Storage Adapter (<code>adapters/storage/file_storage.py</code>)
+        2.2 PostgreSQL Database Adapter (<code>postgres_adapter.py</code>)
       </span>
     </span>
   </a>
@@ -4495,10 +4506,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#23-redis-storage-adapter-adaptersstorageredis_storagepy" class="md-nav__link">
+  <a href="#23-redis-database-adapter-redis_adapterpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2.3 Redis Storage Adapter (<code>adapters/storage/redis_storage.py</code>)
+        2.3 Redis Database Adapter (<code>redis_adapter.py</code>)
       </span>
     </span>
   </a>
@@ -4514,7 +4525,7 @@
   <a href="#3-so-sanh-cac-adapter" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        3. So sánh các Adapter
+        3. So sánh các adapter
       </span>
     </span>
   </a>
@@ -4522,22 +4533,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#4-huong-dan-su-dung" class="md-nav__link">
+  <a href="#4-cau-hinh-va-su-dung" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        4. Hướng dẫn sử dụng
+        4. Cấu hình và sử dụng
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="4. Hướng dẫn sử dụng">
+    <nav class="md-nav" aria-label="4. Cấu hình và sử dụng">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
   <a href="#cau-hinh-qua-settings" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cấu hình qua Settings
+        Cấu hình qua settings
       </span>
     </span>
   </a>
@@ -4568,10 +4579,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#su-dung-file-parquet" class="md-nav__link">
+  <a href="#su-dung-postgresql" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Sử dụng File (Parquet)
+        Sử dụng PostgreSQL
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#su-dung-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        Sử dụng Redis
       </span>
     </span>
   </a>
@@ -4589,22 +4611,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-bao-mat-an-toan-du-lieu" class="md-nav__link">
+  <a href="#5-bao-mat-va-xac-thuc" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        5. Bảo mật &amp; An toàn dữ liệu
+        5. Bảo mật và xác thực
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="5. Bảo mật &amp; An toàn dữ liệu">
+    <nav class="md-nav" aria-label="5. Bảo mật và xác thực">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#chong-tan-cong-path-traversal-cwe-22" class="md-nav__link">
+  <a href="#ngan-chan-loi-path-traversal" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Chống tấn công Path Traversal (CWE-22)
+        Ngăn chặn lỗi Path Traversal
       </span>
     </span>
   </a>
@@ -4612,10 +4634,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#secure-logging" class="md-nav__link">
+  <a href="#ghi-log-an-toan" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Secure Logging
+        Ghi log an toàn
       </span>
     </span>
   </a>
@@ -4628,10 +4650,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#6-xu-ly-loi-bao-tri" class="md-nav__link">
+  <a href="#6-bao-tri-va-luu-giu-du-lieu" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        6. Xử lý lỗi &amp; Bảo trì
+        6. Bảo trì và lưu giữ dữ liệu
       </span>
     </span>
   </a>
@@ -4682,173 +4704,140 @@
 
 <h1 id="adapters-module-hierachainadapters">Adapters Module (<code>hierachain/adapters/*</code>)</h1>
 <h2 id="1-tong-quan">1. Tổng quan</h2>
-<p>Module <strong>Adapters</strong> đóng vai trò là lớp trừu tượng hóa (Abstraction Layer) cho việc lưu trữ dữ liệu trong HieraChain. Thay vì ràng buộc logic nghiệp vụ vào một loại cơ sở dữ liệu cụ thể, HieraChain sử dụng <strong>Adapter Pattern</strong> để cho phép thay đổi backend lưu trữ một cách linh hoạt mà không cần sửa đổi mã nguồn cốt lõi.</p>
+<p>Module <code>adapters</code> cung cấp lớp lưu trữ bền vững cho HieraChain. Hệ thống cốt lõi định nghĩa giao diện chung cho các thao tác cơ sở dữ liệu, cho phép quản trị viên lựa chọn hoặc chuyển đổi cơ sở dữ liệu mà không cần thay đổi logic nghiệp vụ hay mã đồng thuận.</p>
 <h3 id="vai-tro-chinh">Vai trò chính</h3>
 <ul>
-<li><strong>Chuẩn hóa IO</strong>: Cung cấp giao diện thống nhất để lưu trữ block, event, metadata và proof.</li>
-<li><strong>Linh hoạt triển khai</strong>: Hỗ trợ từ môi trường phát triển (SQLite/File) đến môi trường sản xuất hiệu năng cao (Redis/Parquet).</li>
-<li><strong>Tối ưu hóa truy vấn</strong>: Mỗi adapter được thiết kế để tối ưu cho một kiểu truy vấn nhất định (ví dụ: File adapter tối ưu cho việc truy vết entity trên quy mô lớn).</li>
+<li>Chuẩn hóa thao tác đọc và ghi dữ liệu cho chuỗi, khối, sự kiện, bằng chứng và trạng thái thực thể.</li>
+<li>Hỗ trợ nhiều môi trường, từ phát triển cục bộ (SQLite, in-memory) đến cụm sản xuất (PostgreSQL, Redis).</li>
+<li>Đảm bảo phân lập dữ liệu và kiểm tra tính hợp lệ của đầu vào trên các hệ quản trị cơ sở dữ liệu.</li>
 </ul>
-<hr />
-<h2 id="2-cac-adapter-hien-co">2. Các Adapter hiện có</h2>
-<p>HieraChain cung cấp ba loại adapter chính, chia thành hai nhóm: <code>database</code> và <code>storage</code>.</p>
-<h3 id="21-sqlite-database-adapter-adaptersdatabasesqlite_adapterpy">2.1 SQLite Database Adapter (<code>adapters/database/sqlite_adapter.py</code>)</h3>
-<p>Sử dụng SQLite làm backend cho các hệ thống yêu cầu tính toàn vẹn dữ liệu quan hệ và truy vấn SQL linh hoạt.</p>
+<h2 id="2-cac-adapter-co-so-du-lieu-hien-co">2. Các adapter cơ sở dữ liệu hiện có</h2>
+<p>Toàn bộ adapter lưu trữ nằm tại <code>hierachain/adapters/database/</code>.</p>
+<h3 id="21-sqlite-database-adapter-sqlite_adapterpy">2.1 SQLite Database Adapter (<code>sqlite_adapter.py</code>)</h3>
+<p>Adapter mặc định cho môi trường phát triển, kiểm thử và thiết lập một node.</p>
 <ul>
-<li><strong>Công nghệ</strong>: SQLite3.</li>
-<li>
-<p><strong>Cấu trúc Schema</strong>:</p>
+<li>Công nghệ: SQLite3 qua <code>sqlite3</code> và <code>hierachain/adapters/database/base/sql_base.py</code>.</li>
+<li>Lược đồ dữ liệu: Khởi tạo qua <code>sqlite_schema.py</code>, tạo các bảng <code>chains</code>, <code>blocks</code>, <code>events</code>, <code>proofs</code> và <code>chain_state</code>.</li>
+<li>Điểm mạnh: Không phụ thuộc dịch vụ ngoài, đảm bảo ACID, sao lưu dễ dàng bằng file đơn.</li>
+<li>Chỉ mục: Tạo sẵn trên <code>entity_id</code>, <code>event_type</code>, <code>block_number</code> và <code>timestamp</code>.</li>
+</ul>
+<h3 id="22-postgresql-database-adapter-postgres_adapterpy">2.2 PostgreSQL Database Adapter (<code>postgres_adapter.py</code>)</h3>
+<p>Adapter cơ sở dữ liệu quan hệ cho các triển khai đa node và doanh nghiệp.</p>
 <ul>
-<li><code>chains</code>: Lưu thông tin định danh và loại chuỗi (Main/Sub).</li>
-<li><code>blocks</code>: Lưu trữ header của block, mã băm và metadata.</li>
-<li><code>events</code>: Lưu chi tiết các sự kiện nghiệp vụ dưới dạng JSON.</li>
-<li><code>proofs</code>: Lưu vết các bằng chứng cross-chain giữa Sub-Chain và Main Chain.</li>
+<li>Công nghệ: PostgreSQL với cơ chế connection pooling.</li>
+<li>Lược đồ dữ liệu: Khởi tạo qua <code>postgres_schema.py</code> với cấu trúc tương thích hoàn toàn với SQLite.</li>
+<li>Điểm mạnh: Khả năng ghi đồng thời lớn, quản lý kết nối hiệu quả, hỗ trợ công cụ sao lưu doanh nghiệp.</li>
+<li>Tính năng truy vấn: Tối ưu cho phân vùng dữ liệu và quét chỉ mục cho các bản ghi kiểm toán dung lượng lớn.</li>
 </ul>
-</li>
-<li>
-<p><strong>Ưu điểm</strong>: Hỗ trợ ACID, quản lý quan hệ giữa các thực thể tốt, dễ dàng sao lưu (single file).</p>
-</li>
-<li><strong>Tối ưu</strong>: Có sẵn các chỉ mục (indexes) trên <code>entity_id</code>, <code>event_type</code>, và <code>timestamp</code>.</li>
-</ul>
-<h3 id="22-file-storage-adapter-adaptersstoragefile_storagepy">2.2 File Storage Adapter (<code>adapters/storage/file_storage.py</code>)</h3>
-<p>Adapter hiệu năng cao dành cho dữ liệu lớn, sử dụng định dạng file chuyên dụng cho phân tích.</p>
+<h3 id="23-redis-database-adapter-redis_adapterpy">2.3 Redis Database Adapter (<code>redis_adapter.py</code>)</h3>
+<p>Adapter trên bộ nhớ phục vụ đọc dữ liệu tốc độ cao và tra cứu trạng thái thực thể tức thời.</p>
 <ul>
-<li><strong>Công nghệ</strong>: <strong>Apache Parquet</strong> và <strong>PyArrow</strong>.</li>
-<li>
-<p><strong>Cấu trúc lưu trữ</strong>:</p>
-<ul>
-<li><code>blocks/</code>: Lưu trữ block dưới dạng file <code>.parquet</code> nén (Zstd). Mỗi block là một bảng Arrow.</li>
-<li><code>events/</code>: Duy trì bộ chỉ mục sự kiện (Event Index) cho phép truy tìm (tracing) cực nhanh.</li>
-<li><code>chains/</code>: Lưu metadata chuỗi dưới dạng JSON.</li>
+<li>Công nghệ: Redis qua thư viện <code>redis-py</code>.</li>
+<li>Cấu trúc dữ liệu: Hash lưu block header và dữ liệu sự kiện, sorted set lưu thứ tự sự kiện theo thời gian và dải chỉ mục khối, set lưu danh sách chuỗi duy nhất.</li>
+<li>Điểm mạnh: Độ trễ cực thấp khi tra cứu theo khóa và truy vết nhanh thực thể.</li>
+<li>Tính bền vững: Phụ thuộc vào cấu hình snapshot RDB và nhật ký AOF của Redis.</li>
 </ul>
-</li>
-<li>
-<p><strong>Ưu điểm</strong>: Tốc độ đọc/ghi cực nhanh, nén dữ liệu tốt, hỗ trợ <strong>Column Pruning</strong> (chỉ đọc các cột cần thiết).</p>
-</li>
-<li>
-<p><strong>Tính năng đặc biệt</strong>:</p>
-<ul>
-<li><code>BatchBlockWriter</code>: Buffer dữ liệu để ghi hàng loạt, giảm thiểu I/O overhead.</li>
-<li><code>get_entity_events_optimized</code>: Sử dụng Arrow Dataset để quét dữ liệu trên nhiều file block đồng thời.</li>
-</ul>
-</li>
-</ul>
-<h3 id="23-redis-storage-adapter-adaptersstorageredis_storagepy">2.3 Redis Storage Adapter (<code>adapters/storage/redis_storage.py</code>)</h3>
-<p>Phù hợp cho các node yêu cầu phản hồi thời gian thực (Real-time) và truy cập dữ liệu nóng (Hot data).</p>
-<ul>
-<li><strong>Công nghệ</strong>: Redis (In-memory data structure).</li>
-<li>
-<p><strong>Cấu trúc dữ liệu</strong>:</p>
-<ul>
-<li><strong>Hashes</strong>: Lưu trữ block và metadata.</li>
-<li><strong>Sorted Sets (ZSET)</strong>: Lưu chỉ mục block theo index và sự kiện của entity theo timestamp.</li>
-<li><strong>Sets</strong>: Quản lý danh sách các chuỗi và thực thể duy nhất.</li>
-</ul>
-</li>
-<li>
-<p><strong>Ưu điểm</strong>: Độ trễ (latency) cực thấp, hỗ trợ đếm số liệu thống kê (statistics) theo thời gian thực.</p>
-</li>
-<li><strong>Sử dụng</strong>: Thường được dùng làm cache hoặc database chính cho các node giao dịch tần suất cao.</li>
-</ul>
-<hr />
-<h2 id="3-so-sanh-cac-adapter">3. So sánh các Adapter</h2>
+<h2 id="3-so-sanh-cac-adapter">3. So sánh các adapter</h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Đặc điểm</th>
 <th style="text-align: left;">SQLiteAdapter</th>
-<th style="text-align: left;">FileStorageAdapter</th>
-<th style="text-align: left;">RedisStorageAdapter</th>
+<th style="text-align: left;">PostgreSQLAdapter</th>
+<th style="text-align: left;">RedisAdapter</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>Loại lưu trữ</strong></td>
-<td style="text-align: left;">Cơ sở dữ liệu quan hệ</td>
-<td style="text-align: left;">File hệ thống (Parquet)</td>
-<td style="text-align: left;">Bộ nhớ (In-memory)</td>
+<td style="text-align: left;">Loại lưu trữ</td>
+<td style="text-align: left;">File quan hệ</td>
+<td style="text-align: left;">Máy chủ quan hệ</td>
+<td style="text-align: left;">Key-value trong bộ nhớ</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Phù hợp nhất</strong></td>
-<td style="text-align: left;">ERP Integration, Audit</td>
-<td style="text-align: left;">Big Data, Phân tích truy vết</td>
-<td style="text-align: left;">Real-time Dashboard, High-speed Node</td>
+<td style="text-align: left;">Môi trường phù hợp</td>
+<td style="text-align: left;">Phát triển, kiểm thử, node biên</td>
+<td style="text-align: left;">Môi trường sản xuất, cụm đa node</td>
+<td style="text-align: left;">Truy vấn trạng thái độ trễ thấp, cache</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Tốc độ ghi</strong></td>
-<td style="text-align: left;">Trung bình</td>
-<td style="text-align: left;">Rất nhanh (với Batch)</td>
-<td style="text-align: left;">Cực nhanh</td>
+<td style="text-align: left;">Độ trễ ghi</td>
+<td style="text-align: left;">Thấp</td>
+<td style="text-align: left;">Thấp đến trung bình</td>
+<td style="text-align: left;">Rất thấp</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Tốc độ truy vấn</strong></td>
-<td style="text-align: left;">Nhanh (SQL)</td>
-<td style="text-align: left;">Cực nhanh (Analytical)</td>
-<td style="text-align: left;">Nhanh nhất (Point lookup)</td>
+<td style="text-align: left;">Độ linh hoạt truy vấn</td>
+<td style="text-align: left;">Toàn bộ SQL</td>
+<td style="text-align: left;">Toàn bộ SQL</td>
+<td style="text-align: left;">Tra cứu khóa và chỉ mục</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Tính bền vững</strong></td>
-<td style="text-align: left;">Cao (ACID)</td>
-<td style="text-align: left;">Cao (File-based)</td>
-<td style="text-align: left;">Phụ thuộc cấu hình Redis RDB/AOF</td>
+<td style="text-align: left;">Tính bền vững</td>
+<td style="text-align: left;">ACID trên file cục bộ</td>
+<td style="text-align: left;">ACID trên máy chủ doanh nghiệp</td>
+<td style="text-align: left;">Snapshot RDB / AOF</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Dependencies</strong></td>
-<td style="text-align: left;">Không (Built-in Python)</td>
-<td style="text-align: left;"><code>pyarrow</code></td>
-<td style="text-align: left;"><code>redis-py</code></td>
+<td style="text-align: left;">Dịch vụ bên ngoài</td>
+<td style="text-align: left;">Không</td>
+<td style="text-align: left;">PostgreSQL 13+</td>
+<td style="text-align: left;">Redis 6+</td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h2 id="4-huong-dan-su-dung">4. Hướng dẫn sử dụng</h2>
-<h3 id="cau-hinh-qua-settings">Cấu hình qua Settings</h3>
-<p>Bạn có thể chọn adapter mặc định thông qua biến môi trường hoặc file cấu hình:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Chọn backend lưu trữ</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">HRC_STORAGE_BACKEND</span><span class="o">=</span>sqlite<span class="w">  </span><span class="c1"># Hoặc "redis", "file"</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">DATABASE_URL</span><span class="o">=</span><span class="s2">"sqlite:///my_ledger.db"</span>
+<h2 id="4-cau-hinh-va-su-dung">4. Cấu hình và sử dụng</h2>
+<h3 id="cau-hinh-qua-settings">Cấu hình qua settings</h3>
+<p>Thiết lập backend lưu trữ bằng biến môi trường:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Các backend hỗ trợ: sqlite, postgres, redis, memory</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">HRC_STORAGE_BACKEND</span><span class="o">=</span>sqlite
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="nb">export</span><span class="w"> </span><span class="nv">DATABASE_URL</span><span class="o">=</span><span class="s2">"sqlite:///data/ledger.db"</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># Hoặc đối với PostgreSQL</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># export HRC_STORAGE_BACKEND=postgres</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># export DATABASE_URL="postgresql://user:pass@localhost:5432/hierachain"</span>
 </code></pre></div>
 <h3 id="su-dung-trong-ma-nguon">Sử dụng trong mã nguồn</h3>
 <h4 id="su-dung-sqlite">Sử dụng SQLite</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.adapters.database.sqlite_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">SQLiteAdapter</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">adapter</span> <span class="o">=</span> <span class="n">SQLiteAdapter</span><span class="p">(</span><span class="s2">"data/ledger.db"</span><span class="p">)</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="c1"># Lấy thống kê chuỗi</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="n">stats</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">get_chain_statistics</span><span class="p">(</span><span class="s2">"supply_chain_ledger"</span><span class="p">)</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Tổng số block: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">'total_blocks'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">stats</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">get_chain_statistics</span><span class="p">(</span><span class="s2">"supply_chain_ledger"</span><span class="p">)</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total blocks: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">'total_blocks'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
-<h4 id="su-dung-file-parquet">Sử dụng File (Parquet)</h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.adapters.storage.file_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">FileStorageAdapter</span><span class="p">,</span> <span class="n">BatchBlockWriter</span>
+<h4 id="su-dung-postgresql">Sử dụng PostgreSQL</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.adapters.database.postgres_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">PostgreSQLAdapter</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">storage</span> <span class="o">=</span> <span class="n">FileStorageAdapter</span><span class="p">(</span><span class="n">storage_path</span><span class="o">=</span><span class="s2">"./blockchain_data"</span><span class="p">)</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="c1"># Ghi hàng loạt blocks để tối ưu hiệu năng</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="k">with</span> <span class="n">BatchBlockWriter</span><span class="p">(</span><span class="n">storage</span><span class="p">,</span> <span class="s2">"main_chain"</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>    <span class="k">for</span> <span class="n">block</span> <span class="ow">in</span> <span class="n">new_blocks</span><span class="p">:</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>        <span class="n">writer</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">block</span><span class="p">)</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="n">adapter</span> <span class="o">=</span> <span class="n">PostgreSQLAdapter</span><span class="p">(</span><span class="n">connection_string</span><span class="o">=</span><span class="s2">"postgresql://user:pass@localhost:5432/hierachain"</span><span class="p">)</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">stats</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">get_chain_statistics</span><span class="p">(</span><span class="s2">"supply_chain_ledger"</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total blocks: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">'total_blocks'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </code></pre></div>
-<hr />
-<h2 id="5-bao-mat-an-toan-du-lieu">5. Bảo mật &amp; An toàn dữ liệu</h2>
-<h3 id="chong-tan-cong-path-traversal-cwe-22">Chống tấn công Path Traversal (CWE-22)</h3>
-<p>Tất cả các adapter đều thực hiện kiểm tra nghiêm ngặt tên chuỗi (chain name) và đường dẫn:</p>
+<h4 id="su-dung-redis">Sử dụng Redis</h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.adapters.database.redis_adapter</span><span class="w"> </span><span class="kn">import</span> <span class="n">RedisAdapter</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">adapter</span> <span class="o">=</span> <span class="n">RedisAdapter</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="n">stats</span> <span class="o">=</span> <span class="n">adapter</span><span class="o">.</span><span class="n">get_chain_statistics</span><span class="p">(</span><span class="s2">"supply_chain_ledger"</span><span class="p">)</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total blocks: </span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">'total_blocks'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</code></pre></div>
+<h2 id="5-bao-mat-va-xac-thuc">5. Bảo mật và xác thực</h2>
+<h3 id="ngan-chan-loi-path-traversal">Ngăn chặn lỗi Path Traversal</h3>
+<p>Các adapter kiểm tra nghiêm ngặt đường dẫn và tên chuỗi:</p>
 <ul>
-<li>Chỉ cho phép ký tự alphanumeric, dấu gạch dưới <code>_</code> và gạch ngang <code>-</code>.</li>
-<li>Ngăn chặn các ký tự điều hướng như <code>..</code> để đảm bảo dữ liệu không bị ghi đè ngoài thư mục chỉ định.</li>
+<li>Tên chỉ cho phép ký tự chữ cái, chữ số, gạch dưới <code>_</code> và gạch ngang <code>-</code>.</li>
+<li>Các ký tự duyệt thư mục (<code>..</code>, <code>/</code>, <code>\</code>) bị từ chối trước khi thao tác trên hệ thống tệp hoặc truy vấn.</li>
 </ul>
-<h3 id="secure-logging">Secure Logging</h3>
-<p>Việc ghi log trong các adapter được thực hiện qua <code>SecureLogger</code>, đảm bảo không lộ các thông tin nhạy cảm của doanh nghiệp trong file log hệ thống.</p>
-<hr />
-<h2 id="6-xu-ly-loi-bao-tri">6. Xử lý lỗi &amp; Bảo trì</h2>
+<h3 id="ghi-log-an-toan">Ghi log an toàn</h3>
+<p>Adapter ghi nhận truy vấn và sự kiện kết nối qua <code>SecureLogger</code>, tự động ẩn thông tin đăng nhập, token xác thực và dữ liệu nghiệp vụ nhạy cảm.</p>
+<h2 id="6-bao-tri-va-luu-giu-du-lieu">6. Bảo trì và lưu giữ dữ liệu</h2>
 <ul>
-<li><strong>Cleanup</strong>: Cả ba adapter đều hỗ trợ phương thức <code>cleanup_old_data(days_to_keep)</code> để tự động dọn dẹp các khối dữ liệu cũ hoặc log không cần thiết theo chính sách lưu trữ của doanh nghiệp.</li>
-<li><strong>Data Integrity</strong>: Khi sử dụng <code>FileStorageAdapter</code>, mã băm (hash) của block được lưu trực tiếp trong metadata của file Parquet, cho phép kiểm tra tính toàn vẹn ngay khi load file mà không cần đọc toàn bộ nội dung.</li>
+<li>Dọn dẹp dữ liệu: Các adapter quan hệ hỗ trợ xóa các bản ghi sự kiện cũ vượt quá ngưỡng cấu hình qua <code>HRC_SQL_RETENTION_DAYS</code>.</li>
+<li>Nhật ký và journal: Nhật ký nhị phân và dữ liệu kiểm toán lỗi sử dụng <code>hierachain/core/parquet_log.py</code> và <code>hierachain/error_mitigation/journal.py</code>, tách rời việc lưu trữ chuỗi khỏi hệ thống log chẩn đoán.</li>
 </ul>
-<hr />
 <h2 id="lien-quan">Liên quan</h2>
 <ul>
-<li><a href="../../architecture/overview/">Core Concepts - Blockchain</a></li>
 <li><a href=".././storage/">Storage Module</a></li>
-<li><a href=".././security/">Security Overview</a></li>
+<li><a href="../../reference/config/">Tham chiếu cấu hình</a></li>
+<li><a href=".././security/">Tổng quan bảo mật</a></li>
 </ul>
 
 

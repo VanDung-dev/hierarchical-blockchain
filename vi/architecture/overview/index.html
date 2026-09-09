@@ -4370,7 +4370,7 @@
 
 <h1 id="kien-truc-tong-quan">Kiến trúc tổng quan</h1>
 <h2 id="muc-ich">Mục đích</h2>
-<p>Giới thiệu kiến trúc phân cấp (hierarchical) của HieraChain: Main Chain làm cơ quan gốc chỉ lưu bằng chứng (proof) từ các Sub-Chain; Sub-Chain xử lý dữ liệu nghiệp vụ (events) theo từng domain. Trang này giúp định vị vai trò từng thành phần và các luồng chính.</p>
+<p>HieraChain dùng kiến trúc phân cấp. Main Chain là gốc và chỉ giữ proof từ Sub-Chain. Sub-Chain xử lý dữ liệu nghiệp vụ (event) theo từng domain. Phần này mô tả từng thành phần làm gì và các luồng chính vận hành thế nào.</p>
 <h2 id="kien-truc-khai-niem">Kiến trúc &amp; khái niệm</h2>
 <pre class="mermaid"><code>graph BT
     Main[Main Chain - Giám sát viên]
@@ -4384,17 +4384,17 @@
     SC_B --&gt;|Gửi Proof| Main
     SC_C --&gt;|Gửi Proof| Main</code></pre>
 <ul>
-<li>Sub-Chain chịu trách nhiệm ghi nhận Event domain, Ordering thành Block và duy trì World State nội bộ.</li>
-<li>Main Chain không lưu dữ liệu domain chi tiết; chỉ lưu Proof mật mã để đảm bảo tính toàn vẹn toàn hệ thống.</li>
-<li>HierarchyManager điều phối tạo/đăng ký Sub-Chain, gửi Proof, và các tác vụ vận hành liên quan đa chuỗi.</li>
+<li>Sub-Chain ghi nhận event theo domain, sắp xếp thành block và giữ world state riêng.</li>
+<li>Main Chain không giữ dữ liệu domain chi tiết. Nó chỉ giữ proof mật mã để bảo đảm tính toàn vẹn toàn hệ thống.</li>
+<li>HierarchyManager lo việc tạo và đăng ký Sub-Chain, gửi proof và các tác vụ đa chuỗi khác.</li>
 </ul>
 <h3 id="thanh-phan-chinh">Thành phần chính</h3>
 <ul>
-<li>Main Chain: <code>hierachain/hierarchical/main_chain/base.py</code>, lưu và xác minh proof từ Sub-Chain, tổng hợp báo cáo tính toàn vẹn.</li>
-<li>Sub-Chain: <code>hierachain/hierarchical/sub_chain/base.py</code>, ghi nhận event domain, Ordering/đóng block, tạo proof gửi lên Main Chain.</li>
-<li>Hierarchy Manager: <code>hierachain/hierarchical/hierarchy_manager/base.py</code>, điều phối toàn bộ hệ thống đa chuỗi, quản lý vòng đời Sub-Chain, tự động gửi proof, xác minh liên chuỗi.ứng chéo.</li>
-<li>IPFS Storage (Off-chain): <code>hierachain/api/storage/ipfs_client.py</code>, lưu trữ dữ liệu nghiệp vụ lớn hoặc nhạy cảm ngoài chuỗi, chỉ neo mã CID lên Blockchain.</li>
-<li>Ordering Service: <code>hierachain/consensus/ordering/service.py</code>, thành phần sắp xếp sự kiện trước khi tạo block (được Sub-Chain tích hợp khởi tạo).</li>
+<li><code>hierachain/hierarchical/main_chain/base.py</code> là Main Chain. Nó lưu và xác minh proof từ Sub-Chain và tổng hợp báo cáo toàn vẹn.</li>
+<li><code>hierachain/hierarchical/sub_chain/base.py</code> là Sub-Chain. Nó ghi nhận event theo domain, sắp xếp thành block, tạo proof và gửi lên Main Chain.</li>
+<li><code>hierachain/hierarchical/hierarchy_manager/base.py</code> là HierarchyManager. Nó điều phối hệ thống đa chuỗi, quản lý vòng đời Sub-Chain, gửi proof tự động và kiểm tra tính nhất quán liên chuỗi.</li>
+<li><code>hierachain/api/storage/ipfs_client.py</code> là lưu trữ IPFS off-chain. Nó giữ dữ liệu nghiệp vụ lớn hoặc nhạy cảm ngoài chuỗi và chỉ neo CID trên blockchain.</li>
+<li><code>hierachain/consensus/ordering/service.py</code> là Ordering Service. Nó sắp xếp event trước khi tạo block và được Sub-Chain khởi tạo.</li>
 </ul>
 <h3 id="luong-tieu-bieu">Luồng tiêu biểu</h3>
 <pre class="mermaid"><code>sequenceDiagram
@@ -4411,10 +4411,10 @@
     Main-&gt;&gt;Main: Xác minh &amp; Lưu Proof
     Main--&gt;&gt;Sub: Acknowledge</code></pre>
 <ol>
-<li>Ghi Event → Tạo Block (Sub-Chain): Event được <code>SubChain.add_event()</code> tiếp nhận, đưa qua Ordering nội bộ, gom vào Block và <code>finalize_block()</code> khi đủ điều kiện.</li>
-<li>Gửi Proof lên Main Chain: <code>SubChain.submit_proof_to_main()</code> sinh Proof (ví dụ từ Merkle root/hash block), gửi <code>MainChain.add_proof()</code> để neo mốc.</li>
-<li>Báo cáo toàn cục: Main Chain tổng hợp <code>get_main_chain_stats()</code> và thống kê cho từng Sub-Chain.</li>
-<li>Điều phối hệ thống: <code>HierarchyManager</code> hỗ trợ gửi proof định kỳ (<code>configure_auto_proof_submission</code>), đồng bộ, và kiểm tra tính nhất quán liên chuỗi.</li>
+<li>Ghi event và tạo block trên Sub-Chain. <code>SubChain.add_event()</code> nhận event và đưa qua khâu sắp xếp nội bộ. Event được gom thành block và <code>finalize_block()</code> chạy khi đủ điều kiện.</li>
+<li>Gửi proof lên Main Chain. <code>SubChain.submit_proof_to_main()</code> tạo proof từ Merkle root hoặc block hash và gọi <code>MainChain.add_proof()</code> để neo lại.</li>
+<li>Báo cáo toàn cục. Main Chain tổng hợp kết quả từ <code>get_main_chain_stats()</code> và thống kê theo từng Sub-Chain.</li>
+<li>Điều phối hệ thống. <code>HierarchyManager</code> xử lý gửi proof định kỳ bằng <code>configure_auto_proof_submission</code>, đồng bộ và kiểm tra tính nhất quán liên chuỗi.</li>
 </ol>
 <h2 id="lien-quan">Liên quan</h2>
 <ul>

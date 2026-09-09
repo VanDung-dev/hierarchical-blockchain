@@ -4339,8 +4339,8 @@
 <p>Đưa ra các thực hành để đảm bảo hệ thống vận hành ổn định, dễ hồi phục khi gặp sự cố.</p>
 <h2 id="thanh-phan-lien-quan">Thành phần liên quan</h2>
 <ul>
-<li>Journal/Recovery: <code>hierachain/error_mitigation/{journal.py, recovery_engine.py, rollback_manager.py}</code></li>
-<li>Cross-level Sync: <code>hierachain/cluster/{cross_level_sync.py, state_sync_manager.py}</code> (nếu áp dụng)</li>
+<li>Journal/Recovery: <code>hierachain/error_mitigation/journal.py</code>, <code>rollback_manager.py</code>, <code>consensus_recovery.py</code>, <code>network_recovery.py</code>, <code>backup_recovery.py</code></li>
+<li>Cross-level Sync: <code>HRC_CROSS_LEVEL_SYNC</code> qua <code>hierarchical/hierarchy_manager/base.py</code>, <code>hierachain/cluster/state_sync_manager.py</code></li>
 </ul>
 <h2 id="mau-hinh">Mẫu hình</h2>
 <ul>

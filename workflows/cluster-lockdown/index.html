@@ -89,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#cluster-lockdown-recovery" class="md-skip">
+        <a href="#cluster-lockdown-and-recovery" class="md-skip">
           Skip to content
         </a>
       
@@ -1508,7 +1508,7 @@
   <a href="#flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram
+        Flow diagram
       </span>
     </span>
   </a>
@@ -1519,7 +1519,7 @@
   <a href="#state-machine" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        State Machine
+        State machine
       </span>
     </span>
   </a>
@@ -1530,7 +1530,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -1541,7 +1541,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -1549,10 +1549,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4307,7 +4307,7 @@
   <a href="#flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram
+        Flow diagram
       </span>
     </span>
   </a>
@@ -4318,7 +4318,7 @@
   <a href="#state-machine" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        State Machine
+        State machine
       </span>
     </span>
   </a>
@@ -4329,7 +4329,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -4340,7 +4340,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -4348,10 +4348,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4400,12 +4400,12 @@
   
 
 
-<h1 id="cluster-lockdown-recovery">Cluster Lockdown &amp; Recovery</h1>
+<h1 id="cluster-lockdown-and-recovery">Cluster lockdown and recovery</h1>
 <h2 id="overview">Overview</h2>
-<p>The <strong>Cluster Lockdown Protocol</strong> coordinates a system-wide state freeze across all nodes when a critical anomaly is detected. It uses <strong>gossip-style P2P messaging over ZeroMQ</strong> and requires a <strong>2/3 quorum</strong> of registered nodes to trigger both lockdown and recovery. All messages are authenticated with <strong>HMAC-SHA256</strong> to prevent spoofed lockdown attacks.</p>
-<p><strong>Key property</strong>: No single node can lock the cluster unilaterally; quorum is mandatory.</p>
+<p>This protocol freezes state across all nodes when a critical anomaly is detected. It uses gossip style P2P messaging over ZeroMQ and needs a 2/3 quorum of registered nodes to start both lockdown and recovery. All messages use HMAC-SHA256 so spoofed lockdown messages are rejected.</p>
+<p>No single node can lock the cluster on its own. Quorum is required.</p>
 <hr />
-<h2 id="flow-diagram">Flow Diagram</h2>
+<h2 id="flow-diagram">Flow diagram</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant N1 as 🖥️ Node 1 (Detector)
@@ -4454,7 +4454,7 @@
         OS-&gt;&gt;OS: Resume event acceptance
     end</code></pre>
 <hr />
-<h2 id="state-machine">State Machine</h2>
+<h2 id="state-machine">State machine</h2>
 <pre class="mermaid"><code>stateDiagram-v2
     [*] --&gt; NORMAL
     NORMAL --&gt; VOTING: Anomaly detected
@@ -4464,7 +4464,7 @@
     RECOVERING --&gt; NORMAL: State sync complete
     LOCKED --&gt; LOCKED: Quarantine reports exchanged</code></pre>
 <hr />
-<h2 id="step-by-step-breakdown">Step-by-Step Breakdown</h2>
+<h2 id="step-by-step-breakdown">Step-by-step breakdown</h2>
 <table>
 <thead>
 <tr>
@@ -4508,7 +4508,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="error-handling">Error Handling</h2>
+<h2 id="error-handling">Error handling</h2>
 <table>
 <thead>
 <tr>
@@ -4540,7 +4540,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-classes-methods">Key Classes &amp; Methods</h2>
+<h2 id="key-classes-and-methods">Key classes and methods</h2>
 <table>
 <thead>
 <tr>

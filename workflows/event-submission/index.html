@@ -1392,7 +1392,7 @@
   <a href="#flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram
+        Flow diagram
       </span>
     </span>
   </a>
@@ -1403,7 +1403,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -1414,7 +1414,7 @@
   <a href="#event-structure" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Event Structure
+        Event structure
       </span>
     </span>
   </a>
@@ -1425,7 +1425,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -1433,10 +1433,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4307,7 +4307,7 @@
   <a href="#flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram
+        Flow diagram
       </span>
     </span>
   </a>
@@ -4318,7 +4318,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -4329,7 +4329,7 @@
   <a href="#event-structure" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Event Structure
+        Event structure
       </span>
     </span>
   </a>
@@ -4340,7 +4340,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -4348,10 +4348,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4400,12 +4400,12 @@
   
 
 
-<h1 id="event-submission">Event Submission</h1>
+<h1 id="event-submission">Event submission</h1>
 <h2 id="overview">Overview</h2>
-<p>Events enter HieraChain as structured business operations, are validated, batched by the <code>OrderingService</code> into blocks, finalized by the configured <strong>Proof</strong> mechanism (PoA / PoF / BFT), then appended to the Sub-Chain. The consensus mechanism for MainChain is pluggable (<code>HRC_MAINCHAIN_CONSENSUS</code>), while SubChain defaults to PoA for high-speed intra-org operations. The overall flow is always identical, only the <code>finalize_block()</code> step differs.</p>
-<p>For detailed PoA and PoF diagrams, see <a href=".././consensus_mechanisms/">Consensus Mechanisms</a>.</p>
+<p>Events enter HieraChain as business operations. They are validated, batched by <code>OrderingService</code> into blocks, finalized by the configured proof mechanism (PoA, PoF or BFT), and then appended to the Sub-Chain. The MainChain consensus is pluggable via <code>HRC_MAINCHAIN_CONSENSUS</code>, while SubChain uses PoA by default for fast intra-org processing. The flow is the same in all cases. Only the <code>finalize_block()</code> step changes.</p>
+<p>For PoA and PoF diagrams, see <a href=".././consensus_mechanisms/">Consensus Mechanisms</a>.</p>
 <hr />
-<h2 id="flow-diagram">Flow Diagram</h2>
+<h2 id="flow-diagram">Flow diagram</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant Client as 🖥️ Client / ERP
@@ -4454,7 +4454,7 @@
         Note over SC: → Triggers Proof Anchoring
     end</code></pre>
 <hr />
-<h2 id="step-by-step-breakdown">Step-by-Step Breakdown</h2>
+<h2 id="step-by-step-breakdown">Step-by-step breakdown</h2>
 <table>
 <thead>
 <tr>
@@ -4502,7 +4502,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="event-structure">Event Structure</h2>
+<h2 id="event-structure">Event structure</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">event</span> <span class="o">=</span> <span class="p">{</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">"entity_id"</span><span class="p">:</span> <span class="s2">"product-SKU-001"</span><span class="p">,</span>    <span class="c1"># Domain entity identifier</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="s2">"event"</span><span class="p">:</span> <span class="s2">"quality_check"</span><span class="p">,</span>           <span class="c1"># Event type (domain-specific)</span>
@@ -4518,7 +4518,7 @@
 <p><strong>Important</strong>: Never use cryptocurrency terms (<code>transaction</code>, <code>sender</code>, <code>receiver</code>, <code>amount</code>, <code>wallet</code>, <code>fee</code>). The <code>validate_event_for_consensus()</code> scan will reject these.</p>
 </blockquote>
 <hr />
-<h2 id="error-handling">Error Handling</h2>
+<h2 id="error-handling">Error handling</h2>
 <table>
 <thead>
 <tr>
@@ -4550,7 +4550,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-classes-methods">Key Classes &amp; Methods</h2>
+<h2 id="key-classes-and-methods">Key classes and methods</h2>
 <table>
 <thead>
 <tr>

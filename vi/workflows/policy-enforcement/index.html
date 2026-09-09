@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Mô hình thực thi kiểm soát truy cập dựa trên thuộc tính (ABAC - Attribute-Based Access Control) bảo vệ tất cả các hoạt động nhạy cảm.">
+        <meta name="description" content="Mô hình thực thi kiểm soát truy cập dựa trên thuộc tính (ABAC) bảo vệ tất cả các hoạt động nhạy cảm.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -89,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#thuc-thi-chinh-sach-policy-enforcement" class="md-skip">
+        <a href="#thuc-thi-chinh-sach" class="md-skip">
           Bỏ qua
         </a>
       
@@ -1661,10 +1661,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cau-truc-quy-tac-chinh-sach-policy-rule-structure" class="md-nav__link">
+  <a href="#cau-truc-quy-tac-chinh-sach" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cấu trúc Quy tắc Chính sách (Policy Rule Structure)
+        Cấu trúc quy tắc chính sách
       </span>
     </span>
   </a>
@@ -1672,10 +1672,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-buoc-thuc-hien-chi-tiet" class="md-nav__link">
+  <a href="#cac-buoc-chi-tiet" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các bước thực hiện chi tiết
+        Các bước chi tiết
       </span>
     </span>
   </a>
@@ -1683,10 +1683,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-phep-so-sanh-ieu-kien-ho-tro" class="md-nav__link">
+  <a href="#phep-so-sanh-ieu-kien" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các phép so sánh điều kiện hỗ trợ
+        Phép so sánh điều kiện
       </span>
     </span>
   </a>
@@ -1705,10 +1705,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-class-method-quan-trong" class="md-nav__link">
+  <a href="#lop-va-phuong-thuc-chinh" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các Class &amp; Method quan trọng
+        Lớp và phương thức chính
       </span>
     </span>
   </a>
@@ -4326,10 +4326,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cau-truc-quy-tac-chinh-sach-policy-rule-structure" class="md-nav__link">
+  <a href="#cau-truc-quy-tac-chinh-sach" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cấu trúc Quy tắc Chính sách (Policy Rule Structure)
+        Cấu trúc quy tắc chính sách
       </span>
     </span>
   </a>
@@ -4337,10 +4337,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-buoc-thuc-hien-chi-tiet" class="md-nav__link">
+  <a href="#cac-buoc-chi-tiet" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các bước thực hiện chi tiết
+        Các bước chi tiết
       </span>
     </span>
   </a>
@@ -4348,10 +4348,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-phep-so-sanh-ieu-kien-ho-tro" class="md-nav__link">
+  <a href="#phep-so-sanh-ieu-kien" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các phép so sánh điều kiện hỗ trợ
+        Phép so sánh điều kiện
       </span>
     </span>
   </a>
@@ -4370,10 +4370,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-class-method-quan-trong" class="md-nav__link">
+  <a href="#lop-va-phuong-thuc-chinh" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các Class &amp; Method quan trọng
+        Lớp và phương thức chính
       </span>
     </span>
   </a>
@@ -4422,10 +4422,10 @@
   
 
 
-<h1 id="thuc-thi-chinh-sach-policy-enforcement">Thực thi Chính sách (Policy Enforcement)</h1>
+<h1 id="thuc-thi-chinh-sach">Thực thi chính sách</h1>
 <h2 id="tong-quan">Tổng quan</h2>
-<p>Mọi hoạt động nhạy cảm về mặt bảo mật trong HieraChain đều được kiểm soát nghiêm ngặt bởi <code>PolicyEngine</code> (Bộ máy Thực thi Chính sách). Các chính sách bao gồm các nhóm <code>PolicyRule</code> được sắp xếp theo mức độ ưu tiên. Để giảm thiểu độ trễ tối đa, kết quả đánh giá được lưu vào cache (thời gian sống TTL là 5 phút, giải phóng theo cơ chế LRU). Tất cả kết quả đánh giá đều được ghi nhận vào nhật ký kiểm toán trong bộ nhớ (in-memory audit log).</p>
-<p><code>PolicyEngine</code> đóng vai trò là <strong>cổng ủy quyền duy nhất (single authorization gateway)</strong>. Nó được gọi bởi MSP (Định danh &amp; Ủy quyền MSP) sau khi danh tính được xác minh thành công và ngay trước khi hàm <code>SubChain.add_event()</code> (Gửi Sự kiện) được gọi.</p>
+<p>Mọi thao tác nhạy cảm trong HieraChain đều qua <code>PolicyEngine</code>. Chính sách gồm nhóm <code>PolicyRule</code> sắp xếp theo ưu tiên. Để giảm độ trễ, kết quả đánh giá được cache (TTL 5 phút, LRU). Mọi kết quả đều được ghi vào log kiểm toán trong bộ nhớ.</p>
+<p><code>PolicyEngine</code> là cổng ủy quyền duy nhất. Nó được MSP gọi sau khi xác minh danh tính và ngay trước khi gọi <code>SubChain.add_event()</code>.</p>
 <hr />
 <h2 id="bieu-o-luong">Biểu đồ luồng</h2>
 <pre class="mermaid"><code>sequenceDiagram
@@ -4462,12 +4462,12 @@
         PE--&gt;&gt;Caller: result { effect: allow|deny }
     end</code></pre>
 <hr />
-<h2 id="cau-truc-quy-tac-chinh-sach-policy-rule-structure">Cấu trúc Quy tắc Chính sách (Policy Rule Structure)</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Ví dụ chính sách: chỉ cho phép các nhân viên vận hành (operators) hợp lệ gửi sự kiện</span>
+<h2 id="cau-truc-quy-tac-chinh-sach">Cấu trúc quy tắc chính sách</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Ví dụ: chỉ cho phép operator hợp lệ gửi sự kiện</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">policy</span> <span class="o">=</span> <span class="n">Policy</span><span class="p">(</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">policy_id</span><span class="o">=</span><span class="s2">"event_submission_policy"</span><span class="p">,</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">"Event Submission Access"</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">effect</span><span class="o">=</span><span class="n">PolicyEffect</span><span class="o">.</span><span class="n">DENY</span><span class="p">,</span>       <span class="c1"># Hiệu lực tác động mặc định nếu không có quy tắc nào khớp</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">effect</span><span class="o">=</span><span class="n">PolicyEffect</span><span class="o">.</span><span class="n">DENY</span><span class="p">,</span>       <span class="c1"># hiệu lực mặc định nếu không có quy tắc nào khớp</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">rules</span><span class="o">=</span><span class="p">[</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="n">PolicyRule</span><span class="p">(</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>            <span class="n">rule_id</span><span class="o">=</span><span class="s2">"allow_operators"</span><span class="p">,</span>
@@ -4482,7 +4482,7 @@
 <a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="p">)</span>
 </code></pre></div>
 <hr />
-<h2 id="cac-buoc-thuc-hien-chi-tiet">Các bước thực hiện chi tiết</h2>
+<h2 id="cac-buoc-chi-tiet">Các bước chi tiết</h2>
 <table>
 <thead>
 <tr>
@@ -4492,33 +4492,33 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>1. Kiểm tra Cache</strong></td>
-<td style="text-align: left;">Tạo khóa <code>cache_key = "{policy_id}:{SHA256(context)[:8]}"</code>. Nếu trúng cache (HIT) và TTL hợp lệ $\rightarrow$ trả về kết quả ngay.</td>
+<td style="text-align: left;"><strong>1. Kiểm tra cache</strong></td>
+<td style="text-align: left;">Tạo khóa <code>cache_key = "{policy_id}:{SHA256(context)[:8]}"</code>. Nếu hit và TTL hợp lệ thì trả về ngay.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>2. Sắp xếp Quy tắc</strong></td>
-<td style="text-align: left;">Toàn bộ các quy tắc được sắp xếp theo mức độ ưu tiên <code>priority</code> giảm dần (các quy tắc có độ ưu tiên cao hơn sẽ được đánh giá trước).</td>
+<td style="text-align: left;"><strong>2. Sắp xếp quy tắc</strong></td>
+<td style="text-align: left;">Sắp xếp theo <code>priority</code> giảm dần (ưu tiên cao đánh giá trước).</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>3. Đánh giá Quy tắc</strong></td>
-<td style="text-align: left;">Mỗi quy tắc kiểm tra danh sách điều kiện <code>PolicyCondition</code> của nó theo logic AND/OR/NOT.</td>
+<td style="text-align: left;"><strong>3. Đánh giá quy tắc</strong></td>
+<td style="text-align: left;">Mỗi quy tắc kiểm tra <code>PolicyCondition</code> theo logic AND/OR/NOT.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>4. Ghi đè đầu tiên</strong></td>
-<td style="text-align: left;">Quy tắc khớp đầu tiên có hiệu lực tác động (effect) khác với mặc định của chính sách sẽ thắng; các quy tắc còn lại sẽ được bỏ qua.</td>
+<td style="text-align: left;">Quy tắc khớp đầu tiên có effect khác mặc định sẽ thắng; các quy tắc còn lại bỏ qua.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>5. Lưu vào Cache</strong></td>
-<td style="text-align: left;">Kết quả được lưu vào cache kèm dấu thời gian <code>cached_at</code> để hết hạn sau 5 phút.</td>
+<td style="text-align: left;"><strong>5. Lưu cache</strong></td>
+<td style="text-align: left;">Lưu kết quả kèm <code>cached_at</code> để hết hạn sau 5 phút.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>6. Nhật ký kiểm toán</strong></td>
-<td style="text-align: left;">Mọi kết quả đánh giá đều được ghi nhận vào nhật ký kiểm toán kèm thông tin <code>policy_id</code>, <code>context</code>, <code>effect</code> và <code>decision_path</code>.</td>
+<td style="text-align: left;"><strong>6. Log kiểm toán</strong></td>
+<td style="text-align: left;">Ghi <code>policy_id</code>, <code>context</code>, <code>effect</code> và <code>decision_path</code> vào log kiểm toán.</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="cac-phep-so-sanh-ieu-kien-ho-tro">Các phép so sánh điều kiện hỗ trợ</h2>
+<h2 id="phep-so-sanh-ieu-kien">Phép so sánh điều kiện</h2>
 <table>
 <thead>
 <tr>
@@ -4545,17 +4545,17 @@
 </tr>
 <tr>
 <td style="text-align: left;"><code>matches</code></td>
-<td style="text-align: left;">Biểu thức chính quy (Regex)</td>
+<td style="text-align: left;">Biểu thức chính quy</td>
 <td style="text-align: left;"><code>entity_id matches "^product-.*"</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>in</code></td>
-<td style="text-align: left;">Thuộc một tập hợp</td>
+<td style="text-align: left;">Thuộc tập hợp</td>
 <td style="text-align: left;"><code>role in ["admin", "operator"]</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>greater_than</code></td>
-<td style="text-align: left;">So sánh số lượng lớn hơn</td>
+<td style="text-align: left;">So sánh lớn hơn</td>
 <td style="text-align: left;"><code>risk_score &gt; 0.8</code></td>
 </tr>
 </tbody>
@@ -4572,30 +4572,30 @@
 <tbody>
 <tr>
 <td style="text-align: left;">Không tìm thấy chính sách</td>
-<td style="text-align: left;">Trả về <code>DENY</code> (chế độ bảo mật fail-closed)</td>
+<td style="text-align: left;">Trả về <code>DENY</code> (fail-closed)</td>
 </tr>
 <tr>
-<td style="text-align: left;">Chính sách bị tắt (disabled)</td>
-<td style="text-align: left;">Trả về ngay lập tức hiệu lực tác động mặc định (không chạy các quy tắc)</td>
+<td style="text-align: left;">Chính sách bị tắt</td>
+<td style="text-align: left;">Trả về ngay effect mặc định (không chạy quy tắc)</td>
 </tr>
 <tr>
-<td style="text-align: left;">Context bị thiếu trường thông tin yêu cầu</td>
-<td style="text-align: left;">Điều kiện trả về <code>False</code>; ghi nhận log là khớp một phần</td>
+<td style="text-align: left;">Context thiếu trường yêu cầu</td>
+<td style="text-align: left;">Điều kiện trả về <code>False</code>; ghi log là khớp một phần</td>
 </tr>
 <tr>
 <td style="text-align: left;">Cache bị giải phóng (LRU)</td>
-<td style="text-align: left;">Yêu cầu tiếp theo sẽ kích hoạt tính toán và đánh giá chính sách mới</td>
+<td style="text-align: left;">Request tiếp theo tính lại chính sách</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="cac-class-method-quan-trong">Các Class &amp; Method quan trọng</h2>
+<h2 id="lop-va-phuong-thuc-chinh">Lớp và phương thức chính</h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Bước</th>
-<th style="text-align: left;">Class / Method</th>
-<th style="text-align: left;">File</th>
+<th style="text-align: left;">Lớp / Phương thức</th>
+<th style="text-align: left;">Tệp</th>
 </tr>
 </thead>
 <tbody>
@@ -4634,8 +4634,8 @@
 <hr />
 <h2 id="lien-quan">Liên quan</h2>
 <ul>
-<li><a href=".././msp-identity/">Định danh &amp; Ủy quyền MSP</a>: MSP gọi hàm <code>evaluate_policy()</code> sau khi xác minh danh tính</li>
-<li><a href=".././event-submission/">Gửi Sự kiện</a>: Quy trình <code>add_event()</code> được bảo vệ nghiêm ngặt bởi bộ máy chính sách</li>
+<li><a href=".././msp-identity/">Danh tính MSP</a>: MSP gọi <code>evaluate_policy()</code> sau khi xác minh danh tính</li>
+<li><a href=".././event-submission/">Gửi Sự kiện</a>: <code>add_event()</code> được bảo vệ bởi engine chính sách</li>
 </ul>
 
 

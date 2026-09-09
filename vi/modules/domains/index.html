@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Cung cấp nền tảng nghiệp vụ (Generic Domains): Quản lý vòng đời thực thể, truy vết xuyên chuỗi và kiểm soát tuân thủ.">
+        <meta name="description" content="Khuôn mẫu nghiệp vụ: DomainChain, sự kiện chuẩn hóa, theo dõi vòng đời thực thể và truy vết liên chuỗi.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -2283,10 +2283,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tong-quan" class="md-nav__link">
+  <a href="#1-tong-quan" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Tổng quan
+        1. Tổng quan
       </span>
     </span>
   </a>
@@ -2294,33 +2294,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-thanh-phan-cot-loi" class="md-nav__link">
+  <a href="#2-cac-thanh-phan-cot-loi" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các thành phần cốt lõi
+        2. Các thành phần cốt lõi
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quan-ly-nghiep-vu-domain-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Quản lý Nghiệp vụ (Domain Management)
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Quản lý Nghiệp vụ (Domain Management)">
+    <nav class="md-nav" aria-label="2. Các thành phần cốt lõi">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#vong-oi-thuc-the-entity-lifecycle" class="md-nav__link">
+  <a href="#21-chuoi-nghiep-vu-chainsbase_chainpy-chainsdomain_chainpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Vòng đời thực thể (Entity Lifecycle)
+        2.1 Chuỗi nghiệp vụ (<code>chains/base_chain.py</code>, <code>chains/domain_chain.py</code>)
       </span>
     </span>
   </a>
@@ -2328,10 +2317,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#chi-so-van-hanh-operation-metrics" class="md-nav__link">
+  <a href="#22-su-kien-doanh-nghiep-eventsbase_eventpy-eventsevent_creatorspy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Chỉ số vận hành (Operation Metrics)
+        2.2 Sự kiện doanh nghiệp (<code>events/base_event.py</code>, <code>events/event_creators.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-tien-ich-toan-ven-utilscross_chain_validatorpy-utilsentity_tracerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Tiện ích toàn vẹn (<code>utils/cross_chain_validator.py</code>, <code>utils/entity_tracer.py</code>)
       </span>
     </span>
   </a>
@@ -2344,10 +2344,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#co-che-giao-dich-hai-pha-two-phase-commit-2pc" class="md-nav__link">
+  <a href="#3-quan-ly-nghiep-vu-va-vong-oi-thuc-the" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cơ chế Giao dịch Hai pha (Two-Phase Commit - 2PC)
+        3. Quản lý nghiệp vụ và vòng đời thực thể
       </span>
     </span>
   </a>
@@ -2355,22 +2355,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiem-soat-tuan-thu-va-bao-mat" class="md-nav__link">
+  <a href="#4-ieu-phoi-two-phase-commit-2pc" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Kiểm soát Tuân thủ và Bảo mật
+        4. Điều phối Two-Phase Commit (2PC)
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Kiểm soát Tuân thủ và Bảo mật">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-tuan-thu-va-truy-vet-lien-chuoi" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5. Tuân thủ và truy vết liên chuỗi
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Tuân thủ và truy vết liên chuỗi">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#ngan-chan-thuat-ngu-tien-ma-hoa-cryptocurrency-terminology" class="md-nav__link">
+  <a href="#loc-thuat-ngu-tien-ma-hoa" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Ngăn chặn Thuật ngữ Tiền mã hóa (Cryptocurrency Terminology)
+        Lọc thuật ngữ tiền mã hóa
       </span>
     </span>
   </a>
@@ -2378,10 +2389,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#truy-vet-xuyen-chuoi-cross-chain-tracing" class="md-nav__link">
+  <a href="#truy-vet-thuc-the-lien-chuoi" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Truy vết xuyên chuỗi (Cross-Chain Tracing)
+        Truy vết thực thể liên chuỗi
       </span>
     </span>
   </a>
@@ -2394,10 +2405,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-loai-su-kien-chuan-hoa" class="md-nav__link">
+  <a href="#6-cac-loai-thao-tac-chuan-hoa" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các loại sự kiện chuẩn hóa
+        6. Các loại thao tác chuẩn hóa
       </span>
     </span>
   </a>
@@ -4349,10 +4360,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#tong-quan" class="md-nav__link">
+  <a href="#1-tong-quan" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Tổng quan
+        1. Tổng quan
       </span>
     </span>
   </a>
@@ -4360,33 +4371,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-thanh-phan-cot-loi" class="md-nav__link">
+  <a href="#2-cac-thanh-phan-cot-loi" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các thành phần cốt lõi
+        2. Các thành phần cốt lõi
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quan-ly-nghiep-vu-domain-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Quản lý Nghiệp vụ (Domain Management)
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Quản lý Nghiệp vụ (Domain Management)">
+    <nav class="md-nav" aria-label="2. Các thành phần cốt lõi">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#vong-oi-thuc-the-entity-lifecycle" class="md-nav__link">
+  <a href="#21-chuoi-nghiep-vu-chainsbase_chainpy-chainsdomain_chainpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Vòng đời thực thể (Entity Lifecycle)
+        2.1 Chuỗi nghiệp vụ (<code>chains/base_chain.py</code>, <code>chains/domain_chain.py</code>)
       </span>
     </span>
   </a>
@@ -4394,10 +4394,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#chi-so-van-hanh-operation-metrics" class="md-nav__link">
+  <a href="#22-su-kien-doanh-nghiep-eventsbase_eventpy-eventsevent_creatorspy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Chỉ số vận hành (Operation Metrics)
+        2.2 Sự kiện doanh nghiệp (<code>events/base_event.py</code>, <code>events/event_creators.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-tien-ich-toan-ven-utilscross_chain_validatorpy-utilsentity_tracerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Tiện ích toàn vẹn (<code>utils/cross_chain_validator.py</code>, <code>utils/entity_tracer.py</code>)
       </span>
     </span>
   </a>
@@ -4410,10 +4421,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#co-che-giao-dich-hai-pha-two-phase-commit-2pc" class="md-nav__link">
+  <a href="#3-quan-ly-nghiep-vu-va-vong-oi-thuc-the" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cơ chế Giao dịch Hai pha (Two-Phase Commit - 2PC)
+        3. Quản lý nghiệp vụ và vòng đời thực thể
       </span>
     </span>
   </a>
@@ -4421,22 +4432,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#kiem-soat-tuan-thu-va-bao-mat" class="md-nav__link">
+  <a href="#4-ieu-phoi-two-phase-commit-2pc" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Kiểm soát Tuân thủ và Bảo mật
+        4. Điều phối Two-Phase Commit (2PC)
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Kiểm soát Tuân thủ và Bảo mật">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-tuan-thu-va-truy-vet-lien-chuoi" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5. Tuân thủ và truy vết liên chuỗi
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Tuân thủ và truy vết liên chuỗi">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#ngan-chan-thuat-ngu-tien-ma-hoa-cryptocurrency-terminology" class="md-nav__link">
+  <a href="#loc-thuat-ngu-tien-ma-hoa" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Ngăn chặn Thuật ngữ Tiền mã hóa (Cryptocurrency Terminology)
+        Lọc thuật ngữ tiền mã hóa
       </span>
     </span>
   </a>
@@ -4444,10 +4466,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#truy-vet-xuyen-chuoi-cross-chain-tracing" class="md-nav__link">
+  <a href="#truy-vet-thuc-the-lien-chuoi" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Truy vết xuyên chuỗi (Cross-Chain Tracing)
+        Truy vết thực thể liên chuỗi
       </span>
     </span>
   </a>
@@ -4460,10 +4482,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-loai-su-kien-chuan-hoa" class="md-nav__link">
+  <a href="#6-cac-loai-thao-tac-chuan-hoa" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các loại sự kiện chuẩn hóa
+        6. Các loại thao tác chuẩn hóa
       </span>
     </span>
   </a>
@@ -4513,140 +4535,104 @@
 
 
 <h1 id="domains-module-hierachaindomains">Domains Module (<code>hierachain/domains/*</code>)</h1>
-<h2 id="tong-quan">Tổng quan</h2>
-<p>Module <strong>Domains</strong> là lớp trung gian quan trọng kết nối hạ tầng Blockchain lõi với các quy trình nghiệp vụ thực tế của doanh nghiệp. Nó cung cấp các khuôn mẫu (templates) chuẩn hóa để xây dựng các chuỗi nghiệp vụ (Sub-Chains), quản lý vòng đời của các thực thể (Entities), và đảm bảo tính nhất quán dữ liệu trên toàn hệ thống HieraChain.</p>
-<hr />
-<h2 id="cac-thanh-phan-cot-loi">Các thành phần cốt lõi</h2>
-<div class="grid cards">
+<h2 id="1-tong-quan">1. Tổng quan</h2>
+<p>Module <code>domains</code> kết nối hạ tầng chuỗi khối cốt lõi với logic nghiệp vụ doanh nghiệp. Module cung cấp các lớp cơ sở cho các Sub-Chain chuyên biệt, hàm tạo sự kiện chuẩn hóa, công cụ hỗ trợ vòng đời thực thể và tiện ích truy vết liên chuỗi.</p>
+<h2 id="2-cac-thanh-phan-cot-loi">2. Các thành phần cốt lõi</h2>
+<p>Các thành phần được tổ chức thành ba gói con dưới <code>hierachain/domains/</code>:</p>
+<h3 id="21-chuoi-nghiep-vu-chainsbase_chainpy-chainsdomain_chainpy">2.1 Chuỗi nghiệp vụ (<code>chains/base_chain.py</code>, <code>chains/domain_chain.py</code>)</h3>
 <ul>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.59 13.41c.41.39.41 1.03 0 1.42-.39.39-1.03.39-1.42 0a5.003 5.003 0 0 1 0-7.07l3.54-3.54a5.003 5.003 0 0 1 7.07 0 5.003 5.003 0 0 1 0 7.07l-1.49 1.49c.01-.82-.12-1.64-.4-2.42l.47-.48a2.98 2.98 0 0 0 0-4.24 2.98 2.98 0 0 0-4.24 0l-3.53 3.53a2.98 2.98 0 0 0 0 4.24m2.82-4.24c.39-.39 1.03-.39 1.42 0a5.003 5.003 0 0 1 0 7.07l-3.54 3.54a5.003 5.003 0 0 1-7.07 0 5.003 5.003 0 0 1 0-7.07l1.49-1.49c-.01.82.12 1.64.4 2.43l-.47.47a2.98 2.98 0 0 0 0 4.24 2.98 2.98 0 0 0 4.24 0l3.53-3.53a2.98 2.98 0 0 0 0-4.24.973.973 0 0 1 0-1.42"/></svg></span> <strong>Business Chains</strong></p>
-<hr />
-<p><strong>Files</strong>: <code>base_chain.py</code>, <code>domain_chain.py</code></p>
+<li><code>BaseChain</code>: Lớp cơ sở trừu tượng quản lý trạng thái chuỗi, sổ đăng ký thực thể và quy trình xử lý sự kiện.</li>
+<li><code>DomainChain</code>: Triển khai cụ thể hỗ trợ thao tác nghiệp vụ, kiểm tra tính hợp lệ của thao tác và trình quản lý giao dịch.</li>
+<li><code>chains/metrics.py</code>: Theo dõi chỉ số vận hành như tỷ lệ thành công và độ trễ thực thi.</li>
+</ul>
+<h3 id="22-su-kien-doanh-nghiep-eventsbase_eventpy-eventsevent_creatorspy">2.2 Sự kiện doanh nghiệp (<code>events/base_event.py</code>, <code>events/event_creators.py</code>)</h3>
 <ul>
-<li>Lớp trừu tượng cho các quy trình nghiệp vụ chuyên biệt.</li>
-<li>Tích hợp sẵn quản lý trạng thái thực thể (Registration, Status Update).</li>
-<li>Cơ chế <strong>Two-Phase Commit (2PC)</strong> cho giao dịch xuyên chuỗi.</li>
+<li><code>BaseEvent</code>: Lớp cơ sở cho các sự kiện nghiệp vụ có cấu trúc kèm kiểm tra lược đồ.</li>
+<li><code>event_creators.py</code>: Các hàm tiện ích tạo dữ liệu hợp lệ cho các thao tác: <code>create_quality_check</code>, <code>create_approval</code>, <code>create_resource_allocation</code> và <code>create_status_update</code>.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m0-5h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2m-2.47 8.06L15.47 10l-4.88 4.88-2.12-2.12-1.06 1.06L10.59 17z"/></svg></span> <strong>Enterprise Events</strong></p>
-<hr />
-<p><strong>Files</strong>: <code>base_event.py</code>, <code>domain_event.py</code></p>
+<h3 id="23-tien-ich-toan-ven-utilscross_chain_validatorpy-utilsentity_tracerpy">2.3 Tiện ích toàn vẹn (<code>utils/cross_chain_validator.py</code>, <code>utils/entity_tracer.py</code>)</h3>
 <ul>
-<li>Chuẩn hóa sự kiện doanh nghiệp: Approval, Quality Check, Compliance.</li>
-<li>Tự động xác thực cấu trúc sự kiện theo quy tắc Ledger.</li>
-<li>Factory functions để tạo sự kiện nhanh chóng và chính xác.</li>
+<li><code>CrossChainValidator</code>: Đánh giá tính nhất quán giữa các chuỗi con và kiểm tra thuật ngữ tiền mã hóa bị cấm.</li>
+<li><code>EntityTracer</code>: Tái hiện đầy đủ lịch sử của thực thể xuyên suốt các chuỗi trong hệ thống.</li>
+<li><code>utils/compliance_checker.py</code>: Kiểm tra tham số tuân thủ đối chiếu với quy định.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m5.86 10.31C16.23 21.22 14.28 22.45 12 23c-2.56-.61-4.7-2.07-6.42-4.37C3.86 16.34 3 13.8 3 11V5l9-4 9 4v6c0 2.39-.64 4.61-1.92 6.67l-2.91-2.91c.52-.79.83-1.76.83-2.76a5 5 0 0 0-5-5 5 5 0 0 0-5 5 5 5 0 0 0 5 5c1 0 1.97-.31 2.76-.83z"/></svg></span> <strong>Integrity Utils</strong></p>
-<hr />
-<p><strong>Files</strong>: <code>cross_chain_validator.py</code>, <code>entity_tracer.py</code></p>
-<ul>
-<li><strong>Cross-Chain Validator</strong>: Phát hiện mâu thuẫn logic giữa các chuỗi.</li>
-<li><strong>Entity Tracer</strong>: Truy vết toàn bộ lịch sử của một đối tượng trên mọi Sub-Chain.</li>
-<li><strong>Compliance Scanner</strong>: Quét và ngăn chặn thuật ngữ tiền mã hóa.</li>
-</ul>
-</li>
-</ul>
-</div>
-<hr />
-<h2 id="quan-ly-nghiep-vu-domain-management">Quản lý Nghiệp vụ (Domain Management)</h2>
-<h3 id="vong-oi-thuc-the-entity-lifecycle">Vòng đời thực thể (Entity Lifecycle)</h3>
-<p>Mọi <code>DomainChain</code> đều hỗ trợ quản lý trạng thái thực thể một cách tự động thông qua các trình xử lý sự kiện (Event Handlers) mặc định:</p>
+<h2 id="3-quan-ly-nghiep-vu-va-vong-oi-thuc-the">3. Quản lý nghiệp vụ và vòng đời thực thể</h2>
+<p><code>DomainChain</code> cung cấp sẵn các bước chuyển vòng đời:</p>
 <ol>
-<li><strong>Registration</strong>: Đăng ký thực thể mới vào chuỗi nghiệp vụ.</li>
-<li><strong>Status Tracking</strong>: Theo dõi trạng thái hiện tại (ví dụ: <code>In Production</code>, <code>Quality Passed</code>, <code>Shipped</code>).</li>
-<li><strong>Resource Allocation</strong>: Gắn kết tài nguyên (nhân lực, máy móc, nguyên liệu) với thực thể.</li>
-<li><strong>Compliance Monitoring</strong>: Ghi nhận các kết quả kiểm tra tuân thủ quy định.</li>
+<li>Đăng ký: Gắn định danh <code>entity_id</code> duy nhất với loại thực thể và thuộc tính metadata.</li>
+<li>Cập nhật trạng thái: Theo dõi các trạng thái tuần tự (<code>in_progress</code>, <code>quality_approved</code>, <code>completed</code>).</li>
+<li>Phân bổ tài nguyên: Ghi nhận thiết bị, nhân sự hoặc vị trí kho được phân công.</li>
+<li>Chỉ số vận hành: <code>OperationMetricsTracker</code> tính toán các chỉ số thực thi theo từng loại thao tác.</li>
 </ol>
-<h3 id="chi-so-van-hanh-operation-metrics">Chỉ số vận hành (Operation Metrics)</h3>
-<p>Hệ thống tự động theo dõi các KPI quan trọng thông qua <code>OperationMetricsTracker</code>:
-*   <strong>Success Rate</strong>: Tỷ lệ hoàn thành công việc thành công.
-*   <strong>Quality Pass Rate</strong>: Tỷ lệ đạt kiểm tra chất lượng.
-*   <strong>Approval Rate</strong>: Tỷ lệ phê duyệt từ cấp quản lý.
-*   <strong>Compliance Violations</strong>: Số lượng vi phạm quy trình được phát hiện.</p>
-<hr />
-<h2 id="co-che-giao-dich-hai-pha-two-phase-commit-2pc">Cơ chế Giao dịch Hai pha (Two-Phase Commit - 2PC)</h2>
-<p>Để đảm bảo tính nhất quán khi thực hiện các hoạt động ảnh hưởng đến nhiều chuỗi khác nhau, <code>DomainChain</code> tích hợp giao thức 2PC:</p>
+<h2 id="4-ieu-phoi-two-phase-commit-2pc">4. Điều phối Two-Phase Commit (2PC)</h2>
+<p>Các thao tác phối hợp giữa nhiều Sub-Chain thực thi qua giao thức Two-Phase Commit:</p>
 <pre class="mermaid"><code>sequenceDiagram
-    participant Source as Source Chain
-    participant Target as Target Chain
+    participant Source as Source Sub-Chain
+    participant Target as Target Sub-Chain
 
-    Note over Source, Target: Pha 1: Chuẩn bị (Prepare)
-    Source-&gt;&gt;Target: Prepare Transaction (ID, Payload)
-    Target--&gt;&gt;Source: Prepared OK / Reject
+    Note over Source, Target: Phase 1: Prepare
+    Source-&gt;&gt;Target: Prepare transaction (ID, payload)
+    Target--&gt;&gt;Source: Prepared OK or reject
 
-    Note over Source, Target: Pha 2: Thực thi (Commit/Rollback)
+    Note over Source, Target: Phase 2: Commit or rollback
     alt All chains prepared
-        Source-&gt;&gt;Target: Commit Transaction
-        Target-&gt;&gt;Target: Execute &amp; Finalize Block
+        Source-&gt;&gt;Target: Commit transaction
+        Target-&gt;&gt;Target: Finalize block
     else Failure detected
-        Source-&gt;&gt;Target: Rollback Transaction
-        Target-&gt;&gt;Target: Discard Pending Data
+        Source-&gt;&gt;Target: Rollback transaction
+        Target-&gt;&gt;Target: Discard pending state
     end</code></pre>
-<hr />
-<h2 id="kiem-soat-tuan-thu-va-bao-mat">Kiểm soát Tuân thủ và Bảo mật</h2>
-<h3 id="ngan-chan-thuat-ngu-tien-ma-hoa-cryptocurrency-terminology">Ngăn chặn Thuật ngữ Tiền mã hóa (Cryptocurrency Terminology)</h3>
-<p>Theo triết lý HieraChain, <code>CrossChainValidator</code> thực hiện quét nghiêm ngặt và đánh dấu các vi phạm nếu phát hiện thuật ngữ liên quan đến tiền mã hóa trong dữ liệu sự kiện:
-*   <strong>Danh sách cấm</strong>: <code>transaction</code>, <code>mining</code>, <code>coin</code>, <code>token</code>, <code>wallet</code>, <code>address</code>, <code>amount</code>, <code>fee</code>, v.v.
-*   <strong>Hành động</strong>: Ghi nhận vi phạm vào báo cáo tuân thủ hệ thống (<code>Ledger_compliance</code>).</p>
-<h3 id="truy-vet-xuyen-chuoi-cross-chain-tracing">Truy vết xuyên chuỗi (Cross-Chain Tracing)</h3>
-<p><code>EntityTracer</code> cho phép người quản trị tái hiện lại toàn bộ "hành trình" của một thực thể qua nhiều phòng ban/chuỗi khác nhau:</p>
+<h2 id="5-tuan-thu-va-truy-vet-lien-chuoi">5. Tuân thủ và truy vết liên chuỗi</h2>
+<h3 id="loc-thuat-ngu-tien-ma-hoa">Lọc thuật ngữ tiền mã hóa</h3>
+<p><code>CrossChainValidator</code> quét dữ liệu sự kiện để đảm bảo quy định về thuật ngữ doanh nghiệp. Nếu phát hiện các từ như <code>coin</code>, <code>token</code>, <code>mining</code> hoặc <code>wallet</code> trong dữ liệu nghiệp vụ, validator sẽ đánh dấu sự kiện vi phạm quy định.</p>
+<h3 id="truy-vet-thuc-the-lien-chuoi">Truy vết thực thể liên chuỗi</h3>
+<p><code>EntityTracer</code> tổng hợp các sự kiện của một thực thể trên toàn bộ Sub-Chain:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.domains.utils.entity_tracer</span><span class="w"> </span><span class="kn">import</span> <span class="n">EntityTracer</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">tracer</span> <span class="o">=</span> <span class="n">EntityTracer</span><span class="p">(</span><span class="n">hierarchy_manager</span><span class="p">)</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Lấy lịch sử thực thể "ORDER-789" trên toàn bộ hệ thống</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">trace_results</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="n">trace_entity_across_chains</span><span class="p">(</span><span class="s2">"ORDER-789"</span><span class="p">)</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">for</span> <span class="n">chain_name</span><span class="p">,</span> <span class="n">events</span> <span class="ow">in</span> <span class="n">trace_results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Hoạt động tại </span><span class="si">{</span><span class="n">chain_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)</span><span class="si">}</span><span class="s2"> sự kiện."</span><span class="p">)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">trace_results</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="n">trace_entity</span><span class="p">(</span><span class="s2">"ORDER-789"</span><span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total events found: </span><span class="si">{</span><span class="n">trace_results</span><span class="p">[</span><span class="s1">'total_events'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">for</span> <span class="n">chain_name</span><span class="p">,</span> <span class="n">summary</span> <span class="ow">in</span> <span class="n">trace_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"chain_summaries"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Activity at </span><span class="si">{</span><span class="n">chain_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">'total_events'</span><span class="p">]</span><span class="si">}</span><span class="s2"> events"</span><span class="p">)</span>
 </code></pre></div>
-<hr />
-<h2 id="cac-loai-su-kien-chuan-hoa">Các loại sự kiện chuẩn hóa</h2>
+<h2 id="6-cac-loai-thao-tac-chuan-hoa">6. Các loại thao tác chuẩn hóa</h2>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Loại sự kiện</th>
+<th style="text-align: left;">Loại thao tác</th>
 <th style="text-align: left;">Vai trò nghiệp vụ</th>
-<th style="text-align: left;">Các trường chi tiết (Details)</th>
+<th style="text-align: left;">Các trường bắt buộc</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><code>operation_start</code></td>
-<td style="text-align: left;">Bắt đầu quy trình</td>
-<td style="text-align: left;"><code>operation_type</code>, <code>operator_id</code></td>
-</tr>
-<tr>
 <td style="text-align: left;"><code>quality_check</code></td>
 <td style="text-align: left;">Kiểm tra chất lượng</td>
-<td style="text-align: left;"><code>check_type</code>, <code>check_result</code>, <code>inspector_id</code></td>
+<td style="text-align: left;"><code>check_type</code>, <code>check_result</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>approval</code></td>
 <td style="text-align: left;">Phê duyệt quản lý</td>
-<td style="text-align: left;"><code>approval_type</code>, <code>approval_status</code>, <code>approver_id</code></td>
+<td style="text-align: left;"><code>approval_type</code>, <code>approver_id</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>resource_allocation</code></td>
+<td style="text-align: left;">Phân bổ tài nguyên</td>
+<td style="text-align: left;"><code>resource_type</code>, <code>resource_id</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>compliance_check</code></td>
 <td style="text-align: left;">Kiểm tra tuân thủ</td>
-<td style="text-align: left;"><code>compliance_type</code>, <code>compliance_status</code>, <code>regulation_ref</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>resource_assigned</code></td>
-<td style="text-align: left;">Phân bổ tài nguyên</td>
-<td style="text-align: left;"><code>resource_id</code>, <code>resource_type</code>, <code>allocation_type</code></td>
+<td style="text-align: left;"><code>compliance_type</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
 <h2 id="lien-quan">Liên quan</h2>
 <ul>
-<li><a href=".././hierarchical/">Hệ thống Phân cấp (Hierarchical)</a></li>
-<li><a href=".././core/">Cấu trúc Blockchain Lõi (Core)</a></li>
-<li><a href="../../workflows/erp-integration/">Hướng dẫn Tích hợp ERP</a></li>
+<li><a href=".././hierarchical/">Hierarchical Module</a></li>
+<li><a href="../../how-to/write-domain-contracts/">Xây dựng Logic Miền Nghiệp vụ</a></li>
+<li><a href="../../workflows/erp-integration/">Tích hợp ERP</a></li>
 </ul>
 
 

@@ -1143,7 +1143,7 @@
   <a href="#main-security-pillars" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Main Security Pillars
+        Main security pillars
       </span>
     </span>
   </a>
@@ -1154,7 +1154,7 @@
   <a href="#system-integration" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        System Integration
+        System integration
       </span>
     </span>
   </a>
@@ -1165,7 +1165,7 @@
   <a href="#related-configuration-excerpt" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Related Configuration (excerpt)
+        Related configuration (excerpt)
       </span>
     </span>
   </a>
@@ -1176,7 +1176,7 @@
   <a href="#typical-flow" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Typical Flow
+        Typical flow
       </span>
     </span>
   </a>
@@ -4274,7 +4274,7 @@
   <a href="#main-security-pillars" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Main Security Pillars
+        Main security pillars
       </span>
     </span>
   </a>
@@ -4285,7 +4285,7 @@
   <a href="#system-integration" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        System Integration
+        System integration
       </span>
     </span>
   </a>
@@ -4296,7 +4296,7 @@
   <a href="#related-configuration-excerpt" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Related Configuration (excerpt)
+        Related configuration (excerpt)
       </span>
     </span>
   </a>
@@ -4307,7 +4307,7 @@
   <a href="#typical-flow" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Typical Flow
+        Typical flow
       </span>
     </span>
   </a>
@@ -4357,68 +4357,67 @@
 
 
 <h1 id="security-architecture">Security Architecture</h1>
-<p>This page describes the security mechanisms at the architectural level and how they integrate into HieraChain. The system follows strict enterprise security strategy: a multi-layered defense architecture spanning the entire application lifecycle.</p>
-<h2 id="main-security-pillars">Main Security Pillars</h2>
-<p>The defense architecture consists of 6 main coordinated streams:</p>
+<p>This page describes security mechanisms at the architectural level and how they fit into HieraChain. The system uses a layered defense that covers the whole application lifecycle.</p>
+<h2 id="main-security-pillars">Main security pillars</h2>
+<p>The defense is organized into six coordinated areas:</p>
 <ul>
 <li>
-<p><strong>Authorization &amp; Access Control</strong>: </p>
+<p>Authorization and access control:</p>
 <ul>
-<li><code>hierachain/security/{msp.py, identity.py}</code>: manages Organization, User, Role, and PKI Identity.</li>
-<li><code>hierachain/security/policy_engine.py</code>: permission control (ABAC).</li>
-<li><code>hierachain/security/verify/api_key_verifier.py</code>: API key authentication.</li>
+<li><code>hierachain/security/{msp.py, identity.py}</code> manages Organization, User, Role and PKI identity.</li>
+<li><code>hierachain/security/policy_engine.py</code> handles permission control (ABAC).</li>
+<li><code>hierachain/security/verify/api_key_verifier.py</code> handles API key authentication.</li>
 </ul>
 </li>
 <li>
-<p><strong>Lockdown &amp; Logging</strong>: </p>
+<p>Lockdown and logging:</p>
 <ul>
-<li><code>hierachain/security/secure_logging.py</code>: Tamper-evident log, PII data masking.</li>
-<li><code>hierachain/cluster/lockdown_protocol.py</code>: Emergency Lockdown with Quorum (contains <code>ClusterLockdownManager</code>).</li>
+<li><code>hierachain/security/secure_logging.py</code> provides tamper-evident logs and masks PII.</li>
+<li><code>hierachain/cluster/lockdown_protocol.py</code> provides emergency lockdown with quorum and contains <code>ClusterLockdownManager</code>.</li>
 </ul>
 </li>
 <li>
-<p><strong>Fault-tolerance &amp; Integrity</strong>: </p>
+<p>Fault tolerance and integrity:</p>
 <ul>
-<li><code>hierachain/security/resource_guard.py</code>: Steel shield against DoS/DDoS under high load.</li>
-<li><code>hierachain/security/integrity.py</code>: Signature checksum scanning of startup files.</li>
+<li><code>hierachain/error_mitigation/{rollback_manager.py, consensus_validator.py, resource_validator.py}</code> and <code>hierachain/cluster/lockdown_types.py</code> provide integrity checks, rollback snapshots and HMAC lockdown. There is no <code>security/resource_guard.py</code> or <code>security/integrity.py</code>; those paths were removed or never existed.</li>
 </ul>
 </li>
 <li>
-<p><strong>Risk Analyzer</strong>: </p>
+<p>Risk analyzer:</p>
 <ul>
-<li><code>hierachain/risk_management/risk_analyzer.py</code>: Z-score anomaly indicator tracking.</li>
-<li><code>hierachain/security/sanitization.py</code>: Input injection prevention.</li>
+<li><code>hierachain/risk_management/risk_analyzer.py</code> handles risk scoring and uses validators in <code>hierachain/error_mitigation/*</code>.</li>
+<li><code>hierachain/security/sanitization.py</code> helps prevent injection by neutralizing HTML/templates and enforcing a filename allowlist.</li>
 </ul>
 </li>
 <li>
-<p><strong>Encryption &amp; Keys</strong>: </p>
+<p>Encryption and keys:</p>
 <ul>
-<li><code>hierachain/security/{key_manager.py, key_provider.py, key_backup_manager.py, certificate.py}</code>: AES-GCM, Ed25519 and X.509 lifecycle for mTLS.</li>
+<li><code>hierachain/security/{key_manager.py, key_provider.py}</code> and <code>hierachain/security/msp.py</code> (<code>Certificate</code>/<code>CertificateAuthority</code>) provide Ed25519 support and <code>FileVaultProvider</code> (Fernet/PBKDF2, dev only). There is no <code>key_backup_manager.py</code> or <code>certificate.py</code> and no mTLS.</li>
 </ul>
 </li>
 <li>
-<p><strong>Decentralized Zero-Knowledge Proofs</strong>:</p>
+<p>Decentralized zero-knowledge proofs:</p>
 <ul>
-<li><code>hierachain/security/zk_prover.py</code> &amp; <code>hierachain/security/verify/zk_verifier.py</code>: Zero-Knowledge proof implementation for anonymous Sub-Chain data verification.</li>
+<li><code>hierachain/security/zk_prover.py</code> and <code>hierachain/security/verify/zk_verifier.py</code> implement zero-knowledge proofs for anonymous Sub-Chain data verification.</li>
 </ul>
 </li>
 </ul>
-<p>System security configuration is flexibly toggled at <code>hierachain/config/settings.py</code> (AUTH, CORS, HSTS, rate limit…).</p>
-<h2 id="system-integration">System Integration</h2>
+<p>System security configuration is toggled in <code>hierachain/config/settings.py</code> (AUTH, CORS, HSTS, rate limit and others).</p>
+<h2 id="system-integration">System integration</h2>
 <ul>
-<li>API Server (<code>hierachain/api/server.py</code>): inserts middleware (e.g. <code>ResourceGuardMiddleware</code>) and API key authentication if <code>AUTH_ENABLED=true</code>.</li>
-<li>Sub-Chain/Main Chain: all state-changing operations must pass authentication (when AUTH is enabled) and are logged for audit.</li>
-<li>Secure logging: <code>security/secure_logging.py</code>, <code>security/sanitization.py</code> reduce sensitive data leakage.</li>
+<li>API Server (<code>hierachain/api/server.py</code>) adds middleware (<code>add_payload_limit</code>, <code>add_rate_limit</code>, <code>add_cors_middleware</code> via <code>CORSMiddleware</code>) and API key authentication (<code>verify/api_key_verifier.py</code>) when <code>HRC_AUTH_ENABLED=true</code>. There is no <code>ResourceGuardMiddleware</code>.</li>
+<li>Sub-Chain/Main Chain: every state-changing operation must pass authentication when AUTH is enabled and is logged for audit.</li>
+<li>Secure logging: <code>security/secure_logging.py</code> and <code>security/sanitization.py</code> reduce leakage of sensitive data.</li>
 </ul>
-<h2 id="related-configuration-excerpt">Related Configuration (excerpt)</h2>
-<p>Variables in <code>settings.py</code>:</p>
+<h2 id="related-configuration-excerpt">Related configuration (excerpt)</h2>
+<p>Variables in <code>settings.py</code> (all use the <code>HRC_*</code> prefix):</p>
 <ul>
-<li><code>AUTH_ENABLED</code>, <code>API_KEY_LOCATION</code>, <code>API_KEY_NAME</code></li>
-<li><code>CORS_ALLOW_ALL</code>, <code>CORS_ORIGINS</code></li>
-<li><code>HSTS_ENABLED</code>, <code>HSTS_MAX_AGE</code></li>
-<li><code>RATE_LIMIT_ENABLED</code>, <code>RATE_LIMIT_REQUESTS_PER_MINUTE</code></li>
+<li><code>HRC_AUTH_ENABLED</code>, <code>HRC_API_KEY_LOCATION</code>, <code>HRC_API_KEY_NAME</code></li>
+<li><code>HRC_CORS_ALLOW_ALL</code>, <code>HRC_CORS_ORIGINS</code></li>
+<li><code>HRC_HSTS_ENABLED</code>, <code>HRC_HSTS_MAX_AGE</code></li>
+<li><code>HRC_RATE_LIMIT</code>, <code>HRC_RATE_LIMIT_RPM</code>, <code>HRC_RATE_LIMIT_BACKEND</code>, <code>HRC_TRUSTED_PROXIES</code> (there is no <code>RATE_LIMIT_REQUESTS_PER_MINUTE</code>)</li>
 </ul>
-<h2 id="typical-flow">Typical Flow</h2>
+<h2 id="typical-flow">Typical flow</h2>
 <pre class="mermaid"><code>sequenceDiagram
     participant Client
     participant Server as API Server
@@ -4452,8 +4451,8 @@
         end
     end</code></pre>
 <ol>
-<li>Request to API → (optional) ResourceGuard checks CPU/RAM → API key authentication → policy/role check → execute → audit log.</li>
-<li>Signature/ZK handling: events/transactions with signatures/ZK are verified by <code>verify/*</code> before acceptance.</li>
+<li>Request to API goes through an optional ResourceGuard CPU/RAM check, then API key authentication, then policy and role check, then execution, then audit logging.</li>
+<li>Events and transactions that carry signatures or ZK proofs are verified by <code>verify/*</code> before acceptance.</li>
 </ol>
 <h2 id="related">Related</h2>
 <ul>

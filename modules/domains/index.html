@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Provides business domain platform (Generic Domains): Entity lifecycle management, cross-chain tracing, and compliance control.">
+        <meta name="description" content="Business domain templates: DomainChain, standardized events, entity lifecycle tracking, and cross-chain tracing.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -2283,10 +2283,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#1-overview" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Overview
+        1. Overview
       </span>
     </span>
   </a>
@@ -2294,33 +2294,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#core-components" class="md-nav__link">
+  <a href="#2-core-components" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Core Components
+        2. Core components
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#domain-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Domain Management
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Domain Management">
+    <nav class="md-nav" aria-label="2. Core components">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#entity-lifecycle" class="md-nav__link">
+  <a href="#21-business-chains-chainsbase_chainpy-chainsdomain_chainpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Entity Lifecycle
+        2.1 Business chains (<code>chains/base_chain.py</code>, <code>chains/domain_chain.py</code>)
       </span>
     </span>
   </a>
@@ -2328,10 +2317,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#operation-metrics" class="md-nav__link">
+  <a href="#22-enterprise-events-eventsbase_eventpy-eventsevent_creatorspy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Operation Metrics
+        2.2 Enterprise events (<code>events/base_event.py</code>, <code>events/event_creators.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-integrity-utilities-utilscross_chain_validatorpy-utilsentity_tracerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Integrity utilities (<code>utils/cross_chain_validator.py</code>, <code>utils/entity_tracer.py</code>)
       </span>
     </span>
   </a>
@@ -2344,10 +2344,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#two-phase-commit-2pc-mechanism" class="md-nav__link">
+  <a href="#3-domain-management-and-entity-lifecycle" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Two-Phase Commit (2PC) Mechanism
+        3. Domain management and entity lifecycle
       </span>
     </span>
   </a>
@@ -2355,22 +2355,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#compliance-and-security-control" class="md-nav__link">
+  <a href="#4-two-phase-commit-2pc-coordination" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Compliance and Security Control
+        4. Two-Phase Commit (2PC) coordination
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Compliance and Security Control">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-compliance-and-cross-chain-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5. Compliance and cross-chain tracing
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Compliance and cross-chain tracing">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cryptocurrency-terminology-prevention" class="md-nav__link">
+  <a href="#cryptocurrency-term-filtration" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cryptocurrency Terminology Prevention
+        Cryptocurrency term filtration
       </span>
     </span>
   </a>
@@ -2378,10 +2389,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cross-chain-tracing" class="md-nav__link">
+  <a href="#cross-chain-entity-tracing" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cross-Chain Tracing
+        Cross-chain entity tracing
       </span>
     </span>
   </a>
@@ -2394,10 +2405,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#standardized-event-types" class="md-nav__link">
+  <a href="#6-standardized-operation-types" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Standardized Event Types
+        6. Standardized operation types
       </span>
     </span>
   </a>
@@ -4349,10 +4360,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#1-overview" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Overview
+        1. Overview
       </span>
     </span>
   </a>
@@ -4360,33 +4371,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#core-components" class="md-nav__link">
+  <a href="#2-core-components" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Core Components
+        2. Core components
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#domain-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Domain Management
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Domain Management">
+    <nav class="md-nav" aria-label="2. Core components">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#entity-lifecycle" class="md-nav__link">
+  <a href="#21-business-chains-chainsbase_chainpy-chainsdomain_chainpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Entity Lifecycle
+        2.1 Business chains (<code>chains/base_chain.py</code>, <code>chains/domain_chain.py</code>)
       </span>
     </span>
   </a>
@@ -4394,10 +4394,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#operation-metrics" class="md-nav__link">
+  <a href="#22-enterprise-events-eventsbase_eventpy-eventsevent_creatorspy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Operation Metrics
+        2.2 Enterprise events (<code>events/base_event.py</code>, <code>events/event_creators.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-integrity-utilities-utilscross_chain_validatorpy-utilsentity_tracerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Integrity utilities (<code>utils/cross_chain_validator.py</code>, <code>utils/entity_tracer.py</code>)
       </span>
     </span>
   </a>
@@ -4410,10 +4421,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#two-phase-commit-2pc-mechanism" class="md-nav__link">
+  <a href="#3-domain-management-and-entity-lifecycle" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Two-Phase Commit (2PC) Mechanism
+        3. Domain management and entity lifecycle
       </span>
     </span>
   </a>
@@ -4421,22 +4432,33 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#compliance-and-security-control" class="md-nav__link">
+  <a href="#4-two-phase-commit-2pc-coordination" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Compliance and Security Control
+        4. Two-Phase Commit (2PC) coordination
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Compliance and Security Control">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-compliance-and-cross-chain-tracing" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        5. Compliance and cross-chain tracing
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="5. Compliance and cross-chain tracing">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#cryptocurrency-terminology-prevention" class="md-nav__link">
+  <a href="#cryptocurrency-term-filtration" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cryptocurrency Terminology Prevention
+        Cryptocurrency term filtration
       </span>
     </span>
   </a>
@@ -4444,10 +4466,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#cross-chain-tracing" class="md-nav__link">
+  <a href="#cross-chain-entity-tracing" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cross-Chain Tracing
+        Cross-chain entity tracing
       </span>
     </span>
   </a>
@@ -4460,10 +4482,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#standardized-event-types" class="md-nav__link">
+  <a href="#6-standardized-operation-types" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Standardized Event Types
+        6. Standardized operation types
       </span>
     </span>
   </a>
@@ -4513,140 +4535,104 @@
 
 
 <h1 id="domains-module-hierachaindomains">Domains Module (<code>hierachain/domains/*</code>)</h1>
-<h2 id="overview">Overview</h2>
-<p>The <strong>Domains</strong> module is a critical intermediary layer connecting the core Blockchain infrastructure with real-world enterprise business processes. It provides standardized templates for building business chains (Sub-Chains), managing entity lifecycles, and ensuring data consistency across the entire HieraChain system.</p>
-<hr />
-<h2 id="core-components">Core Components</h2>
-<div class="grid cards">
+<h2 id="1-overview">1. Overview</h2>
+<p>The <code>domains</code> module bridges the core blockchain infrastructure with enterprise business logic. It provides base classes for domain-specific Sub-Chains, standardized event creators, entity lifecycle helpers, and cross-chain tracing tools.</p>
+<h2 id="2-core-components">2. Core components</h2>
+<p>Components are organized into three sub-packages under <code>hierachain/domains/</code>:</p>
+<h3 id="21-business-chains-chainsbase_chainpy-chainsdomain_chainpy">2.1 Business chains (<code>chains/base_chain.py</code>, <code>chains/domain_chain.py</code>)</h3>
 <ul>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.59 13.41c.41.39.41 1.03 0 1.42-.39.39-1.03.39-1.42 0a5.003 5.003 0 0 1 0-7.07l3.54-3.54a5.003 5.003 0 0 1 7.07 0 5.003 5.003 0 0 1 0 7.07l-1.49 1.49c.01-.82-.12-1.64-.4-2.42l.47-.48a2.98 2.98 0 0 0 0-4.24 2.98 2.98 0 0 0-4.24 0l-3.53 3.53a2.98 2.98 0 0 0 0 4.24m2.82-4.24c.39-.39 1.03-.39 1.42 0a5.003 5.003 0 0 1 0 7.07l-3.54 3.54a5.003 5.003 0 0 1-7.07 0 5.003 5.003 0 0 1 0-7.07l1.49-1.49c-.01.82.12 1.64.4 2.43l-.47.47a2.98 2.98 0 0 0 0 4.24 2.98 2.98 0 0 0 4.24 0l3.53-3.53a2.98 2.98 0 0 0 0-4.24.973.973 0 0 1 0-1.42"/></svg></span> <strong>Business Chains</strong></p>
-<hr />
-<p><strong>Files</strong>: <code>base_chain.py</code>, <code>domain_chain.py</code></p>
+<li><code>BaseChain</code>: Abstract base class managing chain states, entity registries, and event pipelines.</li>
+<li><code>DomainChain</code>: Concrete implementation supporting domain operations, operation validation, and transaction managers.</li>
+<li><code>chains/metrics.py</code>: Tracks operational metrics such as success rates and execution latencies.</li>
+</ul>
+<h3 id="22-enterprise-events-eventsbase_eventpy-eventsevent_creatorspy">2.2 Enterprise events (<code>events/base_event.py</code>, <code>events/event_creators.py</code>)</h3>
 <ul>
-<li>Abstract base class for specialized business processes.</li>
-<li>Built-in entity state management (Registration, Status Update).</li>
-<li><strong>Two-Phase Commit (2PC)</strong> mechanism for cross-chain transactions.</li>
+<li><code>BaseEvent</code>: Base class for structured business events with schema validation.</li>
+<li><code>event_creators.py</code>: Helper factories producing validated dictionaries for operations: <code>create_quality_check</code>, <code>create_approval</code>, <code>create_resource_allocation</code>, and <code>create_status_update</code>.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m0-5h-1V1h-2v2H8V1H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2m-2.47 8.06L15.47 10l-4.88 4.88-2.12-2.12-1.06 1.06L10.59 17z"/></svg></span> <strong>Enterprise Events</strong></p>
-<hr />
-<p><strong>Files</strong>: <code>base_event.py</code>, <code>domain_event.py</code></p>
+<h3 id="23-integrity-utilities-utilscross_chain_validatorpy-utilsentity_tracerpy">2.3 Integrity utilities (<code>utils/cross_chain_validator.py</code>, <code>utils/entity_tracer.py</code>)</h3>
 <ul>
-<li>Standardized enterprise events: Approval, Quality Check, Compliance.</li>
-<li>Automatic event structure validation according to Ledger rules.</li>
-<li>Factory functions for fast and accurate event creation.</li>
+<li><code>CrossChainValidator</code>: Evaluates consistency across sub-chains and scans for forbidden cryptocurrency terminology.</li>
+<li><code>EntityTracer</code>: Reconstructs complete entity histories across the chain hierarchy.</li>
+<li><code>utils/compliance_checker.py</code>: Validates compliance parameters against regulatory rules.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m5.86 10.31C16.23 21.22 14.28 22.45 12 23c-2.56-.61-4.7-2.07-6.42-4.37C3.86 16.34 3 13.8 3 11V5l9-4 9 4v6c0 2.39-.64 4.61-1.92 6.67l-2.91-2.91c.52-.79.83-1.76.83-2.76a5 5 0 0 0-5-5 5 5 0 0 0-5 5 5 5 0 0 0 5 5c1 0 1.97-.31 2.76-.83z"/></svg></span> <strong>Integrity Utils</strong></p>
-<hr />
-<p><strong>Files</strong>: <code>cross_chain_validator.py</code>, <code>entity_tracer.py</code></p>
-<ul>
-<li><strong>Cross-Chain Validator</strong>: Detects logical inconsistencies between chains.</li>
-<li><strong>Entity Tracer</strong>: Traces the complete history of an object across all Sub-Chains.</li>
-<li><strong>Compliance Scanner</strong>: Scans and blocks cryptocurrency terminology.</li>
-</ul>
-</li>
-</ul>
-</div>
-<hr />
-<h2 id="domain-management">Domain Management</h2>
-<h3 id="entity-lifecycle">Entity Lifecycle</h3>
-<p>Every <code>DomainChain</code> supports automatic entity state management through default Event Handlers:</p>
+<h2 id="3-domain-management-and-entity-lifecycle">3. Domain management and entity lifecycle</h2>
+<p><code>DomainChain</code> provides built-in lifecycle transitions:</p>
 <ol>
-<li><strong>Registration</strong>: Register a new entity in the business chain.</li>
-<li><strong>Status Tracking</strong>: Track current status (e.g., <code>In Production</code>, <code>Quality Passed</code>, <code>Shipped</code>).</li>
-<li><strong>Resource Allocation</strong>: Attach resources (personnel, machinery, materials) to an entity.</li>
-<li><strong>Compliance Monitoring</strong>: Record regulatory compliance check results.</li>
+<li>Registration: Links a unique <code>entity_id</code> to an entity type and metadata attributes.</li>
+<li>Status updates: Tracks sequential states (<code>in_progress</code>, <code>quality_approved</code>, <code>completed</code>).</li>
+<li>Resource allocation: Records assigned equipment, personnel, or storage locations.</li>
+<li>Operation metrics: <code>OperationMetricsTracker</code> calculates execution metrics per operation type.</li>
 </ol>
-<h3 id="operation-metrics">Operation Metrics</h3>
-<p>The system automatically tracks key KPIs through <code>OperationMetricsTracker</code>:
-*   <strong>Success Rate</strong>: Rate of successful task completion.
-*   <strong>Quality Pass Rate</strong>: Rate of passing quality inspections.
-*   <strong>Approval Rate</strong>: Rate of management approvals.
-*   <strong>Compliance Violations</strong>: Number of detected process violations.</p>
-<hr />
-<h2 id="two-phase-commit-2pc-mechanism">Two-Phase Commit (2PC) Mechanism</h2>
-<p>To ensure consistency when performing operations affecting multiple chains, <code>DomainChain</code> integrates the 2PC protocol:</p>
+<h2 id="4-two-phase-commit-2pc-coordination">4. Two-Phase Commit (2PC) coordination</h2>
+<p>Cross-chain operations coordinating multiple Sub-Chains execute through the Two-Phase Commit protocol:</p>
 <pre class="mermaid"><code>sequenceDiagram
-    participant Source as Source Chain
-    participant Target as Target Chain
+    participant Source as Source Sub-Chain
+    participant Target as Target Sub-Chain
 
     Note over Source, Target: Phase 1: Prepare
-    Source-&gt;&gt;Target: Prepare Transaction (ID, Payload)
-    Target--&gt;&gt;Source: Prepared OK / Reject
+    Source-&gt;&gt;Target: Prepare transaction (ID, payload)
+    Target--&gt;&gt;Source: Prepared OK or reject
 
-    Note over Source, Target: Phase 2: Commit/Rollback
+    Note over Source, Target: Phase 2: Commit or rollback
     alt All chains prepared
-        Source-&gt;&gt;Target: Commit Transaction
-        Target-&gt;&gt;Target: Execute &amp; Finalize Block
+        Source-&gt;&gt;Target: Commit transaction
+        Target-&gt;&gt;Target: Finalize block
     else Failure detected
-        Source-&gt;&gt;Target: Rollback Transaction
-        Target-&gt;&gt;Target: Discard Pending Data
+        Source-&gt;&gt;Target: Rollback transaction
+        Target-&gt;&gt;Target: Discard pending state
     end</code></pre>
-<hr />
-<h2 id="compliance-and-security-control">Compliance and Security Control</h2>
-<h3 id="cryptocurrency-terminology-prevention">Cryptocurrency Terminology Prevention</h3>
-<p>According to HieraChain's philosophy, <code>CrossChainValidator</code> performs strict scanning and flags violations if cryptocurrency-related terms are detected in event data:
-*   <strong>Banned list</strong>: <code>transaction</code>, <code>mining</code>, <code>coin</code>, <code>token</code>, <code>wallet</code>, <code>address</code>, <code>amount</code>, <code>fee</code>, etc.
-*   <strong>Action</strong>: Records violations in the system compliance report (<code>Ledger_compliance</code>).</p>
-<h3 id="cross-chain-tracing">Cross-Chain Tracing</h3>
-<p><code>EntityTracer</code> allows administrators to reconstruct the complete "journey" of an entity across multiple departments or chains:</p>
+<h2 id="5-compliance-and-cross-chain-tracing">5. Compliance and cross-chain tracing</h2>
+<h3 id="cryptocurrency-term-filtration">Cryptocurrency term filtration</h3>
+<p><code>CrossChainValidator</code> scans event payloads to enforce enterprise terminology rules. If terms such as <code>coin</code>, <code>token</code>, <code>mining</code>, or <code>wallet</code> appear in business payloads, the validator flags the event as non-compliant.</p>
+<h3 id="cross-chain-entity-tracing">Cross-chain entity tracing</h3>
+<p><code>EntityTracer</code> aggregates events for an entity across all Sub-Chains:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.domains.utils.entity_tracer</span><span class="w"> </span><span class="kn">import</span> <span class="n">EntityTracer</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">tracer</span> <span class="o">=</span> <span class="n">EntityTracer</span><span class="p">(</span><span class="n">hierarchy_manager</span><span class="p">)</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Get the history of entity "ORDER-789" across the entire system</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">trace_results</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="n">trace_entity_across_chains</span><span class="p">(</span><span class="s2">"ORDER-789"</span><span class="p">)</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">for</span> <span class="n">chain_name</span><span class="p">,</span> <span class="n">events</span> <span class="ow">in</span> <span class="n">trace_results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Activity at </span><span class="si">{</span><span class="n">chain_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">events</span><span class="p">)</span><span class="si">}</span><span class="s2"> events."</span><span class="p">)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">trace_results</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="n">trace_entity</span><span class="p">(</span><span class="s2">"ORDER-789"</span><span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Total events found: </span><span class="si">{</span><span class="n">trace_results</span><span class="p">[</span><span class="s1">'total_events'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="k">for</span> <span class="n">chain_name</span><span class="p">,</span> <span class="n">summary</span> <span class="ow">in</span> <span class="n">trace_results</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"chain_summaries"</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Activity at </span><span class="si">{</span><span class="n">chain_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">summary</span><span class="p">[</span><span class="s1">'total_events'</span><span class="p">]</span><span class="si">}</span><span class="s2"> events"</span><span class="p">)</span>
 </code></pre></div>
-<hr />
-<h2 id="standardized-event-types">Standardized Event Types</h2>
+<h2 id="6-standardized-operation-types">6. Standardized operation types</h2>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Event Type</th>
+<th style="text-align: left;">Operation Type</th>
 <th style="text-align: left;">Business Role</th>
-<th style="text-align: left;">Details Fields</th>
+<th style="text-align: left;">Required Fields</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><code>operation_start</code></td>
-<td style="text-align: left;">Start a process</td>
-<td style="text-align: left;"><code>operation_type</code>, <code>operator_id</code></td>
-</tr>
-<tr>
 <td style="text-align: left;"><code>quality_check</code></td>
 <td style="text-align: left;">Quality inspection</td>
-<td style="text-align: left;"><code>check_type</code>, <code>check_result</code>, <code>inspector_id</code></td>
+<td style="text-align: left;"><code>check_type</code>, <code>check_result</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>approval</code></td>
 <td style="text-align: left;">Management approval</td>
-<td style="text-align: left;"><code>approval_type</code>, <code>approval_status</code>, <code>approver_id</code></td>
+<td style="text-align: left;"><code>approval_type</code>, <code>approver_id</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>resource_allocation</code></td>
+<td style="text-align: left;">Resource assignment</td>
+<td style="text-align: left;"><code>resource_type</code>, <code>resource_id</code></td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>compliance_check</code></td>
-<td style="text-align: left;">Compliance check</td>
-<td style="text-align: left;"><code>compliance_type</code>, <code>compliance_status</code>, <code>regulation_ref</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>resource_assigned</code></td>
-<td style="text-align: left;">Resource allocation</td>
-<td style="text-align: left;"><code>resource_id</code>, <code>resource_type</code>, <code>allocation_type</code></td>
+<td style="text-align: left;">Regulatory verification</td>
+<td style="text-align: left;"><code>compliance_type</code></td>
 </tr>
 </tbody>
 </table>
-<hr />
 <h2 id="related">Related</h2>
 <ul>
-<li><a href=".././hierarchical/">Hierarchical System</a></li>
-<li><a href=".././core/">Core Blockchain Structure</a></li>
-<li><a href="../../workflows/erp-integration/">ERP Integration Guide</a></li>
+<li><a href=".././hierarchical/">Hierarchical Module</a></li>
+<li><a href="../../how-to/write-domain-contracts/">Writing Domain Logic</a></li>
+<li><a href="../../workflows/erp-integration/">ERP Integration</a></li>
 </ul>
 
 

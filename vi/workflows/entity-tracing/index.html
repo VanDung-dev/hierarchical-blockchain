@@ -89,7 +89,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#truy-vet-thuc-the-entity-tracing" class="md-skip">
+        <a href="#truy-vet-thuc-the" class="md-skip">
           Bỏ qua
         </a>
       
@@ -1585,10 +1585,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cau-truc-chi-muc-thuc-the-entity-index" class="md-nav__link">
+  <a href="#cau-truc-chi-muc-thuc-the" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cấu trúc Chỉ mục Thực thể (Entity Index)
+        Cấu trúc chỉ mục thực thể
       </span>
     </span>
   </a>
@@ -1596,10 +1596,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-buoc-thuc-hien-chi-tiet" class="md-nav__link">
+  <a href="#cac-buoc-chi-tiet" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các bước thực hiện chi tiết
+        Các bước chi tiết
       </span>
     </span>
   </a>
@@ -1618,10 +1618,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-class-method-quan-trong" class="md-nav__link">
+  <a href="#lop-va-phuong-thuc-chinh" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các Class &amp; Method quan trọng
+        Lớp và phương thức chính
       </span>
     </span>
   </a>
@@ -4337,10 +4337,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cau-truc-chi-muc-thuc-the-entity-index" class="md-nav__link">
+  <a href="#cau-truc-chi-muc-thuc-the" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cấu trúc Chỉ mục Thực thể (Entity Index)
+        Cấu trúc chỉ mục thực thể
       </span>
     </span>
   </a>
@@ -4348,10 +4348,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-buoc-thuc-hien-chi-tiet" class="md-nav__link">
+  <a href="#cac-buoc-chi-tiet" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các bước thực hiện chi tiết
+        Các bước chi tiết
       </span>
     </span>
   </a>
@@ -4370,10 +4370,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cac-class-method-quan-trong" class="md-nav__link">
+  <a href="#lop-va-phuong-thuc-chinh" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Các Class &amp; Method quan trọng
+        Lớp và phương thức chính
       </span>
     </span>
   </a>
@@ -4422,10 +4422,10 @@
   
 
 
-<h1 id="truy-vet-thuc-the-entity-tracing">Truy vết Thực thể (Entity Tracing)</h1>
+<h1 id="truy-vet-thuc-the">Truy vết thực thể</h1>
 <h2 id="tong-quan">Tổng quan</h2>
-<p>Vì cùng một thực thể vật lý (ví dụ: mã hàng hóa <code>SKU-001</code>, hợp đồng <code>C-2024</code>) có thể phát sinh các sự kiện trên nhiều Chuỗi con (Sub-Chain) khác nhau trong suốt vòng đời của nó, HieraChain cung cấp <strong>cơ chế truy vết thực thể liên chuỗi</strong> để tái cấu trúc lại một luồng kiểm toán đầy đủ, bất biến cho bất kỳ định danh thực thể <code>entity_id</code> nào.</p>
-<p>Mỗi Chuỗi con duy trì một chỉ mục trong bộ nhớ <code>entity_event_index</code> theo <code>entity_id</code>, giúp thực hiện <strong>truy vấn với độ phức tạp O(1)</strong> mà không cần quét toàn bộ dữ liệu chuỗi.</p>
+<p>Cùng một thực thể vật lý (ví dụ mã hàng <code>SKU-001</code>, hợp đồng <code>C-2024</code>) có thể phát sinh sự kiện trên nhiều Sub-Chain khác nhau trong vòng đời. HieraChain có cơ chế truy vết liên chuỗi để dựng lại lịch sử kiểm toán đầy đủ và bất biến cho bất kỳ <code>entity_id</code> nào.</p>
+<p>Mỗi Sub-Chain giữ chỉ mục trong bộ nhớ <code>entity_event_index</code> theo <code>entity_id</code>, cho phép truy vấn O(1) mà không cần quét toàn bộ chuỗi.</p>
 <hr />
 <h2 id="bieu-o-luong">Biểu đồ luồng</h2>
 <pre class="mermaid"><code>flowchart TB
@@ -4440,7 +4440,7 @@
     end
 
     AGG["🔀 Gom cụm kết quả\n{ chain_name: [events] }"]
-    SORT["🕒 Sắp xếp theo timestamp\ntrên toàn bộ các chuỗi"]
+    SORT["🕒 Sắp xếp theo timestamp\n trên toàn bộ các chuỗi"]
     OUT["📋 Dòng thời gian hoàn chỉnh của thực thể"]
 
     CLIENT --&gt; HM
@@ -4455,21 +4455,21 @@
     AGG --&gt; SORT --&gt; OUT</code></pre>
 <hr />
 <h2 id="vi-du-thuc-te">Ví dụ thực tế</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Thực thể (Entity): product-SKU-001 (Lô cảm biến công nghiệp)
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Thực thể: product-SKU-001 (lô cảm biến công nghiệp)
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Dòng thời gian tái cấu trúc liên chuỗi:
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>Dòng thời gian liên chuỗi:
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>────────────────────────────────────────────────────────
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>[supply_chain]  block 3   quality_check      → passed (Đạt)
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>[supply_chain]  block 7   packaging_complete → confirmed (Xác nhận)
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>[logistics]     block 2   shipment_dispatch  → warehouse A → B (Xuất kho)
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>[logistics]     block 9   customs_cleared    → port XYZ (Thông quan)
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>[finance]       block 4   invoice_issued     → INV-2024-0471 (Phát hóa đơn)
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>[finance]       block 12  payment_confirmed  → ref: WIRE-9821 (Xác nhận thanh toán)
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>[supply_chain]  block 3   quality_check      → passed
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>[supply_chain]  block 7   packaging_complete → confirmed
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>[logistics]     block 2   shipment_dispatch  → warehouse A → B
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>[logistics]     block 9   customs_cleared    → port XYZ
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>[finance]       block 4   invoice_issued     → INV-2024-0471
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>[finance]       block 12  payment_confirmed  → ref: WIRE-9821
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>────────────────────────────────────────────────────────
 </code></pre></div>
 <hr />
-<h2 id="cau-truc-chi-muc-thuc-the-entity-index">Cấu trúc Chỉ mục Thực thể (Entity Index)</h2>
-<p>Mỗi Chuỗi con duy trì một cấu trúc <code>entity_event_index</code> ngay trong bộ nhớ cache:</p>
+<h2 id="cau-truc-chi-muc-thuc-the">Cấu trúc chỉ mục thực thể</h2>
+<p>Mỗi Sub-Chain giữ <code>entity_event_index</code> trong bộ nhớ:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">entity_event_index</span> <span class="o">=</span> <span class="p">{</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="s2">"product-SKU-001"</span><span class="p">:</span> <span class="p">[</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>        <span class="p">{</span><span class="s2">"block_index"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"event"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"event"</span><span class="p">:</span> <span class="s2">"quality_check"</span><span class="p">,</span> <span class="s2">"timestamp"</span><span class="p">:</span> <span class="mf">1714000000.0</span><span class="p">,</span> <span class="o">...</span><span class="p">}},</span>
@@ -4477,9 +4477,9 @@
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="p">]</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="p">}</span>
 </code></pre></div>
-<p>Các sự kiện được đánh chỉ mục ngay khi ghi khối (<code>add_block()</code>), do đó tốc độ đọc trên mỗi chuỗi là O(1). Việc tổng hợp kết quả trên n chuỗi có độ phức tạp O(n).</p>
+<p>Sự kiện được đánh chỉ mục khi ghi khối (<code>add_block()</code>), nên tốc độ đọc trên mỗi chuỗi là O(1). Tổng hợp trên n chuỗi có độ phức tạp O(n).</p>
 <hr />
-<h2 id="cac-buoc-thuc-hien-chi-tiet">Các bước thực hiện chi tiết</h2>
+<h2 id="cac-buoc-chi-tiet">Các bước chi tiết</h2>
 <table>
 <thead>
 <tr>
@@ -4490,27 +4490,27 @@
 <tbody>
 <tr>
 <td style="text-align: left;"><strong>1. Gọi truy vết</strong></td>
-<td style="text-align: left;">Client gọi hàm <code>HierarchyManager.trace_entity_across_chains(entity_id)</code>.</td>
+<td style="text-align: left;">Client gọi <code>HierarchyManager.trace_entity_across_chains(entity_id)</code>.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>2. Truy vấn song song</strong></td>
-<td style="text-align: left;"><code>HierarchyManager</code> truy vấn đồng thời tới tất cả các Chuỗi con đã đăng ký trong mạng lưới.</td>
+<td style="text-align: left;"><code>HierarchyManager</code> truy vấn đồng thời tới mọi Sub-Chain đã đăng ký.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>3. Đọc dữ liệu đơn chuỗi</strong></td>
-<td style="text-align: left;">Mỗi Chuỗi con gọi hàm <code>get_entity_history(entity_id)</code> $\rightarrow$ đọc dữ liệu cực nhanh O(1) từ bộ chỉ mục.</td>
+<td style="text-align: left;"><strong>3. Đọc trên một chuỗi</strong></td>
+<td style="text-align: left;">Mỗi Sub-Chain gọi <code>get_entity_history(entity_id)</code> và đọc O(1) từ chỉ mục.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>4. Gom cụm</strong></td>
-<td style="text-align: left;">Kết quả được gom về dưới dạng cấu trúc dictionary <code>{ chain_name: [event_list] }</code>.</td>
+<td style="text-align: left;">Kết quả gom về dạng <code>{ chain_name: [event_list] }</code>.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>5. Sắp xếp</strong></td>
-<td style="text-align: left;">Các sự kiện được sắp xếp thứ tự theo dấu thời gian (<code>timestamp</code>) để tạo lập dòng lịch sử chuẩn xác.</td>
+<td style="text-align: left;">Sự kiện được sắp xếp theo <code>timestamp</code> để tạo dòng lịch sử chính xác.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><strong>6. Trả về</strong></td>
-<td style="text-align: left;">Trả lại toàn bộ lịch sử vòng đời sự kiện đã sắp xếp cho bên yêu cầu.</td>
+<td style="text-align: left;">Trả lại lịch sử vòng đời đã sắp xếp cho bên gọi.</td>
 </tr>
 </tbody>
 </table>
@@ -4525,49 +4525,49 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;">Không tìm thấy thực thể trên chuỗi nào</td>
-<td style="text-align: left;">Trả về từ điển rỗng <code>{}</code></td>
+<td style="text-align: left;">Không tìm thấy thực thể ở chuỗi nào</td>
+<td style="text-align: left;">Trả về <code>{}</code> rỗng</td>
 </tr>
 <tr>
-<td style="text-align: left;">Có Chuỗi con ngoại tuyến hoặc lỗi</td>
-<td style="text-align: left;">Kết quả của chuỗi đó được coi là <code>[]</code>; hệ thống vẫn tiếp tục đọc từ các chuỗi khác</td>
+<td style="text-align: left;">Sub-Chain offline hoặc lỗi</td>
+<td style="text-align: left;">Kết quả của chuỗi đó là <code>[]</code>; tiếp tục đọc các chuỗi còn lại</td>
 </tr>
 <tr>
-<td style="text-align: left;">Chỉ mục thực thể chưa xây dựng xong (khi khởi động)</td>
-<td style="text-align: left;">Tự động chuyển cấu hình sang quét toàn bộ chuỗi (full scan); ghi nhật ký cảnh báo</td>
+<td style="text-align: left;">Chỉ mục chưa dựng xong khi khởi động</td>
+<td style="text-align: left;">Chuyển sang quét toàn bộ chuỗi (full scan); ghi log cảnh báo</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="cac-class-method-quan-trong">Các Class &amp; Method quan trọng</h2>
+<h2 id="lop-va-phuong-thuc-chinh">Lớp và phương thức chính</h2>
 <table>
 <thead>
 <tr>
 <th style="text-align: left;">Bước</th>
-<th style="text-align: left;">Class / Method</th>
-<th style="text-align: left;">File</th>
+<th style="text-align: left;">Lớp / Phương thức</th>
+<th style="text-align: left;">Tệp</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align: left;">Điểm gọi chính</td>
 <td style="text-align: left;"><code>HierarchyManager.trace_entity_across_chains()</code></td>
-<td style="text-align: left;"><code>hierarchical/hierarchy_manager.py</code></td>
+<td style="text-align: left;"><code>hierarchical/hierarchy_manager/base.py</code></td>
 </tr>
 <tr>
-<td style="text-align: left;">Truy vết đơn chuỗi</td>
+<td style="text-align: left;">Truy vết trên một chuỗi</td>
 <td style="text-align: left;"><code>SubChain.get_entity_history()</code></td>
-<td style="text-align: left;"><code>hierarchical/sub_chain.py</code></td>
+<td style="text-align: left;"><code>hierarchical/sub_chain/base.py</code></td>
 </tr>
 <tr>
 <td style="text-align: left;">Bộ truy vết nâng cao</td>
 <td style="text-align: left;"><code>EntityTracer.trace_entity()</code></td>
-<td style="text-align: left;"><code>domains/generic/utils/entity_tracer.py</code></td>
+<td style="text-align: left;"><code>domains/utils/entity_tracer.py</code></td>
 </tr>
 <tr>
 <td style="text-align: left;">Cập nhật chỉ mục</td>
 <td style="text-align: left;"><code>SubChain._update_event_statistics()</code></td>
-<td style="text-align: left;"><code>hierarchical/sub_chain.py</code></td>
+<td style="text-align: left;"><code>hierarchical/sub_chain/base.py</code></td>
 </tr>
 <tr>
 <td style="text-align: left;">REST API</td>
@@ -4579,8 +4579,8 @@
 <hr />
 <h2 id="lien-quan">Liên quan</h2>
 <ul>
-<li><a href=".././integrity-validation/">Xác thực Tính toàn vẹn</a>: Xác thực độ tin cậy của các chuỗi đang được thực hiện truy vết</li>
-<li><a href=".././erp-integration/">Đồng bộ Tích hợp ERP</a>: Các sự kiện ERP là dữ liệu chính được theo dõi qua cơ chế này</li>
+<li><a href=".././integrity-validation/">Xác thực Tính toàn vẹn</a>: xác thực độ tin cậy của chuỗi đang truy vết</li>
+<li><a href=".././erp-integration/">Đồng bộ Tích hợp ERP</a>: sự kiện ERP là dữ liệu chính được theo dõi qua cơ chế này</li>
 </ul>
 
 

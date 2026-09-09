@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="HieraChain's multi-tier architecture: Main Chain, Sub-Chains, and Hierarchy Manager — The foundation for enterprise scalability and security.">
+        <meta name="description" content="Two-tier architecture: MainChain, SubChain, and HierarchyManager for enterprise scalability and data isolation.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -1964,10 +1964,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#1-overview" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Overview
+        1. Overview
       </span>
     </span>
   </a>
@@ -1975,44 +1975,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#foundational-components" class="md-nav__link">
+  <a href="#2-foundational-components" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Foundational Components
+        2. Foundational components
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#data-flow-architecture-system-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Data Flow Architecture (System Workflow)
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#scalability-infrastructure-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Scalability &amp; Infrastructure Management
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Scalability &amp; Infrastructure Management">
+    <nav class="md-nav" aria-label="2. Foundational components">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-sub-chain-rebalancer-rebalancerpy" class="md-nav__link">
+  <a href="#21-main-chain-main_chainbasepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Sub-Chain Rebalancer (<code>rebalancer.py</code>)
+        2.1 Main Chain (<code>main_chain/base.py</code>)
       </span>
     </span>
   </a>
@@ -2020,10 +1998,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-kubernetes-namespace-manager-k8s_namespace_managerpy" class="md-nav__link">
+  <a href="#22-sub-chain-sub_chainbasepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Kubernetes Namespace Manager (<code>k8s_namespace_manager.py</code>)
+        2.2 Sub-Chain (<code>sub_chain/base.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-hierarchy-manager-hierarchy_managerbasepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Hierarchy Manager (<code>hierarchy_manager/base.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-multi-organization-channels-and-private-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4 Multi-organization, channels, and private data
       </span>
     </span>
   </a>
@@ -2036,10 +2036,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cross-chain-transactions" class="md-nav__link">
+  <a href="#3-data-flow" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cross-Chain Transactions
+        3. Data flow
       </span>
     </span>
   </a>
@@ -2047,22 +2047,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#advanced-security-and-privacy" class="md-nav__link">
+  <a href="#4-scalability-and-infrastructure-management" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Advanced Security and Privacy
+        4. Scalability and infrastructure management
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Advanced Security and Privacy">
+    <nav class="md-nav" aria-label="4. Scalability and infrastructure management">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#zero-disclosure-verification-zk-proofs" class="md-nav__link">
+  <a href="#sub-chain-rebalancer-rebalancerrebalancerpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Zero-Disclosure Verification (ZK Proofs)
+        Sub-chain rebalancer (<code>rebalancer/rebalancer.py</code>)
       </span>
     </span>
   </a>
@@ -2070,10 +2070,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#private-data-collections" class="md-nav__link">
+  <a href="#kubernetes-namespace-isolation-k8s_namespace_manageroperationspy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Private Data Collections
+        Kubernetes namespace isolation (<code>k8s_namespace_manager/operations.py</code>)
       </span>
     </span>
   </a>
@@ -2086,41 +2086,24 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-public-api" class="md-nav__link">
+  <a href="#5-cross-chain-operations-2pc" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Public API
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Key Public API">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#hierarchymanager" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        HierarchyManager
+        5. Cross-chain operations (2PC)
       </span>
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#mainchain" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#6-privacy-and-zero-knowledge-verification" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        MainChain
+        6. Privacy and zero-knowledge verification
       </span>
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -4388,10 +4371,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#1-overview" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Overview
+        1. Overview
       </span>
     </span>
   </a>
@@ -4399,44 +4382,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#foundational-components" class="md-nav__link">
+  <a href="#2-foundational-components" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Foundational Components
+        2. Foundational components
       </span>
     </span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#data-flow-architecture-system-workflow" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Data Flow Architecture (System Workflow)
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#scalability-infrastructure-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Scalability &amp; Infrastructure Management
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Scalability &amp; Infrastructure Management">
+    <nav class="md-nav" aria-label="2. Foundational components">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-sub-chain-rebalancer-rebalancerpy" class="md-nav__link">
+  <a href="#21-main-chain-main_chainbasepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Sub-Chain Rebalancer (<code>rebalancer.py</code>)
+        2.1 Main Chain (<code>main_chain/base.py</code>)
       </span>
     </span>
   </a>
@@ -4444,10 +4405,32 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-kubernetes-namespace-manager-k8s_namespace_managerpy" class="md-nav__link">
+  <a href="#22-sub-chain-sub_chainbasepy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Kubernetes Namespace Manager (<code>k8s_namespace_manager.py</code>)
+        2.2 Sub-Chain (<code>sub_chain/base.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-hierarchy-manager-hierarchy_managerbasepy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Hierarchy Manager (<code>hierarchy_manager/base.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-multi-organization-channels-and-private-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4 Multi-organization, channels, and private data
       </span>
     </span>
   </a>
@@ -4460,10 +4443,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#cross-chain-transactions" class="md-nav__link">
+  <a href="#3-data-flow" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Cross-Chain Transactions
+        3. Data flow
       </span>
     </span>
   </a>
@@ -4471,22 +4454,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#advanced-security-and-privacy" class="md-nav__link">
+  <a href="#4-scalability-and-infrastructure-management" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Advanced Security and Privacy
+        4. Scalability and infrastructure management
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Advanced Security and Privacy">
+    <nav class="md-nav" aria-label="4. Scalability and infrastructure management">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#zero-disclosure-verification-zk-proofs" class="md-nav__link">
+  <a href="#sub-chain-rebalancer-rebalancerrebalancerpy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Zero-Disclosure Verification (ZK Proofs)
+        Sub-chain rebalancer (<code>rebalancer/rebalancer.py</code>)
       </span>
     </span>
   </a>
@@ -4494,10 +4477,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#private-data-collections" class="md-nav__link">
+  <a href="#kubernetes-namespace-isolation-k8s_namespace_manageroperationspy" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Private Data Collections
+        Kubernetes namespace isolation (<code>k8s_namespace_manager/operations.py</code>)
       </span>
     </span>
   </a>
@@ -4510,41 +4493,24 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-public-api" class="md-nav__link">
+  <a href="#5-cross-chain-operations-2pc" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Public API
-      </span>
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Key Public API">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#hierarchymanager" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        HierarchyManager
+        5. Cross-chain operations (2PC)
       </span>
     </span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#mainchain" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#6-privacy-and-zero-knowledge-verification" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        MainChain
+        6. Privacy and zero-knowledge verification
       </span>
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -4591,63 +4557,42 @@
 
 
 <h1 id="hierarchical-module-hierachainhierarchical">Hierarchical Module (<code>hierachain/hierarchical/*</code>)</h1>
-<h2 id="overview">Overview</h2>
-<p>The <strong>Hierarchical</strong> module is the "heart" of HieraChain's architecture, implementing the Two-Tier Blockchain model designed specifically for enterprise structures. It allows separating detailed business data (at Sub-Chains) from global verification proofs (at Main Chain), ensuring privacy, high performance, and unlimited scalability.</p>
-<hr />
-<h2 id="foundational-components">Foundational Components</h2>
-<div class="grid cards">
+<h2 id="1-overview">1. Overview</h2>
+<p>The <code>hierarchical</code> module implements the two-tier ledger architecture of HieraChain. Sub-Chains process domain business events and store detailed state locally. The Main Chain stores cryptographic proofs and root hashes submitted by Sub-Chains. This separation maintains business data privacy, keeps Main Chain verification lightweight, and scales horizontally by partitioning load across chains.</p>
+<h2 id="2-foundational-components">2. Foundational components</h2>
+<p>Components reside in dedicated packages under <code>hierachain/hierarchical/</code>.</p>
+<h3 id="21-main-chain-main_chainbasepy">2.1 Main Chain (<code>main_chain/base.py</code>)</h3>
 <ul>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.59 13.41c.41.39.41 1.03 0 1.42-.39.39-1.03.39-1.42 0a5.003 5.003 0 0 1 0-7.07l3.54-3.54a5.003 5.003 0 0 1 7.07 0 5.003 5.003 0 0 1 0 7.07l-1.49 1.49c.01-.82-.12-1.64-.4-2.42l.47-.48a2.98 2.98 0 0 0 0-4.24 2.98 2.98 0 0 0-4.24 0l-3.53 3.53a2.98 2.98 0 0 0 0 4.24m2.82-4.24c.39-.39 1.03-.39 1.42 0a5.003 5.003 0 0 1 0 7.07l-3.54 3.54a5.003 5.003 0 0 1-7.07 0 5.003 5.003 0 0 1 0-7.07l1.49-1.49c-.01.82.12 1.64.4 2.43l-.47.47a2.98 2.98 0 0 0 0 4.24 2.98 2.98 0 0 0 4.24 0l3.53-3.53a2.98 2.98 0 0 0 0-4.24.973.973 0 0 1 0-1.42"/></svg></span> <strong>Main Chain (Root of Trust)</strong></p>
-<hr />
-<p><strong>File</strong>: <code>main_chain.py</code></p>
+<li>Stores cryptographic block proofs rather than raw business event records.</li>
+<li>Verifies state transitions using zero-knowledge proofs when enabled.</li>
+<li>Validates cross-chain anchors under consortium or authority consensus.</li>
+</ul>
+<h3 id="22-sub-chain-sub_chainbasepy">2.2 Sub-Chain (<code>sub_chain/base.py</code>)</h3>
 <ul>
-<li>Acts as the "CEO" of the system, storing only Proofs.</li>
-<li>Integrates <strong>Zero-Knowledge Proof (ZKP)</strong> for verification without data disclosure.</li>
-<li>Uses PoA/PoF consensus for optimized enterprise validation speed.</li>
+<li>Operates dedicated business workflows for a specific domain or department.</li>
+<li>Packages business events into blocks and calculates Merkle roots.</li>
+<li>Generates periodic state proofs for submission to the Main Chain.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14c-3.36 0-4.46 1.35-4.82 2.24C9.25 16.7 10 17.76 10 19a3 3 0 0 1-3 3 3 3 0 0 1-3-3c0-1.31.83-2.42 2-2.83V7.83A2.99 2.99 0 0 1 4 5a3 3 0 0 1 3-3 3 3 0 0 1 3 3c0 1.31-.83 2.42-2 2.83v5.29c.88-.65 2.16-1.12 4-1.12 2.67 0 3.56-1.34 3.85-2.23A3.01 3.01 0 0 1 14 7a3 3 0 0 1 3-3 3 3 0 0 1 3 3c0 1.34-.88 2.5-2.09 2.86C17.65 11.29 16.68 14 13 14m-6 4a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1M7 4a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1m10 2a1 1 0 0 0-1 1 1 1 0 0 0 1 1 1 1 0 0 0 1-1 1 1 0 0 0-1-1"/></svg></span> <strong>Sub-Chain (Execution Layer)</strong></p>
-<hr />
-<p><strong>File</strong>: <code>sub_chain.py</code></p>
+<h3 id="23-hierarchy-manager-hierarchy_managerbasepy">2.3 Hierarchy Manager (<code>hierarchy_manager/base.py</code>)</h3>
 <ul>
-<li>Each Sub-Chain serves a business domain or a specific department.</li>
-<li>Executes business logic, packages Blocks, and generates periodic Proofs.</li>
-<li>Ensures detailed domain data is always locally isolated.</li>
+<li>Coordinates chain lifecycles, cross-chain verification, and multi-organization setups.</li>
+<li>Manages communication channels, private data collections, and two-phase commit (2PC) transactions.</li>
+<li>Compiles system-wide integrity reports across all registered chains.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 3h6v4H3zm12 7h6v4h-6zm0 7h6v4h-6zm-2-4H7v5h6v2H5V9h2v2h6z"/></svg></span> <strong>Hierarchy Manager (Orchestrator)</strong></p>
-<hr />
-<p><strong>File</strong>: <code>hierarchy_manager.py</code></p>
+<h3 id="24-multi-organization-channels-and-private-data">2.4 Multi-organization, channels, and private data</h3>
 <ul>
-<li>Orchestrates the entire lifecycle of chains and organizations in the network.</li>
-<li>Manages Channels, private data, and cross-chain transactions.</li>
-<li>Provides comprehensive reports on system-wide integrity.</li>
+<li><code>multi_org.py</code>: Manages member organizations, certificates, and MSP identities.</li>
+<li><code>channel/manager.py</code>: Partitions communication between specific groups of organizations.</li>
+<li><code>private_data.py</code>: Stores confidential payloads off-chain while anchoring cryptographic hashes on-chain.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5zm0 4a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m5.13 12A9.7 9.7 0 0 1 12 20.92 9.7 9.7 0 0 1 6.87 17c-.34-.5-.63-1-.87-1.53 0-1.65 2.71-3 6-3s6 1.32 6 3c-.24.53-.53 1.03-.87 1.53"/></svg></span> <strong>Multi-Org &amp; Channels</strong></p>
-<hr />
-<p><strong>Files</strong>: <code>multi_org.py</code>, <code>channel.py</code>, <code>private_data.py</code></p>
-<ul>
-<li><strong>Multi-Org</strong>: Manages multiple participating organizations with their own MSP configurations.</li>
-<li><strong>Channels</strong>: Completely isolates data between specific groups of organizations.</li>
-<li><strong>Private Data</strong>: Stores sensitive data off-chain, sharing only hash values.</li>
-</ul>
-</li>
-</ul>
-</div>
-<hr />
-<h2 id="data-flow-architecture-system-workflow">Data Flow Architecture (System Workflow)</h2>
-<p>The hierarchical model ensures that detailed data never "leaks" to the global verification layer:</p>
+<h2 id="3-data-flow">3. Data flow</h2>
+<p>Detailed data remains on Sub-Chains. Only Merkle roots and cryptographic proofs anchor to the Main Chain:</p>
 <pre class="mermaid"><code>graph TD
     subgraph "Sub-Chain (Logistics/Finance/...)"
         A[Business Events] --&gt; B[Ordering Service]
         B --&gt; C[Block Builder]
         C --&gt; D[(Local DB)]
-        C --&gt; E[Merkle Tree/ZK Prover]
+        C --&gt; E[Merkle Tree / ZK Prover]
     end
 
     subgraph "Main Chain (Root Authority)"
@@ -4664,56 +4609,36 @@
     end
 
     I -. "Coordinate" .-&gt; A</code></pre>
-<hr />
-<h2 id="scalability-infrastructure-management">Scalability &amp; Infrastructure Management</h2>
-<h3 id="1-sub-chain-rebalancer-rebalancerpy">1. Sub-Chain Rebalancer (<code>rebalancer.py</code>)</h3>
-<p>Automatically monitors system load and performs Sub-Chain splitting when transaction volume exceeds the threshold (EPS Threshold), ensuring performance does not bottleneck:</p>
+<h2 id="4-scalability-and-infrastructure-management">4. Scalability and infrastructure management</h2>
+<h3 id="sub-chain-rebalancer-rebalancerrebalancerpy">Sub-chain rebalancer (<code>rebalancer/rebalancer.py</code>)</h3>
+<p>The rebalancer monitors throughput and splits heavily loaded Sub-Chains when events-per-second (EPS) exceed operational thresholds:</p>
 <ul>
-<li><strong>Strategies</strong>: Hash-based, Time-based, Load-based.</li>
-<li><strong>Mechanism</strong>: Smoothly migrates entities to new chains.</li>
+<li>Strategies: Hash-based, time-based, or volume-based partitioning.</li>
+<li>Migration: Relocates entity states to daughter chains without service interruption.</li>
 </ul>
-<h3 id="2-kubernetes-namespace-manager-k8s_namespace_managerpy">2. Kubernetes Namespace Manager (<code>k8s_namespace_manager.py</code>)</h3>
-<p>Integrates directly with Cloud-Native infrastructure to completely isolate resources (CPU, RAM, Network) of each Sub-Chain in a separate Namespace.</p>
-<hr />
-<h2 id="cross-chain-transactions">Cross-Chain Transactions</h2>
-<p>HieraChain uses the <strong>Two-Phase Commit (2PC)</strong> protocol via <code>CrossChainTransactionManager</code> to ensure atomicity when performing operations involving multiple Sub-Chains:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Example of initiating a cross-chain transaction</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">tx_id</span> <span class="o">=</span> <span class="n">hierarchy_manager</span><span class="o">.</span><span class="n">initiate_cross_chain_transaction</span><span class="p">(</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">source_chain_name</span><span class="o">=</span><span class="s2">"supply_chain"</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">dest_chain_name</span><span class="o">=</span><span class="s2">"finance_chain"</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">payload</span><span class="o">=</span><span class="p">{</span><span class="s2">"asset_id"</span><span class="p">:</span> <span class="s2">"INV-100"</span><span class="p">,</span> <span class="s2">"action"</span><span class="p">:</span> <span class="s2">"settle_payment"</span><span class="p">}</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span>
+<h3 id="kubernetes-namespace-isolation-k8s_namespace_manageroperationspy">Kubernetes namespace isolation (<code>k8s_namespace_manager/operations.py</code>)</h3>
+<p>Maps each Sub-Chain into a dedicated Kubernetes namespace, enforcing resource quotas and network policies per domain.</p>
+<h2 id="5-cross-chain-operations-2pc">5. Cross-chain operations (2PC)</h2>
+<p><code>CrossChainTransactionManager</code> in <code>hierachain/hierarchical/transaction_manager.py</code> implements a two-phase commit protocol to maintain atomicity across Sub-Chains:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.hierarchical.hierarchy_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">HierarchyManager</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">manager</span> <span class="o">=</span> <span class="n">HierarchyManager</span><span class="p">()</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">tx_id</span> <span class="o">=</span> <span class="n">manager</span><span class="o">.</span><span class="n">initiate_cross_chain_transaction</span><span class="p">(</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">source_chain_name</span><span class="o">=</span><span class="s2">"supply_chain"</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">dest_chain_name</span><span class="o">=</span><span class="s2">"finance_chain"</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">payload</span><span class="o">=</span><span class="p">{</span><span class="s2">"asset_id"</span><span class="p">:</span> <span class="s2">"INV-100"</span><span class="p">,</span> <span class="s2">"action"</span><span class="p">:</span> <span class="s2">"settle_payment"</span><span class="p">}</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">)</span>
 </code></pre></div>
-<hr />
-<h2 id="advanced-security-and-privacy">Advanced Security and Privacy</h2>
-<h3 id="zero-disclosure-verification-zk-proofs">Zero-Disclosure Verification (ZK Proofs)</h3>
-<p>Main Chain supports strict verification mode, requiring every Sub-Chain to submit ZK proofs. This proves that:</p>
-<ol>
-<li>The new Sub-Chain state is a valid result from the previous state.</li>
-<li>All business rules have been followed without requiring Main Chain to read raw data.</li>
-</ol>
-<h3 id="private-data-collections">Private Data Collections</h3>
-<p>Allows members within a chain to share sensitive data that even other members of the same chain (but not in the Collection) cannot read.</p>
-<hr />
-<h2 id="key-public-api">Key Public API</h2>
-<h3 id="hierarchymanager">HierarchyManager</h3>
+<h2 id="6-privacy-and-zero-knowledge-verification">6. Privacy and zero-knowledge verification</h2>
 <ul>
-<li><code>create_sub_chain(name, domain_type)</code>: Create a new business chain.</li>
-<li><code>create_organization(org_id, name)</code>: Register a participating organization in the network.</li>
-<li><code>create_channel(channel_id, org_ids)</code>: Set up a data isolation channel.</li>
-<li><code>get_system_integrity_report()</code>: Report on overall system health.</li>
+<li>Main Chain verification: Sub-Chains can submit zero-knowledge proofs confirming valid state transitions according to consensus rules without revealing raw event details.</li>
+<li>Private data collections: Sensitive payloads are restricted to authorized member nodes, while only hashes are propagated across the common ledger.</li>
 </ul>
-<h3 id="mainchain">MainChain</h3>
-<ul>
-<li><code>add_proof(sub_chain, proof_hash, metadata, zk_proof)</code>: Accept a proof from a Sub-Chain.</li>
-<li><code>verify_proof(proof_hash, sub_chain)</code>: Verify the validity of a proof.</li>
-</ul>
-<hr />
 <h2 id="related">Related</h2>
 <ul>
-<li><a href="../../consensus/bft_consensus/">BFT Consensus</a></li>
-<li><a href="../../consensus/ordering/">Ordering Service</a></li>
-<li><a href=".././domains/">Domains Module (Business Logic)</a></li>
+<li><a href=".././consensus/">Consensus Module</a></li>
+<li><a href=".././domains/">Domains Module</a></li>
+<li><a href="../../how-to/cross-chain-transactions/">Two-Phase Commit Guide</a></li>
 </ul>
 
 

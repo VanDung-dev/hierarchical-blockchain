@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Risk mitigation and recovery system: Validation, Journaling, Rollback and Automated Recovery.">
+        <meta name="description" content="Fault tolerance and recovery: Validation, durable journaling, rollback snapshots, and recovery handlers.">
       
       
         <meta name="author" content="Nguyễn Lê Văn Dũng">
@@ -2109,10 +2109,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#1-overview" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Overview
+        1. Overview
       </span>
     </span>
   </a>
@@ -2120,10 +2120,71 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#multi-layered-defense-architecture" class="md-nav__link">
+  <a href="#2-core-components" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Multi-layered Defense Architecture
+        2. Core components
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Core components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-validation-layer-validatorpy-data_validatorpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.1 Validation layer (<code>validator.py</code>, <code>data_validator.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-durable-journaling-journalpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2 Durable journaling (<code>journal.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-rollback-manager-rollback_managerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Rollback manager (<code>rollback_manager.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-recovery-subsystems" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4 Recovery subsystems
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-error-classification-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3. Error classification strategy
       </span>
     </span>
   </a>
@@ -2131,10 +2192,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#error-classification-strategy" class="md-nav__link">
+  <a href="#4-transaction-journaling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Classification Strategy
+        4. Transaction journaling
       </span>
     </span>
   </a>
@@ -2142,10 +2203,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#transaction-journal" class="md-nav__link">
+  <a href="#5-recovery-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Transaction Journal
+        5. Recovery workflow
       </span>
     </span>
   </a>
@@ -2153,21 +2214,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#recovery-workflow" class="md-nav__link">
+  <a href="#6-snapshot-types" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Recovery Workflow
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#snapshot-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Snapshot Management
+        6. Snapshot types
       </span>
     </span>
   </a>
@@ -4293,10 +4343,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#1-overview" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Overview
+        1. Overview
       </span>
     </span>
   </a>
@@ -4304,10 +4354,71 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#multi-layered-defense-architecture" class="md-nav__link">
+  <a href="#2-core-components" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Multi-layered Defense Architecture
+        2. Core components
+      </span>
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="2. Core components">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#21-validation-layer-validatorpy-data_validatorpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.1 Validation layer (<code>validator.py</code>, <code>data_validator.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#22-durable-journaling-journalpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.2 Durable journaling (<code>journal.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#23-rollback-manager-rollback_managerpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.3 Rollback manager (<code>rollback_manager.py</code>)
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#24-recovery-subsystems" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        2.4 Recovery subsystems
+      </span>
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-error-classification-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      <span class="md-typeset">
+        3. Error classification strategy
       </span>
     </span>
   </a>
@@ -4315,10 +4426,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#error-classification-strategy" class="md-nav__link">
+  <a href="#4-transaction-journaling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Classification Strategy
+        4. Transaction journaling
       </span>
     </span>
   </a>
@@ -4326,10 +4437,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#transaction-journal" class="md-nav__link">
+  <a href="#5-recovery-workflow" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Transaction Journal
+        5. Recovery workflow
       </span>
     </span>
   </a>
@@ -4337,21 +4448,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#recovery-workflow" class="md-nav__link">
+  <a href="#6-snapshot-types" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Recovery Workflow
-      </span>
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#snapshot-management" class="md-nav__link">
-    <span class="md-ellipsis">
-      <span class="md-typeset">
-        Snapshot Management
+        6. Snapshot types
       </span>
     </span>
   </a>
@@ -4401,133 +4501,105 @@
 
 
 <h1 id="error-mitigation-module-hierachainerror_mitigation">Error Mitigation Module (<code>hierachain/error_mitigation/*</code>)</h1>
-<h2 id="overview">Overview</h2>
-<p>The <strong>Error Mitigation</strong> module acts as HieraChain's "safety net," ensuring the system always maintains integrity and resilience against hardware, software, or network incidents. This system combines durable journaling techniques, intelligent error classification, and automated recovery scenarios.</p>
-<hr />
-<h2 id="multi-layered-defense-architecture">Multi-layered Defense Architecture</h2>
-<div class="grid cards">
+<h2 id="1-overview">1. Overview</h2>
+<p>The <code>error_mitigation</code> module handles fault tolerance, state validation, and system recovery. It provides append-only event journals, automated error classification, rollback snapshots, and targeted recovery engines for network, consensus, and state failures.</p>
+<h2 id="2-core-components">2. Core components</h2>
+<p>Components reside in <code>hierachain/error_mitigation/</code>.</p>
+<h3 id="21-validation-layer-validatorpy-data_validatorpy">2.1 Validation layer (<code>validator.py</code>, <code>data_validator.py</code>)</h3>
 <ul>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m10 17-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9m-6-8L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5z"/></svg></span> <strong>Validation Layer</strong></p>
-<hr />
-<p><strong>Files</strong>: <code>validator.py</code>, <code>data_validator.py</code></p>
+<li><code>Validator</code>: Validates block and event structure against ledger rules.</li>
+<li><code>DataValidator</code>: Checks event payload consistency, Arrow schema alignment, and input constraints.</li>
+</ul>
+<h3 id="22-durable-journaling-journalpy">2.2 Durable journaling (<code>journal.py</code>)</h3>
 <ul>
-<li><strong>Validator</strong>: Checks Block/Event structure according to Ledger guidelines.</li>
-<li><strong>DataValidator</strong>: Deep validation of business logic, Arrow schema, and input data validity.</li>
+<li>Implements <code>TransactionJournal</code> using Apache Parquet and Arrow for disk-backed event logging.</li>
+<li>Enforces append-only storage before events commit to blockchain state.</li>
+<li>Provides replay generators to reconstruct uncommitted events after ungraceful shutdowns.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21.04 13.13c.14 0 .27.06.38.17l1.28 1.28c.22.21.22.56 0 .77l-1 1-2.05-2.05 1-1c.11-.11.25-.17.39-.17m-1.97 1.75 2.05 2.05L15.06 23H13v-2.06zM3 7V5h2V4a2 2 0 0 1 2-2h6v7l2.5-1.5L18 9V2h1c1.05 0 2 .95 2 2v6L11 20v2H7c-1.05 0-2-.95-2-2v-1H3v-2h2v-4H3v-2h2V7zm2 0h2V5H5zm0 4v2h2v-2zm0 6v2h2v-2z"/></svg></span> <strong>Durable Journaling</strong></p>
-<hr />
-<p><strong>File</strong>: <code>journal.py</code></p>
+<h3 id="23-rollback-manager-rollback_managerpy">2.3 Rollback manager (<code>rollback_manager.py</code>)</h3>
 <ul>
-<li>Uses <strong>Apache Arrow</strong> for high-speed transaction journaling.</li>
-<li><strong>Append-only</strong> mechanism ensures data is never overwritten.</li>
-<li>Guarantees persistence before events are committed to the chain.</li>
+<li>Creates and verifies point-in-time state snapshots (<code>FULL_SYSTEM</code>, <code>CHAIN_STATE</code>, <code>CONSENSUS_STATE</code>, <code>CONFIGURATION</code>).</li>
+<li>Validates SHA-256 snapshot hashes prior to applying rollbacks.</li>
+<li>Integrates quarantine mechanisms for corrupt state blocks.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13.5 8H12v5l4.28 2.54.72-1.21-3.5-2.08zM13 3a9 9 0 0 0-9 9H1l3.96 4.03L9 12H6a7 7 0 0 1 7-7 7 7 0 0 1 7 7 7 7 0 0 1-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.9 8.9 0 0 0 13 21a9 9 0 0 0 9-9 9 9 0 0 0-9-9"/></svg></span> <strong>Rollback &amp; Snapshots</strong></p>
-<hr />
-<p><strong>File</strong>: <code>rollback_manager.py</code></p>
+<h3 id="24-recovery-subsystems">2.4 Recovery subsystems</h3>
 <ul>
-<li>Manages restore points (Snapshots) for the entire system or individual components.</li>
-<li>Automatic periodic snapshot creation (Auto-snapshot).</li>
-<li>Validates data integrity before performing rollback.</li>
+<li><code>backup_recovery.py</code>: Manages backup archives, snapshot restoration, and retention policies.</li>
+<li><code>consensus_recovery.py</code>: Handles view change synchronization, leader failure recovery, and BFT round restarts.</li>
+<li><code>network_recovery.py</code>: Detects network partition events, initiates reconnect backoffs, and manages peer alerts.</li>
+<li><code>auto_scaler.py</code>: Monitors memory and CPU utilization to dynamically scale validator thresholds.</li>
 </ul>
-</li>
-<li>
-<p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.5 5.6 5 7l1.4-2.5L5 2l2.5 1.4L10 2 8.6 4.5 10 7zm12 9.8L22 14l-1.4 2.5L22 19l-2.5-1.4L17 19l1.4-2.5L17 14zM22 2l-1.4 2.5L22 7l-2.5-1.4L17 7l1.4-2.5L17 2l2.5 1.4zm-8.66 10.78 2.44-2.44-2.12-2.12-2.44 2.44zm1.03-5.49 2.34 2.34c.39.37.39 1.02 0 1.41L5.04 22.71c-.39.39-1.04.39-1.41 0l-2.34-2.34c-.39-.37-.39-1.02 0-1.41L12.96 7.29c.39-.39 1.04-.39 1.41 0"/></svg></span> <strong>Adaptive Recovery</strong></p>
-<hr />
-<p><strong>File</strong>: <code>recovery_engine.py</code></p>
-<ul>
-<li>Automatic handling of network errors and partition detection.</li>
-<li>Consensus state recovery when a Leader fails.</li>
-<li>Integrates <strong>AutoScaler</strong> to scale resources based on system load.</li>
-</ul>
-</li>
-</ul>
-</div>
-<hr />
-<h2 id="error-classification-strategy">Error Classification Strategy</h2>
-<p>The <code>ErrorClassifier</code> not only logs errors but also proposes mitigation strategies based on severity:</p>
+<h2 id="3-error-classification-strategy">3. Error classification strategy</h2>
+<p><code>ErrorClassifier</code> in <code>error_classifier.py</code> categorizes errors by severity and recommends mitigation actions:</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Level</th>
-<th style="text-align: left;">Meaning</th>
-<th style="text-align: left;">Suggested Action</th>
+<th style="text-align: left;">Severity Level</th>
+<th style="text-align: left;">Category Meaning</th>
+<th style="text-align: left;">Mitigation Action</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>INFO / WARNING</strong></td>
-<td style="text-align: left;">Information or minor error</td>
-<td style="text-align: left;">Log &amp; Continue</td>
+<td style="text-align: left;">INFO / WARNING</td>
+<td style="text-align: left;">Minor operational anomalies</td>
+<td style="text-align: left;">Log and continue</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>ERROR</strong></td>
-<td style="text-align: left;">Transaction processing error</td>
-<td style="text-align: left;">RETRY / REJECT</td>
+<td style="text-align: left;">ERROR</td>
+<td style="text-align: left;">Event validation or transient processing failures</td>
+<td style="text-align: left;">Retry with backoff or reject</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>CRITICAL</strong></td>
-<td style="text-align: left;">Data / consistency error</td>
-<td style="text-align: left;">ROLLBACK &amp; QUARANTINE</td>
+<td style="text-align: left;">CRITICAL</td>
+<td style="text-align: left;">State corruption or Merkle root mismatch</td>
+<td style="text-align: left;">Rollback and quarantine</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>FATAL</strong></td>
-<td style="text-align: left;">Critical system error</td>
-<td style="text-align: left;">EMERGENCY SHUTDOWN</td>
+<td style="text-align: left;">FATAL</td>
+<td style="text-align: left;">Irrecoverable consensus or hardware failure</td>
+<td style="text-align: left;">Emergency lockdown</td>
 </tr>
 </tbody>
 </table>
-<hr />
-<h2 id="transaction-journal">Transaction Journal</h2>
-<p>HieraChain uses <strong>Apache Arrow</strong> IPC format for Journaling to achieve optimal performance:</p>
+<h2 id="4-transaction-journaling">4. Transaction journaling</h2>
+<p>The <code>TransactionJournal</code> provides write-ahead persistence:</p>
 <ol>
-<li><strong>Durable Write</strong>: Events are written to disk and <code>fsync</code> is called before proceeding.</li>
-<li><strong>Schema Enforcement</strong>: Ensures every journal record conforms to the core event schema.</li>
-<li><strong>Replay Ability</strong>: When the system restarts after a failure, the Journal can replay uncommitted events to restore state.</li>
+<li>Durable writes: Writes records to Parquet files on disk before blocks finalize.</li>
+<li>Schema enforcement: Guarantees every journal record matches the required event schema.</li>
+<li>Replay ability: Replays logged events from disk into the ordering pipeline during node restart.</li>
 </ol>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hierachain.error_mitigation.journal</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransactionJournal</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="c1"># Initialize a secure journal (Path Traversal protected)</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">journal</span> <span class="o">=</span> <span class="n">TransactionJournal</span><span class="p">(</span><span class="n">storage_dir</span><span class="o">=</span><span class="s2">"data/journal"</span><span class="p">)</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Write a durable event</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">journal</span><span class="o">.</span><span class="n">log_event</span><span class="p">(</span><span class="n">event_dict</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">journal</span> <span class="o">=</span> <span class="n">TransactionJournal</span><span class="p">(</span><span class="n">storage_dir</span><span class="o">=</span><span class="s2">"data/journal"</span><span class="p">)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">journal</span><span class="o">.</span><span class="n">log_event</span><span class="p">(</span><span class="n">event_dict</span><span class="p">)</span>
 </code></pre></div>
-<hr />
-<h2 id="recovery-workflow">Recovery Workflow</h2>
-<p>When an error is detected, the system follows this processing flow:</p>
+<h2 id="5-recovery-workflow">5. Recovery workflow</h2>
 <pre class="mermaid"><code>graph TD
-    A[Incident occurs] --&gt; B{ErrorClassifier}
-    B --&gt;|Low Level| C[Log &amp; Continue]
-    B --&gt;|Medium Level| D[Auto Retry / Recovery Engine]
-    B --&gt;|High Level| E[Rollback to nearest Snapshot]
+    A[Incident detected] --&gt; B{ErrorClassifier}
+    B --&gt;|Low Severity| C[Log and continue]
+    B --&gt;|Medium Severity| D[Retry / Automated recovery]
+    B --&gt;|High Severity| E[Rollback to verified snapshot]
 
     D --&gt; D1[Network Recovery]
     D --&gt; D2[Consensus Recovery]
     D --&gt; D3[Auto Scaling]
 
-    E --&gt; F[Validate integrity after Rollback]
-    F --&gt; G[Replay Journal to restore missing data]</code></pre>
-<hr />
-<h2 id="snapshot-management">Snapshot Management</h2>
-<p><code>RollbackManager</code> supports different Snapshot types:</p>
+    E --&gt; F[Validate post-rollback state]
+    F --&gt; G[Replay journal to restore valid delta]</code></pre>
+<h2 id="6-snapshot-types">6. Snapshot types</h2>
+<p><code>RollbackManager</code> manages four snapshot scopes:</p>
 <ul>
-<li><strong>CONFIGURATION</strong>: Backup only system configuration files.</li>
-<li><strong>CHAIN_STATE</strong>: Backup Main Chain and Sub-Chains state.</li>
-<li><strong>CONSENSUS_STATE</strong>: Stores View Number and current Leader information.</li>
-<li><strong>FULL_SYSTEM</strong>: Snapshot of the entire system state.</li>
+<li><code>CONFIGURATION</code>: Node settings and environment parameters.</li>
+<li><code>CHAIN_STATE</code>: Block hashes and world state registers across Main Chain and Sub-Chains.</li>
+<li><code>CONSENSUS_STATE</code>: Current view number, validator set, and leader status.</li>
+<li><code>FULL_SYSTEM</code>: Comprehensive archive combining configuration, chain blocks, and consensus state.</li>
 </ul>
-<hr />
 <h2 id="related">Related</h2>
 <ul>
-<li><a href=".././adapters/">Storage System</a></li>
-<li><a href=".././core/">Core Architecture</a></li>
-<li><a href=".././cluster/">Cluster System</a></li>
+<li><a href=".././adapters/">Adapters Module</a></li>
+<li><a href=".././core/">Core Module</a></li>
+<li><a href=".././cluster/">Cluster Lockdown</a></li>
 </ul>
 
 

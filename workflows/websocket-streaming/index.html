@@ -1679,10 +1679,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#flow-diagram-connection-broadcast-lifecycle" class="md-nav__link">
+  <a href="#flow-diagram-connection-and-broadcast-lifecycle" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Connection &amp; Broadcast Lifecycle
+        Flow diagram: connection and broadcast lifecycle
       </span>
     </span>
   </a>
@@ -1690,10 +1690,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#flow-diagram-ping-stale-connection-cleanup" class="md-nav__link">
+  <a href="#flow-diagram-ping-and-stale-connection-cleanup" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Ping / Stale Connection Cleanup
+        Flow diagram: ping and stale connection cleanup
       </span>
     </span>
   </a>
@@ -1704,7 +1704,7 @@
   <a href="#message-format" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Message Format
+        Message format
       </span>
     </span>
   </a>
@@ -1715,7 +1715,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -1726,7 +1726,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -1734,10 +1734,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4315,10 +4315,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#flow-diagram-connection-broadcast-lifecycle" class="md-nav__link">
+  <a href="#flow-diagram-connection-and-broadcast-lifecycle" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Connection &amp; Broadcast Lifecycle
+        Flow diagram: connection and broadcast lifecycle
       </span>
     </span>
   </a>
@@ -4326,10 +4326,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#flow-diagram-ping-stale-connection-cleanup" class="md-nav__link">
+  <a href="#flow-diagram-ping-and-stale-connection-cleanup" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram: Ping / Stale Connection Cleanup
+        Flow diagram: ping and stale connection cleanup
       </span>
     </span>
   </a>
@@ -4340,7 +4340,7 @@
   <a href="#message-format" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Message Format
+        Message format
       </span>
     </span>
   </a>
@@ -4351,7 +4351,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -4362,7 +4362,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -4370,10 +4370,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4422,12 +4422,12 @@
   
 
 
-<h1 id="websocket-real-time-streaming">WebSocket Real-Time Streaming</h1>
+<h1 id="websocket-real-time-streaming">WebSocket real-time streaming</h1>
 <h2 id="overview">Overview</h2>
-<p>HieraChain pushes block and event notifications to connected clients in real-time via WebSocket. Clients subscribe to specific chains or event types. A background ping loop detects stale connections and removes them automatically.</p>
-<p>The <code>WebSocketManager</code> is a <strong>singleton</strong> (<code>ws_manager</code>) used across all API routes to ensure a single connection registry.</p>
+<p>HieraChain pushes block and event notifications to connected clients over WebSocket. Clients subscribe to specific chains or event types. A background ping loop checks for stale connections and removes them.</p>
+<p><code>WebSocketManager</code> is a singleton (<code>ws_manager</code>) shared by all API routes, so there is a single connection registry.</p>
 <hr />
-<h2 id="flow-diagram-connection-broadcast-lifecycle">Flow Diagram: Connection &amp; Broadcast Lifecycle</h2>
+<h2 id="flow-diagram-connection-and-broadcast-lifecycle">Flow diagram: connection and broadcast lifecycle</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant Client as 🖥️ Browser / SDK Client
@@ -4456,7 +4456,7 @@
         WSM-&gt;&gt;Client: send_text(JSON { type: "block_added", data: block_data })
     end</code></pre>
 <hr />
-<h2 id="flow-diagram-ping-stale-connection-cleanup">Flow Diagram: Ping / Stale Connection Cleanup</h2>
+<h2 id="flow-diagram-ping-and-stale-connection-cleanup">Flow diagram: ping and stale connection cleanup</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant BG as 🔄 PingLoopRunner (background)
@@ -4476,7 +4476,7 @@
         end
     end</code></pre>
 <hr />
-<h2 id="message-format">Message Format</h2>
+<h2 id="message-format">Message format</h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">// Block added notification</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="p">{</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"block_added"</span><span class="p">,</span>
@@ -4503,7 +4503,7 @@
 <a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="p">}</span>
 </code></pre></div>
 <hr />
-<h2 id="step-by-step-breakdown">Step-by-Step Breakdown</h2>
+<h2 id="step-by-step-breakdown">Step-by-step breakdown</h2>
 <table>
 <thead>
 <tr>
@@ -4543,7 +4543,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="error-handling">Error Handling</h2>
+<h2 id="error-handling">Error handling</h2>
 <table>
 <thead>
 <tr>
@@ -4571,7 +4571,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-classes-methods">Key Classes &amp; Methods</h2>
+<h2 id="key-classes-and-methods">Key classes and methods</h2>
 <table>
 <thead>
 <tr>

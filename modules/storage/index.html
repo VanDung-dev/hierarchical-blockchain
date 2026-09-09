@@ -2094,7 +2094,7 @@
   <a href="#multi-tier-storage-architecture" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Multi-tier Storage Architecture
+        Multi-tier storage architecture
       </span>
     </span>
   </a>
@@ -2102,10 +2102,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#state-update-processing-flow" class="md-nav__link">
+  <a href="#state-update-flow" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        State Update Processing Flow
+        State update flow
       </span>
     </span>
   </a>
@@ -2113,10 +2113,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#core-data-models-modelspy" class="md-nav__link">
+  <a href="#core-data-models" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Core Data Models (<code>models.py</code>)
+        Core data models
       </span>
     </span>
   </a>
@@ -2124,10 +2124,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#backend-configuration-environment-variables" class="md-nav__link">
+  <a href="#backend-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Backend Configuration (Environment Variables)
+        Backend configuration
       </span>
     </span>
   </a>
@@ -2138,19 +2138,19 @@
   <a href="#advanced-features" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Advanced Features
+        Advanced features
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Advanced Features">
+    <nav class="md-nav" aria-label="Advanced features">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-integrity-and-idempotency" class="md-nav__link">
+  <a href="#integrity-and-idempotency" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Integrity and Idempotency
+        Integrity and idempotency
       </span>
     </span>
   </a>
@@ -2158,10 +2158,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-indexing-queries" class="md-nav__link">
+  <a href="#indexing-and-queries" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Indexing Queries
+        Indexing and queries
       </span>
     </span>
   </a>
@@ -4335,7 +4335,7 @@
   <a href="#multi-tier-storage-architecture" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Multi-tier Storage Architecture
+        Multi-tier storage architecture
       </span>
     </span>
   </a>
@@ -4343,10 +4343,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#state-update-processing-flow" class="md-nav__link">
+  <a href="#state-update-flow" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        State Update Processing Flow
+        State update flow
       </span>
     </span>
   </a>
@@ -4354,10 +4354,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#core-data-models-modelspy" class="md-nav__link">
+  <a href="#core-data-models" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Core Data Models (<code>models.py</code>)
+        Core data models
       </span>
     </span>
   </a>
@@ -4365,10 +4365,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#backend-configuration-environment-variables" class="md-nav__link">
+  <a href="#backend-configuration" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Backend Configuration (Environment Variables)
+        Backend configuration
       </span>
     </span>
   </a>
@@ -4379,19 +4379,19 @@
   <a href="#advanced-features" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Advanced Features
+        Advanced features
       </span>
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Advanced Features">
+    <nav class="md-nav" aria-label="Advanced features">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-integrity-and-idempotency" class="md-nav__link">
+  <a href="#integrity-and-idempotency" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        1. Integrity and Idempotency
+        Integrity and idempotency
       </span>
     </span>
   </a>
@@ -4399,10 +4399,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#2-indexing-queries" class="md-nav__link">
+  <a href="#indexing-and-queries" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        2. Indexing Queries
+        Indexing and queries
       </span>
     </span>
   </a>
@@ -4458,30 +4458,29 @@
 
 <h1 id="storage-module-hierachainadaptersdatabase">Storage Module (<code>hierachain/adapters/database/*</code>)</h1>
 <h2 id="overview">Overview</h2>
-<p>The <strong>Storage</strong> module is responsible for managing all HieraChain data, from block and event history to the current state of business entities (<strong>World State</strong>). The system is designed with a pluggable architecture, allowing flexible switching of storage backends based on enterprise performance and scale requirements.</p>
+<p>The storage module manages all HieraChain data, from block and event history to current entity state (World State). It has a pluggable design, so you can switch backends based on scale and performance needs without changing business logic.</p>
 <hr />
-<h2 id="multi-tier-storage-architecture">Multi-tier Storage Architecture</h2>
-<p>HieraChain divides storage into two main layers to optimize between persistence and query speed:</p>
+<h2 id="multi-tier-storage-architecture">Multi-tier storage architecture</h2>
+<p>HieraChain splits storage into layers to balance durability and query speed:</p>
 <div class="grid cards">
 <ul>
 <li>
 <p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.27 17.05A2.991 2.991 0 0 1 4 22c-1.66 0-3-1.34-3-3s1.34-3 3-3c.18 0 .36 0 .53.05l3.07-5.36-1.74-.99 4.09-1.12 1.12 4.09-1.74-.99zM20 16c-1.3 0-2.4.84-2.82 2H11v-2l-3 3 3 3v-2h6.18c.42 1.16 1.52 2 2.82 2 1.66 0 3-1.34 3-3s-1.34-3-3-3m-8-8c.18 0 .36 0 .53-.05l3.07 5.36-1.74.99 4.09 1.12 1.12-4.09-1.74.99-3.06-5.37A2.991 2.991 0 0 0 12 2c-1.66 0-3 1.34-3 3s1.34 3 3 3"/></svg></span> <strong>World State Layer</strong></p>
 <hr />
-<p><strong>File</strong>: <code>world_state.py</code></p>
+<p><strong>File</strong>: <code>hierachain/state/world_state.py</code> (<code>WorldState.get_entity_state()</code>)</p>
 <ul>
-<li>Stores the current value of entities (e.g., the status of a shipment).</li>
-<li>Updates in real time from new blocks through event processing mechanisms (<code>creation</code>, <code>update</code>, <code>status_change</code>).</li>
-<li>Supports <strong>Caching</strong> and <strong>Indexing</strong> for instant query responses.</li>
+<li>Holds current entity state derived from finalized blocks.</li>
+<li>Updated when a block commits and supports caching. The codebase does not define implicit <code>creation/update/status_change</code> event types.</li>
 </ul>
 </li>
 <li>
 <p><span class="twemoji lg middle"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 12v1.5a4 4 0 0 1 4 4c0 .82-.25 1.58-.67 2.21l-1.09-1.09c.17-.34.26-.72.26-1.12A2.5 2.5 0 0 0 19 15v1.5l-2.25-2.25zm0 11v-1.5a4 4 0 0 1-4-4c0-.82.25-1.58.67-2.21l1.09 1.09c-.17.34-.26.72-.26 1.12A2.5 2.5 0 0 0 19 20v-1.5l2.25 2.25zM12 3c4.42 0 8 1.79 8 4s-3.58 4-8 4-8-1.79-8-4 3.58-4 8-4M4 9c0 2.21 3.58 4 8 4 1.11 0 2.17-.11 3.14-.32-.95.86-1.64 1.99-1.96 3.28L12 16c-4.42 0-8-1.79-8-4zm16 0v2h-.5l-.6.03c.7-.6 1.1-1.29 1.1-2.03M4 14c0 2.21 3.58 4 8 4l1-.03c.09 1.06.42 2.03.95 2.91L12 21c-4.42 0-8-1.79-8-4z"/></svg></span> <strong>Persistence Layer (Adapters)</strong></p>
 <hr />
-<p><strong>File</strong>: <code>adapters/database/sqlite_adapter.py</code>, <code>adapters/database/*</code></p>
+<p><strong>File</strong>: <code>hierachain/adapters/database/sqlite_adapter.py</code>, <code>postgres_adapter.py</code>, <code>redis_adapter.py</code>, <code>sqlite_schema.py</code>/<code>postgres_schema.py</code></p>
 <ul>
-<li><strong>SQL Backend</strong>: Durable storage for blocks and events (SQLite via <code>sqlite_adapter.py</code>).</li>
-<li><strong>Redis Adapter</strong>: Optimized for entity indexing.</li>
-<li><strong>File Adapter</strong>: Parquet file storage for large data.</li>
+<li><strong>SQLite/Postgres</strong> via <code>SQLBase</code> + <code>init_database_schema()</code> (<code>chains</code>, <code>blocks</code>, <code>events</code>, <code>proofs</code>, <code>chain_state</code> tables; composite indexes).</li>
+<li><strong>Redis Adapter</strong>: <code>hierachain/adapters/database/redis_adapter.py</code> for entity indexing.</li>
+<li><strong>Memory</strong>: <code>HRC_STORAGE_BACKEND=memory</code> for tests. There is no built-in File Adapter. Parquet is for logs and journals (<code>core/parquet_log.py</code>, <code>error_mitigation/journal.py</code>), not for chain storage.</li>
 </ul>
 </li>
 <li>
@@ -4489,15 +4488,15 @@
 <hr />
 <p><strong>File</strong>: <code>api/storage/ipfs_client.py</code></p>
 <ul>
-<li>Stores large data (such as attached documents, complex event details).</li>
-<li>Only stores the hash (CID) on the blockchain to save space and optimize performance.</li>
-<li>Integrates <strong>AES-256-GCM</strong> encryption before upload.</li>
+<li>Holds large payloads such as documents and detailed event data.</li>
+<li>Stores only the CID on chain to save space.</li>
+<li>Encrypts data with AES-256-GCM before upload.</li>
 </ul>
 </li>
 </ul>
 </div>
 <hr />
-<h2 id="state-update-processing-flow">State Update Processing Flow</h2>
+<h2 id="state-update-flow">State update flow</h2>
 <pre class="mermaid"><code>graph TD
     A[New Block Committed] --&gt; B[World State Manager]
     B --&gt; C{Extract Events}
@@ -4506,15 +4505,10 @@
     E --&gt; F[Persist to Backend]
     F --&gt; G[(SQL / Redis / Memory)]</code></pre>
 <hr />
-<h2 id="core-data-models-modelspy">Core Data Models (<code>models.py</code>)</h2>
-<p>HieraChain uses SQLAlchemy to define durable data structures:</p>
-<ul>
-<li><strong>BlockModel</strong>: Stores block index, hash, previous_hash, and metadata.</li>
-<li><strong>EventModel</strong>: Stores event details, linked to block hash and entity ID.</li>
-<li><strong>ChainStateModel</strong>: Stores Key-Value pairs representing chain state.</li>
-</ul>
+<h2 id="core-data-models">Core data models</h2>
+<p>There is no <code>models.py</code> or SQLAlchemy <code>BlockModel</code>/<code>EventModel</code>. Tables are created with raw SQL in <code>sqlite_schema.py</code>/<code>postgres_schema.py:init_database_schema()</code> with <code>chains</code>, <code>blocks</code>, <code>events</code>, <code>proofs</code>, <code>chain_state</code>. <code>Block</code> and <code>Blockchain</code> are plain Python classes in <code>hierachain/core/</code>.</p>
 <hr />
-<h2 id="backend-configuration-environment-variables">Backend Configuration (Environment Variables)</h2>
+<h2 id="backend-configuration">Backend configuration</h2>
 <table>
 <thead>
 <tr>
@@ -4525,28 +4519,23 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><code>HRC_STORAGE_BACKEND</code></td>
-<td style="text-align: left;">Storage backend type</td>
-<td style="text-align: left;"><code>sqlite</code>, <code>redis</code>, <code>memory</code>, <code>file</code></td>
+<td style="text-align: left;"><code>HRC_STORAGE_BACKEND</code> / <code>DATABASE_URL</code>+<code>HRC_DATABASE_URL</code></td>
+<td style="text-align: left;">Storage backend / DB URL</td>
+<td style="text-align: left;"><code>sqlite</code>, <code>postgres</code> (auto-detected from <code>postgres://</code>), <code>redis</code>, <code>memory</code>, <code>parquet_only</code> (via <code>HRC_STORAGE_BACKEND</code>/<code>DATABASE_URL</code> handling in <code>config/settings.py:78</code>)</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>DATABASE_URL</code></td>
-<td style="text-align: left;">DB connection string</td>
-<td style="text-align: left;"><code>sqlite:///hierachain.db</code>, <code>postgresql://...</code></td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>LOG_SQL_DETAIL</code></td>
-<td style="text-align: left;">Log detailed SQL</td>
-<td style="text-align: left;"><code>true</code>, <code>false</code> (Recommended <code>false</code> for Prod)</td>
+<td style="text-align: left;"><code>HRC_LOG_SQL_DETAIL</code> / <code>HRC_LOG_FORMAT</code></td>
+<td style="text-align: left;">SQL detail / log format</td>
+<td style="text-align: left;"><code>true/false</code>, <code>text/json</code></td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="advanced-features">Advanced Features</h2>
-<h3 id="1-integrity-and-idempotency">1. Integrity and Idempotency</h3>
-<p><code>SqlStorageBackend</code> is designed to safely handle duplicate requests (Idempotency) through unique constraint checking, ensuring the system remains stable even when network issues cause block re-submission.</p>
-<h3 id="2-indexing-queries">2. Indexing Queries</h3>
-<p>Every entity in World State is automatically indexed by <code>entity_id</code> and <code>timestamp</code>. When using the Redis Adapter, these indexes are stored as <strong>Sorted Sets</strong>, enabling extremely fast queries of an entity's change history.</p>
+<h2 id="advanced-features">Advanced features</h2>
+<h3 id="integrity-and-idempotency">Integrity and idempotency</h3>
+<p><code>SQLiteAdapter</code> and <code>PostgresAdapter</code> (via <code>SQLBase</code>) handle <code>save_block</code> with checks for duplicate <code>hash</code>/<code>block_hash</code> and verify <code>previous_hash</code> links (<code>consensus/ordering/storage.py:_verify_chain_links</code>). <code>SqlStorageBackend</code> does not exist in the current code.</p>
+<h3 id="indexing-and-queries">Indexing and queries</h3>
+<p>World State indexes every entity by <code>entity_id</code> and <code>timestamp</code>. With the Redis adapter, these indexes are stored as Sorted Sets, which makes history queries for an entity fast.</p>
 <hr />
 <h2 id="related">Related</h2>
 <ul>

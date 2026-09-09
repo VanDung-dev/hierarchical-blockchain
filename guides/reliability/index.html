@@ -4339,8 +4339,8 @@
 <p>Provides practices to ensure stable system operation and easy recovery from failures.</p>
 <h2 id="related-components">Related Components</h2>
 <ul>
-<li>Journal/Recovery: <code>hierachain/error_mitigation/{journal.py, recovery_engine.py, rollback_manager.py}</code></li>
-<li>Cross-level Sync: <code>hierachain/cluster/{cross_level_sync.py, state_sync_manager.py}</code> (if applicable)</li>
+<li>Journal/Recovery: <code>hierachain/error_mitigation/journal.py</code>, <code>rollback_manager.py</code>, <code>consensus_recovery.py</code>, <code>network_recovery.py</code>, <code>backup_recovery.py</code></li>
+<li>Cross-level Sync: <code>HRC_CROSS_LEVEL_SYNC</code> via <code>hierarchical/hierarchy_manager/base.py</code>, <code>hierachain/cluster/state_sync_manager.py</code></li>
 </ul>
 <h2 id="patterns">Patterns</h2>
 <ul>

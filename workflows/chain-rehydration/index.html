@@ -1595,7 +1595,7 @@
   <a href="#flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram
+        Flow diagram
       </span>
     </span>
   </a>
@@ -1606,7 +1606,7 @@
   <a href="#divergence-scenarios" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Divergence Scenarios
+        Divergence scenarios
       </span>
     </span>
   </a>
@@ -1617,7 +1617,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -1628,7 +1628,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -1636,10 +1636,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4307,7 +4307,7 @@
   <a href="#flow-diagram" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Flow Diagram
+        Flow diagram
       </span>
     </span>
   </a>
@@ -4318,7 +4318,7 @@
   <a href="#divergence-scenarios" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Divergence Scenarios
+        Divergence scenarios
       </span>
     </span>
   </a>
@@ -4329,7 +4329,7 @@
   <a href="#step-by-step-breakdown" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Step-by-Step Breakdown
+        Step-by-step breakdown
       </span>
     </span>
   </a>
@@ -4340,7 +4340,7 @@
   <a href="#error-handling" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Error Handling
+        Error handling
       </span>
     </span>
   </a>
@@ -4348,10 +4348,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-classes-methods" class="md-nav__link">
+  <a href="#key-classes-and-methods" class="md-nav__link">
     <span class="md-ellipsis">
       <span class="md-typeset">
-        Key Classes &amp; Methods
+        Key classes and methods
       </span>
     </span>
   </a>
@@ -4400,12 +4400,12 @@
   
 
 
-<h1 id="chain-rehydration">Chain Rehydration</h1>
+<h1 id="chain-rehydration">Chain rehydration</h1>
 <h2 id="overview">Overview</h2>
-<p>When a Sub-Chain node <strong>restarts</strong> or detects a <strong>divergent state</strong> (local hash ≠ DB hash), it rehydrates its in-memory chain from the persistent storage backend. This ensures consistency after crashes, restarts, or network partitions.</p>
-<p>The DB is always the <strong>authoritative source of truth</strong>. If local state diverges, it is discarded and rebuilt from DB.</p>
+<p>When a Sub-Chain node restarts or detects divergent state (local hash is different from the DB hash), it rehydrates the in-memory chain from persistent storage. This keeps the node consistent after crashes, restarts or network partitions.</p>
+<p>The DB is the authoritative source of truth. If local state diverges, it is discarded and rebuilt from the DB.</p>
 <hr />
-<h2 id="flow-diagram">Flow Diagram</h2>
+<h2 id="flow-diagram">Flow diagram</h2>
 <pre class="mermaid"><code>sequenceDiagram
     autonumber
     participant SC as 📦 SubChain
@@ -4449,7 +4449,7 @@
     SC-&gt;&gt;SC: _reset_ordering_service_state()
     Note over SC: Chain now consistent with storage</code></pre>
 <hr />
-<h2 id="divergence-scenarios">Divergence Scenarios</h2>
+<h2 id="divergence-scenarios">Divergence scenarios</h2>
 <table>
 <thead>
 <tr>
@@ -4487,7 +4487,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="step-by-step-breakdown">Step-by-Step Breakdown</h2>
+<h2 id="step-by-step-breakdown">Step-by-step breakdown</h2>
 <table>
 <thead>
 <tr>
@@ -4531,7 +4531,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="error-handling">Error Handling</h2>
+<h2 id="error-handling">Error handling</h2>
 <table>
 <thead>
 <tr>
@@ -4559,7 +4559,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-classes-methods">Key Classes &amp; Methods</h2>
+<h2 id="key-classes-and-methods">Key classes and methods</h2>
 <table>
 <thead>
 <tr>
