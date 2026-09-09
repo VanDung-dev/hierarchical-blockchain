@@ -8,21 +8,21 @@ icon: material/sitemap
 
 ## Purpose
 
-Detailed explanation of HieraChain's hierarchical mechanism: how Sub-Chains interact with the Main Chain via `HierarchyManager`, Channel and multi-org model, private data, cross-chain transactions (2PC), Proof anchoring, and Sub-Chain rebalancing.
+This page explains how HieraChain organizes its hierarchy. It covers how Sub-Chains interact with the Main Chain through `HierarchyManager`, how channels and the multi-org model work, how private data is handled, how cross-chain transactions use 2PC, how proofs are anchored, and how Sub-Chains are rebalanced.
 
-## Components & Concepts
+## Components and concepts
 
-* Main Chain: `hierachain/hierarchical/main_chain/base.py`, stores Proofs from Sub-Chains; aggregates integrity reports.
-* Sub-Chain (Domain Chain): `hierachain/hierarchical/sub_chain/base.py`, processes domain Events, Ordering/closes Blocks, generates Proofs.
-* Hierarchy Manager: `hierachain/hierarchical/hierarchy_manager/base.py`, coordinates the Chain system, manages Sub-Chain lifecycle, cross-chain transactions, system statistics.
-* Channel: `hierachain/hierarchical/channel/channel.py`, private communication space for organization groups, channel creation policy settings.
-* Multi-Org: `hierachain/hierarchical/multi_org.py`, organization initialization, multi-org network, Channel ↔ Organization relationships.
-* Private Data: `hierachain/hierarchical/private_data.py`, private data collections at Sub-Chain level.
-* Cross-Chain Transaction Manager: `hierachain/hierarchical/transaction_manager.py`, coordinates 2PC transactions between Sub-Chains.
-* Proof Aggregation: `hierachain/hierarchical/proof_aggregation/aggregator.py`, groups, compresses proofs before sending/recording (configurable).
-* Rebalancer: `hierachain/hierarchical/rebalancer/rebalancer.py`, automatically splits/balances Sub-Chains under high load based on thresholds.
+* Main Chain: `hierachain/hierarchical/main_chain/base.py` stores proofs from Sub-Chains and aggregates integrity reports.
+* Sub-Chain (Domain Chain): `hierachain/hierarchical/sub_chain/base.py` processes domain events, orders and closes blocks, and generates proofs.
+* Hierarchy Manager: `hierachain/hierarchical/hierarchy_manager/base.py` coordinates the chain system, manages Sub-Chain lifecycle, cross-chain transactions and system statistics.
+* Channel: `hierachain/hierarchical/channel/channel.py` provides a private communication space for groups of organizations and holds channel creation policies.
+* Multi-Org: `hierachain/hierarchical/multi_org.py` handles organization initialization, the multi-org network, and the relationship between channels and organizations.
+* Private Data: `hierachain/hierarchical/private_data.py` holds private data collections at the Sub-Chain level.
+* Cross-Chain Transaction Manager: `hierachain/hierarchical/transaction_manager.py` coordinates 2PC transactions between Sub-Chains.
+* Proof Aggregation: `hierachain/hierarchical/proof_aggregation/aggregator.py` groups and compresses proofs before they are sent or recorded. This is configurable.
+* Rebalancer: `hierachain/hierarchical/rebalancer/rebalancer.py` splits or balances Sub-Chains automatically when load crosses thresholds.
 
-### Typical Flow
+### Typical flow
 
 ```mermaid
 graph TD
@@ -35,24 +35,24 @@ graph TD
     MainChain -->|6. Store Root Hash| Storage[World State]
 ```
 
-1. Create Sub-Chain: `HierarchyManager.create_sub_chain(name, domain_type, metadata)` → initializes DomainChain, connects to Main Chain.
-2. Write Event and close Block: `SubChain.add_event()` → Ordering → Consensus → `finalize_block()`.
-3. Anchor Proof to Main Chain: `SubChain.submit_proof_to_main(main_chain, ...)` or via `HierarchyManager.submit_proof_to_main_chain(name)`.
-4. Cross-chain transactions (2PC): `HierarchyManager.transaction_manager.initiate_transaction(src, dst, payload)` → prepare/commit/rollback.
-5. Channels & Private Data: Create Channel between organizations; private collections stored at Sub-Chain per channel policy.
-6. Sub-Chain Rebalancing: Rebalancer monitors EPS/thresholds → proposes branch splitting/load movement.
+1. Create a Sub-Chain with `HierarchyManager.create_sub_chain(name, domain_type, metadata)`. This initializes a DomainChain and connects it to the Main Chain.
+2. Write an event and close a block with `SubChain.add_event()`, which goes through ordering and consensus to `finalize_block()`.
+3. Anchor the proof to the Main Chain with `SubChain.submit_proof_to_main(main_chain, ...)` or `HierarchyManager.submit_proof_to_main_chain(name)`.
+4. Run cross-chain transactions (2PC) with `HierarchyManager.transaction_manager.initiate_transaction(src, dst, payload)`, which handles prepare, commit and rollback.
+5. Channels and private data: create a channel between organizations. Private collections are stored at the Sub-Chain according to the channel policy.
+6. Sub-Chain rebalancing: the rebalancer watches EPS and configured thresholds, then proposes branch splitting or load movement.
 
-## Related Configuration (settings.py)
+## Related configuration (settings.py, actual `HRC_*`)
 
-* Proof: `PROOF_AGGREGATION_ENABLED`, `PROOF_BATCH_SIZE`, `PROOF_BATCH_TIMEOUT`, `PROOF_COMPRESSION_ENABLED`.
-* Rebalance: `REBALANCE_ENABLED`, `REBALANCE_THRESHOLD_EPS`, `REBALANCE_CHECK_INTERVAL`, `REBALANCE_MIN_EVENTS_FOR_SPLIT`, `REBALANCE_COOLDOWN`.
-* K8s (Sub-Chain isolation): `K8S_ENABLED`, `K8S_NAMESPACE_PREFIX`, `K8S_*_LIMIT/REQUEST`, `K8S_CONFIG_PATH`.
-* Consensus/Ordering: see [Consensus & Ordering](consensus.md) and `CONSENSUS_TYPE`, `VALIDATOR_TIMEOUT`.
+* Proof: `HRC_PROOF_AGGREGATION`, `HRC_PROOF_BATCH_SIZE`, `HRC_PROOF_BATCH_TIMEOUT`, `HRC_PROOF_COMPRESSION`.
+* Rebalance: `HRC_REBALANCE_ENABLED`, `HRC_REBALANCE_THRESHOLD_EPS`, `HRC_REBALANCE_CHECK_INTERVAL`, `HRC_REBALANCE_MIN_EVENTS`, `HRC_REBALANCE_COOLDOWN`.
+* K8s (Sub-Chain isolation): `HRC_K8S_ENABLED`, `HRC_K8S_NAMESPACE_PREFIX`, `HRC_K8S_CPU_LIMIT`/`HRC_K8S_MEMORY_LIMIT`/`HRC_K8S_CPU_REQUEST`/`HRC_K8S_MEMORY_REQUEST`, `HRC_K8S_CONFIG`.
+* Consensus/Ordering: see [Consensus & Ordering](consensus.md) and `HRC_CONSENSUS_TYPE`/`HRC_MAINCHAIN_CONSENSUS`, `VALIDATOR_TIMEOUT`, `HRC_BLOCK_INTERVAL`.
 
-## Features & Limitations
+## Features and limitations
 
-* Features: domain data separation, centralized proof anchoring on Main Chain, 2PC support, channels/multi-org, private data, rebalancing.
-* Limitations: channel/multi-org operations require clear policies; 2PC requires good synchronization; rebalancing may need out-of-band operational intervention.
+* Features: domain data separation, centralized proof anchoring on the Main Chain, 2PC support, channels and multi-org, private data, and rebalancing.
+* Limitations: channel and multi-org operations need clear policies, 2PC needs good synchronization, and rebalancing can require operational intervention outside the normal flow.
 
 ## Related
 

@@ -8,15 +8,15 @@ icon: material/sync
 
 ## Mục đích
 
-Mô tả các cơ chế Consensus và Ordering Service được HieraChain sử dụng để đảm bảo tính toàn vẹn, thứ tự và khả năng xác minh của Block/Event.
+Phần này mô tả cơ chế consensus và Ordering Service mà HieraChain dùng để giữ block và event được sắp xếp, toàn vẹn và có thể xác minh.
 
 ## Kiến trúc & khái niệm
 
-* Base Consensus: `hierachain/consensus/base_consensus.py`, giao diện/khung cơ bản cho các thuật toán đồng thuận.
-* Proof of Authority (PoA): `hierachain/consensus/proof_of_authority.py`, đồng thuận Nội bộ Tổ chức (1 MainChain quản lý các Sub-Chains thuộc phân khu nội bộ).
-* Proof of Federation (PoF): `hierachain/consensus/proof_of_federation.py`, đồng thuận Liên minh Ngang hàng giữa các MainChain độc lập (Consortium không cần RootChain trung tâm).
-* BFT Consensus: `hierachain/consensus/bft/`, chống lỗi Byzantine ở lớp phân cấp.
-* Ordering Service: `hierachain/consensus/ordering/`, sắp xếp Event trước khi đóng Block; kiến trúc đa thành phần (Processor, Certifier, BlockBuilder).
+* Base Consensus: `hierachain/consensus/base_consensus.py` định nghĩa interface và khung chung cho các thuật toán đồng thuận.
+* Proof of Authority (PoA): `hierachain/consensus/proof_of_authority.py` xử lý đồng thuận trong một organization, một MainChain quản lý các Sub-Chain nội bộ.
+* Proof of Federation (PoF): `hierachain/consensus/proof_of_federation.py` xử lý đồng thuận liên minh P2P giữa các MainChain độc lập, không cần RootChain trung tâm.
+* BFT Consensus: `hierachain/consensus/bft/` bổ sung khả năng chịu lỗi Byzantine ở tầng phân cấp.
+* Ordering Service: `hierachain/consensus/ordering/` sắp xếp event trước khi tạo block và gồm nhiều thành phần (Processor, Certifier, BlockBuilder).
 
 ### Luồng điển hình
 
@@ -37,19 +37,19 @@ sequenceDiagram
     MC-->>SC: Acknowledge
 ```
 
-1. Sub‑Chain nhận Event → đẩy vào hàng đợi của Ordering Service.
-2. Ordering Service tạo batch theo chính sách (kích thước/ngưỡng thời gian) → gửi cho cơ chế Consensus đã chọn.
-3. Cơ chế Consensus (PoA/PoF hoặc BFT) xác nhận batch/Block → Sub‑Chain đóng Block.
-4. Nếu bật neo lên Main Chain: Sub‑Chain gửi Proof (Merkle root/hash) để Main Chain ghi nhận.
+1. Sub-Chain nhận event và đẩy vào hàng đợi của Ordering Service.
+2. Ordering Service gom batch theo ngưỡng kích thước và thời gian rồi gửi cho cơ chế consensus đã chọn.
+3. Cơ chế consensus (PoA, PoF hoặc BFT) xác nhận batch hoặc block, sau đó Sub-Chain đóng block.
+4. Nếu bật neo lên Main Chain, Sub-Chain gửi proof (Merkle root hoặc hash) để Main Chain ghi nhận.
 
 ## Cấu hình
 
 Các biến trong `hierachain/config/settings.py`:
 
 * `CONSENSUS_TYPE`: `proof_of_authority` (mặc định) hoặc `proof_of_federation`.
-* `BFT_ENABLED`: Bật/tắt lớp BFT cho kịch bản cần chống Byzantine.
-* `VALIDATOR_TIMEOUT`: Thời gian timeout giữa các validator.
-* `CONSENSUS_FEDERATION_CONFIG`: tham số liên minh (ví dụ `min_validators`, `block_interval`).
+* `BFT_ENABLED`: bật hoặc tắt lớp BFT cho các kịch bản cần chịu lỗi Byzantine.
+* `VALIDATOR_TIMEOUT`: timeout giữa các validator.
+* `CONSENSUS_FEDERATION_CONFIG`: tham số liên minh (ví dụ `min_validators` và `block_interval`).
 
 Ví dụ môi trường:
 
@@ -60,10 +60,10 @@ HRC_ZK_REQUIRED_MAINCHAIN=false
 
 ## Tính năng & hạn chế
 
-* PoA: triển khai đơn giản, độ trễ thấp; phụ thuộc niềm tin vào validator tập trung.
-* PoF: cân bằng giữa tin cậy và phân tán; cần quản trị thành viên liên minh.
-* BFT: chịu lỗi Byzantine tốt; đổi lại phức tạp/chi phí thông điệp cao hơn.
-* Ordering: đảm bảo thứ tự/nhóm sự kiện ổn định trước khi đóng block.
+* PoA triển khai đơn giản và độ trễ thấp, nhưng phụ thuộc vào validator tập trung để bảo đảm tin cậy.
+* PoF cân bằng giữa tin cậy và phân tán, nhưng cần quản lý thành viên liên minh.
+* BFT chịu lỗi Byzantine tốt, nhưng làm tăng độ phức tạp và chi phí thông điệp.
+* Ordering giữ thứ tự event và việc gom batch ổn định trước khi đóng block.
 
 ## Liên quan
 

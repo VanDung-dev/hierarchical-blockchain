@@ -8,7 +8,7 @@ icon: material/eye
 
 ## Mục đích
 
-Giới thiệu kiến trúc phân cấp (hierarchical) của HieraChain: Main Chain làm cơ quan gốc chỉ lưu bằng chứng (proof) từ các Sub-Chain; Sub-Chain xử lý dữ liệu nghiệp vụ (events) theo từng domain. Trang này giúp định vị vai trò từng thành phần và các luồng chính.
+HieraChain dùng kiến trúc phân cấp. Main Chain là gốc và chỉ giữ proof từ Sub-Chain. Sub-Chain xử lý dữ liệu nghiệp vụ (event) theo từng domain. Phần này mô tả từng thành phần làm gì và các luồng chính vận hành thế nào.
 
 ## Kiến trúc & khái niệm
 
@@ -26,17 +26,17 @@ graph BT
     SC_C -->|Gửi Proof| Main
 ```
 
-* Sub-Chain chịu trách nhiệm ghi nhận Event domain, Ordering thành Block và duy trì World State nội bộ.
-* Main Chain không lưu dữ liệu domain chi tiết; chỉ lưu Proof mật mã để đảm bảo tính toàn vẹn toàn hệ thống.
-* HierarchyManager điều phối tạo/đăng ký Sub-Chain, gửi Proof, và các tác vụ vận hành liên quan đa chuỗi.
+* Sub-Chain ghi nhận event theo domain, sắp xếp thành block và giữ world state riêng.
+* Main Chain không giữ dữ liệu domain chi tiết. Nó chỉ giữ proof mật mã để bảo đảm tính toàn vẹn toàn hệ thống.
+* HierarchyManager lo việc tạo và đăng ký Sub-Chain, gửi proof và các tác vụ đa chuỗi khác.
 
 ### Thành phần chính
 
-* Main Chain: `hierachain/hierarchical/main_chain/base.py`, lưu và xác minh proof từ Sub-Chain, tổng hợp báo cáo tính toàn vẹn.
-* Sub-Chain: `hierachain/hierarchical/sub_chain/base.py`, ghi nhận event domain, Ordering/đóng block, tạo proof gửi lên Main Chain.
-* Hierarchy Manager: `hierachain/hierarchical/hierarchy_manager/base.py`, điều phối toàn bộ hệ thống đa chuỗi, quản lý vòng đời Sub-Chain, tự động gửi proof, xác minh liên chuỗi.ứng chéo.
-* IPFS Storage (Off-chain): `hierachain/api/storage/ipfs_client.py`, lưu trữ dữ liệu nghiệp vụ lớn hoặc nhạy cảm ngoài chuỗi, chỉ neo mã CID lên Blockchain.
-* Ordering Service: `hierachain/consensus/ordering/service.py`, thành phần sắp xếp sự kiện trước khi tạo block (được Sub-Chain tích hợp khởi tạo).
+* `hierachain/hierarchical/main_chain/base.py` là Main Chain. Nó lưu và xác minh proof từ Sub-Chain và tổng hợp báo cáo toàn vẹn.
+* `hierachain/hierarchical/sub_chain/base.py` là Sub-Chain. Nó ghi nhận event theo domain, sắp xếp thành block, tạo proof và gửi lên Main Chain.
+* `hierachain/hierarchical/hierarchy_manager/base.py` là HierarchyManager. Nó điều phối hệ thống đa chuỗi, quản lý vòng đời Sub-Chain, gửi proof tự động và kiểm tra tính nhất quán liên chuỗi.
+* `hierachain/api/storage/ipfs_client.py` là lưu trữ IPFS off-chain. Nó giữ dữ liệu nghiệp vụ lớn hoặc nhạy cảm ngoài chuỗi và chỉ neo CID trên blockchain.
+* `hierachain/consensus/ordering/service.py` là Ordering Service. Nó sắp xếp event trước khi tạo block và được Sub-Chain khởi tạo.
 
 ### Luồng tiêu biểu
 
@@ -56,10 +56,10 @@ sequenceDiagram
     Main-->>Sub: Acknowledge
 ```
 
-1. Ghi Event → Tạo Block (Sub-Chain): Event được `SubChain.add_event()` tiếp nhận, đưa qua Ordering nội bộ, gom vào Block và `finalize_block()` khi đủ điều kiện.
-2. Gửi Proof lên Main Chain: `SubChain.submit_proof_to_main()` sinh Proof (ví dụ từ Merkle root/hash block), gửi `MainChain.add_proof()` để neo mốc.
-3. Báo cáo toàn cục: Main Chain tổng hợp `get_main_chain_stats()` và thống kê cho từng Sub-Chain.
-4. Điều phối hệ thống: `HierarchyManager` hỗ trợ gửi proof định kỳ (`configure_auto_proof_submission`), đồng bộ, và kiểm tra tính nhất quán liên chuỗi.
+1. Ghi event và tạo block trên Sub-Chain. `SubChain.add_event()` nhận event và đưa qua khâu sắp xếp nội bộ. Event được gom thành block và `finalize_block()` chạy khi đủ điều kiện.
+2. Gửi proof lên Main Chain. `SubChain.submit_proof_to_main()` tạo proof từ Merkle root hoặc block hash và gọi `MainChain.add_proof()` để neo lại.
+3. Báo cáo toàn cục. Main Chain tổng hợp kết quả từ `get_main_chain_stats()` và thống kê theo từng Sub-Chain.
+4. Điều phối hệ thống. `HierarchyManager` xử lý gửi proof định kỳ bằng `configure_auto_proof_submission`, đồng bộ và kiểm tra tính nhất quán liên chuỗi.
 
 ## Liên quan
 

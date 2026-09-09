@@ -6,57 +6,56 @@ icon: material/shield-lock
 
 # Kiến trúc bảo mật
 
-Trang này mô tả các cơ chế bảo mật ở tầng kiến trúc và cách chúng tích hợp vào HieraChain. Hệ thống tuân theo chiến lược bảo mật doanh nghiệp ngặt nghèo - một kiến trúc phòng thủ đa tầng vắt ngang qua toàn bộ vòng đời ứng dụng.
+Cơ chế bảo mật ở tầng kiến trúc và cách chúng gắn vào HieraChain. Hệ thống dùng phòng thủ phân tầng bao phủ toàn bộ vòng đời ứng dụng.
 
-## Thành Bảo Mật phần chính
+## Các trụ cột bảo mật chính
 
-Kiến trúc phòng vệ được cấu thành từ 6 luồng chính phối hợp chặt chẽ:
+Phòng thủ được chia thành sáu nhóm phối hợp với nhau:
 
-* **Authorization & Access Control**: 
+* Authorization và kiểm soát truy cập:
 
-    * `hierachain/security/{msp.py, identity.py}`: quản lý Organization, User, Role, và PKI Identity.
-    * `hierachain/security/policy_engine.py`: kiểm soát quyền (ABAC).
-    * `hierachain/security/verify/api_key_verifier.py`: xác thực API key.
+    * `hierachain/security/{msp.py, identity.py}` quản lý Organization, User, Role và định danh PKI.
+    * `hierachain/security/policy_engine.py` xử lý kiểm soát quyền (ABAC).
+    * `hierachain/security/verify/api_key_verifier.py` xử lý xác thực API key.
 
-* **Lockdown & Logging**: 
+* Lockdown và logging:
 
-    * `hierachain/security/secure_logging.py`: Tamper-evident log, che mờ dữ liệu PII.
-    * `hierachain/cluster/lockdown_protocol.py`: Phong tỏa (Lockdown) khẩn cấp bằng Quorum (chứa lớp `ClusterLockdownManager`).
+    * `hierachain/security/secure_logging.py` ghi log có khả năng phát hiện giả mạo và che PII.
+    * `hierachain/cluster/lockdown_protocol.py` xử lý phong tỏa khẩn cấp theo quorum và chứa `ClusterLockdownManager`.
 
-* **Fault-tolerance & Integrity**: 
+* Fault tolerance và tính toàn vẹn:
 
-    * `hierachain/security/resource_guard.py`: Lá chắn thép chống DoS/DDoS tải cao.
-    * `hierachain/security/integrity.py`: Quét chữ ký checksum các tệp khởi động.
+    * `hierachain/error_mitigation/{rollback_manager.py, consensus_validator.py, resource_validator.py}` và `hierachain/cluster/lockdown_types.py` cung cấp kiểm tra toàn vẹn, snapshot rollback và HMAC lockdown. Không có `security/resource_guard.py` hay `security/integrity.py`, các đường dẫn này đã bị xóa hoặc chưa từng tồn tại.
 
-* **Risk Analyzer**: 
+* Risk analyzer:
 
-    * `hierachain/risk_management/risk_analyzer.py`: Theo dõi chỉ báo dị thường Z-score.
-    * `hierachain/security/sanitization.py`: Chống injection đầu vào.
+    * `hierachain/risk_management/risk_analyzer.py` xử lý chấm điểm rủi ro và dùng các validator trong `hierachain/error_mitigation/*`.
+    * `hierachain/security/sanitization.py` giúp ngăn injection bằng cách trung hòa HTML/template và áp allowlist cho tên file.
 
-* **Encryption & Keys**: 
+* Encryption và khóa:
 
-    * `hierachain/security/{key_manager.py, key_provider.py, key_backup_manager.py, certificate.py}`: AES-GCM, Ed25519 và vòng đời X.509 cho mTLS.
+    * `hierachain/security/{key_manager.py, key_provider.py}` và `hierachain/security/msp.py` (`Certificate`/`CertificateAuthority`) cung cấp hỗ trợ Ed25519 và `FileVaultProvider` (Fernet/PBKDF2, chỉ dùng cho dev). Không có `key_backup_manager.py` hay `certificate.py` và không có mTLS.
 
-* **Decentralized Zero-Knowledge Proofs**:
+* Zero-knowledge proof phi tập trung:
 
-    * `hierachain/security/zk_prover.py` & `hierachain/security/verify/zk_verifier.py`: Triển khai Zero-Knowledge proofs cho Sub-Chains ẩn danh dữ liệu thật.
+    * `hierachain/security/zk_prover.py` và `hierachain/security/verify/zk_verifier.py` triển khai zero-knowledge proof để xác minh dữ liệu Sub-Chain ẩn danh.
 
-Cấu hình bảo mật hệ thống được bật/tắt linh hoạt tại `hierachain/config/settings.py` (AUTH, CORS, HSTS, rate limit…).
+Cấu hình bảo mật hệ thống được bật tắt trong `hierachain/config/settings.py` (AUTH, CORS, HSTS, rate limit và các tùy chọn khác).
 
 ## Tích hợp vào hệ thống
 
-* API Server (`hierachain/api/server.py`): chèn middleware (ví dụ `ResourceGuardMiddleware`) và xác thực API key nếu `AUTH_ENABLED=true`.
-* Sub-Chain/Main Chain: mọi thao tác thay đổi trạng thái phải qua xác thực (khi bật AUTH) và được ghi vết để audit.
-* Logging an toàn: `security/secure_logging.py`, `security/sanitization.py` giảm rò rỉ dữ liệu nhạy cảm.
+* API Server (`hierachain/api/server.py`) thêm middleware (`add_payload_limit`, `add_rate_limit`, `add_cors_middleware` qua `CORSMiddleware`) và xác thực API key (`verify/api_key_verifier.py`) khi `HRC_AUTH_ENABLED=true`. Không có `ResourceGuardMiddleware`.
+* Sub-Chain/Main Chain: mọi thao tác làm thay đổi trạng thái phải qua xác thực khi bật AUTH và được ghi lại để audit.
+* Logging an toàn: `security/secure_logging.py` và `security/sanitization.py` giúp giảm rò rỉ dữ liệu nhạy cảm.
 
 ## Cấu hình liên quan (trích)
 
-Các biến trong `settings.py`:
+Các biến trong `settings.py` (đều dùng tiền tố `HRC_*`):
 
-* `AUTH_ENABLED`, `API_KEY_LOCATION`, `API_KEY_NAME`
-* `CORS_ALLOW_ALL`, `CORS_ORIGINS`
-* `HSTS_ENABLED`, `HSTS_MAX_AGE`
-* `RATE_LIMIT_ENABLED`, `RATE_LIMIT_REQUESTS_PER_MINUTE`
+* `HRC_AUTH_ENABLED`, `HRC_API_KEY_LOCATION`, `HRC_API_KEY_NAME`
+* `HRC_CORS_ALLOW_ALL`, `HRC_CORS_ORIGINS`
+* `HRC_HSTS_ENABLED`, `HRC_HSTS_MAX_AGE`
+* `HRC_RATE_LIMIT`, `HRC_RATE_LIMIT_RPM`, `HRC_RATE_LIMIT_BACKEND`, `HRC_TRUSTED_PROXIES` (không có `RATE_LIMIT_REQUESTS_PER_MINUTE`)
 
 ## Luồng tiêu biểu
 
@@ -95,8 +94,8 @@ sequenceDiagram
     end
 ```
 
-1. Request tới API → (tuỳ chọn) ResourceGuard kiểm tra CPU/RAM → xác thực API key → kiểm tra policy/role → thực thi → ghi audit.
-2. Xử lý chữ ký/ZK: các sự kiện/giao dịch có chữ ký/ZK được xác minh bằng `verify/*` trước khi chấp nhận.
+1. Request tới API đi qua bước kiểm tra CPU/RAM tùy chọn của ResourceGuard, rồi xác thực API key, rồi kiểm tra policy/role, sau đó thực thi và ghi audit.
+2. Event và giao dịch mang chữ ký hoặc ZK proof được `verify/*` xác minh trước khi chấp nhận.
 
 ## Liên quan
 
