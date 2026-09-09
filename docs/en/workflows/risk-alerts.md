@@ -4,15 +4,15 @@ description: "Continuous risk assessment, anomaly threshold evaluation, and aler
 icon: material/alert
 ---
 
-# Risk Alerts
+# Risk alerts
 
 ## Overview
 
-HieraChain continuously monitors system health across **4 risk domains** (Consensus, Security, Performance, Storage). When thresholds are breached, `AlertManager` creates alerts, suppresses duplicates via cooldown, notifies via Email/Webhook, and auto-escalates unacknowledged alerts after a configurable timeout.
+HieraChain monitors health across four risk domains: consensus, security, performance and storage. When a metric crosses its threshold, `AlertManager` creates an alert, suppresses duplicates during cooldown, sends notifications by email or webhook, and escalates alerts that stay unacknowledged past the timeout.
 
 ---
 
-## Flow Diagram
+## Flow diagram
 
 ```mermaid
 sequenceDiagram
@@ -66,7 +66,7 @@ sequenceDiagram
 
 ---
 
-## Alert Severity Levels
+## Alert severity levels
 
 | Severity | Trigger Example | Auto-Escalate After |
 |:---------|:---------------|:--------------------|
@@ -77,7 +77,7 @@ sequenceDiagram
 
 ---
 
-## Risk Domains
+## Risk domains
 
 | Domain | Key Metrics Checked |
 |:-------|:--------------------|
@@ -88,7 +88,7 @@ sequenceDiagram
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Step | Description |
 |:-----|:------------|
@@ -103,7 +103,7 @@ sequenceDiagram
 
 ---
 
-## Error Handling
+## Error handling
 
 | Condition | Behavior |
 |:----------|:---------|
@@ -114,7 +114,7 @@ sequenceDiagram
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|

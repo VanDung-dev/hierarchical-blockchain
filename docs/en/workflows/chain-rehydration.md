@@ -4,17 +4,17 @@ description: "Syncing and rehydrating the active in-memory ledger state from per
 icon: material/water
 ---
 
-# Chain Rehydration
+# Chain rehydration
 
 ## Overview
 
-When a Sub-Chain node **restarts** or detects a **divergent state** (local hash ≠ DB hash), it rehydrates its in-memory chain from the persistent storage backend. This ensures consistency after crashes, restarts, or network partitions.
+When a Sub-Chain node restarts or detects divergent state (local hash is different from the DB hash), it rehydrates the in-memory chain from persistent storage. This keeps the node consistent after crashes, restarts or network partitions.
 
-The DB is always the **authoritative source of truth**. If local state diverges, it is discarded and rebuilt from DB.
+The DB is the authoritative source of truth. If local state diverges, it is discarded and rebuilt from the DB.
 
 ---
 
-## Flow Diagram
+## Flow diagram
 
 ```mermaid
 sequenceDiagram
@@ -63,7 +63,7 @@ sequenceDiagram
 
 ---
 
-## Divergence Scenarios
+## Divergence scenarios
 
 | Scenario | Detection | Action |
 |:---------|:----------|:-------|
@@ -75,7 +75,7 @@ sequenceDiagram
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Step | Description |
 |:-----|:------------|
@@ -90,7 +90,7 @@ sequenceDiagram
 
 ---
 
-## Error Handling
+## Error handling
 
 | Condition | Behavior |
 |:----------|:---------|
@@ -101,7 +101,7 @@ sequenceDiagram
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|

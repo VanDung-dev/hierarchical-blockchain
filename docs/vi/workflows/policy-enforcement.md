@@ -1,16 +1,16 @@
 ---
 title: "Thực thi Chính sách"
-description: "Mô hình thực thi kiểm soát truy cập dựa trên thuộc tính (ABAC - Attribute-Based Access Control) bảo vệ tất cả các hoạt động nhạy cảm."
+description: "Mô hình thực thi kiểm soát truy cập dựa trên thuộc tính (ABAC) bảo vệ tất cả các hoạt động nhạy cảm."
 icon: material/gavel
 ---
 
-# Thực thi Chính sách (Policy Enforcement)
+# Thực thi chính sách
 
 ## Tổng quan
 
-Mọi hoạt động nhạy cảm về mặt bảo mật trong HieraChain đều được kiểm soát nghiêm ngặt bởi `PolicyEngine` (Bộ máy Thực thi Chính sách). Các chính sách bao gồm các nhóm `PolicyRule` được sắp xếp theo mức độ ưu tiên. Để giảm thiểu độ trễ tối đa, kết quả đánh giá được lưu vào cache (thời gian sống TTL là 5 phút, giải phóng theo cơ chế LRU). Tất cả kết quả đánh giá đều được ghi nhận vào nhật ký kiểm toán trong bộ nhớ (in-memory audit log).
+Mọi thao tác nhạy cảm trong HieraChain đều qua `PolicyEngine`. Chính sách gồm nhóm `PolicyRule` sắp xếp theo ưu tiên. Để giảm độ trễ, kết quả đánh giá được cache (TTL 5 phút, LRU). Mọi kết quả đều được ghi vào log kiểm toán trong bộ nhớ.
 
-`PolicyEngine` đóng vai trò là **cổng ủy quyền duy nhất (single authorization gateway)**. Nó được gọi bởi MSP (Định danh & Ủy quyền MSP) sau khi danh tính được xác minh thành công và ngay trước khi hàm `SubChain.add_event()` (Gửi Sự kiện) được gọi.
+`PolicyEngine` là cổng ủy quyền duy nhất. Nó được MSP gọi sau khi xác minh danh tính và ngay trước khi gọi `SubChain.add_event()`.
 
 ---
 
@@ -54,14 +54,14 @@ sequenceDiagram
 
 ---
 
-## Cấu trúc Quy tắc Chính sách (Policy Rule Structure)
+## Cấu trúc quy tắc chính sách
 
 ```python
-# Ví dụ chính sách: chỉ cho phép các nhân viên vận hành (operators) hợp lệ gửi sự kiện
+# Ví dụ: chỉ cho phép operator hợp lệ gửi sự kiện
 policy = Policy(
     policy_id="event_submission_policy",
     name="Event Submission Access",
-    effect=PolicyEffect.DENY,       # Hiệu lực tác động mặc định nếu không có quy tắc nào khớp
+    effect=PolicyEffect.DENY,       # hiệu lực mặc định nếu không có quy tắc nào khớp
     rules=[
         PolicyRule(
             rule_id="allow_operators",
@@ -78,29 +78,29 @@ policy = Policy(
 
 ---
 
-## Các bước thực hiện chi tiết
+## Các bước chi tiết
 
 | Bước | Mô tả |
 |:-----|:------|
-| **1. Kiểm tra Cache** | Tạo khóa `cache_key = "{policy_id}:{SHA256(context)[:8]}"`. Nếu trúng cache (HIT) và TTL hợp lệ $\rightarrow$ trả về kết quả ngay. |
-| **2. Sắp xếp Quy tắc** | Toàn bộ các quy tắc được sắp xếp theo mức độ ưu tiên `priority` giảm dần (các quy tắc có độ ưu tiên cao hơn sẽ được đánh giá trước). |
-| **3. Đánh giá Quy tắc** | Mỗi quy tắc kiểm tra danh sách điều kiện `PolicyCondition` của nó theo logic AND/OR/NOT. |
-| **4. Ghi đè đầu tiên** | Quy tắc khớp đầu tiên có hiệu lực tác động (effect) khác với mặc định của chính sách sẽ thắng; các quy tắc còn lại sẽ được bỏ qua. |
-| **5. Lưu vào Cache** | Kết quả được lưu vào cache kèm dấu thời gian `cached_at` để hết hạn sau 5 phút. |
-| **6. Nhật ký kiểm toán**| Mọi kết quả đánh giá đều được ghi nhận vào nhật ký kiểm toán kèm thông tin `policy_id`, `context`, `effect` và `decision_path`. |
+| **1. Kiểm tra cache** | Tạo khóa `cache_key = "{policy_id}:{SHA256(context)[:8]}"`. Nếu hit và TTL hợp lệ thì trả về ngay. |
+| **2. Sắp xếp quy tắc** | Sắp xếp theo `priority` giảm dần (ưu tiên cao đánh giá trước). |
+| **3. Đánh giá quy tắc** | Mỗi quy tắc kiểm tra `PolicyCondition` theo logic AND/OR/NOT. |
+| **4. Ghi đè đầu tiên** | Quy tắc khớp đầu tiên có effect khác mặc định sẽ thắng; các quy tắc còn lại bỏ qua. |
+| **5. Lưu cache** | Lưu kết quả kèm `cached_at` để hết hạn sau 5 phút. |
+| **6. Log kiểm toán**| Ghi `policy_id`, `context`, `effect` và `decision_path` vào log kiểm toán. |
 
 ---
 
-## Các phép so sánh điều kiện hỗ trợ
+## Phép so sánh điều kiện
 
 | Phép so sánh | Mô tả | Ví dụ |
 |:-------------|:------|:------|
 | `equals` | Khớp tuyệt đối | `role == "admin"` |
 | `not_equals` | Phủ định | `status != "revoked"` |
 | `contains` | Tìm chuỗi hoặc phần tử trong danh sách | `permissions contains "submit_events"` |
-| `matches` | Biểu thức chính quy (Regex) | `entity_id matches "^product-.*"` |
-| `in` | Thuộc một tập hợp | `role in ["admin", "operator"]` |
-| `greater_than` | So sánh số lượng lớn hơn | `risk_score > 0.8` |
+| `matches` | Biểu thức chính quy | `entity_id matches "^product-.*"` |
+| `in` | Thuộc tập hợp | `role in ["admin", "operator"]` |
+| `greater_than` | So sánh lớn hơn | `risk_score > 0.8` |
 
 ---
 
@@ -108,16 +108,16 @@ policy = Policy(
 
 | Tình huống | Hành vi |
 |:-----------|:--------|
-| Không tìm thấy chính sách | Trả về `DENY` (chế độ bảo mật fail-closed) |
-| Chính sách bị tắt (disabled) | Trả về ngay lập tức hiệu lực tác động mặc định (không chạy các quy tắc) |
-| Context bị thiếu trường thông tin yêu cầu | Điều kiện trả về `False`; ghi nhận log là khớp một phần |
-| Cache bị giải phóng (LRU) | Yêu cầu tiếp theo sẽ kích hoạt tính toán và đánh giá chính sách mới |
+| Không tìm thấy chính sách | Trả về `DENY` (fail-closed) |
+| Chính sách bị tắt | Trả về ngay effect mặc định (không chạy quy tắc) |
+| Context thiếu trường yêu cầu | Điều kiện trả về `False`; ghi log là khớp một phần |
+| Cache bị giải phóng (LRU) | Request tiếp theo tính lại chính sách |
 
 ---
 
-## Các Class & Method quan trọng
+## Lớp và phương thức chính
 
-| Bước | Class / Method | File |
+| Bước | Lớp / Phương thức | Tệp |
 |:-----|:--------------|:-----|
 | Điểm gọi chính | `PolicyEngine.evaluate_policy()` | `security/policy_engine.py` |
 | Đánh giá đa chính sách | `PolicyEngine.evaluate_policy_set()` | `security/policy_engine.py` |
@@ -130,5 +130,5 @@ policy = Policy(
 
 ## Liên quan
 
-- [Định danh & Ủy quyền MSP](./msp-identity.md): MSP gọi hàm `evaluate_policy()` sau khi xác minh danh tính
-- [Gửi Sự kiện](./event-submission.md): Quy trình `add_event()` được bảo vệ nghiêm ngặt bởi bộ máy chính sách
+- [Danh tính MSP](./msp-identity.md): MSP gọi `evaluate_policy()` sau khi xác minh danh tính
+- [Gửi Sự kiện](./event-submission.md): `add_event()` được bảo vệ bởi engine chính sách

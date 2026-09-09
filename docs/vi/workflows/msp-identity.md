@@ -4,22 +4,22 @@ description: "Vòng đời chứng chỉ X.509, đăng ký và xác thực MSP c
 icon: material/card-account-details
 ---
 
-# Danh tính & Ủy quyền MSP
+# Danh tính và ủy quyền MSP
 
 ## Tổng quan
 
-HieraChain sử dụng hai lớp danh tính:
+HieraChain có hai lớp danh tính:
 
-| Lớp | Lớp (Class) | Trường hợp sử dụng |
+| Lớp | Lớp (Class) | Trường hợp dùng |
 |:------|:------|:---------|
-| **RBAC Đơn giản** | `IdentityManager` | Triển khai tổ chức đơn lẻ; kiểm tra quyền dựa trên vai trò |
+| **RBAC đơn giản** | `IdentityManager` | Triển khai một tổ chức; kiểm tra quyền theo vai trò |
 | **Doanh nghiệp MSP** | `HierarchicalMSP` | Liên minh đa tổ chức; phân cấp chứng chỉ X.509 với `CertificateAuthority` |
 
-Mỗi thực thể phải được đăng ký và xác thực danh tính trước khi được phép gọi `PolicyEngine` (Thực thi Chính sách) hoặc gửi sự kiện (Gửi Sự kiện).
+Mỗi thực thể phải đăng ký và xác thực danh tính trước khi được gọi `PolicyEngine` hoặc gửi sự kiện.
 
 ---
 
-## Sơ đồ Luồng: Đăng ký Thực thể (Doanh nghiệp MSP)
+## Sơ đồ luồng: đăng ký thực thể (doanh nghiệp MSP)
 
 ```mermaid
 sequenceDiagram
@@ -51,7 +51,7 @@ sequenceDiagram
 
 ---
 
-## Sơ đồ Luồng: Xác thực Quyền lúc Khởi chạy
+## Sơ đồ luồng: xác thực quyền lúc chạy
 
 ```mermaid
 sequenceDiagram
@@ -87,7 +87,7 @@ sequenceDiagram
 
 ---
 
-## Sơ đồ Luồng: Thu hồi Chứng chỉ
+## Sơ đồ luồng: thu hồi chứng chỉ
 
 ```mermaid
 sequenceDiagram
@@ -108,7 +108,7 @@ sequenceDiagram
 
 ---
 
-## Các Vai trò Mặc định
+## Vai trò mặc định
 
 | Vai trò | Quyền hạn |
 |:-----|:------------|
@@ -118,34 +118,34 @@ sequenceDiagram
 
 ---
 
-## Chi tiết Từng Bước
+## Các bước chi tiết
 
 | Bước | Mô tả |
 |:-----|:------------|
-| **1. Định nghĩa vai trò** | Quản trị viên định nghĩa vai trò + tập hợp quyền hạn + các ID chính sách được liên kết |
-| **2. Đăng ký thực thể** | MSP yêu cầu chứng chỉ X.509 từ CA cho khóa công khai (public key) của thực thể |
-| **3. CA phát hành** | CA tạo `cert_id`, ký chứng chỉ, và lưu trữ với trạng thái `status=ACTIVE` |
-| **4. Xác thực danh tính** | CA kiểm tra: chứng chỉ chưa bị thu hồi VÀ thời gian hiện tại nằm trong khoảng `[issued_at, valid_until]` |
-| **5. So khớp thông tin** | MSP xác minh `credentials.public_key == certificate.public_key` |
-| **6. Cấp quyền hành động** | `check_permission(role, action)` + đánh giá tất cả các chính sách liên kết với vai trò |
-| **7. Cổng chính sách** | Nếu được cấp quyền, PolicyEngine (Thực thi Chính sách) sẽ đánh giá thêm các quy tắc dựa trên ngữ cảnh |
-| **8. Thu hồi** | Đặt trạng thái `cert.status = REVOKED`; mọi cuộc gọi `validate_identity()` trong tương lai sẽ thất bại tại bước 4 |
+| **1. Định nghĩa vai trò** | Quản trị viên định nghĩa vai trò, tập quyền và ID chính sách liên kết. |
+| **2. Đăng ký thực thể** | MSP yêu cầu chứng chỉ X.509 từ CA cho public key của thực thể. |
+| **3. CA phát hành** | CA tạo `cert_id`, ký chứng chỉ và lưu với `status=ACTIVE`. |
+| **4. Xác thực danh tính** | CA kiểm tra: chứng chỉ chưa thu hồi và thời gian hiện tại trong `[issued_at, valid_until]`. |
+| **5. So khớp** | MSP kiểm tra `credentials.public_key == certificate.public_key`. |
+| **6. Cấp quyền** | `check_permission(role, action)` và đánh giá mọi chính sách liên kết với vai trò. |
+| **7. Cổng chính sách** | Nếu được cấp quyền, PolicyEngine đánh giá thêm quy tắc theo ngữ cảnh. |
+| **8. Thu hồi** | Đặt `cert.status = REVOKED`; mọi `validate_identity()` sau đó lỗi tại bước 4. |
 
 ---
 
-## Xử lý Lỗi
+## Xử lý lỗi
 
 | Điều kiện | Hành vi |
 |:----------|:---------|
-| Thực thể chưa đăng ký | `validate_identity()` trả về `False` ngay lập tức |
+| Thực thể chưa đăng ký | `validate_identity()` trả về `False` ngay |
 | Chứng chỉ hết hạn | `CA.is_valid()` trả về `False`; từ chối danh tính |
-| Chứng chỉ bị thu hồi | `CA.verify_certificate()` thất bại; từ chối danh tính |
-| Không khớp khóa công khai | `validate_identity()` trả về `False` |
-| Vai trò không có quyền phù hợp | `authorize_action()` trả về `False` |
+| Chứng chỉ bị thu hồi | `CA.verify_certificate()` lỗi; từ chối danh tính |
+| Không khớp public key | `validate_identity()` trả về `False` |
+| Vai trò không có quyền | `authorize_action()` trả về `False` |
 
 ---
 
-## Các Lớp & Phương thức Quan trọng
+## Lớp và phương thức chính
 
 | Bước | Lớp / Phương thức | Tệp |
 |:-----|:--------------|:-----|
@@ -155,13 +155,13 @@ sequenceDiagram
 | Đăng ký doanh nghiệp | `HierarchicalMSP.register_entity()` | `security/msp.py` |
 | Phát hành chứng chỉ | `CertificateAuthority.issue_certificate()` | `security/msp.py` |
 | Xác thực danh tính | `HierarchicalMSP.validate_identity()` | `security/msp.py` |
-| Ủy quyền hành động | `HierarchicalMSP.authorize_action()` | `security/msp.py` |
+| Ủy quyền thao tác | `HierarchicalMSP.authorize_action()` | `security/msp.py` |
 | Thu hồi thực thể | `HierarchicalMSP.revoke_entity()` | `security/msp.py` |
 
 ---
 
-## Liên kết liên quan
+## Liên quan
 
-- [Thực thi Chính sách](./policy-enforcement.md): được gọi sau khi ủy quyền MSP thành công
-- [Gửi Sự kiện](./event-submission.md): `authorize_action()` làm rào chắn truy cập trước khi gọi `add_event()`
-- [Sao lưu Khóa](./key-backup.md): phát hành chứng chỉ mới sẽ kích hoạt việc sao lưu khóa
+- [Thực thi Chính sách](./policy-enforcement.md): gọi sau khi ủy quyền MSP thành công
+- [Gửi Sự kiện](./event-submission.md): `authorize_action()` là rào chắn trước `add_event()`
+- [Sao lưu Khóa](./key-backup.md): phát hành chứng chỉ mới không tự kích hoạt sao lưu khóa

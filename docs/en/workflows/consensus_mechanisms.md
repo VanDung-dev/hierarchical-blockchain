@@ -4,15 +4,15 @@ description: "Comparison and technical specifications of PoA, PoF, and BFT conse
 icon: material/sync
 ---
 
-# Consensus Mechanisms Reference
+# Consensus mechanisms reference
 
 **Related workflows**: [Event Submission](./event-submission.md) · [BFT Consensus](./bft-consensus.md)
 
-HieraChain supports pluggable consensus mechanisms across layers. At the **MainChain (Inter-Organization Alliance)** level, consensus is configured via the `HRC_MAINCHAIN_CONSENSUS` environment variable (defaults to `proof_of_federation`). At the **SubChain (Intra-Organization)** level, domain event processing strictly defaults to **Proof of Authority (PoA)** for maximum speed (~0ms latency). The event submission flow ([Event Submission](./event-submission.md)) is identical regardless of which mechanism is selected; only the `finalize_block()` step differs.
+HieraChain has pluggable consensus across layers. The MainChain (inter-organization alliance) is set by `HRC_MAINCHAIN_CONSENSUS` and defaults to `proof_of_federation`. SubChains that hold domain events use proof of authority by default for speed. The event submission flow in [Event Submission](./event-submission.md) is the same no matter which mechanism you pick. Only `finalize_block()` is different.
 
 ---
 
-## Mechanism Comparison
+## Mechanism comparison
 
 | Aspect | PoA | PoF | BFT |
 |:-------|:----|:----|:----|
@@ -28,7 +28,7 @@ HieraChain supports pluggable consensus mechanisms across layers. At the **MainC
 
 ---
 
-## Proof of Authority (PoA)
+## Proof of authority (PoA)
 
 > Default for SubChains, or when `HRC_MAINCHAIN_CONSENSUS=proof_of_authority` on MainChain.
 > A single pre-registered authority signs the block with its Ed25519 private key.
@@ -52,7 +52,7 @@ sequenceDiagram
     POA-->>OS: Finalized Block ✅
 ```
 
-### Key Classes: PoA
+### Key classes: PoA
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|
@@ -63,7 +63,7 @@ sequenceDiagram
 
 ---
 
-## Proof of Federation (PoF)
+## Proof of federation (PoF)
 
 > Default for MainChains when `HRC_MAINCHAIN_CONSENSUS=proof_of_federation`.
 > Leader is elected deterministically by block index. ZK proof is enforced.
@@ -89,7 +89,7 @@ sequenceDiagram
     POF-->>OS: Finalized Block ✅
 ```
 
-### Key Classes: PoF
+### Key classes: PoF
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|
@@ -101,18 +101,18 @@ sequenceDiagram
 
 ---
 
-## Byzantine Fault Tolerance (BFT / PBFT)
+## Byzantine fault tolerance (BFT / PBFT)
 
-> Activated when `HRC_MAINCHAIN_CONSENSUS=byzantine_fault_tolerant`.
+> Active when `HRC_MAINCHAIN_CONSENSUS=byzantine_fault_tolerant`.
 > Full 3-phase PBFT. See [BFT Consensus](./bft-consensus.md) for the complete flow.
 
-**Requirements**: n ≥ 3f + 1 nodes to tolerate f faulty nodes.
+You need n >= 3f + 1 nodes to tolerate f faulty nodes.
 
-**View Change**: If the leader fails within timeout, `view += 1`, new leader = `Validators[view % n]`, protocol restarts from Phase 1.
+View change: if the leader fails within the timeout, `view += 1`, new leader is `Validators[view % n]` and the protocol restarts from phase 1.
 
 ---
 
-## Configuration Reference
+## Configuration reference
 
 | Variable | Values | Description |
 |:---------|:-------|:------------|

@@ -1,16 +1,16 @@
 ---
 title: "Đồng bộ Tích hợp ERP"
-description: "Tiếp nhận các cập nhật dữ liệu từ hệ thống hoạch định tài nguyên doanh nghiệp (ERP - Enterprise Resource Planning) vào các Chuỗi con tương ứng."
+description: "Tiếp nhận các cập nhật dữ liệu từ hệ thống hoạch định tài nguyên doanh nghiệp (ERP) vào các Chuỗi con tương ứng."
 icon: material/briefcase
 ---
 
-# Đồng bộ Tích hợp ERP (ERP Integration Sync)
+# Đồng bộ tích hợp ERP
 
 ## Tổng quan
 
-HieraChain tích hợp với các hệ thống ERP doanh nghiệp (SAP, Oracle, Dynamics) thông qua cấu trúc **bộ điều phối (adapter) + bộ máy ánh xạ (mapping engine)**. Lớp `SyncScheduler` thăm dò các adapter ERP theo khoảng thời gian cấu hình, dịch chuyển các sự kiện ERP gốc thành định dạng sự kiện của HieraChain thông qua `EventTranslator`, phát hiện các thay đổi dữ liệu có ý nghĩa và gửi chúng dưới dạng các sự kiện nghiệp vụ. Các lượt đồng bộ lỗi sẽ được thử lại theo cơ chế khoảng chờ tăng dần (exponential backoff).
+HieraChain tích hợp với ERP doanh nghiệp (SAP, Oracle, Dynamics) qua adapter và mapping engine. `SyncScheduler` thăm dò adapter ERP theo interval đã cấu hình, dịch sự kiện ERP gốc thành định dạng sự kiện HieraChain qua `EventTranslator`, phát hiện thay đổi có ý nghĩa và gửi như sự kiện nghiệp vụ. Lượt đồng bộ lỗi được thử lại với backoff theo hàm mũ.
 
-Quy trình này đóng vai trò là **cầu nối tiếp nhận dữ liệu (ingestion bridge)** giữa các hệ thống Web2 ERP truyền thống và sổ cái HieraChain.
+Quy trình này là cầu nối tiếp nhận giữa hệ thống ERP Web2 truyền thống và sổ cái HieraChain.
 
 ---
 
@@ -63,7 +63,7 @@ sequenceDiagram
 
 ---
 
-## Biểu đồ luồng: Cơ chế Thử lại khi Thất bại (Retry on Failure)
+## Biểu đồ luồng: thử lại khi lỗi
 
 ```mermaid
 flowchart LR
@@ -76,30 +76,30 @@ flowchart LR
 
 ---
 
-## Ví dụ Chuyển đổi Sự kiện ERP (ERP Event Translation Example)
+## Ví dụ chuyển đổi sự kiện ERP
 
 ```python
-# Sự kiện thô từ hệ thống SAP (trước khi chuyển đổi)
+# Sự kiện thô từ SAP (trước khi chuyển đổi)
 erp_event = {
-    "MBLNR": "5000012345",       # Số chứng từ vật tư (Material document number)
-    "BUDAT": "2024-04-23",       # Ngày ghi sổ (Posting date)
-    "MATNR": "MAT-00789",        # Mã số vật tư (Material number)
-    "MENGE": 150,                 # Số lượng (Quantity)
-    "WERKS": "PLANT-01"          # Nhà máy (Plant)
+    "MBLNR": "5000012345",       # Số chứng từ vật tư
+    "BUDAT": "2024-04-23",       # Ngày ghi sổ
+    "MATNR": "MAT-00789",        # Mã vật tư
+    "MENGE": 150,                 # Số lượng
+    "WERKS": "PLANT-01"          # Nhà máy
 }
 
-# Sau khi qua bộ EventTranslator.translate() sử dụng profile ánh xạ của SAP
+# Sau khi qua EventTranslator.translate() với profile SAP
 blockchain_event = {
-    "entity_id": "MAT-00789",            # ánh xạ từ trường MATNR
+    "entity_id": "MAT-00789",            # ánh xạ từ MATNR
     "event": "erp_integration",
-    "timestamp": 1714000000.0,           # tự động thêm bởi add_blockchain_metadata()
+    "timestamp": 1714000000.0,           # thêm bởi add_blockchain_metadata()
     "details": {
-        "document_number": "5000012345", # ánh xạ từ trường MBLNR
-        "posting_date": "2024-04-23",    # ánh xạ từ trường BUDAT
-        "quantity": 150,                  # ánh xạ từ trường MENGE
-        "plant": "PLANT-01",             # ánh xạ từ trường WERKS
+        "document_number": "5000012345", # ánh xạ từ MBLNR
+        "posting_date": "2024-04-23",    # ánh xạ từ BUDAT
+        "quantity": 150,                  # ánh xạ từ MENGE
+        "plant": "PLANT-01",             # ánh xạ từ WERKS
         "source": "SAP",
-        "changes": {                      # tự động thêm bởi ChangeDetector nếu bật
+        "changes": {                      # thêm bởi ChangeDetector nếu bật
             "quantity": {"old": 100, "new": 150, "type": "numeric_change"}
         }
     }
@@ -108,9 +108,9 @@ blockchain_event = {
 
 ---
 
-## Các hệ thống ERP hỗ trợ
+## Hệ thống ERP hỗ trợ
 
-| Hệ thống ERP | Lớp Adapter tương ứng | Khóa Cấu hình |
+| Hệ thống ERP | Lớp Adapter | Khóa cấu hình |
 |:-------------|:----------------------|:--------------|
 | SAP S/4HANA | `SAPAdapter` | `erp_system: "SAP"` |
 | Oracle ERP Cloud | `OracleAdapter` | `erp_system: "Oracle"` |
@@ -119,18 +119,18 @@ blockchain_event = {
 
 ---
 
-## Các bước thực hiện chi tiết
+## Các bước chi tiết
 
 | Bước | Mô tả |
 |:-----|:------|
-| **1. Kích hoạt bộ lịch**| Lớp `SyncScheduler` gọi hàm `_execute_sync()` cho từng cấu hình profile đã đăng ký. |
-| **2. Đọc các thay đổi** | Adapter ERP gọi hàm `get_changes_since_last_sync()` sử dụng timestamp của lần đồng bộ trước đó. |
-| **3. Phát hiện thay đổi**| Lớp `ChangeDetector` so sánh trạng thái mới với trạng thái trước đó, chú thích các trường dữ liệu bị thay đổi. |
-| **4. Ánh xạ dịch nghĩa**| Lớp `EventTranslator` áp dụng các quy tắc `mapping_rules` để tạo ra sự kiện HieraChain hợp lệ. |
-| **5. Chèn Metadata** | Lớp `add_blockchain_metadata()` tự động thêm các thông tin `timestamp`, `source`, `event: "erp_integration"`. |
-| **6. Gửi lên chuỗi** | Gọi hàm `SubChain.add_event(blockchain_event)`: sự kiện chính thức đi vào luồng Gửi Sự kiện. |
-| **7. Lưu mốc thời gian**| Cập nhật giá trị `last_sync` cho profile; lên lịch chạy tiếp theo. |
-| **8. Cơ chế thử lại** | Nếu xảy ra lỗi $\rightarrow$ thử lại với thời gian chờ tăng dần tối đa 300 giây; vượt quá số lần thử tối đa $\rightarrow$ phát tín hiệu cảnh báo rủi ro. |
+| **1. Kích hoạt lịch**| `SyncScheduler` gọi `_execute_sync()` cho từng profile đã đăng ký. |
+| **2. Đọc thay đổi** | Adapter ERP gọi `get_changes_since_last_sync()` dùng timestamp lần đồng bộ trước. |
+| **3. Phát hiện thay đổi**| `ChangeDetector` so sánh trạng thái mới với trạng thái trước, chú thích trường thay đổi. |
+| **4. Ánh xạ**| `EventTranslator` áp dụng `mapping_rules` để tạo sự kiện HieraChain hợp lệ. |
+| **5. Chèn metadata** | `add_blockchain_metadata()` thêm `timestamp`, `source`, `event: "erp_integration"`. |
+| **6. Gửi lên chuỗi** | Gọi `SubChain.add_event(blockchain_event)`: sự kiện vào luồng Gửi Sự kiện. |
+| **7. Lưu mốc thời gian**| Cập nhật `last_sync` cho profile; lên lịch lần chạy tiếp theo. |
+| **8. Thử lại** | Nếu lỗi thì thử lại với backoff tối đa 300 giây; vượt max thì gửi cảnh báo rủi ro. |
 
 ---
 
@@ -138,21 +138,21 @@ blockchain_event = {
 
 | Tình huống | Hành vi |
 |:-----------|:--------|
-| Lỗi kết nối tới ERP adapter | Thử lại với khoảng chờ tăng dần (30s, 60s, 120s, 240s, tối đa 300s) |
-| Thiếu khóa ánh xạ trường | Ghi nhật ký cảnh báo rủi ro; tiếp tục gửi sự kiện lên chuỗi với phần dữ liệu có sẵn |
-| Gọi `add_event()` lỗi (từ khóa cấm) | Loại bỏ sự kiện; ghi nhận log kèm dữ liệu ERP thô để đối soát |
-| Vượt quá số lần thử lại tối đa | Kích hoạt cảnh báo qua Risk Alerts với mã lỗi `erp_sync_failure` |
+| Lỗi kết nối tới ERP adapter | Thử lại với backoff (30s, 60s, 120s, 240s, tối đa 300s) |
+| Thiếu khóa ánh xạ trường | Ghi log cảnh báo; tiếp tục gửi sự kiện với dữ liệu có sẵn |
+| Gọi `add_event()` lỗi (từ cấm) | Loại sự kiện; ghi log kèm dữ liệu ERP thô để đối chiếu |
+| Vượt max lần thử lại | Kích hoạt cảnh báo qua Risk Alerts với `erp_sync_failure` |
 
 ---
 
-## Các Class & Method quan trọng
+## Lớp và phương thức chính
 
-| Bước | Class / Method | File |
+| Bước | Lớp / Phương thức | Tệp |
 |:-----|:--------------|:-----|
 | Điểm đồng bộ chính | `ERPIntegrationLedger.start_scheduled_sync()` | `integration/erp_ledger.py` |
 | Thực thi đồng bộ | `ERPIntegrationLedger._execute_sync()` | `integration/erp_ledger.py` |
 | Phát hiện thay đổi | `ChangeDetector.detect_changes()` | `integration/erp_ledger.py` |
-| Ánh xạ dịch nghĩa | `EventTranslator.translate()` | `integration/erp_ledger.py` |
+| Ánh xạ | `EventTranslator.translate()` | `integration/erp_ledger.py` |
 | Quản lý profile | `MappingEngine.create_profile()` | `integration/erp_ledger.py` |
 | Lên lịch thử lại | `SyncScheduler.schedule_retry()` | `integration/erp_ledger.py` |
 
@@ -160,6 +160,6 @@ blockchain_event = {
 
 ## Liên quan
 
-- [Gửi Sự kiện](./event-submission.md): Các sự kiện sau khi dịch nghĩa sẽ đi vào luồng này
-- [Truy vết Thực thể](./entity-tracing.md): Các sự kiện có nguồn gốc từ ERP có thể được truy vết qua `entity_id`
-- [Cảnh báo Rủi ro](./risk-alerts.md): Các lỗi đồng bộ sẽ được chuyển tới đây để leo thang xử lý
+- [Gửi Sự kiện](./event-submission.md): sự kiện sau dịch đi vào luồng này
+- [Truy vết Thực thể](./entity-tracing.md): sự kiện gốc ERP có thể truy vết qua `entity_id`
+- [Cảnh báo Rủi ro](./risk-alerts.md): lỗi đồng bộ được chuyển tới đây để leo thang

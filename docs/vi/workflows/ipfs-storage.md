@@ -4,17 +4,17 @@ description: "Đẩy các dữ liệu nghiệp vụ có dung lượng lớn ra n
 icon: material/harddisk
 ---
 
-# Lưu trữ Mã hóa IPFS (IPFS Encrypted Storage)
+# Lưu trữ mã hóa IPFS
 
 ## Tổng quan
 
-Các dữ liệu lớn hoặc nhạy cảm nằm ngoài chuỗi (ví dụ: tài liệu đính kèm, bằng chứng kiểm toán, tài sản nhị phân) được lưu trữ trên một mạng riêng tư IPFS swarm với **cơ chế mã hóa bắt buộc AES-256-GCM**. Chỉ có các nút chia sẻ chung khóa mật mã mới có quyền giải mã dữ liệu này. Mã định danh nội dung (CID) do IPFS trả về được lưu trữ trên chuỗi làm tham chiếu trỏ tới; dữ liệu dạng văn bản thô (plaintext) không bao giờ rời khỏi ranh giới mã hóa.
+Dữ liệu lớn hoặc nhạy cảm ngoài chuỗi (ví dụ tệp đính kèm, bằng chứng kiểm toán, tài sản nhị phân) được lưu trên swarm IPFS riêng với mã hóa bắt buộc AES-256-GCM. Chỉ node có chung khóa mới giải mã được. CID do IPFS trả về được lưu trên chuỗi làm tham chiếu; plaintext không rời khỏi ranh giới mã hóa.
 
-**Đặc tính an toàn cốt lõi**: Ngay cả khi bộ lưu trữ IPFS bị tấn công vật lý, dữ liệu vẫn hoàn toàn không thể đọc được nếu không có khóa giải mã AES-256-GCM.
+Điểm an toàn cốt lõi: ngay cả khi storage IPFS bị lộ vật lý, dữ liệu vẫn không đọc được nếu không có khóa AES-256-GCM.
 
 ---
 
-## Biểu đồ luồng: Tải lên (Mã hóa → Lưu trữ → Ghim)
+## Biểu đồ luồng: tải lên (mã hóa và ghim)
 
 ```mermaid
 sequenceDiagram
@@ -45,7 +45,7 @@ sequenceDiagram
 
 ---
 
-## Biểu đồ luồng: Tải về (Truy xuất → Giải mã)
+## Biểu đồ luồng: tải về (truy xuất và giải mã)
 
 ```mermaid
 sequenceDiagram
@@ -60,7 +60,7 @@ sequenceDiagram
     IPFS-->>IC: ciphertext
 
     IC->>AES: decrypt(ciphertext, nonce_bytes, aad=json(metadata))
-    Note right of AES: Xác thực thẻ chữ ký GCM trước<br/>Nếu thẻ không hợp lệ → ném lỗi DecryptionError
+    Note right of AES: Xác thực thẻ GCM trước<br/>Nếu thẻ không hợp lệ → ném lỗi DecryptionError
     AES-->>IC: plaintext bytes
 
     IC->>IC: json.loads(plaintext) → dict
@@ -69,7 +69,7 @@ sequenceDiagram
 
 ---
 
-## Xử lý lỗi: IPFS Ngoại tuyến
+## Xử lý lỗi: IPFS ngoại tuyến
 
 ```mermaid
 flowchart LR
@@ -89,46 +89,46 @@ flowchart LR
 
 ---
 
-## Các bước thực hiện chi tiết
+## Các bước chi tiết
 
 | Bước | Mô tả |
 |:-----|:------|
-| **1. Tuần tự hóa** | Thực hiện `json.dumps(data)` chuyển đổi thành mảng bytes thô. |
-| **2. Mã hóa** | Sử dụng thuật toán AES-256-GCM với nonce ngẫu nhiên 96-bit. Dữ liệu xác thực bổ sung AAD (Additional Authenticated Data) được xây dựng từ metadata dạng JSON. |
-| **3. Tải lên** | Mảng bytes dữ liệu đã mã hóa (ciphertext) được truyền tới IPFS daemon thông qua Kubo RPC API (`httpx`). |
-| **4. Ghim dữ liệu** | Lệnh `pin.add(CID)` giữ dữ liệu an toàn trên đĩa cứng, ngăn không cho tiến trình dọn rác của IPFS tự động xóa bỏ. |
-| **5. Trả kết quả** | Bên gọi nhận về thông tin `{ cid, nonce }`; cả hai tham số này phải được lưu trữ trên chuỗi phục vụ truy xuất sau này. |
-| **6. Truy xuất** | Phương thức `cat(cid)` tải về mảng bytes mã hóa; lệnh `decrypt()` kiểm tra thẻ xác thực GCM trước khi giải mã dữ liệu thô. |
+| **1. Tuần tự hóa** | `json.dumps(data)` thành bytes thô. |
+| **2. Mã hóa** | AES-256-GCM với nonce ngẫu nhiên 96-bit. AAD được tạo từ metadata JSON. |
+| **3. Tải lên** | Bytes mã hóa được gửi tới IPFS daemon qua Kubo RPC API (`httpx`). |
+| **4. Ghim** | `pin.add(CID)` giữ dữ liệu trên đĩa, tránh GC của IPFS xóa. |
+| **5. Trả kết quả** | Bên gọi nhận `{ cid, nonce }`; cả hai phải lưu trên chuỗi để truy xuất sau. |
+| **6. Truy xuất** | `cat(cid)` tải bytes mã hóa; `decrypt()` kiểm tra thẻ GCM trước khi giải mã. |
 
 ---
 
-## Các thuộc tính an ninh mạng
+## Thuộc tính an toàn
 
 | Thuộc tính | Cơ chế |
 |:-----------|:-------|
-| **Tính bảo mật** | Mã hóa cấp độ doanh nghiệp AES-256-GCM |
-| **Tính toàn vẹn** | Xác thực bằng thẻ chữ ký GCM (authenticated encryption) |
-| **Chống phát lại** | Mỗi lần tải lên sử dụng một mã nonce ngẫu nhiên 96-bit độc nhất |
-| **Quản lý khóa** | Cấu hình qua biến môi trường `HRC_IPFS_ENCRYPTION_KEY`; tự động sinh nếu thiếu |
-| **Kiểm soát quyền** | Bộ máy chính sách (Thực thi Chính sách) kiểm soát quyền gọi các API upload/download |
+| **Bảo mật** | AES-256-GCM |
+| **Toàn vẹn** | Xác thực thẻ GCM (authenticated encryption) |
+| **Chống replay** | Mỗi lần tải lên dùng nonce 96-bit ngẫu nhiên riêng |
+| **Quản lý khóa** | Cấu hình qua `HRC_IPFS_ENCRYPTION_KEY`; tự sinh nếu thiếu |
+| **Kiểm soát quyền** | Policy engine kiểm soát quyền gọi API upload/download |
 
 ---
 
-## Các Class & Method quan trọng
+## Lớp và phương thức chính
 
-| Bước | Class / Method | File |
+| Bước | Lớp / Phương thức | Tệp |
 |:-----|:--------------|:-----|
 | Điểm tải lên | `IPFSClient.upload_json()` | `api/storage/ipfs_client.py` |
-| Mã hóa dữ liệu | `AESEncryption.encrypt()` | `api/storage/encryption.py` |
+| Mã hóa | `AESEncryption.encrypt()` | `api/storage/encryption.py` |
 | Tải bytes thô | `IPFSClient.upload_bytes()` | `api/storage/ipfs_client.py` |
-| Ghim dữ liệu | `IPFSClient.pin()` | `api/storage/ipfs_client.py` |
-| Tải về & Giải mã | `IPFSClient.download_json()` | `api/storage/ipfs_client.py` |
-| Bộ tạo Client | `create_ipfs_client_from_env()` | `api/storage/ipfs_client.py` |
+| Ghim | `IPFSClient.pin()` | `api/storage/ipfs_client.py` |
+| Tải về và giải mã | `IPFSClient.download_json()` | `api/storage/ipfs_client.py` |
+| Tạo client | `create_ipfs_client_from_env()` | `api/storage/ipfs_client.py` |
 
 ---
 
 ## Liên quan
 
-- [Thực thi Chính sách](./policy-enforcement.md): Kiểm soát quyền truy cập của việc tải lên/tải xuống dữ liệu
-- [Cảnh báo Rủi ro](./risk-alerts.md): Lỗi kết nối IPFS sẽ kích hoạt hệ thống gửi cảnh báo
-- [Sao lưu & Khôi phục Khóa](./key-backup.md): Áp dụng chung mô hình mã hóa AES-256-GCM cho việc lưu trữ các bản sao lưu khóa
+- [Thực thi Chính sách](./policy-enforcement.md): kiểm soát quyền upload/download
+- [Cảnh báo Rủi ro](./risk-alerts.md): lỗi kết nối IPFS kích hoạt cảnh báo
+- [Sao lưu & Khôi phục Khóa](./key-backup.md): cùng mô hình mã hóa AES-256-GCM cho bản sao lưu khóa

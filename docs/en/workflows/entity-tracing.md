@@ -4,17 +4,17 @@ description: "Cross-chain entity auditing and tracking utility to reconstruct co
 icon: material/map-marker-path
 ---
 
-# Entity Tracing
+# Entity tracing
 
 ## Overview
 
-Since the same physical entity (e.g., product `SKU-001`, contract `C-2024`) may generate events across multiple Sub-Chains over its lifecycle, HieraChain provides **cross-chain entity tracing** to reconstruct a complete, immutable audit trail for any `entity_id`.
+The same physical entity (for example product `SKU-001` or contract `C-2024`) can produce events on several Sub-Chains during its lifecycle. HieraChain provides cross-chain tracing to rebuild a complete and immutable audit trail for any `entity_id`.
 
-Each Sub-Chain maintains an in-memory `entity_event_index` keyed by `entity_id`, enabling **O(1) lookup** without full chain scan.
+Each Sub-Chain keeps an in-memory `entity_event_index` keyed by `entity_id`, so lookup is O(1) without scanning the whole chain.
 
 ---
 
-## Flow Diagram
+## Flow diagram
 
 ```mermaid
 flowchart TB
@@ -46,7 +46,7 @@ flowchart TB
 
 ---
 
-## Real-World Example
+## Real-world example
 
 ```
 Entity: product-SKU-001 (Industrial sensor batch)
@@ -64,9 +64,9 @@ Timeline reconstructed across chains:
 
 ---
 
-## Entity Index Structure
+## Entity index structure
 
-Each Sub-Chain maintains an in-memory `entity_event_index`:
+Each Sub-Chain keeps an in-memory `entity_event_index`:
 
 ```python
 entity_event_index = {
@@ -77,11 +77,11 @@ entity_event_index = {
 }
 ```
 
-Events are indexed on write (`add_block()`), so reads are O(1) per chain. Aggregation across n chains is O(n).
+Events are indexed on write in `add_block()`, so reads are O(1) per chain. Aggregation across n chains is O(n).
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Step | Description |
 |:-----|:------------|
@@ -94,7 +94,7 @@ Events are indexed on write (`add_block()`), so reads are O(1) per chain. Aggreg
 
 ---
 
-## Error Handling
+## Error handling
 
 | Condition | Behavior |
 |:----------|:---------|
@@ -104,7 +104,7 @@ Events are indexed on write (`add_block()`), so reads are O(1) per chain. Aggreg
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|

@@ -4,17 +4,17 @@ description: "Coordinated cluster lockdown protocol triggered by critical risk d
 icon: material/lock
 ---
 
-# Cluster Lockdown & Recovery
+# Cluster lockdown and recovery
 
 ## Overview
 
-The **Cluster Lockdown Protocol** coordinates a system-wide state freeze across all nodes when a critical anomaly is detected. It uses **gossip-style P2P messaging over ZeroMQ** and requires a **2/3 quorum** of registered nodes to trigger both lockdown and recovery. All messages are authenticated with **HMAC-SHA256** to prevent spoofed lockdown attacks.
+This protocol freezes state across all nodes when a critical anomaly is detected. It uses gossip style P2P messaging over ZeroMQ and needs a 2/3 quorum of registered nodes to start both lockdown and recovery. All messages use HMAC-SHA256 so spoofed lockdown messages are rejected.
 
-**Key property**: No single node can lock the cluster unilaterally; quorum is mandatory.
+No single node can lock the cluster on its own. Quorum is required.
 
 ---
 
-## Flow Diagram
+## Flow diagram
 
 ```mermaid
 sequenceDiagram
@@ -68,7 +68,7 @@ sequenceDiagram
 
 ---
 
-## State Machine
+## State machine
 
 ```mermaid
 stateDiagram-v2
@@ -83,7 +83,7 @@ stateDiagram-v2
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Step | Description |
 |:-----|:------------|
@@ -98,7 +98,7 @@ stateDiagram-v2
 
 ---
 
-## Error Handling
+## Error handling
 
 | Condition | Behavior |
 |:----------|:---------|
@@ -110,7 +110,7 @@ stateDiagram-v2
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|

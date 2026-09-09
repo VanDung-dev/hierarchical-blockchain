@@ -4,7 +4,7 @@ description: "X.509 certificate lifecycle, enrollment, and MSP authentication fo
 icon: material/card-account-details
 ---
 
-# MSP Identity & Authorization
+# MSP identity and authorization
 
 ## Overview
 
@@ -15,11 +15,11 @@ HieraChain uses two identity layers:
 | **Simple RBAC** | `IdentityManager` | Single-org deployments; role-based permission checks |
 | **Enterprise MSP** | `HierarchicalMSP` | Multi-org consortiums; X.509 certificate hierarchy with `CertificateAuthority` |
 
-Every entity must be registered and have its identity validated before being permitted to call `PolicyEngine` (Policy Enforcement) or submit events (Event Submission).
+Every entity must be registered and have its identity validated before the system allows it to call `PolicyEngine` or submit events.
 
 ---
 
-## Flow Diagram: Entity Onboarding (Enterprise MSP)
+## Flow diagram: entity onboarding (enterprise MSP)
 
 ```mermaid
 sequenceDiagram
@@ -51,7 +51,7 @@ sequenceDiagram
 
 ---
 
-## Flow Diagram: Runtime Authorization
+## Flow diagram: runtime authorization
 
 ```mermaid
 sequenceDiagram
@@ -87,7 +87,7 @@ sequenceDiagram
 
 ---
 
-## Flow Diagram: Certificate Revocation
+## Flow diagram: certificate revocation
 
 ```mermaid
 sequenceDiagram
@@ -108,7 +108,7 @@ sequenceDiagram
 
 ---
 
-## Default Roles
+## Default roles
 
 | Role | Permissions |
 |:-----|:------------|
@@ -118,7 +118,7 @@ sequenceDiagram
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Step | Description |
 |:-----|:------------|
@@ -133,7 +133,7 @@ sequenceDiagram
 
 ---
 
-## Error Handling
+## Error handling
 
 | Condition | Behavior |
 |:----------|:---------|
@@ -145,7 +145,7 @@ sequenceDiagram
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|

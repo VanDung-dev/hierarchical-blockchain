@@ -4,17 +4,17 @@ description: "Anchoring sub-chain cryptographic proofs onto the main chain for g
 icon: material/anchor
 ---
 
-# Proof Anchoring
+# Proof anchoring
 
 ## Overview
 
-After a block is finalized on a Sub-Chain, the Sub-Chain submits a **cryptographic proof** (hash + optional ZK proof) to the Main Chain. The Main Chain stores only the proof, never raw event data. This is how global immutability is enforced without storing sensitive domain data on the root chain.
+After a block is finalized on a Sub-Chain, the Sub-Chain submits a cryptographic proof (hash and optional ZK proof) to the Main Chain. The Main Chain stores only the proof, never raw event data. This keeps domain data off the root chain while still enforcing global immutability.
 
-This is a **post-block trigger**, not a user-initiated call. It fires automatically when `chain_length % proof_interval == 0`.
+This is not a user initiated call. It is a post-block trigger that fires when `chain_length % proof_interval == 0`.
 
 ---
 
-## Flow Diagram
+## Flow diagram
 
 ```mermaid
 sequenceDiagram
@@ -47,7 +47,7 @@ sequenceDiagram
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Step | Description |
 |:-----|:------------|
@@ -59,7 +59,7 @@ sequenceDiagram
 
 ---
 
-## ZK Proof Modes
+## ZK proof modes
 
 | Mode | Mechanism | Use Case |
 |:-----|:----------|:---------|
@@ -74,28 +74,28 @@ sequenceDiagram
 |:--------|:--------|:------------|
 | `HRC_ENABLE_ZK_PROOFS` | `false` | Toggle ZK verification |
 | `HRC_ZK_MODE` | `mock` | `mock` or `production` |
-| `HRC_ZK_PROOF_REQUIRED_FOR_MAINCHAIN` | `false` | Block proof submission if ZK fails |
+| `HRC_ZK_REQUIRED_MAINCHAIN` | `false` | Block proof submission if ZK fails |
 
 ---
 
-## Error Handling
+## Error handling
 
 | Condition | Behavior |
 |:----------|:---------|
-| ZK proof generation fails | Retry up to 3× with exponential backoff; if `HRC_ZK_PROOF_REQUIRED_FOR_MAINCHAIN=true`, abort |
+| ZK proof generation fails | Retry up to 3× with exponential backoff; if `HRC_ZK_REQUIRED_MAINCHAIN=true`, abort |
 | Main Chain write fails | Exception logged, `last_proof_submission` not updated; retry on next block |
 | Main Chain ZK verification fails | `add_proof()` raises, proof block not appended |
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|
-| Trigger | `SubChain.auto_submit_proof_if_needed()` | `hierarchical/sub_chain.py` |
+| Trigger | `SubChain.auto_submit_proof_if_needed()` | `hierarchical/sub_chain/base.py` |
 | ZK generate | `ZKProver.generate_proof()` | `security/zk_prover.py` |
-| Proof metadata | `_generate_default_proof_metadata()` | `hierarchical/sub_chain.py` |
-| Anchor on Main | `MainChain.add_proof()` | `hierarchical/main_chain.py` |
+| Proof metadata | `_generate_default_proof_metadata()` | `hierarchical/sub_chain/base.py` |
+| Anchor on Main | `MainChain.add_proof()` | `hierarchical/main_chain/base.py` |
 | ZK verify | `ZKVerifier.verify_proof()` | `security/verify/zk_verifier.py` |
 
 ---

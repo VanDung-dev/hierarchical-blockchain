@@ -1,16 +1,16 @@
 ---
-title: "Khóa băng Cụm (Cluster Lockdown)"
+title: "Khóa băng Cụm"
 description: "Giao thức điều phối khóa băng trạng thái của toàn cụm nút được kích hoạt khi phát hiện các rủi ro nguy hiểm."
 icon: material/lock
 ---
 
-# Khóa băng Cụm (Cluster Lockdown)
+# Khóa băng cụm
 
 ## Tổng quan
 
-**Giao thức Khóa băng Cụm (Cluster Lockdown Protocol)** điều phối việc đóng băng trạng thái của toàn bộ hệ thống trên tất cả các nút khi phát hiện sự bất thường nghiêm trọng. Cơ chế này sử dụng **giao thức tin nhắn ngang hàng P2P kiểu tin đồn (gossip) qua ZeroMQ** và yêu cầu **biểu quyết quá bán (tối thiểu 2/3)** của các nút đã đăng ký để kích hoạt cả quá trình khóa băng lẫn phục hồi. Tất cả thông điệp đều được xác thực bằng chữ ký **HMAC-SHA256** nhằm ngăn chặn các cuộc tấn công giả mạo yêu cầu khóa băng.
+Giao thức khóa băng cụm đóng băng trạng thái toàn hệ thống trên mọi node khi phát hiện bất thường nghiêm trọng. Nó dùng gossip P2P qua ZeroMQ và yêu cầu quorum tối thiểu 2/3 node đã đăng ký để kích hoạt cả khóa băng lẫn khôi phục. Mọi thông điệp được xác thực bằng HMAC-SHA256 để ngăn giả mạo yêu cầu khóa băng.
 
-**Đặc tính quan trọng**: Không một nút đơn lẻ nào có thể đơn phương khóa băng toàn bộ cụm; đạt tỷ lệ biểu quyết tối thiểu (quorum) là điều bắt buộc.
+Điểm chính: không một node đơn lẻ nào có thể tự khóa toàn cụm; phải đạt quorum.
 
 ---
 
@@ -68,7 +68,7 @@ sequenceDiagram
 
 ---
 
-## Máy trạng thái (State Machine)
+## Máy trạng thái
 
 ```mermaid
 stateDiagram-v2
@@ -83,18 +83,18 @@ stateDiagram-v2
 
 ---
 
-## Các bước thực hiện chi tiết
+## Các bước chi tiết
 
 | Bước | Mô tả |
 |:-----|:------|
-| **1. Phát hiện bất thường** | Lệnh `RiskAnalyzer` hoặc người vận hành hệ thống kích hoạt `broadcast_lockdown_vote(reason)` thủ công. |
-| **2. Phát tin phiếu bầu** | Lan truyền thông điệp LOCKDOWN_VOTE dạng gossip tới tất cả các nút ngang hàng, được ký kèm HMAC-SHA256 + dấu thời gian. |
-| **3. Xác thực phiếu bầu** | Mỗi nút nhận tin xác thực chữ ký HMAC và từ chối các phiếu bầu có thời gian trễ lớn hơn 300 giây. |
-| **4. Kiểm tra Quorum** | Lệnh `_check_lockdown_quorum()`: nếu tỷ lệ `votes / total_nodes ≥ 0.66` $\rightarrow$ quy trình khóa băng được kích hoạt. |
-| **5. Đóng băng hệ thống** | Mỗi nút gọi hàm gọi lại `local_lockdown_callback()` $\rightarrow$ `OrderingService` dừng hoàn toàn việc tiếp nhận sự kiện. |
-| **6. Báo cáo kiểm dịch** | Các nút trao đổi danh sách ID các sự kiện đang chờ xử lý và các mã băm của khối cuối cùng để đối soát độ sai lệch trạng thái. |
-| **7. Biểu quyết phục hồi** | Sau khi phân tích lỗi xong, người vận hành hoặc trigger tự động khởi tạo lan truyền `RECOVERY_VOTE` dạng gossip. |
-| **8. Quorum phục hồi** | Yêu cầu ngưỡng tối thiểu tương tự (2/3). Khi đạt quorum: gọi hàm `local_recovery_callback()` $\rightarrow$ khôi phục hoạt động bình thường. |
+| **1. Phát hiện** | `RiskAnalyzer` hoặc người vận hành gọi `broadcast_lockdown_vote(reason)`. |
+| **2. Phát phiếu** | Lan truyền LOCKDOWN_VOTE dạng gossip tới mọi peer, kèm HMAC-SHA256 và timestamp. |
+| **3. Xác thực** | Mỗi node kiểm tra chữ ký HMAC và loại phiếu có độ trễ trên 300 giây. |
+| **4. Kiểm tra quorum** | `_check_lockdown_quorum()`: nếu `votes / total_nodes >= 0.66` thì kích hoạt khóa băng. |
+| **5. Đóng băng** | Mỗi node gọi `local_lockdown_callback()` và `OrderingService` dừng nhận sự kiện. |
+| **6. Báo cáo kiểm dịch** | Node trao đổi danh sách ID sự kiện chờ xử lý và hash khối cuối để đối chiếu lệch trạng thái. |
+| **7. Biểu quyết khôi phục** | Sau khi phân tích lỗi, người vận hành hoặc trigger tự động phát `RECOVERY_VOTE` dạng gossip. |
+| **8. Quorum khôi phục** | Ngưỡng tương tự (2/3). Khi đạt quorum: gọi `local_recovery_callback()` và trở lại hoạt động bình thường. |
 
 ---
 
@@ -102,23 +102,23 @@ stateDiagram-v2
 
 | Tình huống | Hành vi |
 |:-----------|:--------|
-| Xác thực HMAC thất bại | Phiếu biểu quyết bị loại bỏ, ghi nhật ký cảnh báo |
-| Dấu thời gian phiếu bầu > 300 giây | Phiếu biểu quyết bị từ chối (ngăn chặn tấn công phát lại - replay attack) |
-| Không đạt đủ tỷ lệ phiếu khóa băng | Hệ thống tiếp tục hoạt động bình thường, các phiếu bầu tự động hết hạn |
-| Không đạt đủ tỷ lệ phiếu phục hồi | Toàn cụm tiếp tục bị khóa băng; phát đi cảnh báo leo thang thông qua hệ thống Cảnh báo Rủi ro |
-| Nút mới tham gia cụm trong lúc khóa băng | Nút mới tự động nhận trạng thái LOCKED thông qua `StateSyncManager` |
+| Xác thực HMAC lỗi | Loại phiếu, ghi log cảnh báo |
+| Timestamp phiếu > 300 giây | Từ chối phiếu (chống replay) |
+| Không đủ quorum khóa băng | Hệ thống tiếp tục bình thường, phiếu tự hết hạn |
+| Không đủ quorum khôi phục | Cụm vẫn bị khóa; gửi cảnh báo leo thang qua Risk Alerts |
+| Node mới tham gia khi đang khóa | Node mới nhận trạng thái LOCKED qua `StateSyncManager` |
 
 ---
 
-## Các Class & Method quan trọng
+## Lớp và phương thức chính
 
-| Bước | Class / Method | File |
+| Bước | Lớp / Phương thức | Tệp |
 |:-----|:--------------|:-----|
 | Khởi tạo khóa băng | `ClusterLockdownManager.broadcast_lockdown_vote()` | `cluster/lockdown_protocol.py` |
 | Xác thực tin nhắn | `_verify_lockdown_message()` | `cluster/lockdown_protocol.py` |
-| Kiểm tra Quorum | `_check_lockdown_quorum()` | `cluster/lockdown_protocol.py` |
-| Đóng băng hệ thống | `local_lockdown_callback()` | `cluster/lockdown_protocol.py` |
-| Quorum phục hồi | `_check_recovery_quorum()` | `cluster/lockdown_protocol.py` |
+| Kiểm tra quorum | `_check_lockdown_quorum()` | `cluster/lockdown_protocol.py` |
+| Đóng băng | `local_lockdown_callback()` | `cluster/lockdown_protocol.py` |
+| Quorum khôi phục | `_check_recovery_quorum()` | `cluster/lockdown_protocol.py` |
 | Đồng bộ trạng thái | `StateSyncManager.sync_state()` | `cluster/state_sync_manager.py` |
 | Giao thức mạng | `ZmqTransport.broadcast()` | `network/zmq_transport.py` |
 
@@ -126,6 +126,6 @@ stateDiagram-v2
 
 ## Liên quan
 
-- [Risk Analysis & Alerts](./risk-alerts.md): Việc vượt quá ngưỡng rủi ro cho phép sẽ kích hoạt quy trình này
-- [Giảm thiểu Lỗi & Phục hồi](./error-recovery.md): Xử lý hoàn trả trạng thái (rollback) sau khi phục hồi thành công
-- [Sao lưu & Khôi phục Khóa](./key-backup.md): Quá trình khóa băng cụm có thể kích hoạt cơ chế luân chuyển khóa $\rightarrow$ Sao lưu & Khôi phục Khóa
+- [Cảnh báo Rủi ro](./risk-alerts.md): vượt ngưỡng rủi ro kích hoạt quy trình này
+- [Giảm thiểu Lỗi & Phục hồi](./error-recovery.md): xử lý rollback sau khi khôi phục
+- [Sao lưu & Khôi phục Khóa](./key-backup.md): khóa băng không tự kích hoạt xoay vòng khóa

@@ -1,177 +1,76 @@
 ---
 title: "Key Backup & Restoration"
-description: "Cryptographic backup of critical validator private keys and system restoration procedures."
+description: "Actual key backup/restore paths in HieraChain: CLI-generated Ed25519 keys and FileVaultProvider."
 icon: material/key
 ---
 
-# Key Backup & Restoration
+# Key backup and restoration
 
 ## Overview
 
-Cryptographic keys (consensus keys, identity keys, encryption keys) are backed up automatically after each generation or rotation event. Each backup is **AES-256-GCM encrypted** and distributed to multiple vault locations. When restoring, `restore_keys()` verifies **SHA-512 integrity** before decrypting and applying keys to the system.
-
-**Key property**: Even if one vault is compromised, the plaintext keys are protected by AES-256-GCM. Even if the ciphertext is tampered, the SHA-512 integrity check prevents decryption of corrupted data.
+HieraChain does not have a `security/key_backup_manager.py` or `MasterKeyProvider`. Key backup is operator managed and has two real paths: plain JSON key files created by the CLI and the optional encrypted `FileVaultProvider` vault. There is no automatic AES-256-GCM multi-vault distribution or SHA-512 integrity chain in the code.
 
 ---
 
-## Flow Diagram: Backup
+## Actual paths
+
+### 1. CLI plain backup (default)
+
+**File**: `hierachain/cli/key.py`
+
+```bash
+python -m hierachain key generate --output validator_key.json  # Ed25519 hex JSON
+python -m hierachain key show --input validator_key.json
+python -m hierachain key verify --input validator_key.json
+```
+
+* Output is `{private_key, public_key}` hex. Backup means copying `validator_key.json` to secure external storage. Restore means copying it back and setting `HRC_VALIDATOR_IDENTITY=validator_key.json`.
+* No encryption, no hash, no auto-rotation. The operator handles rotation by running `generate` again.
+
+### 2. Encrypted vault (dev/test)
+
+**File**: `hierachain/security/key_provider.py` (`FileVaultProvider`)
+
+* Creates a `.vault` file encrypted with `PBKDF2HMAC(SHA256, 310k iter)` that leads to `Fernet` (AES-128-CBC with HMAC, not AES-256-GCM). The password comes from `HRC_VAULT_*` or the constructor argument.
+* This provider is documented as dev/test only. Production should implement `KeyProvider` with HSM or KMS.
+* There is no distribution to multiple vaults, no `metadata.json`, no `retention_period` and no `auto_restore_threshold`.
 
 ```mermaid
 sequenceDiagram
-    autonumber
-    participant Trigger as ⚙️ Key Generation / Rotation
-    participant KBM as 🔑 KeyBackupManager
-    participant AES as 🔐 AES-256-GCM
-    participant FS as 📁 File System / Vault
+    participant CLI as CLI generate
+    participant File as validator_key.json / .vault
+    participant Op as Operator / HSM
 
-    Note over Trigger: New key created (MSP cert issue, consensus rotation)
-
-    Trigger->>KBM: backup_keys(public_key, private_key, key_type)
-    KBM->>KBM: Sanitize key_type → backup_id = "{key_type}_{timestamp}"
-
-    rect rgb(0, 0, 0, 0)
-        Note over KBM,AES: Phase 1 — Encryption
-        KBM->>AES: _encrypt_backup_data({ public_key, private_key, ... }, encryption_key)
-        Note right of AES: nonce = secrets.token_bytes(12)<br/>ciphertext = AESGCM.encrypt(nonce, json_data, aad)<br/>output = nonce || ciphertext
-        AES-->>KBM: encrypted_data (bytes)
-    end
-
-    rect rgb(0, 0, 0, 0)
-        Note over KBM,FS: Phase 2 — Write & Integrity Verify
-        KBM->>FS: write {backup_id}.enc to primary vault
-        KBM->>KBM: _calculate_integrity_hash(encrypted_data) → SHA-512
-        KBM->>KBM: _verify_integrity(backup_file, expected_hash) → confirm write OK
-    end
-
-    rect rgb(0, 0, 0, 0)
-        Note over KBM,FS: Phase 3 — Distribution & Metadata
-        KBM->>FS: _distribute_to_locations(file, backup_id, locations)
-        Note right of FS: Copy to secondary_vault, tertiary_vault, ...<br/>Each = separate directory / remote path
-        FS-->>KBM: distributed_locations []
-
-        KBM->>KBM: _update_metadata(backup_id, { timestamp, key_type, hash, locations, file_path })
-        KBM->>KBM: _cleanup_old_backups() — remove backups older than retention_period days
-    end
-    KBM-->>Trigger: backup_id ✅
+    CLI->>File: write private_key/public_key hex
+    File->>Op: manual copy to backup / KMS
+    Op-->>File: restore copy back
+    File->>CLI: verify / LocalKeyProvider.from_file()
 ```
 
 ---
 
-## Flow Diagram: Restoration
+## What is not implemented
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant Trigger as ⚙️ Disaster Recovery
-    participant KBM as 🔑 KeyBackupManager
-    participant AES as 🔐 AES-256-GCM
-    participant FS as 📁 File System / Vault
-
-    Trigger->>KBM: restore_keys(backup_id)
-    rect rgb(0, 0, 0, 0)
-        Note over KBM,FS: Phase 1 — Locate & Integrity Check
-        KBM->>FS: _find_backup_file(backup_id)<br/>Search primary vault, then distributed locations
-        FS-->>KBM: backup_file path
-
-        KBM->>KBM: _get_backup_hash(backup_id) → expected_hash from metadata
-        KBM->>KBM: _calculate_integrity_hash(file_content) → actual_hash
-    end
-
-    alt Integrity OK (actual == expected)
-        KBM->>AES: _decrypt_backup_data(encrypted_data, encryption_key)
-        AES-->>KBM: { public_key, private_key, key_type }
-        KBM->>KBM: _validate_keys(public_key, private_key, key_type)
-        KBM->>KBM: _apply_restored_keys(public_key, private_key, key_type)
-        KBM-->>Trigger: { public_key, private_key } ✅
-    else Integrity FAIL (tampered or corrupted)
-        KBM-->>Trigger: raise IntegrityError ❌
-        Note over KBM: Log corruption, try next vault location
-    end
-```
+| Documented claim (removed) | Reality |
+|---|---|
+| `KeyBackupManager.backup_keys()` / `_encrypt_backup_data()` / `SHA-512` / `_distribute_to_locations()` | No such class/methods exist |
+| AES-256-GCM + nonce\|\|ciphertext + 3-vault failover | Vault uses `Fernet`; multi-location is manual copy |
+| `MasterKeyProvider.get_master_key()` | No such provider; master key is `HRC_MASTER_KEY_FILE`/`HRC_MASTER_KEY_SOURCE` + `HRC_VAULT_TOKEN`/`HRC_VAULT_PATH` envs |
+| Auto backup on MSP cert issue or consensus rotation | No hook; certs in `security/msp.py` are in-memory only |
 
 ---
 
-## Multi-Vault Failover
+## Operator checklist
 
-```mermaid
-flowchart LR
-    RESTORE["restore_keys(backup_id)"]
-    ledger["📁 Primary Vault\n_find_backup_file()"]
-    business["📁 Secondary Vault\n(fallback)"]
-    admin["📁 Tertiary Vault\n(fallback)"]
-    OK["✅ Decrypted Keys"]
-    ERR["❌ IntegrityError\nAll vaults failed"]
-
-    RESTORE --> ledger
-    ledger -->|Found + intact| OK
-    ledger -->|Not found / tampered| business
-    business -->|Found + intact| OK
-    business -->|Not found / tampered| admin
-    admin -->|Found + intact| OK
-    admin -->|Not found / tampered| ERR
-```
-
----
-
-## Step-by-Step Breakdown
-
-| Step | Description |
-|:-----|:------------|
-| **1. Trigger** | Key generated (MSP cert issue) or rotated (scheduled rotation) |
-| **2. Backup ID** | `backup_id = "{sanitized_key_type}_{unix_timestamp}"` |
-| **3. Encrypt** | AES-256-GCM with random 96-bit nonce. Output = `nonce \|\| ciphertext` |
-| **4. Write + verify** | Write to primary vault; SHA-512 hash of file verified immediately |
-| **5. Distribute** | Copy to all configured vault locations |
-| **6. Metadata** | `metadata.json` updated: backup_id, key_type, hash, locations, timestamp |
-| **7. Cleanup** | Backups older than `retention_period` (default 365 days) deleted |
-| **8. Restore** | Find file → verify SHA-512 → decrypt → validate key pair → apply |
-
----
-
-## Backup Configuration
-
-| Parameter | Default | Description |
-|:----------|:--------|:------------|
-| `frequency` | `daily` | Backup schedule |
-| `encryption_algorithm` | `AES-256-GCM` | Cipher |
-| `integrity_check` | `sha512` | Hash algorithm for write verification |
-| `retention_period` | `365` days | Auto-cleanup threshold |
-| `locations` | `[primary_vault]` | Distribution targets |
-| `auto_restore_threshold` | `1` | Min available copies before auto-restore triggered |
-
----
-
-## Error Handling
-
-| Condition | Behavior |
-|:----------|:---------|
-| Integrity check fails immediately after write | `ValueError` raised; backup aborted, retried |
-| All vault locations unreachable | `IOError` raised; critical alert via Risk Alerts |
-| SHA-512 mismatch on restore | `IntegrityError` raised; next vault location tried |
-| Decryption fails (wrong key) | `CryptographyError` raised; process aborted |
-| `_apply_restored_keys()` fails | System remains on existing keys; error logged and alerted |
-
----
-
-## Key Classes & Methods
-
-| Step | Class / Method | File |
-|:-----|:--------------|:-----|
-| Backup entry | `KeyBackupManager.backup_keys()` | `security/key_backup_manager.py` |
-| Encrypt | `_encrypt_backup_data()` | `security/key_backup_manager.py` |
-| Integrity hash | `_calculate_integrity_hash()` | `security/key_backup_manager.py` |
-| Verify write | `_verify_integrity()` | `security/key_backup_manager.py` |
-| Distribute | `_distribute_to_locations()` | `security/key_backup_manager.py` |
-| Restore entry | `KeyBackupManager.restore_keys()` | `security/key_backup_manager.py` |
-| Find file | `_find_backup_file()` | `security/key_backup_manager.py` |
-| Decrypt | `_decrypt_backup_data()` | `security/key_backup_manager.py` |
-| Validate keys | `_validate_keys()` | `security/key_backup_manager.py` |
-| Master key | `MasterKeyProvider.get_master_key()` | `security/master_key_provider.py` |
+1. Generate: `python -m hierachain key generate -o validator_key.json`
+2. Backup: `cp validator_key.json /secure/backup/` (encrypt externally if needed)
+3. Restore: `cp /secure/backup/validator_key.json ./ && python -m hierachain key verify`
+4. For encrypted vault: `FileVaultProvider.create_vault(vault_path, password)` then store password in vault/KMS at `HRC_VAULT_TOKEN`.
 
 ---
 
 ## Related
 
-- [MSP Identity](./msp-identity.md): certificate issuance triggers key backup
-- [Cluster Lockdown](./cluster-lockdown.md): lockdown may require key rotation, triggering this workflow
-- [IPFS Storage](./ipfs-storage.md): uses the same AES-256-GCM encryption pattern
+- [MSP Identity](./msp-identity.md): `security/msp.py` issues in-memory certs; no trigger to key backup
+- [Cluster Lockdown](./cluster-lockdown.md): no automatic key rotation
+- [Encryption & Keys](../security/encryption-keys.md): corrected description of `msp.py`/`key_provider.py`

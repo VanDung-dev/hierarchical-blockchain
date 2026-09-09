@@ -4,17 +4,17 @@ description: "Details of the core ingestion pipeline: event submission, validati
 icon: material/tray-arrow-down
 ---
 
-# Event Submission
+# Event submission
 
 ## Overview
 
-Events enter HieraChain as structured business operations, are validated, batched by the `OrderingService` into blocks, finalized by the configured **Proof** mechanism (PoA / PoF / BFT), then appended to the Sub-Chain. The consensus mechanism for MainChain is pluggable (`HRC_MAINCHAIN_CONSENSUS`), while SubChain defaults to PoA for high-speed intra-org operations. The overall flow is always identical, only the `finalize_block()` step differs.
+Events enter HieraChain as business operations. They are validated, batched by `OrderingService` into blocks, finalized by the configured proof mechanism (PoA, PoF or BFT), and then appended to the Sub-Chain. The MainChain consensus is pluggable via `HRC_MAINCHAIN_CONSENSUS`, while SubChain uses PoA by default for fast intra-org processing. The flow is the same in all cases. Only the `finalize_block()` step changes.
 
-For detailed PoA and PoF diagrams, see [Consensus Mechanisms](./consensus_mechanisms.md).
+For PoA and PoF diagrams, see [Consensus Mechanisms](./consensus_mechanisms.md).
 
 ---
 
-## Flow Diagram
+## Flow diagram
 
 ```mermaid
 sequenceDiagram
@@ -68,7 +68,7 @@ sequenceDiagram
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Step | Description |
 |:-----|:------------|
@@ -84,7 +84,7 @@ sequenceDiagram
 
 ---
 
-## Event Structure
+## Event structure
 
 ```python
 event = {
@@ -103,7 +103,7 @@ event = {
 
 ---
 
-## Error Handling
+## Error handling
 
 | Condition | Behavior |
 |:----------|:---------|
@@ -115,7 +115,7 @@ event = {
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|

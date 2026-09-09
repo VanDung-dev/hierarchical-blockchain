@@ -4,19 +4,19 @@ description: "Byzantine Fault Tolerant (PBFT) consensus flow for adversarial env
 icon: material/shield-key
 ---
 
-# BFT Consensus
+# BFT consensus
 
 ## Overview
 
-The **Byzantine Fault-Tolerant (BFT)** consensus mechanism runs 3-phase PBFT when blocks are finalized. It requires `n ≥ 3f + 1` nodes to tolerate `f` faulty or malicious nodes. This replaces the `finalize_block()` step in Event Submission for BFT mode.
+The Byzantine Fault Tolerant consensus uses 3-phase PBFT to finalize blocks. It needs `n >= 3f + 1` nodes to tolerate `f` faulty or malicious nodes. In BFT mode this replaces the `finalize_block()` step from event submission.
 
-For PoA and PoF consensus flows, see [Consensus Mechanisms](./consensus_mechanisms.md).
+For PoA and PoF flows, see [Consensus Mechanisms](./consensus_mechanisms.md).
 
-**Requirement**: Minimum 4 nodes to tolerate 1 Byzantine failure (n=4, f=1: 3×1+1=4).
+You need at least 4 nodes to tolerate 1 Byzantine failure (n=4, f=1: 3×1+1=4).
 
 ---
 
-## Flow Diagram: 3-Phase PBFT
+## Flow diagram: 3-phase PBFT
 
 ```mermaid
 sequenceDiagram
@@ -61,7 +61,7 @@ sequenceDiagram
 
 ---
 
-## Flow Diagram: View Change (Leader Failure)
+## Flow diagram: view change (leader failure)
 
 ```mermaid
 sequenceDiagram
@@ -83,7 +83,7 @@ sequenceDiagram
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Step | Description |
 |:-----|:------------|
@@ -94,7 +94,7 @@ sequenceDiagram
 
 ---
 
-## Consensus Comparison
+## Consensus comparison
 
 | Algorithm | Mechanism | Fault Tolerance | Use Case |
 |:----------|:----------|:----------------|:---------|
@@ -104,7 +104,7 @@ sequenceDiagram
 
 ---
 
-## Error Handling
+## Error handling
 
 | Condition | Behavior |
 |:----------|:---------|
@@ -115,7 +115,7 @@ sequenceDiagram
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|

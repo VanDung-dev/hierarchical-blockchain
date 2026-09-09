@@ -4,13 +4,13 @@ description: "Quét mã hóa toàn hệ thống để phát hiện các bất th
 icon: material/check-decagram
 ---
 
-# Xác thực Tính toàn vẹn Hệ thống (System Integrity Validation)
+# Xác thực tính toàn vẹn hệ thống
 
 ## Tổng quan
 
-Quy trình xác thực tính toàn vẹn trên toàn hệ thống kiểm tra **tính nhất quán mã hóa (cryptographic consistency)** của tất cả các chuỗi và xác minh rằng các bằng chứng được lưu trữ trên Chuỗi chính (Main Chain) khớp hoàn toàn với các khối mới nhất trên từng Chuỗi con (Sub-Chain). Đây là cơ chế chính để **phát hiện can thiệp trái phép (tamper detection)** và **tuân thủ quy trình kiểm toán (audit compliance)**.
+Quy trình xác thực kiểm tra tính nhất quán mật mã của mọi chuỗi và xác minh proof lưu trên Main Chain khớp với khối mới nhất trên từng Sub-Chain. Đây là cơ chế chính để phát hiện can thiệp và đáp ứng kiểm toán.
 
-Quy trình xác thực chạy ba lớp kiểm tra song song: tính hợp lệ mã hóa của Chuỗi chính, tính hợp lệ mã hóa của Chuỗi con, và tính nhất quán của bằng chứng giữa hai cấp chuỗi.
+Quy trình chạy ba lớp kiểm tra song song: tính hợp lệ mật mã của Main Chain, tính hợp lệ của Sub-Chain, và tính nhất quán proof giữa hai cấp.
 
 ---
 
@@ -46,7 +46,7 @@ flowchart TB
 
 ---
 
-## Luồng Phát hiện Can thiệp Trái phép
+## Luồng phát hiện can thiệp
 
 ```mermaid
 sequenceDiagram
@@ -77,7 +77,7 @@ sequenceDiagram
 
 ---
 
-## Cấu trúc Báo cáo Toàn vẹn (Integrity Report)
+## Cấu trúc báo cáo toàn vẹn
 
 ```python
 {
@@ -111,17 +111,17 @@ sequenceDiagram
 
 ---
 
-## Các bước thực hiện chi tiết
+## Các bước chi tiết
 
 | Bước | Mô tả |
 |:-----|:------|
-| **1. Kích hoạt** | Hẹn giờ định kỳ, lệnh gọi từ người vận hành, hoặc phát hiện bất thường từ hệ thống Cảnh báo Rủi ro. |
-| **2. Xác thực Chuỗi chính** | Lệnh `BlockVerifier.verify_chain()` tính toán lại mã băm của mọi khối và kiểm tra các liên kết `previous_hash`. |
-| **3. Xác thực Chuỗi con** | Thực hiện quy trình xác thực tương tự song song trên tất cả các Chuỗi con đã đăng ký. |
-| **4. Nhất quán bằng chứng** | So sánh giá trị `sub_chain.latest_block.hash` với bằng chứng được lưu trên Chuỗi chính `main_chain.proofs[chain_name]`. |
-| **5. Quét từ khóa cấm** | Lệnh `CrossChainValidator` quét toàn bộ payload sự kiện để phát hiện các thuật ngữ liên quan đến cryptocurrency. |
-| **6. Tổng hợp báo cáo** | Ghép tất cả các kết quả phân tích thành một thực thể `IntegrityReport` duy nhất. |
-| **7. Cảnh báo khi DEGRADED** | Nếu có bất kỳ bước kiểm tra nào thất bại, hệ thống Cảnh báo Rủi ro sẽ gửi thông báo chi tiết lỗi ngay lập tức. |
+| **1. Kích hoạt** | Timer định kỳ, lệnh vận hành, hoặc phát hiện bất thường từ Risk Alerts. |
+| **2. Xác thực Main Chain** | `BlockVerifier.verify_chain()` tính lại hash mọi khối và kiểm tra liên kết `previous_hash`. |
+| **3. Xác thực Sub-Chain** | Chạy xác thực tương tự song song trên mọi Sub-Chain đã đăng ký. |
+| **4. Nhất quán proof** | So sánh `sub_chain.latest_block.hash` với proof lưu trên Main Chain `main_chain.proofs[chain_name]`. |
+| **5. Quét từ cấm** | `CrossChainValidator` quét payload sự kiện để tìm thuật ngữ tiền mã hóa. |
+| **6. Tổng hợp báo cáo** | Ghép kết quả thành một `IntegrityReport` duy nhất. |
+| **7. Cảnh báo khi DEGRADED** | Nếu có kiểm tra lỗi, Risk Alerts gửi thông báo chi tiết ngay. |
 
 ---
 
@@ -129,28 +129,28 @@ sequenceDiagram
 
 | Tình huống | Trạng thái | Hành động |
 |:-----------|:-----------|:----------|
-| Lệch mã băm trên Chuỗi chính | `DEGRADED` | Đánh dấu chỉ số khối bị can thiệp; phát cảnh báo khẩn cấp |
-| Chuỗi con bị thiếu bằng chứng | `DEGRADED` | Ghi nhật ký thiếu bằng chứng; gửi cảnh báo |
-| Mã băm của Chuỗi con khác với bằng chứng trên Chuỗi chính | `DEGRADED` | Phát hiện can thiệp dữ liệu trái phép; phát cảnh báo tối cao |
-| Tìm thấy từ khóa crypto cấm trong sự kiện | `DEGRADED` | Đánh dấu sự kiện, ghi nhật ký kèm đường dẫn chi tiết |
+| Lệch hash trên Main Chain | `DEGRADED` | Đánh dấu chỉ số khối bị can thiệp; phát cảnh báo khẩn |
+| Sub-Chain thiếu proof | `DEGRADED` | Ghi log thiếu proof; gửi cảnh báo |
+| Hash Sub-Chain khác proof trên Main Chain | `DEGRADED` | Phát hiện can thiệp; phát cảnh báo mức cao |
+| Tìm thấy từ cấm trong sự kiện | `DEGRADED` | Đánh dấu sự kiện, ghi log kèm đường dẫn chi tiết |
 
 ---
 
-## Các Class & Method quan trọng
+## Lớp và phương thức chính
 
-| Bước | Class / Method | File |
+| Bước | Lớp / Phương thức | Tệp |
 |:-----|:--------------|:-----|
-| Báo cáo toàn phần | `HierarchyManager.get_system_integrity_report()` | `hierarchical/hierarchy_manager.py` |
-| Kiểm tra nhất quán | `HierarchyManager.validate_cross_chain_consistency()` | `hierarchical/hierarchy_manager.py` |
+| Báo cáo toàn phần | `HierarchyManager.get_system_integrity_report()` | `hierarchical/hierarchy_manager/base.py` |
+| Kiểm tra nhất quán | `HierarchyManager.validate_cross_chain_consistency()` | `hierarchical/hierarchy_manager/base.py` |
 | Xác thực chuỗi | `BlockVerifier.verify_chain()` | `security/verify/block_verifier.py` |
 | Xác thực đơn khối | `BlockVerifier.verify_block()` | `security/verify/block_verifier.py` |
-| Quét từ khóa cấm | `CrossChainValidator.validate_system_integrity()` | `domains/generic/utils/cross_chain_validator.py` |
+| Quét từ cấm | `CrossChainValidator.validate_system_integrity()` | `domains/utils/cross_chain_validator.py` |
 | REST API | `GET /ledger/system/integrity` | `api/ledger/routes.py` |
 
 ---
 
 ## Liên quan
 
-- [Neo giữ Bằng chứng](./proof-anchoring.md): Tạo ra các bằng chứng được kiểm tra tại đây
-- [Nạp lại Trạng thái Chuỗi](./chain-rehydration.md): Được gọi nếu phát hiện không nhất quán và cần nạp lại chuỗi từ DB
-- [Cảnh báo Rủi ro](./risk-alerts.md): Tiếp nhận các thông tin cảnh báo DEGRADED từ quy trình này
+- [Neo giữ Bằng chứng](./proof-anchoring.md): tạo proof được kiểm tra ở đây
+- [Nạp lại Trạng thái Chuỗi](./chain-rehydration.md): gọi nếu phát hiện không nhất quán và cần nạp lại từ DB
+- [Cảnh báo Rủi ro](./risk-alerts.md): nhận cảnh báo DEGRADED từ quy trình này

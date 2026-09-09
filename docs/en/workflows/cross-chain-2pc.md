@@ -4,17 +4,17 @@ description: "Two-Phase Commit (2PC) protocol coordination for atomic cross-chai
 icon: material/swap-horizontal
 ---
 
-# Cross-Chain Operation (2PC)
+# Cross-chain operation (2PC)
 
 ## Overview
 
-When a business operation needs to atomically span two Sub-Chains (e.g., an asset moves from the `logistics` chain to the `finance` chain), HieraChain uses the **Two-Phase Commit (2PC)** protocol to guarantee atomicity. Either both chains commit the change, or both roll back. No partial state is possible.
+When a business operation must span two Sub-Chains atomically, for example when an asset moves from the `logistics` chain to the `finance` chain, HieraChain uses Two-Phase Commit. Either both chains commit or both roll back. No partial state is left behind.
 
-**Example real-world trigger**: An inventory item is transferred between departments. The source chain records a `deduct` event; the destination chain records a `receive` event. Both must succeed or neither applies.
+A typical trigger is an inventory transfer between departments. The source chain records a `deduct` event and the destination chain records a `receive` event. Both have to succeed.
 
 ---
 
-## Flow Diagram: Happy Path
+## Flow diagram: happy path
 
 ```mermaid
 sequenceDiagram
@@ -54,7 +54,7 @@ sequenceDiagram
 
 ---
 
-## Flow Diagram: Failure Paths
+## Flow diagram: failure paths
 
 ```mermaid
 sequenceDiagram
@@ -88,7 +88,7 @@ sequenceDiagram
 
 ---
 
-## Operation State Machine
+## Operation state machine
 
 ```mermaid
 flowchart LR
@@ -101,7 +101,7 @@ flowchart LR
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Step | Description |
 |:-----|:------------|
@@ -115,7 +115,7 @@ flowchart LR
 
 ---
 
-## Error Handling
+## Error handling
 
 | Condition | State | Recovery |
 |:----------|:------|:---------|
@@ -126,7 +126,7 @@ flowchart LR
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|

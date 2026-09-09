@@ -4,17 +4,17 @@ description: "Ingesting legacy Enterprise Resource Planning (ERP) ledger updates
 icon: material/briefcase
 ---
 
-# ERP Integration Sync
+# ERP integration sync
 
 ## Overview
 
-HieraChain integrates with enterprise ERP systems (SAP, Oracle, Dynamics) via an **adapter + mapping engine** architecture. The `SyncScheduler` polls ERP adapters on a configurable interval, translates native ERP events into HieraChain event format via `EventTranslator`, detects meaningful field changes, and submits them as business events. Failed syncs use exponential backoff retry.
+HieraChain connects to ERP systems (SAP, Oracle, Dynamics) through an adapter and mapping engine. `SyncScheduler` polls ERP adapters on a fixed interval, converts native ERP events into HieraChain event format with `EventTranslator`, detects changed fields, and submits the result as a business event. Failed syncs are retried with exponential backoff.
 
-This workflow acts as the **ingestion bridge** between Web2 ERP systems and the HieraChain ledger.
+This workflow is the bridge between Web2 ERP systems and the HieraChain ledger.
 
 ---
 
-## Flow Diagram
+## Flow diagram
 
 ```mermaid
 sequenceDiagram
@@ -63,7 +63,7 @@ sequenceDiagram
 
 ---
 
-## Flow Diagram: Retry on Failure
+## Flow diagram: retry on failure
 
 ```mermaid
 flowchart LR
@@ -76,7 +76,7 @@ flowchart LR
 
 ---
 
-## ERP Event Translation Example
+## ERP event translation example
 
 ```python
 # Raw SAP event (before translation)
@@ -108,7 +108,7 @@ blockchain_event = {
 
 ---
 
-## Supported ERP Systems
+## Supported ERP systems
 
 | ERP | Adapter Class | Config Key |
 |:----|:-------------|:-----------|
@@ -119,7 +119,7 @@ blockchain_event = {
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Step | Description |
 |:-----|:------------|
@@ -134,7 +134,7 @@ blockchain_event = {
 
 ---
 
-## Error Handling
+## Error handling
 
 | Condition | Behavior |
 |:----------|:---------|
@@ -145,7 +145,7 @@ blockchain_event = {
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|

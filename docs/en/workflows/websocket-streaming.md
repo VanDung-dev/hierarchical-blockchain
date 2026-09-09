@@ -4,17 +4,17 @@ description: "Real-time subscription and push protocol for new block commits and
 icon: material/connection
 ---
 
-# WebSocket Real-Time Streaming
+# WebSocket real-time streaming
 
 ## Overview
 
-HieraChain pushes block and event notifications to connected clients in real-time via WebSocket. Clients subscribe to specific chains or event types. A background ping loop detects stale connections and removes them automatically.
+HieraChain pushes block and event notifications to connected clients over WebSocket. Clients subscribe to specific chains or event types. A background ping loop checks for stale connections and removes them.
 
-The `WebSocketManager` is a **singleton** (`ws_manager`) used across all API routes to ensure a single connection registry.
+`WebSocketManager` is a singleton (`ws_manager`) shared by all API routes, so there is a single connection registry.
 
 ---
 
-## Flow Diagram: Connection & Broadcast Lifecycle
+## Flow diagram: connection and broadcast lifecycle
 
 ```mermaid
 sequenceDiagram
@@ -48,7 +48,7 @@ sequenceDiagram
 
 ---
 
-## Flow Diagram: Ping / Stale Connection Cleanup
+## Flow diagram: ping and stale connection cleanup
 
 ```mermaid
 sequenceDiagram
@@ -73,7 +73,7 @@ sequenceDiagram
 
 ---
 
-## Message Format
+## Message format
 
 ```json
 // Block added notification
@@ -104,7 +104,7 @@ sequenceDiagram
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Step | Description |
 |:-----|:------------|
@@ -118,7 +118,7 @@ sequenceDiagram
 
 ---
 
-## Error Handling
+## Error handling
 
 | Condition | Behavior |
 |:----------|:---------|
@@ -129,7 +129,7 @@ sequenceDiagram
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|

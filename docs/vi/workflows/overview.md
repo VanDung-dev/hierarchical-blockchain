@@ -4,102 +4,102 @@ description: "Hướng dẫn toàn diện và tài liệu tham khảo cho lập 
 icon: material/routes
 ---
 
-# Tổng quan & Hướng dẫn cho Lập trình viên về Luồng công việc
+# Tổng quan và hướng dẫn luồng công việc
 
-HieraChain là một **sổ cái blockchain phân cấp thuần Python cấp doanh nghiệp**, được thiết kế như một **Lớp Tiện ích mở rộng (Plugin Layer)** cho cơ sở hạ tầng Web2 hiện có. Thay vì thay thế ngăn xếp mạng doanh nghiệp (vốn đã xử lý TLS/SSL, tường lửa và WAF ở cấp độ API Gateway), HieraChain tập trung hoàn toàn vào việc cung cấp các đặc tính: **Tính Bất biến (Immutability), Niềm tin Phân tán (Distributed Trust), Khả năng Phát hiện Thay đổi (Tamper Evidence) và Chống từ chối (Non-repudiation)**.
+HieraChain là sổ cái phân cấp thuần Python, hoạt động như plugin layer cho hạ tầng Web2 hiện có. Nó không thay thế ngăn xếp mạng doanh nghiệp vốn đã xử lý TLS/SSL, tường lửa và WAF ở API gateway. HieraChain tập trung vào tính bất biến, niềm tin phân tán, bằng chứng can thiệp và chống chối bỏ.
 
-Tài liệu này đóng vai trò là tài liệu tham khảo trung tâm cho các lập trình viên về **16 luồng công việc hệ thống** của HieraChain, được tổ chức thành 6 nhóm chức năng. Tài liệu chi tiết về mô hình tương tác thời gian chạy (runtime), tra cứu nhanh và các nguyên tắc dành cho lập trình viên khi đọc, duy trì hoặc bổ sung các luồng công việc mới của hệ thống.
-
----
-
-## 1. Rào chắn Phát triển Cốt lõi
-
-Khi làm việc với các luồng công việc của HieraChain, lập trình viên **phải** tuân thủ nghiêm ngặt các rào chắn kiến trúc sau đây được định nghĩa trong các quy tắc đồng thuận của dự án:
-
-* **Kiểm duyệt Thuật ngữ Nghiêm ngặt**: HieraChain được thiết kế để theo dõi sổ cái quy trình kinh doanh, **không phải tiền mã hóa**. Không sử dụng thuật ngữ tiền mã hóa trong dữ liệu sự kiện, tên biến, khóa cơ sở dữ liệu hoặc bình luận.
-
-    * ❌ **Từ bị cấm**: `transaction`, `mining`, `coin`, `token`, `wallet`, `address`, `sender`, `receiver`, `amount`, `fee`.
-    *  **Từ bắt buộc**: `event` (cho các mục sổ cái), `node` (cho các nút ngang hàng), `msp_id` (cho danh tính), `entity_id` (cho tài sản nghiệp vụ).
-    * *Lưu ý*: `CrossChainValidator` sẽ tự động quét các thay đổi (commit) và từ chối bất kỳ mã nguồn nào chứa các từ bị cấm.
-
-* **Ràng buộc về Độ trễ Tối thiểu**: HieraChain áp đặt **độ trễ cơ sở từ 10-20ms**. Hãy giữ cho mã nguồn của luồng công việc ở mức tối giản, nhanh chóng và tối ưu hóa cao. Tránh thêm mã hóa ở cấp độ truyền tải hoặc các trình bao bọc lồng nhau gây ra tải CPU không cần thiết.
-* **Không Truy cập Trực tiếp vào Bộ lưu trữ**: Các luồng công việc tuyệt đối không được thực hiện các truy vấn SQL hoặc Redis trực tiếp. Mọi hoạt động truy cập dữ liệu phải sử dụng các bộ chuyển đổi lưu trữ (storage adapters) trong không gian tên `adapters/storage/`.
+Tài liệu này là tham khảo trung tâm cho 16 luồng công việc hệ thống trong 6 nhóm chức năng. Nó mô tả cách các luồng tương tác khi chạy và cách đọc, duy trì hoặc thêm luồng mới.
 
 ---
 
-## 2. Tất cả các Luồng công việc: Tra cứu Nhanh
+## 1. Rào chắn phát triển cốt lõi
 
-Bảng này cung cấp cái nhìn tổng quan toàn diện về các luồng công việc của HieraChain để lập trình viên tra cứu nhanh:
+Khi làm việc với luồng công việc của HieraChain, tuân thủ các rào chắn sau:
 
-| Luồng công việc | Nhóm | Kích hoạt | Kết quả | Mô-đun Chính |
+* Kiểm duyệt thuật ngữ: HieraChain theo dõi sổ cái quy trình nghiệp vụ, không phải tiền mã hóa. Không dùng thuật ngữ tiền mã hóa trong payload sự kiện, tên biến, khóa cơ sở dữ liệu hoặc comment.
+
+    * Từ bị cấm: `transaction`, `mining`, `coin`, `token`, `wallet`, `address`, `sender`, `receiver`, `amount`, `fee`.
+    * Từ bắt buộc: `event` cho mục sổ cái, `node` cho peer, `msp_id` cho danh tính, `entity_id` cho tài sản nghiệp vụ.
+    * Lưu ý: `CrossChainValidator` quét commit và từ chối mã chứa từ bị cấm.
+
+* Ràng buộc độ trễ tối thiểu: HieraChain giữ độ trễ cơ sở ở mức 10 đến 20ms. Giữ mã luồng ngắn và nhanh. Không thêm mã hóa tầng truyền tải hoặc wrapper thừa làm tăng tải CPU.
+* Không truy cập trực tiếp bộ lưu trữ: không truy vấn SQL hoặc Redis trực tiếp. Dùng adapter lưu trữ trong `adapters/database/` (ví dụ `adapters/database/sqlite_adapter.py`).
+
+---
+
+## 2. Tất cả luồng công việc: tra cứu nhanh
+
+Bảng này liệt kê tất cả luồng để tra cứu nhanh:
+
+| Luồng công việc | Nhóm | Kích hoạt | Kết quả | Mô-đun chính |
 |:---------|:------|:--------|:-------|:-----------|
-| [Gửi Sự kiện](./event-submission.md) | A | `POST /ledger/chains/{name}/events` | Khối được thêm vào Chuỗi phụ (Sub-Chain) | `hierarchical/sub_chain.py` |
-| [Neo giữ Bằng chứng](./proof-anchoring.md) | A | Khối được hoàn thiện trên Chuỗi phụ | Mã băm bằng chứng trên Chuỗi chính (Main Chain) | `hierarchical/main_chain.py` |
-| [Giao dịch Liên chuỗi 2PC](./cross-chain-2pc.md) | A | `initiate_cross_chain_transaction()` | `COMMITTED` hoặc `ROLLED_BACK` | `hierarchical/hierarchy_manager.py` |
-| [Đồng thuận BFT](./bft-consensus.md) | B | `HRC_MAINCHAIN_CONSENSUS=byzantine_fault_tolerant` | Khối được xác nhận bởi 2f+1 nút xác thực | `consensus/bft/consensus.py` |
-| [Khóa băng Cụm](./cluster-lockdown.md) | C | Bất thường vượt quá ngưỡng rủi ro | Tất cả các nút bị khóa băng / tiếp tục | `cluster/lockdown_protocol.py` |
-| [Giảm thiểu Lỗi & Phục hồi](./error-recovery.md) | C | Lỗi mạng / hết giờ trưởng nhóm / lỗi toàn vẹn | Trạng thái được khôi phục từ ảnh chụp nhanh | `error_mitigation/recovery_engine.py` |
-| [Truy vết Thực thể](./entity-tracing.md) | D | `trace_entity_across_chains(entity_id)` | Nhật ký kiểm toán liên chuỗi hoàn chỉnh | `domains/generic/utils/entity_tracer.py` |
-| [Nạp lại Trạng thái Chuỗi](./chain-rehydration.md) | D | Khởi động lại nút hoặc sai lệch mã băm | Chuỗi trong bộ nhớ được đồng bộ với DB | `hierarchical/sub_chain.py` |
-| [Xác thực Tính toàn vẹn](./integrity-validation.md) | D | Định kỳ / thủ công / cảnh báo bất thường | Báo cáo `IntegrityReport` (LÀNH MẠNH / SUY GIẢM) | `security/verify/block_verifier.py` |
-| [Thực thi Chính sách](./policy-enforcement.md) | E | Mọi hoạt động nhạy cảm về quyền truy cập | `allow` hoặc `deny` cùng với đường dẫn quyết định | `security/policy_engine.py` |
-| [Luồng dữ liệu WebSocket](./websocket-streaming.md) | E | Máy khách kết nối tới `/ws/{chain_name}` | Đẩy khối/sự kiện theo thời gian thực | `api/websocket/manager.py` |
-| [Lưu trữ Mã hóa IPFS](./ipfs-storage.md) | E | `IPFSClient.upload_json()` | Trả về CID; bản mã được lưu trên IPFS | `api/storage/ipfs_client.py` |
-| [Cảnh báo Rủi ro](./risk-alerts.md) | E | Lịch trình của `PerformanceMonitor` | Cảnh báo được gửi đi; chuyển cấp nếu không xác nhận | `monitoring/alert_system.py` |
-| [Đồng bộ Tích hợp ERP](./erp-integration.md) | E | Bộ lập lịch `SyncScheduler` | Các sự kiện ERP được gửi tới Chuỗi phụ | `integration/erp_ledger.py` |
-| [Danh tính & Xác thực MSP](./msp-identity.md) | F | Đăng ký thực thể / xác thực API | Xác nhận danh tính + ủy quyền hành động | `security/msp.py` |
-| [Sao lưu & Khôi phục Khóa](./key-backup.md) | F | Tạo / xoay vòng khóa / khôi phục thảm họa | Bản sao lưu được mã hóa và phân phối; khôi phục khóa | `security/key_backup_manager.py` |
+| [Gửi Sự kiện](./event-submission.md) | A | `POST /api/ledger/chains/{name}/events` | Khối được thêm vào Sub-Chain | `hierarchical/sub_chain/base.py` (`SubChain.add_event`) |
+| [Neo giữ Bằng chứng](./proof-anchoring.md) | A | Khối được hoàn thiện trên Sub-Chain | Mã băm bằng chứng trên Main Chain | `hierarchical/main_chain/base.py` + `hierarchical/sub_chain/proof.py` |
+| [Giao dịch Liên chuỗi 2PC](./cross-chain-2pc.md) | A | `HierarchyManager.transaction_manager` | `COMMITTED` hoặc `ROLLED_BACK` | `hierarchical/hierarchy_manager/base.py` + `hierarchical/transaction_manager.py` |
+| [Đồng thuận BFT](./bft-consensus.md) | B | `HRC_MAINCHAIN_CONSENSUS` / `HRC_CONSENSUS_TYPE` | Khối được xác nhận bởi 2f+1 validator | `consensus/bft/consensus.py` |
+| [Khóa băng Cụm](./cluster-lockdown.md) | C | Bất thường vượt ngưỡng rủi ro | Tất cả node bị đóng băng / khôi phục | `cluster/lockdown_types.py` + `cluster/lockdown_protocol.py` |
+| [Giảm thiểu Lỗi & Phục hồi](./error-recovery.md) | C | Lỗi mạng / hết hạn leader / lỗi toàn vẹn | Trạng thái khôi phục từ snapshot | `error_mitigation/rollback_manager.py` + `consensus_recovery.py` |
+| [Truy vết Thực thể](./entity-tracing.md) | D | `EntityTracer.trace_entity()` | Dấu vết kiểm toán liên chuỗi đầy đủ | `domains/utils/entity_tracer.py` |
+| [Nạp lại Trạng thái Chuỗi](./chain-rehydration.md) | D | Khởi động lại node hoặc lệch mã băm | Chuỗi trong bộ nhớ đồng bộ với DB | `hierarchical/sub_chain/base.py` + `hierarchical/sub_chain/ordering.py` |
+| [Xác thực Tính toàn vẹn](./integrity-validation.md) | D | Định kỳ / thủ công / bất thường Risk Alerts | `IntegrityReport` (HEALTHY / DEGRADED) | `security/verify/block_verifier.py` |
+| [Thực thi Chính sách](./policy-enforcement.md) | E | Mọi thao tác nhạy cảm về quyền | `allow` hoặc `deny` kèm đường dẫn quyết định | `security/policy_engine.py` |
+| [Luồng dữ liệu WebSocket](./websocket-streaming.md) | E | Client kết nối tới `/ws/{chain_name}` | Đẩy khối/sự kiện thời gian thực | `api/websocket/manager.py` |
+| [Lưu trữ Mã hóa IPFS](./ipfs-storage.md) | E | `IPFSClient.upload_json()` | Trả về CID; bản mã trên IPFS | `api/storage/ipfs_client.py` |
+| [Cảnh báo Rủi ro](./risk-alerts.md) | E | Lịch `PerformanceMonitor` | Cảnh báo được gửi; leo thang nếu không xác nhận | `monitoring/alert_system.py` |
+| [Đồng bộ Tích hợp ERP](./erp-integration.md) | E | Timer `SyncScheduler` | Sự kiện ERP được gửi tới Sub-Chain | `integration/erp_ledger.py` |
+| [Danh tính & Xác thực MSP](./msp-identity.md) | F | Đăng ký thực thể / xác thực API | Xác nhận danh tính và ủy quyền thao tác | `security/msp.py` |
+| [Sao lưu & Khôi phục Khóa](./key-backup.md) | F | Tạo khóa (`cli/key.py`) | Tệp khóa / vault được sao lưu; khôi phục qua CLI | `cli/key.py` + `security/key_provider.py` (không có `key_backup_manager.py`) |
 
 ---
 
-## 3. Nhóm chức năng & Phân hệ
+## 3. Nhóm chức năng và phân hệ
 
-Để hợp lý hóa việc hiểu về kiến trúc, các luồng công việc được tổ chức thành sáu khu vực chức năng. Lập trình viên có thể sử dụng bảng điều khiển bên dưới để điều hướng đến nhóm tương ứng khi gỡ lỗi hoặc sửa đổi các phân hệ cốt lõi:
+Các luồng được nhóm thành sáu khu vực. Dùng bảng điều khiển bên dưới để tìm nhóm khớp với phân hệ bạn đang gỡ lỗi hoặc thay đổi:
 
 <div class="grid cards" markdown>
 
-* :material-sitemap:{ .lg .middle } __Nhóm A: Các Hoạt động Chuỗi Cốt lõi__
+* :material-sitemap:{ .lg .middle } __Nhóm A: Hoạt động chuỗi cốt lõi__
 
     ---
 
-    Xử lý các đường truyền dữ liệu tiếp nhận, xác thực mật mã và lưu trữ cốt lõi.
+    Xử lý tiếp nhận, xác thực mật mã và lưu trữ.
 
     * [Gửi Sự kiện](./event-submission.md)
     * [Neo giữ Bằng chứng](./proof-anchoring.md)
     * [Thao tác Liên chuỗi (2PC)](./cross-chain-2pc.md)
 
-* :material-shield-key:{ .lg .middle } __Nhóm B: Hoàn thiện Đồng thuận__
+* :material-shield-key:{ .lg .middle } __Nhóm B: Hoàn thiện đồng thuận__
 
     ---
 
-    Các cơ chế hoàn thiện khối. Đối với các giải pháp PoA/PoF thay thế, xem [Cơ chế Đồng thuận](./consensus_mechanisms.md).
+    Hoàn thiện khối. Với lựa chọn PoA/PoF, xem [Cơ chế Đồng thuận](./consensus_mechanisms.md).
 
-    * [Đồng thuận BFT (PBFT 3 Giai đoạn)](./bft-consensus.md)
+    * [Đồng thuận BFT (PBFT 3 pha)](./bft-consensus.md)
 
-* :material-server-security:{ .lg .middle } __Nhóm C: Quản lý Cụm__
+* :material-server-security:{ .lg .middle } __Nhóm C: Quản lý cụm__
 
     ---
 
-    Quy trình quản trị tự động, kích hoạt khóa băng trạng thái và khắc phục thảm họa.
+    Quản trị, kích hoạt khóa băng và phục hồi.
 
     * [Khóa băng Cụm](./cluster-lockdown.md)
     * [Giảm thiểu Lỗi & Phục hồi](./error-recovery.md)
 
-* :material-shield-check:{ .lg .middle } __Nhóm D: Tính Toàn vẹn & Truy vết__
+* :material-shield-check:{ .lg .middle } __Nhóm D: Tính toàn vẹn và truy vết__
 
     ---
 
-    Các công cụ kiểm toán vòng đời, nạp lại trạng thái (cold-start) và xác thực tính toàn vẹn hệ thống.
+    Kiểm toán, nạp lại khi khởi động lạnh và xác thực toàn vẹn.
 
     * [Truy vết Thực thể](./entity-tracing.md)
     * [Nạp lại Trạng thái Chuỗi](./chain-rehydration.md)
     * [Xác thực Tính toàn vẹn](./integrity-validation.md)
 
-* :material-connection:{ .lg .middle } __Nhóm E: Vận hành & Tích hợp__
+* :material-connection:{ .lg .middle } __Nhóm E: Vận hành và tích hợp__
 
     ---
 
-    Cổng chính sách bảo mật, đẩy dữ liệu WebSocket thời gian thực, lưu trữ IPFS mã hóa và đồng bộ ERP.
+    Cổng chính sách, đẩy WebSocket, lưu trữ IPFS mã hóa và đồng bộ ERP.
 
     * [Thực thi Chính sách](./policy-enforcement.md)
     * [Luồng dữ liệu WebSocket](./websocket-streaming.md)
@@ -107,11 +107,11 @@ Bảng này cung cấp cái nhìn tổng quan toàn diện về các luồng cô
     * [Cảnh báo Rủi ro](./risk-alerts.md)
     * [Đồng bộ Tích hợp ERP](./erp-integration.md)
 
-* :material-key-chain:{ .lg .middle } __Nhóm F: Quản lý Danh tính & Khóa__
+* :material-key-chain:{ .lg .middle } __Nhóm F: Quản lý danh tính và khóa__
 
     ---
 
-    Đăng ký vòng đời X.509, ủy quyền thành viên tham gia và sao lưu khóa riêng tư trình xác thực được mã hóa.
+    Đăng ký MSP nhẹ (lớp `Certificate` nội bộ trong `security/msp.py`), ủy quyền thành viên và sao lưu khóa do CLI quản lý (không có X.509/mTLS).
 
     * [Danh tính & Xác thực MSP](./msp-identity.md)
     * [Sao lưu & Khôi phục Khóa](./key-backup.md)
@@ -120,77 +120,78 @@ Bảng này cung cấp cái nhìn tổng quan toàn diện về các luồng cô
 
 ---
 
-## 4. Cách thức Tương tác giữa các Luồng
+## 4. Cách luồng tương tác
 
-Sơ đồ dưới đây thể hiện mối quan hệ và các kích hoạt sự kiện khi hệ thống hoạt động giữa tất cả các luồng công việc. Các đường nét liền biểu thị các hoạt động đồng bộ/chặn (blocking), trong khi các đường nét đứt biểu thị các kích hoạt không đồng bộ hoặc dựa trên sự kiện.
+Sơ đồ cho thấy quan hệ thời gian chạy và kích hoạt giữa các luồng. Đường liền là thao tác đồng bộ hoặc chặn. Đường đứt là không đồng bộ hoặc theo sự kiện.
 
 ```mermaid
 flowchart TD
-    ERP["🏢 Hệ thống ERP\n(SAP / Oracle)"]
-    CLIENT["🖥️ Máy khách / SDK"]
+    ERP["🏢 ERP System\n(SAP / Oracle)"]
+    CLIENT["🖥️ Client / SDK"]
 
-    WF14["Đồng bộ ERP"] -->|add_event| WF1
+    WF14["ERP Sync"] -->|add_event| WF1
     CLIENT -->|POST /events| WF1
 
-    WF15["🪪 Danh tính MSP"] -->|authorize_action| WF1
-    WF15 -->|validate_identity| WF10["⚖️ Thực thi Chính sách"]
+    WF15["🪪 MSP Identity"] -->|authorize_action| WF1
+    WF15 -->|validate_identity| WF10["⚖️ Policy Enforcement"]
     WF10 -->|allow/deny gate| WF1
 
-    WF1["📦 Gửi Sự kiện"] -->|khối được hoàn thiện| WF2["Neo giữ Bằng chứng"]
+    WF1["📦 Event Submission"] -->|block finalized| WF2["Proof Anchoring"]
     WF1 -->|broadcast_new_block| WF11["🔌 WebSocket"]
-    WF1 -->|tải lên dữ liệu lớn| WF12["🗄️ Lưu trữ IPFS"]
+    WF1 -->|upload large data| WF12["🗄️ IPFS Storage"]
 
-    WF1 -->|hoạt động liên chuỗi| WF3["Giao dịch Liên chuỗi 2PC"]
-    WF1 -->|chế độ BFT| WF4["👑 Đồng thuận BFT"]
+    WF1 -->|cross-chain op| WF3["2PC Cross-Chain"]
+    WF1 -->|BFT mode| WF4["👑 BFT Consensus"]
 
-    WF9["🔍 Quét Tính Toàn vẹn"] -->|SUY GIẢM| WF13["🚨 Rủi ro & Cảnh báo"]
-    WF13 -->|ngưỡng nguy hiểm| WF5["🔒 Khóa băng Cụm"]
-    WF5 -.->|sau khi khóa băng| WF6["🔧 Phục hồi Lỗi"]
-    WF6 -.->|lỗi ảnh chụp nhanh| WF8["♻️ Nạp lại Trạng thái"]
-    WF8 -.->|khôi phục trạng thái| WF1
+    WF9["🔍 Integrity Scan"] -->|DEGRADED| WF13["🚨 Risk & Alerts"]
+    WF13 -->|critical threshold| WF5["🔒 Cluster Lockdown"]
+    WF5 -.->|after lockdown| WF6["🔧 Error Recovery"]
+    WF6 -.->|snapshot fail| WF8["♻️ Rehydration"]
+    WF8 -.->|restore state| WF1
 
-    WF5 -.->|xoay vòng khóa| WF16["🔑 Sao lưu Khóa"]
-    WF15 -.->|chứng chỉ được cấp| WF16
+    WF5 -.->|key rotation| WF16["🔑 Key Backup"]
+    WF15 -.->|cert issued| WF16
 
-    WF7["🗂️ Truy vết Thực thể"] -.->|đọc| WF1
+    WF7["🗂️ Entity Tracing"] -.->|reads| WF1
 
     ERP --> WF14
 ```
 
-### Các Luồng Tích hợp Chính dành cho Lập trình viên
+### Luồng tích hợp chính cho lập trình viên
 
-| Chuỗi Tiếp nhận & Bảo mật | Mô tả |
+| Chuỗi tiếp nhận và bảo mật | Mô tả |
 |:---|:---|
-| **ERP $\rightarrow$ Đồng bộ ERP $\rightarrow$ Gửi Sự kiện $\rightarrow$ Neo giữ Bằng chứng** | Đường ống tiếp nhận dữ liệu: thay đổi nghiệp vụ $\rightarrow$ sự kiện nội bộ $\rightarrow$ khối Chuỗi phụ $\rightarrow$ mã băm bằng chứng được neo vào Chuỗi chính. |
-| **Danh tính MSP $\rightarrow$ Thực thi Chính sách $\rightarrow$ Gửi Sự kiện** | Đường truyền xác thực bảo mật: xác minh chứng chỉ X.509 $\rightarrow$ kiểm tra chính sách ABAC $\rightarrow$ chấp nhận/từ chối sự kiện. |
-| **Quét Tính Toàn vẹn $\rightarrow$ Rủi ro & Cảnh báo $\rightarrow$ Khóa băng Cụm $\rightarrow$ Phục hồi Lỗi** | Đường truyền phát hiện bất thường: kiểm toán thất bại $\rightarrow$ gửi cảnh báo $\rightarrow$ đồng thuận trạng thái khóa băng đóng băng cụm $\rightarrow$ tự động khôi phục/khởi tạo lại. |
-| **Khóa băng Cụm $\rightarrow$ Sao lưu Khóa** | Xoay vòng khóa độ bảo mật cao: trạng thái đóng băng kích hoạt xoay vòng khóa riêng tư của trình xác thực tự động và tiến hành sao lưu mã hóa. |
-| **Phục hồi Lỗi $\rightarrow$ Nạp lại Trạng thái** | Dự phòng đồng bộ trạng thái: việc xác thực ảnh chụp nhanh cục bộ thất bại sẽ kích hoạt việc dựng lại chuỗi trong bộ nhớ từ nhật ký lưu trữ DB. |
+| **ERP → ERP Sync → Gửi Sự kiện → Neo giữ Bằng chứng** | Pipeline tiếp nhận: thay đổi nghiệp vụ → sự kiện nội bộ → khối Sub-Chain → mã băm bằng chứng neo lên chuỗi gốc. |
+| **MSP Identity → Thực thi Chính sách → Gửi Sự kiện** | Đường xác thực bảo mật: xác minh cert nội bộ (`msp.py:verify_certificate`) → kiểm tra chính sách ABAC → chấp nhận/từ chối sự kiện. |
+| **Quét Tính Toàn vẹn → Cảnh báo Rủi ro → Khóa băng Cụm → Phục hồi Lỗi** | Đường phát hiện bất thường: `block_verifier`/`risk_analyzer` → gửi cảnh báo → khóa băng → `rollback_manager` khôi phục. |
+| **Khóa băng Cụm → Sao lưu Khóa** | Không có liên kết tự động trong mã: xoay vòng/sao lưu khóa là thao tác thủ công qua `cli/key.py` (không do khóa băng kích hoạt). |
+| **Phục hồi Lỗi → Nạp lại Trạng thái** | Dự phòng đồng bộ trạng thái: xác thực snapshot cục bộ thất bại kích hoạt dựng lại chuỗi trong bộ nhớ từ nhật ký DB. |
 
 ---
 
-## 5. Hướng dẫn Lập trình viên: Duy trì Luồng công việc
+## 5. Hướng dẫn lập trình viên: duy trì luồng công việc
 
-Khi triển khai các tính năng mới hoặc điều chỉnh hoạt động của hệ thống, hãy giữ cho tài liệu luồng công việc của HieraChain luôn đồng bộ và chính xác:
+Giữ tài liệu luồng đồng bộ với mã khi bạn thêm tính năng hoặc sửa hành vi:
 
-### Cấu trúc của một Tài liệu Luồng công việc
-Mỗi trang luồng công việc riêng lẻ (ví dụ: `event-submission.md`) tuân theo một bố cục nghiêm ngặt và đồng nhất. Nó **phải** bao gồm:
+### Cấu trúc của một tài liệu luồng
 
-1. **Zensical Front-Matter**: Các siêu dữ liệu YAML tiêu chuẩn bao gồm `title`, `description` và một biểu tượng `icon` trực quan. (Không cho phép tiền tố dạng "WF-number").
-2. **Tiêu đề H1 rõ ràng**: `# [Tiêu đề]` khớp chính xác với tiêu đề trong phần front-matter.
-3. **Tổng quan (Overview)**: Mô tả ngắn gọn về những gì luồng công việc hoàn thành, bao gồm bối cảnh nghiệp vụ doanh nghiệp.
-4. **Sơ đồ luồng (Flow Diagram)**: Sử dụng sơ đồ tuần tự (sequence) hoặc sơ đồ luồng (flowchart) Mermaid độ phân giải cao để trực quan hóa các tương tác thời gian chạy.
-5. **Chi tiết Từng Bước (Step-by-Step Breakdown)**: Một bảng Markdown chi tiết liên kết các mã số bước thứ tự với hành động thực tế của lập trình viên.
-6. **Xử lý Lỗi (Error Handling)**: Một bảng ánh xạ các trường hợp thất bại (ví dụ: nút ngoại tuyến, lỗi xác thực) với các bước giảm thiểu hoặc khắc phục cụ thể.
-7. **Các Lớp & Phương thức Quan trọng (Key Classes & Methods)**: Các con trỏ cấp mã nguồn ánh xạ các bước luồng công việc trực tiếp đến mã nguồn thực tế (ví dụ: `SubChain.add_event()`).
-8. **Liên kết liên quan (Related)**: Các liên kết đến các luồng công việc liền kề hoặc phụ thuộc trực tiếp.
+Mỗi trang luồng (ví dụ `event-submission.md`) có bố cục sau. Nó phải chứa:
 
-### Quy trình Thêm hoặc Sửa đổi một Luồng công việc
+1. **Front-matter Zensical**: metadata YAML với `title`, `description` và `icon`. Không có tiền tố WF-number.
+2. **Tiêu đề H1**: `# [Title]` khớp với front-matter.
+3. **Tổng quan**: luồng làm gì và khi nào dùng.
+4. **Sơ đồ luồng**: sơ đồ Mermaid sequence hoặc flowchart thể hiện tương tác thời gian chạy.
+5. **Chi tiết từng bước**: bảng ánh xạ số thứ tự tới hành động của lập trình viên.
+6. **Xử lý lỗi**: bảng ánh xạ lỗi (node offline, lỗi xác thực) tới biện pháp xử lý.
+7. **Lớp và phương thức chính**: con trỏ từ bước luồng tới mã (ví dụ `SubChain.add_event()`).
+8. **Liên quan**: liên kết tới luồng anh em hoặc luồng tiếp theo.
 
-1. **Viết Markdown chuẩn**: Lưu các luồng công việc mới dưới đường dẫn `docs/en/workflows/name.md` sử dụng chính xác hệ thống thiết kế hiện tại.
-2. **Đăng ký trong zensical.toml**: Thêm luồng công việc mới của bạn vào nhánh `Workflows` trong [zensical.toml](../../zensical.toml) với tên gọn gàng và bóng bẩy.
-3. **Quét thuật ngữ**: Đảm bảo không đưa bất kỳ từ vựng tiền mã hóa bị cấm nào vào tài liệu.
-4. **Biên dịch và Xác thực**: Chạy lệnh dựng Zensical trong môi trường HieraChain để xác nhận định dạng và tính toàn vẹn của các liên kết:
+### Quy trình thêm hoặc sửa luồng
+
+1. **Viết Markdown chuẩn**: lưu luồng mới dưới `docs/en/workflows/name.md` dùng hệ thống thiết kế hiện tại.
+2. **Đăng ký trong zensical.toml**: thêm luồng vào cây `Workflows` trong [zensical.toml](../../zensical.toml) với tên gọn.
+3. **Quét thuật ngữ**: kiểm tra không thêm từ vựng tiền mã hóa bị cấm.
+4. **Biên dịch và xác thực**: chạy build Zensical trong môi trường HieraChain để kiểm tra định dạng và liên kết:
 
     ```bash
     zensical build -f zensical.toml

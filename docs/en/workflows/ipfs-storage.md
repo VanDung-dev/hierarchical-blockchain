@@ -4,17 +4,17 @@ description: "Offloading large business data payloads to encrypted IPFS storage,
 icon: material/harddisk
 ---
 
-# IPFS Encrypted Storage
+# IPFS encrypted storage
 
 ## Overview
 
-Large or sensitive off-chain data (e.g., document attachments, audit evidence, binary assets) is stored on a private IPFS swarm with **mandatory AES-256-GCM encryption**. Only nodes sharing the same encryption key can decrypt. The CID returned by IPFS is stored on-chain as a reference; the plaintext never leaves the encrypted boundary.
+Large or sensitive off-chain data such as document attachments, audit evidence or binary assets is kept on a private IPFS swarm with mandatory AES-256-GCM encryption. Only nodes that share the same encryption key can decrypt the data. IPFS returns a CID that is stored on-chain as a reference. Plaintext never leaves the encrypted boundary.
 
-**Key property**: Even if IPFS storage is compromised, data is unreadable without the AES-256-GCM key.
+Even if IPFS storage is compromised, the data is unreadable without the AES-256-GCM key.
 
 ---
 
-## Flow Diagram: Upload (Encrypt → Store → Pin)
+## Flow diagram: upload (encrypt, store, pin)
 
 ```mermaid
 sequenceDiagram
@@ -45,7 +45,7 @@ sequenceDiagram
 
 ---
 
-## Flow Diagram: Download (Retrieve → Decrypt)
+## Flow diagram: download (retrieve, decrypt)
 
 ```mermaid
 sequenceDiagram
@@ -69,7 +69,7 @@ sequenceDiagram
 
 ---
 
-## Error Handling: IPFS Unavailable
+## Error handling: IPFS unavailable
 
 ```mermaid
 flowchart LR
@@ -89,7 +89,7 @@ flowchart LR
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Step | Description |
 |:-----|:------------|
@@ -102,7 +102,7 @@ flowchart LR
 
 ---
 
-## Security Properties
+## Security properties
 
 | Property | Mechanism |
 |:---------|:----------|
@@ -114,7 +114,7 @@ flowchart LR
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|

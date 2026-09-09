@@ -4,17 +4,17 @@ description: "Giao thức đẩy thông tin và đăng ký thời gian thực kh
 icon: material/connection
 ---
 
-# Luồng dữ liệu WebSocket Thời gian thực (WebSocket Real-Time Streaming)
+# Luồng dữ liệu WebSocket thời gian thực
 
-## Overview
+## Tổng quan
 
-HieraChain tự động đẩy các thông báo về khối mới và sự kiện mới phát sinh tới các máy khách (clients) đang kết nối trong thời gian thực thông qua kết nối WebSocket. Các máy khách có thể chọn đăng ký theo dõi toàn bộ chuỗi cụ thể hoặc theo các loại sự kiện nhất định. Một quy trình vòng lặp ping chạy nền (background ping loop) sẽ giám sát để phát hiện các kết nối rác, mất mạng và tự động giải phóng chúng.
+HieraChain đẩy thông báo khối mới và sự kiện mới tới client đang kết nối qua WebSocket. Client có thể đăng ký theo chuỗi cụ thể hoặc theo loại sự kiện. Vòng lặp ping nền giám sát kết nối chết và tự giải phóng.
 
-`WebSocketManager` được triển khai dưới dạng **mẫu thiết kế Singleton** (`ws_manager`) dùng chung cho toàn bộ các định tuyến API để quản lý đăng ký kết nối tập trung tại một nơi duy nhất.
+`WebSocketManager` là singleton (`ws_manager`) dùng chung cho mọi route API để quản lý đăng ký tập trung.
 
 ---
 
-## Biểu đồ luồng: Vòng đời Kết nối & Phát tin (Broadcast)
+## Biểu đồ luồng: vòng đời kết nối và broadcast
 
 ```mermaid
 sequenceDiagram
@@ -48,7 +48,7 @@ sequenceDiagram
 
 ---
 
-## Biểu đồ luồng: Vòng lặp Ping / Dọn dẹp kết nối rác
+## Biểu đồ luồng: vòng lặp ping và dọn dẹp
 
 ```mermaid
 sequenceDiagram
@@ -73,10 +73,10 @@ sequenceDiagram
 
 ---
 
-## Định dạng Thông điệp (Message Format)
+## Định dạng thông điệp
 
 ```json
-// Thông báo khi có khối dữ liệu mới được thêm vào chuỗi
+// Thông báo khi có khối mới
 {
     "type": "block_added",
     "chain": "supply_chain",
@@ -89,7 +89,7 @@ sequenceDiagram
     }
 }
 
-// Thông báo sự kiện (nếu đăng ký lọc cụ thể theo event_types)
+// Thông báo sự kiện (nếu đăng ký lọc theo event_types)
 {
     "type": "event",
     "chain": "supply_chain",
@@ -104,17 +104,17 @@ sequenceDiagram
 
 ---
 
-## Các bước thực hiện chi tiết
+## Các bước chi tiết
 
 | Bước | Mô tả |
 |:-----|:------|
-| **1. Nâng cấp giao thức** | Gửi yêu cầu HTTP GET kèm tiêu đề `Upgrade: websocket`. |
-| **2. Kiểm tra giới hạn** | Từ chối kết nối mới nếu `active_connections >= max_connections` (mặc định 1000). |
-| **3. Đăng ký** | Phương thức `ConnectionRegistry.add()` lưu trữ kết nối dựa trên định danh duy nhất `connection_id`. |
-| **4. Đăng ký chuỗi** | Lệnh `SubscriptionManager.subscribe_to_chain()` liên kết kết nối hiện tại với chuỗi tương ứng. |
-| **5. Bộ lọc tùy chọn** | Client có thể gửi cấu hình để lọc cụ thể theo danh sách các `event_types`. |
-| **6. Phát tin (Broadcast)** | Khi Gửi Sự kiện hoàn tất khối dữ liệu mới, hàm `broadcast_new_block()` phát tin thông báo tới toàn bộ người đăng ký. |
-| **7. Vòng lặp Ping** | Luồng nền định kỳ gửi gói tin ping mỗi 30 giây; ngắt kết nối các máy khách không phản hồi quá 10 giây. |
+| **1. Nâng cấp giao thức** | Gửi HTTP GET kèm header `Upgrade: websocket`. |
+| **2. Kiểm tra giới hạn** | Từ chối nếu `active_connections >= max_connections` (mặc định 1000). |
+| **3. Đăng ký** | `ConnectionRegistry.add()` lưu kết nối theo `connection_id`. |
+| **4. Đăng ký chuỗi** | `SubscriptionManager.subscribe_to_chain()` liên kết kết nối với chuỗi. |
+| **5. Bộ lọc tùy chọn** | Client có thể gửi danh sách `event_types` để lọc. |
+| **6. Broadcast** | Khi Gửi Sự kiện hoàn tất khối mới, `broadcast_new_block()` gửi tới mọi subscriber. |
+| **7. Vòng lặp ping** | Luồng nền gửi ping mỗi 30 giây; ngắt client không phản hồi quá 10 giây. |
 
 ---
 
@@ -122,23 +122,23 @@ sequenceDiagram
 
 | Tình huống | Hành vi |
 |:-----------|:--------|
-| Vượt quá giới hạn kết nối tối đa | Từ chối kết nối mới kèm mã lỗi `1008 Policy Violation` |
-| Client ngắt kết nối đột ngột | Phương thức `ConnectionRegistry.remove()` tự động được gọi ở lần gửi lỗi tiếp theo |
-| Gửi dữ liệu thất bại do kết nối hỏng | Bắt ngoại lệ gửi tin, gọi phương thức `disconnect()`, xóa kết nối khỏi Registry |
-| Phát tin khi không có người đăng ký nào | Bỏ qua (No-op), không sinh lỗi |
+| Vượt giới hạn kết nối | Từ chối kèm mã `1008 Policy Violation` |
+| Client ngắt đột ngột | `ConnectionRegistry.remove()` được gọi ở lần gửi lỗi tiếp theo |
+| Gửi lỗi do kết nối hỏng | Bắt exception, gọi `disconnect()`, xóa khỏi Registry |
+| Broadcast khi không có subscriber | Bỏ qua (No-op), không lỗi |
 
 ---
 
-## Các Class & Method quan trọng
+## Lớp và phương thức chính
 
-| Bước | Class / Method | File |
+| Bước | Lớp / Phương thức | Tệp |
 |:-----|:--------------|:-----|
-| Quản lý dạng Singleton | `ws_manager` | `api/websocket/manager.py` |
+| Singleton | `ws_manager` | `api/websocket/manager.py` |
 | Tạo kết nối | `WebSocketManager.connect()` | `api/websocket/manager.py` |
 | Ngắt kết nối | `WebSocketManager.disconnect()` | `api/websocket/manager.py` |
-| Đăng ký theo dõi | `WebSocketManager.subscribe()` | `api/websocket/manager.py` |
-| Phát tin khối mới | `WebSocketManager.broadcast_new_block()` | `api/websocket/manager.py` |
-| Phát tin sự kiện mới | `WebSocketManager.broadcast_event()` | `api/websocket/manager.py` |
+| Đăng ký | `WebSocketManager.subscribe()` | `api/websocket/manager.py` |
+| Phát khối mới | `WebSocketManager.broadcast_new_block()` | `api/websocket/manager.py` |
+| Phát sự kiện mới | `WebSocketManager.broadcast_event()` | `api/websocket/manager.py` |
 | Vòng lặp ping | `PingLoopRunner` | `api/websocket/handlers.py` |
 | Xây dựng thông điệp | `build_block_added()` / `build_event_message()` | `api/websocket/builders.py` |
 | Kho kết nối | `ConnectionRegistry` | `api/websocket/registry.py` |
@@ -147,5 +147,5 @@ sequenceDiagram
 
 ## Liên quan
 
-- [Gửi Sự kiện](./event-submission.md): Kích hoạt `broadcast_new_block()` sau khi khối mới được cam kết thành công
-- [Cảnh báo Rủi ro](./risk-alerts.md): Các thông báo cảnh báo cũng được đẩy thời gian thực qua kênh WebSocket này
+- [Gửi Sự kiện](./event-submission.md): kích hoạt `broadcast_new_block()` sau khi commit khối
+- [Cảnh báo Rủi ro](./risk-alerts.md): cảnh báo cũng được đẩy qua kênh WebSocket này

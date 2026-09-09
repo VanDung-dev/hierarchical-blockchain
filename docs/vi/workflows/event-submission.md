@@ -4,13 +4,13 @@ description: "Chi tiết về đường truyền tiếp nhận dữ liệu cốt
 icon: material/tray-arrow-down
 ---
 
-# Gửi Sự kiện (Event Submission)
+# Gửi sự kiện
 
 ## Tổng quan
 
-Các sự kiện đi vào HieraChain dưới dạng các hoạt động nghiệp vụ có cấu trúc, được xác thực, gom nhóm theo lô bởi `OrderingService` thành các khối, được hoàn thiện bằng cơ chế **Bằng chứng (Proof)** được cấu hình (PoA / PoF / BFT), sau đó được thêm vào Sub-Chain. Cơ chế đồng thuận cho MainChain có thể cấu hình linh hoạt (`HRC_MAINCHAIN_CONSENSUS`), trong khi SubChain mặc định sử dụng PoA cho các hoạt động nội bộ tốc độ cao. Quy trình tổng thể luôn giống nhau, chỉ khác biệt ở bước `finalize_block()`.
+Sự kiện vào HieraChain là thao tác nghiệp vụ. Sự kiện được xác thực, gom nhóm bởi `OrderingService` thành khối, hoàn thiện bằng cơ chế proof đã cấu hình (PoA, PoF hoặc BFT), rồi nối vào Sub-Chain. Đồng thuận MainChain có thể cắm qua `HRC_MAINCHAIN_CONSENSUS`, còn SubChain mặc định dùng PoA để xử lý nhanh trong tổ chức. Luồng là như nhau trong mọi trường hợp. Chỉ bước `finalize_block()` thay đổi.
 
-Để xem biểu đồ chi tiết của PoA và PoF, vui lòng tham khảo [Cơ chế Đồng thuận](./consensus_mechanisms.md).
+Với sơ đồ PoA và PoF, xem [Cơ chế Đồng thuận](./consensus_mechanisms.md).
 
 ---
 
@@ -68,30 +68,30 @@ sequenceDiagram
 
 ---
 
-## Các bước thực hiện chi tiết
+## Các bước chi tiết
 
 | Bước | Mô tả |
 |:-----|:------|
-| **1. Nhận sự kiện qua API** | FastAPI xác thực cấu trúc yêu cầu, trích xuất dữ liệu `event_dict`. |
-| **2. Xác thực Chuỗi con (SC)** | `SubChain.add_event()` đóng dấu `timestamp`, gọi `validate_event_for_consensus()`: quét các từ khóa cấm về cryptocurrency. |
-| **3. Đưa vào hàng đợi Sắp xếp (OS)** | Sự kiện được đẩy vào `event_pool` (hàng đợi trong bộ nhớ). `OrderingService` gom cụm các sự kiện theo bộ hẹn giờ hoặc theo ngưỡng `block_size`. |
-| **4. Xây dựng Khối** | `BlockBuilder.build()` lắp ráp khối bao gồm: chỉ số (index), băm khối trước đó (previous_hash), mã băm Merkle root của các sự kiện, dữ liệu đặc tả (metadata). |
-| **5. Hoàn tất** | `Proof.finalize_block()`: PoA ký bằng Ed25519, PoF xác thực luân chuyển leader + bằng chứng ZK, BFT chạy quy trình 3 pha PBFT. |
-| **6. Ghi khối (Commit)** | Khối được đẩy vào `commit_queue`, luồng nền `consumer_thread` sẽ tiếp nhận để xử lý. |
-| **7. Liên kết chuỗi băm** | Lệnh `_process_and_finalize_single_block()` tính toán lại `previous_hash` và `hash` để đảm bảo tính toàn vẹn của chuỗi. |
-| **8. Lưu trữ** | Khối được ghi vào bộ lưu trữ backend thông qua (`SQLiteAdapter`, `RedisStorageAdapter`, hoặc `MemoryStorage`). |
-| **9. Kích hoạt Bằng chứng** | Lệnh `auto_submit_proof_if_needed()` kích hoạt Neo giữ Bằng chứng nếu đạt ngưỡng chiều dài chuỗi tối thiểu. |
+| **1. Nhận qua API** | FastAPI xác thực cấu trúc request, trích xuất `event_dict`. |
+| **2. Xác thực SC** | `SubChain.add_event()` đóng dấu `timestamp`, gọi `validate_event_for_consensus()`: quét từ cấm liên quan tiền mã hóa. |
+| **3. Đưa vào hàng đợi OS** | Sự kiện được đẩy vào `event_pool` (hàng đợi trong bộ nhớ). `OrderingService` gom nhóm theo timer hoặc ngưỡng `block_size`. |
+| **4. Dựng khối** | `BlockBuilder.build()` tạo khối: index, previous_hash, Merkle root của sự kiện, metadata. |
+| **5. Hoàn tất** | `Proof.finalize_block()`: PoA ký bằng Ed25519, PoF xác thực luân phiên leader và proof ZK, BFT chạy PBFT 3 pha. |
+| **6. Commit** | Khối được đẩy vào `commit_queue`, luồng nền `consumer_thread` nhận xử lý. |
+| **7. Chuỗi băm** | `_process_and_finalize_single_block()` tính lại `previous_hash` và `hash` để giữ toàn vẹn chuỗi. |
+| **8. Lưu trữ** | Khối được ghi vào backend lưu trữ (`SQLiteAdapter`, `RedisStorageAdapter` hoặc `MemoryStorage`). |
+| **9. Kích hoạt proof** | `auto_submit_proof_if_needed()` kích hoạt Neo giữ Bằng chứng nếu đạt ngưỡng độ dài chuỗi. |
 
 ---
 
-## Cấu trúc Sự kiện (Event)
+## Cấu trúc sự kiện
 
 ```python
 event = {
-    "entity_id": "product-SKU-001",    # Định danh thực thể nghiệp vụ (Domain entity)
-    "event": "quality_check",           # Loại sự kiện (domain-specific)
+    "entity_id": "product-SKU-001",    # Định danh thực thể nghiệp vụ
+    "event": "quality_check",           # Loại sự kiện
     "timestamp": 1714000000.0,
-    "details": {                        # Dữ liệu nghiệp vụ chi tiết
+    "details": {                        # Payload nghiệp vụ
         "check_type": "visual",
         "check_result": "passed",
         "inspector": "station-7"
@@ -99,7 +99,7 @@ event = {
 }
 ```
 
-> **Quan trọng**: Tuyệt đối không được sử dụng các thuật ngữ cryptocurrency (`transaction`, `sender`, `receiver`, `amount`, `wallet`, `fee`). Bộ quét `validate_event_for_consensus()` sẽ từ chối sự kiện ngay lập tức.
+> **Lưu ý**: không dùng thuật ngữ tiền mã hóa (`transaction`, `sender`, `receiver`, `amount`, `wallet`, `fee`). Hàm `validate_event_for_consensus()` sẽ từ chối các từ này.
 
 ---
 
@@ -107,33 +107,33 @@ event = {
 
 | Tình huống | Hành vi |
 |:-----------|:--------|
-| Phát hiện từ khóa cryptocurrency bị cấm | Ném lỗi `ValueError`, từ chối sự kiện trước khi xếp hàng đợi |
-| Hoàn tất khối thất bại (PoA: quyền không hợp lệ) | Hủy bỏ khối, ghi nhật ký lỗi, đưa sự kiện lại vào hàng đợi |
-| Hoàn tất khối thất bại (PoF: sai leader) | Từ chối khối, lệnh `validate_block_proposer()` ném ra lỗi |
-| Lưu trữ thất bại | Rollback session `SQLAlchemy`; khối vẫn nằm trong commit_queue để thử lại |
-| Lỗi luồng Consumer | Bắt lỗi ngoại lệ ở cấp độ luồng, ghi nhật ký và khởi động lại luồng nền |
+| Phát hiện từ cấm liên quan tiền mã hóa | Ném `ValueError`, từ chối sự kiện trước khi vào hàng đợi |
+| Hoàn tất khối lỗi (PoA: authority không hợp lệ) | Hủy khối, ghi log lỗi, đưa sự kiện lại vào hàng đợi |
+| Hoàn tất khối lỗi (PoF: sai leader) | Từ chối khối, `validate_block_proposer()` ném lỗi |
+| Ghi storage lỗi | Session `SQLAlchemy` rollback; khối ở lại `commit_queue` để thử lại |
+| Lỗi luồng consumer | Bắt exception ở cấp luồng, ghi log, luồng tự khởi động lại |
 
 ---
 
-## Các Class & Method quan trọng
+## Lớp và phương thức chính
 
-| Bước | Class / Method | File |
+| Bước | Lớp / Phương thức | Tệp |
 |:-----|:--------------|:-----|
-| Nhận sự kiện | `SubChain.add_event()` | `hierarchical/sub_chain.py` |
-| Quét từ khóa cấm | `BaseConsensus.validate_event_for_consensus()` | `consensus/base_consensus.py` |
-| Đóng gói & sắp xếp | `OrderingService.receive_event()` | `consensus/ordering/service.py` |
-| Xây dựng khối | `BlockBuilder.build()` | `consensus/ordering/block_builder.py` |
+| Nhận sự kiện | `SubChain.add_event()` | `hierarchical/sub_chain/base.py` |
+| Quét từ cấm | `BaseConsensus.validate_event_for_consensus()` | `consensus/base_consensus.py` |
+| Gom nhóm và sắp xếp | `OrderingService.receive_event()` | `consensus/ordering/service.py` |
+| Dựng khối | `BlockBuilder.build()` | `consensus/ordering/block_builder.py` |
 | Hoàn tất PoA | `ProofOfAuthority.finalize_block()` | `consensus/proof_of_authority.py` |
 | Hoàn tất PoF | `ProofOfFederation.finalize_block()` | `consensus/proof_of_federation.py` |
-| Liên kết & Thêm khối | `SubChain._process_and_finalize_single_block()` | `hierarchical/sub_chain.py` |
-| Ghi dữ liệu | `SQLiteAdapter` / `RedisStorageAdapter` | `adapters/storage/` |
+| Liên kết và thêm khối | `SubChain._process_and_finalize_single_block()` | `hierarchical/sub_chain/base.py` |
+| Ghi dữ liệu | `SQLiteAdapter` / `RedisStorageAdapter` | `adapters/database/` |
 
 ---
 
 ## Liên quan
 
-- [Cơ chế Đồng thuận](./consensus_mechanisms.md): Sơ đồ luồng phụ của PoA và PoF
-- [Neo giữ Bằng chứng](./proof-anchoring.md): Kích hoạt sau khi khối được hoàn tất
-- [Đồng thuận BFT](./bft-consensus.md): Luồng PBFT 3 pha đầy đủ
-- [Thực thi Chính sách](./policy-enforcement.md): Kiểm soát quyền truy cập trước khi gọi `add_event()`
-- [Định danh & Ủy quyền MSP](./msp-identity.md): Gọi `authorize_action()` trước khi gửi sự kiện
+- [Cơ chế Đồng thuận](./consensus_mechanisms.md): sơ đồ phụ PoA và PoF
+- [Neo giữ Bằng chứng](./proof-anchoring.md): kích hoạt sau khi khối hoàn tất
+- [Đồng thuận BFT](./bft-consensus.md): luồng PBFT 3 pha đầy đủ
+- [Thực thi Chính sách](./policy-enforcement.md): cổng kiểm soát trước `add_event()`
+- [Danh tính MSP](./msp-identity.md): gọi `authorize_action()` trước khi gửi

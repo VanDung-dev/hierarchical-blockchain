@@ -4,17 +4,17 @@ description: "Attribute-Based Access Control (ABAC) execution model guarding all
 icon: material/gavel
 ---
 
-# Policy Enforcement
+# Policy enforcement
 
 ## Overview
 
-Every access-sensitive operation in HieraChain is gated by the `PolicyEngine`. Policies are composed of typed `PolicyRule` sets with priority ordering. Results are cached (5-minute TTL, LRU eviction) to minimize latency overhead. All evaluations are written to an in-memory audit log.
+Every access sensitive operation goes through `PolicyEngine`. Policies are sets of typed `PolicyRule` objects ordered by priority. Results are cached with a 5 minute TTL and LRU eviction to keep latency low. All evaluations are written to an in-memory audit log.
 
-The `PolicyEngine` acts as the **single authorization gateway**. It is called by MSP (MSP Identity & Authorization) after identity is verified, and before `SubChain.add_event()` (Event Submission) is invoked.
+`PolicyEngine` is the single authorization gateway. MSP calls it after identity is verified and before `SubChain.add_event()` runs.
 
 ---
 
-## Flow Diagram
+## Flow diagram
 
 ```mermaid
 sequenceDiagram
@@ -54,7 +54,7 @@ sequenceDiagram
 
 ---
 
-## Policy Rule Structure
+## Policy rule structure
 
 ```python
 # Example policy: restrict event submission to authorized operators only
@@ -78,7 +78,7 @@ policy = Policy(
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Step | Description |
 |:-----|:------------|
@@ -91,7 +91,7 @@ policy = Policy(
 
 ---
 
-## Supported Condition Operators
+## Supported condition operators
 
 | Operator | Description | Example |
 |:---------|:------------|:--------|
@@ -104,7 +104,7 @@ policy = Policy(
 
 ---
 
-## Error Handling
+## Error handling
 
 | Condition | Behavior |
 |:----------|:---------|
@@ -115,7 +115,7 @@ policy = Policy(
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|

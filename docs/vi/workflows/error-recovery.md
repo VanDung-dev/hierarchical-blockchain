@@ -4,15 +4,15 @@ description: "Luồng công việc tự động khôi phục và giảm thiểu 
 icon: material/alert-decagram
 ---
 
-# Giảm thiểu Lỗi & Phục hồi (Error Mitigation & Recovery)
+# Giảm thiểu lỗi và phục hồi
 
 ## Tổng quan
 
-HieraChain cung cấp các cơ chế khôi phục tự động phân lớp trên ba khía cạnh: **khả năng phục hồi mạng (network resilience)**, **khôi phục nút trưởng nhóm (consensus leader recovery)**, và **hoàn trả trạng thái (state rollback)**. Các cơ chế này hoạt động độc lập và có thể chạy đồng thời.
+HieraChain có cơ chế khôi phục tự động theo ba lớp: khả năng phục hồi mạng, khôi phục leader đồng thuận và rollback trạng thái. Các cơ chế này hoạt động độc lập và có thể chạy song song.
 
 ---
 
-## 6A: Khôi phục Mạng (Network Recovery)
+## 6A: Khôi phục mạng
 
 ```mermaid
 flowchart TB
@@ -30,11 +30,11 @@ flowchart TB
     PART -->|Không| FIRST
 ```
 
-**Chiến lược**: Phương thức `send_with_redundancy()` gửi cùng một thông điệp qua N đường truyền mạng song song cùng một lúc. Phản hồi thành công đầu tiên sẽ được chấp nhận, và các cuộc gọi đang truyền khác sẽ bị hủy bỏ. Cơ chế này giúp xử lý các lỗi đứt quãng đường truyền mà không cần logic thử lại (retry) phức tạp.
+Chiến lược: `send_with_redundancy()` gửi cùng thông điệp qua N đường truyền song song. Phản hồi thành công đầu tiên được chấp nhận, các cuộc gọi còn lại bị hủy. Cách này xử lý lỗi đường truyền chập chờn mà không cần logic retry phức tạp.
 
 ---
 
-## 6B: Khôi phục Đồng thuận (Lỗi Trưởng nhóm - Leader Failure)
+## 6B: Khôi phục đồng thuận (lỗi leader)
 
 ```mermaid
 sequenceDiagram
@@ -55,7 +55,7 @@ sequenceDiagram
 
 ---
 
-## 6C: Hoàn trả Trạng thái (State Rollback)
+## 6C: Rollback trạng thái
 
 ```mermaid
 flowchart LR
@@ -71,23 +71,23 @@ flowchart LR
     VER -->|Không hợp lệ| ALERT
 ```
 
-**Các bước Khôi phục (Rollback)**:
-1. `RollbackManager.load_snapshot()`: nạp ảnh chụp nhanh đồng nhất gần nhất
-2. `EventJournal.replay()`: phát lại các mục nhật ký đã cam kết kể từ thời điểm ảnh chụp nhanh
-3. `DataValidator.validate()`: xác thực trạng thái đã khôi phục so với mã kiểm tra băm (cryptographic checksums).
-4. Nếu xác thực thất bại: gửi cảnh báo leo thang qua hệ thống Cảnh báo Rủi ro; yêu cầu sự can thiệp thủ công từ người quản trị.
+Các bước rollback:
+1. `RollbackManager.load_snapshot()`: nạp snapshot nhất quán gần nhất
+2. `EventJournal.replay()`: phát lại các mục nhật ký đã commit kể từ snapshot
+3. `DataValidator.validate()`: xác thực trạng thái khôi phục so với checksum mật mã
+4. Nếu xác thực lỗi: gửi cảnh báo leo thang qua Risk Alerts; cần can thiệp thủ công.
 
 ---
 
-## Các bước thực hiện chi tiết
+## Các bước chi tiết
 
 | Luồng phụ | Kích hoạt | Hành động |
 |:----------|:----------|:----------|
-| **6A Mạng** | `avg_latency > ngưỡng` | Khoảng thời gian chờ thích ứng + gửi song song dự phòng |
-| **6A Phân mảnh** | `avg_latency > 5000ms` | Kích hoạt Thay đổi Phiên (View Change) BFT (Đồng thuận BFT) |
-| **6B Trưởng nhóm** | `leader_timeout` | Gọi `ConsensusRecoveryEngine.handle_leader_failure()` $\rightarrow$ View Change |
-| **6B Thử lại tối đa**| `recovery_attempts ≥ max` | Ghi lỗi nghiêm trọng, cảnh báo rủi ro, tạm dừng đồng thuận |
-| **6C Hoàn trả** | Lỗi toàn vẹn dữ liệu hoặc lỗi nghiêm trọng | Nạp ảnh chụp trạng thái $\rightarrow$ Phát lại Nhật ký $\rightarrow$ Xác thực |
+| **6A Mạng** | `avg_latency > ngưỡng` | Timeout thích ứng và gửi song song dự phòng |
+| **6A Phân mảnh** | `avg_latency > 5000ms` | Kích hoạt View Change BFT |
+| **6B Leader** | `leader_timeout` | Gọi `ConsensusRecoveryEngine.handle_leader_failure()` và View Change |
+| **6B Thử lại tối đa**| `recovery_attempts >= max` | Ghi lỗi nghiêm trọng, gửi cảnh báo rủi ro, tạm dừng đồng thuận |
+| **6C Rollback** | Lỗi toàn vẹn hoặc lỗi nghiêm trọng | Nạp snapshot và phát lại nhật ký rồi xác thực |
 
 ---
 
@@ -95,22 +95,22 @@ flowchart LR
 
 | Tình huống | Hành vi |
 |:-----------|:--------|
-| Hết lượt khôi phục (6B) | Gửi cảnh báo rủi ro mức tối cao, nút dừng tham gia quá trình đồng thuận |
-| Không tìm thấy Ảnh chụp (6C) | Chuyển sang nạp lại đầy đủ chuỗi từ cơ sở dữ liệu (Chain Rehydration) |
-| Phát lại nhật ký ra trạng thái không hợp lệ | Cảnh báo leo thang qua hệ thống Cảnh báo Rủi ro, đánh dấu yêu cầu can thiệp thủ công |
-| Sự cố phân mảnh mạng được khắc phục | Khoảng chờ thích ứng tự động giảm xuống, luồng hoạt động bình thường trở lại |
+| Hết lượt khôi phục (6B) | Gửi cảnh báo mức cao nhất, node dừng tham gia đồng thuận |
+| Không tìm thấy snapshot (6C) | Chuyển sang nạp lại toàn bộ chuỗi từ DB (Chain Rehydration) |
+| Phát lại nhật ký cho trạng thái không hợp lệ | Cảnh báo leo thang qua Risk Alerts, đánh dấu cần can thiệp thủ công |
+| Phân mảnh mạng được khắc phục | Timeout thích ứng tự giảm, hoạt động trở lại bình thường |
 
 ---
 
-## Các Class & Method quan trọng
+## Lớp và phương thức chính
 
-| Bước | Class / Method | File |
+| Bước | Lớp / Phương thức | Tệp |
 |:-----|:--------------|:-----|
-| Cấu hình khoảng chờ mạng | `NetworkRecoveryManager.adjust_timeout()` | `error_mitigation/recovery_engine.py` |
-| Gửi tin dự phòng | `send_with_redundancy()` | `error_mitigation/recovery_engine.py` |
-| Xử lý lỗi Leader | `ConsensusRecoveryEngine.handle_leader_failure()` | `error_mitigation/recovery_engine.py` |
+| Cấu hình timeout mạng | `NetworkRecoveryManager.adjust_timeout()` | `error_mitigation/recovery_engine.py` |
+| Gửi dự phòng | `send_with_redundancy()` | `error_mitigation/recovery_engine.py` |
+| Xử lý lỗi leader | `ConsensusRecoveryEngine.handle_leader_failure()` | `error_mitigation/recovery_engine.py` |
 | Kích hoạt View Change | `BFTViewChangeManager._initiate_view_change()` | `consensus/bft/consensus.py` |
-| Nạp ảnh chụp | `RollbackManager.load_snapshot()` | `error_mitigation/rollback_manager.py` |
+| Nạp snapshot | `RollbackManager.load_snapshot()` | `error_mitigation/rollback_manager.py` |
 | Phát lại nhật ký | `TransactionJournal.replay()` | `error_mitigation/journal.py` |
 | Xác thực trạng thái | `DataValidator.validate()` | `error_mitigation/validator.py` |
 
@@ -118,7 +118,7 @@ flowchart LR
 
 ## Liên quan
 
-- [Đồng thuận BFT](./bft-consensus.md): Chi tiết về Thay đổi Phiên (View Change)
-- [Khóa băng Cụm](./cluster-lockdown.md): Khôi phục ở cấp độ toàn cụm nút
-- [Nạp lại Trạng thái Chuỗi](./chain-rehydration.md): Tải lại toàn bộ chuỗi từ cơ sở dữ liệu (DB)
-- [Cảnh báo Rủi ro](./risk-alerts.md): Các thông báo cảnh báo leo thang
+- [Đồng thuận BFT](./bft-consensus.md): chi tiết View Change
+- [Khóa băng Cụm](./cluster-lockdown.md): khôi phục ở cấp cụm
+- [Nạp lại Trạng thái Chuỗi](./chain-rehydration.md): tải lại toàn bộ chuỗi từ DB
+- [Cảnh báo Rủi ro](./risk-alerts.md): thông báo leo thang

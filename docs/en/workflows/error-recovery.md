@@ -4,15 +4,15 @@ description: "Automated recovery and mitigation workflows for network failures, 
 icon: material/alert-decagram
 ---
 
-# Error Mitigation & Recovery
+# Error mitigation and recovery
 
 ## Overview
 
-HieraChain provides layered, automated recovery mechanisms across three dimensions: **network resilience**, **consensus leader recovery**, and **state rollback**. These operate independently and can be active simultaneously.
+HieraChain has layered recovery for three areas: network resilience, consensus leader recovery and state rollback. These run independently and can be active at the same time.
 
 ---
 
-## 6A: Network Recovery
+## 6A: Network recovery
 
 ```mermaid
 flowchart TB
@@ -30,11 +30,11 @@ flowchart TB
     PART -->|No| FIRST
 ```
 
-**Strategy**: `send_with_redundancy()` dispatches the same message over N parallel network paths simultaneously. The first successful response wins and remaining in-flight calls are cancelled. This handles intermittent path failures without explicit retry logic.
+`send_with_redundancy()` sends the same message over N parallel paths at once. The first successful response wins and the remaining in flight calls are cancelled. This hides intermittent path failures without explicit retries.
 
 ---
 
-## 6B: Consensus Recovery (Leader Failure)
+## 6B: Consensus recovery (leader failure)
 
 ```mermaid
 sequenceDiagram
@@ -55,7 +55,7 @@ sequenceDiagram
 
 ---
 
-## 6C: State Rollback
+## 6C: State rollback
 
 ```mermaid
 flowchart LR
@@ -71,15 +71,16 @@ flowchart LR
     VER -->|Invalid| ALERT
 ```
 
-**Rollback steps**:
-1. `RollbackManager.load_snapshot()`: load the most recent consistent snapshot
-2. `EventJournal.replay()`: replay committed journal entries since the snapshot
-3. `DataValidator.validate()`: verify the restored state against cryptographic checksums
-4. If validation fails: escalation alert sent via Risk Alerts; manual intervention required
+Rollback does four things in order:
+
+1. `RollbackManager.load_snapshot()` loads the most recent consistent snapshot
+2. `EventJournal.replay()` replays committed journal entries since that snapshot
+3. `DataValidator.validate()` checks the restored state against cryptographic checksums
+4. If validation fails, an escalation alert is sent via Risk Alerts and manual intervention is needed
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Sub-flow | Trigger | Action |
 |:---------|:--------|:-------|
@@ -91,7 +92,7 @@ flowchart LR
 
 ---
 
-## Error Handling
+## Error handling
 
 | Condition | Behavior |
 |:----------|:---------|
@@ -102,7 +103,7 @@ flowchart LR
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|

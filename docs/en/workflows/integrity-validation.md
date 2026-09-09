@@ -4,17 +4,17 @@ description: "System-wide cryptographic scans to detect anomalies, hash divergen
 icon: material/check-decagram
 ---
 
-# System Integrity Validation
+# System integrity validation
 
 ## Overview
 
-A system-wide integrity check that validates the **cryptographic consistency** of all chains and verifies that the proofs stored on the Main Chain match the latest blocks on each Sub-Chain. This is the primary mechanism for **tamper detection** and **audit compliance**.
+This workflow checks cryptographic consistency across all chains. It verifies that every block links correctly and that proofs stored on the Main Chain match the latest blocks on each Sub-Chain. It is the main way the system detects tampering and stays audit ready.
 
-The check runs three parallel validation layers: Main Chain cryptographic validity, Sub-Chain cryptographic validity, and proof consistency between the two tiers.
+The check runs three layers in parallel: Main Chain validity, Sub-Chain validity and proof consistency between the two tiers.
 
 ---
 
-## Flow Diagram
+## Flow diagram
 
 ```mermaid
 flowchart TB
@@ -46,7 +46,7 @@ flowchart TB
 
 ---
 
-## Tamper Detection Flow
+## Tamper detection flow
 
 ```mermaid
 sequenceDiagram
@@ -77,7 +77,7 @@ sequenceDiagram
 
 ---
 
-## Integrity Report Structure
+## Integrity report structure
 
 ```python
 {
@@ -111,7 +111,7 @@ sequenceDiagram
 
 ---
 
-## Step-by-Step Breakdown
+## Step-by-step breakdown
 
 | Step | Description |
 |:-----|:------------|
@@ -125,7 +125,7 @@ sequenceDiagram
 
 ---
 
-## Error Handling
+## Error handling
 
 | Condition | Status | Action |
 |:----------|:-------|:-------|
@@ -136,7 +136,7 @@ sequenceDiagram
 
 ---
 
-## Key Classes & Methods
+## Key classes and methods
 
 | Step | Class / Method | File |
 |:-----|:--------------|:-----|
