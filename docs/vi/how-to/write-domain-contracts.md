@@ -1,84 +1,104 @@
 ---
-title: Viết Hợp đồng Miền (Domain Contracts)
-description: Hướng dẫn chi tiết thiết kế phần mềm, quản lý vòng đời và xử lý sự kiện trong DomainContract.
+title: "Xây dựng Logic Miền Nghiệp vụ"
+description: "Hướng dẫn triển khai quy tắc nghiệp vụ, kiểm tra tính hợp lệ của thao tác và vòng đời thực thể bằng DomainChain."
 icon: material/file-document-edit
 ---
 
-# Viết Hợp đồng Miền (Domain Contracts)
+# Xây dựng Logic Miền Nghiệp vụ
 
-## Hợp đồng Miền
+## 1. Chuỗi nghiệp vụ (Domain Chains)
 
-HieraChain sử dụng hệ thống Domain Contracts linh hoạt hỗ trợ xử lý logic nghiệp vụ riêng cho từng loại dữ liệu hoặc sự kiện. Hệ thống mã quản lý được định nghĩa trực tiếp tại `hierachain/domains/domain_contract.py`.
+HieraChain xử lý logic nghiệp vụ thông qua các chuỗi nghiệp vụ. Thay vì triển khai các hợp đồng thông minh bytecode tùy ý, nhà phát triển thực hiện logic nghiệp vụ bằng cách mở rộng hoặc cấu hình `DomainChain` trong `hierachain/domains/chains/domain_chain.py`.
 
-### 1. Khởi tạo một Domain Contract
+### Khởi tạo một Domain Chain
 
-Mỗi hợp đồng cung cấp nhiều thuộc tính cốt lõi gồm mã định danh, phiên bản, callback thực thi và metadata:
+`DomainChain` kế thừa từ `BaseChain` và cung cấp sẵn cơ chế kiểm tra tính hợp lệ cho các thao tác phổ biến:
 
 ```python
-from hierachain.domains.domain_contract import DomainContract
+from hierachain.domains.chains.domain_chain import DomainChain
 
-contract = DomainContract(
-    contract_id="logistics_tracker_ledger",
-    version="1.0.0",
-    implementation=my_custom_logic_function,
-    metadata={"department": "supply_chain"}
+chain = DomainChain(
+    name="supply_chain_01",
+    domain_type="supply_chain",
+    storage_path="data/ledger.db"
 )
 ```
 
-### 2. Quản lý Vòng đời (Lifecycle)
+## 2. Kiểm tra tính hợp lệ của thao tác
 
-Các hợp đồng trên HieraChain không bao giờ khởi chạy trực tiếp ra ngay production mà đi qua một chu trình kiểm soát chất lượng (ContractStatus):
+`DomainChain` kiểm tra các trường bắt buộc trong dữ liệu thao tác trước khi tạo sự kiện:
 
-* `DEVELOPMENT`: Mặc định khi vừa khởi tạo. Dành cho dev/gỡ lỗi.
-* `TESTING`: Giai đoạn QA, thử nghiệm với test data.
-* `ACTIVE`: Hợp đồng chính thức live trên mạng, được phép kích hoạt xử lý giao dịch qua `activate()`.
-* `DEPRECATED`: Đánh dấu là lỗi thời nhưng vẫn giữ để hỗ trợ khối block cũ thông qua `deprecate()`.
-* `DISABLED`: Vô hiệu hóa khẩn cấp bằng `disable()`.
-* `ARCHIVED`: Đã cất gọn hoàn toàn, không thể kích hoạt lại.
+* `quality_check`: Yêu cầu `check_type` và `check_result`.
+* `approval`: Yêu cầu `approval_type` và `approver_id`.
+* `resource_allocation`: Yêu cầu `resource_type` và `resource_id`.
+* `compliance_check`: Yêu cầu `compliance_type`.
 
-```mermaid
-stateDiagram-v2
-    [*] --> DEVELOPMENT
-    DEVELOPMENT --> TESTING
-    DEVELOPMENT --> DISABLED
-    TESTING --> ACTIVE
-    TESTING --> DEVELOPMENT
-    TESTING --> DISABLED
-    ACTIVE --> DEPRECATED
-    ACTIVE --> DISABLED
-    DEPRECATED --> DISABLED
-    DEPRECATED --> ARCHIVED
-    DISABLED --> DEVELOPMENT
-    DISABLED --> ARCHIVED
-    ARCHIVED --> [*]
-```
-
-### 3. Nâng cấp Phiên bản (Versioning)
-
-Thay vì ghi đè lên những hợp đồng cũ, gây sai lệch lịch sử chuỗi khối, người dùng dễ dàng nâng cấp một phiên bản hợp đồng logic mới mà hệ thống vẫn lưu trữ lại `previous_versions`. Cơ chế này cho phép các hoạt động bảo trì mạng không bao giờ bị **Downtime**.
+Các loại thao tác chưa định nghĩa mặc định được chấp thuận, giúp mở rộng tùy chỉnh dễ dàng:
 
 ```python
-contract.upgrade_to_version(
-    new_version="1.1.0",
-    new_implementation=optimized_logic_function,
-    metadata={"upgrade_reason": "Performance improvement"}
+from hierachain.domains.chains.domain_chain import validate_operation_data
+
+payload = {
+    "check_type": "visual_inspection",
+    "check_result": "passed"
+}
+
+is_valid = validate_operation_data("quality_check", payload)
+assert is_valid is True
+```
+
+## 3. Ghi nhận thao tác nghiệp vụ
+
+Sử dụng các hàm tạo sự kiện từ `hierachain/domains/events/event_creators.py`:
+
+```python
+from hierachain.domains.chains.domain_chain import DomainChain
+from hierachain.domains.events.event_creators import create_quality_check
+
+chain = DomainChain(name="logistics_chain", domain_type="logistics")
+
+# Tạo sự kiện kiểm tra chất lượng đã qua kiểm thực
+event = create_quality_check(
+    entity_id="CONTAINER-409",
+    check_type="temperature_compliance",
+    check_result="passed",
+    metadata={"temperature_c": 4.2}
+)
+
+# Nạp sự kiện vào chuỗi nghiệp vụ
+chain.add_domain_event(
+    entity_id=event["entity_id"],
+    event=event["event"],
+    details=event["details"]
 )
 ```
 
-### 4. Đăng ký Bộ xử lý Sự kiện (Event Handlers)
+## 4. Quản lý vòng đời thực thể
 
-Giao dịch hoặc Event khi cập bến DomainContract có thể được chẻ luồng ra và gọi nhiều hàm callback khác nhau tùy thuộc vào loại `event_type`.
+`DomainChain` theo dõi trạng thái thực thể qua các thao tác:
+
+1. Đăng ký: Đăng ký thực thể mới cần theo dõi trên chuỗi.
+2. Cập nhật trạng thái: Ghi nhận các trạng thái chuyển giao như `in_progress`, `quality_approved` và `completed`.
+3. Chỉ số đo lường: `OperationMetricsTracker` ghi nhận độ trễ thực thi và tỷ lệ thành công phục vụ báo cáo kiểm toán.
 
 ```python
-def quality_check_handler(event, context, storage):
-    # Logic đối chiếu, thay đổi storage tuỳ ý...
-    return {"status": "passed"}
+# Đăng ký thực thể
+chain.register_entity(
+    entity_id="CONTAINER-409",
+    entity_type="cargo",
+    metadata={"origin": "Port A", "destination": "Port B"}
+)
 
-# Đăng ký handler này riêng cho event "quality_inspection"
-contract.register_event_handler(
-    event_type="quality_inspection",
-    handler=quality_check_handler
+# Cập nhật trạng thái thực thể
+chain.update_entity_status(
+    entity_id="CONTAINER-409",
+    new_status="in_transit",
+    reason="Departed facility"
 )
 ```
 
-Điều này giúp tách biệt rõ ràng việc kiểm tra, đối soát và phê duyệt (approval) qua từng module riêng rẽ.
+## Liên quan
+
+* [Domains Module](../modules/domains.md)
+* [Thêm một chuỗi nghiệp vụ](./add-domain-chain.md)
+* [Thao tác liên chuỗi](./cross-chain-transactions.md)

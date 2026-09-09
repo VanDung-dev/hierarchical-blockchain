@@ -1,84 +1,104 @@
 ---
-title: Writing Domain Contracts
-description: Detailed guide on software design, lifecycle management, and event handling in DomainContract.
+title: "Writing Domain Logic"
+description: "Guide to implementing business rules, operation validation, and entity lifecycles using DomainChain."
 icon: material/file-document-edit
 ---
 
-# Writing Domain Contracts
+# Writing Domain Logic
 
-## Domain Contracts
+## 1. Domain Chains
 
-HieraChain uses a flexible Domain Contracts system that supports processing business logic specific to each type of data or event. The code management system is defined directly in `hierachain/domains/domain_contract.py`.
+HieraChain processes business logic through domain chains. Instead of deploying arbitrary bytecode smart contracts, developers implement domain logic by extending or configuring `DomainChain` in `hierachain/domains/chains/domain_chain.py`.
 
-### 1. Initializing a Domain Contract
+### Initializing a Domain Chain
 
-Each contract provides several core properties including an identifier, version, execution callback, and metadata:
+`DomainChain` inherits from `BaseChain` and provides built-in validation for common operations:
 
 ```python
-from hierachain.domains.domain_contract import DomainContract
+from hierachain.domains.chains.domain_chain import DomainChain
 
-contract = DomainContract(
-    contract_id="logistics_tracker_ledger",
-    version="1.0.0",
-    implementation=my_custom_logic_function,
-    metadata={"department": "supply_chain"}
+chain = DomainChain(
+    name="supply_chain_01",
+    domain_type="supply_chain",
+    storage_path="data/ledger.db"
 )
 ```
 
-### 2. Lifecycle Management
+## 2. Operation validation
 
-Contracts on HieraChain never go straight to production; they go through a quality control cycle (ContractStatus):
+`DomainChain` validates incoming operation payloads against required fields before creating events:
 
-* `DEVELOPMENT`: Default state upon creation. For dev/debugging.
-* `TESTING`: QA phase, testing with test data.
-* `ACTIVE`: Contract is officially live on the network, allowed to activate transaction processing via `activate()`.
-* `DEPRECATED`: Marked as obsolete but retained to support old blocks via `deprecate()`.
-* `DISABLED`: Emergency disable via `disable()`.
-* `ARCHIVED`: Fully archived, cannot be reactivated.
+* `quality_check`: Requires `check_type` and `check_result`.
+* `approval`: Requires `approval_type` and `approver_id`.
+* `resource_allocation`: Requires `resource_type` and `resource_id`.
+* `compliance_check`: Requires `compliance_type`.
 
-```mermaid
-stateDiagram-v2
-    [*] --> DEVELOPMENT
-    DEVELOPMENT --> TESTING
-    DEVELOPMENT --> DISABLED
-    TESTING --> ACTIVE
-    TESTING --> DEVELOPMENT
-    TESTING --> DISABLED
-    ACTIVE --> DEPRECATED
-    ACTIVE --> DISABLED
-    DEPRECATED --> DISABLED
-    DEPRECATED --> ARCHIVED
-    DISABLED --> DEVELOPMENT
-    DISABLED --> ARCHIVED
-    ARCHIVED --> [*]
-```
-
-### 3. Versioning
-
-Instead of overwriting old contracts, which would distort the blockchain history, users can easily upgrade to a new contract logic version while the system still retains `previous_versions`. This mechanism ensures network maintenance never causes **Downtime**.
+Unknown operation types default to allowed, making custom extension straightforward:
 
 ```python
-contract.upgrade_to_version(
-    new_version="1.1.0",
-    new_implementation=optimized_logic_function,
-    metadata={"upgrade_reason": "Performance improvement"}
+from hierachain.domains.chains.domain_chain import validate_operation_data
+
+payload = {
+    "check_type": "visual_inspection",
+    "check_result": "passed"
+}
+
+is_valid = validate_operation_data("quality_check", payload)
+assert is_valid is True
+```
+
+## 3. Recording domain operations
+
+You record business operations using helper factories from `hierachain/domains/events/event_creators.py`:
+
+```python
+from hierachain.domains.chains.domain_chain import DomainChain
+from hierachain.domains.events.event_creators import create_quality_check
+
+chain = DomainChain(name="logistics_chain", domain_type="logistics")
+
+# Create a validated quality check event
+event = create_quality_check(
+    entity_id="CONTAINER-409",
+    check_type="temperature_compliance",
+    check_result="passed",
+    metadata={"temperature_c": 4.2}
+)
+
+# Append event to the domain chain
+chain.add_domain_event(
+    entity_id=event["entity_id"],
+    event=event["event"],
+    details=event["details"]
 )
 ```
 
-### 4. Registering Event Handlers
+## 4. Entity lifecycle management
 
-Transactions or Events arriving at a DomainContract can be split and routed to different callback functions depending on the `event_type`.
+`DomainChain` tracks entity state across operations:
+
+1. Registration: Register a new tracked entity on the chain.
+2. Status updates: Record transition states such as `in_progress`, `quality_approved`, and `completed`.
+3. Metrics: `OperationMetricsTracker` records execution latencies and success rates for audit reporting.
 
 ```python
-def quality_check_handler(event, context, storage):
-    # Reconciliation logic, modify storage as needed...
-    return {"status": "passed"}
+# Register an entity
+chain.register_entity(
+    entity_id="CONTAINER-409",
+    entity_type="cargo",
+    metadata={"origin": "Port A", "destination": "Port B"}
+)
 
-# Register this handler specifically for the "quality_inspection" event
-contract.register_event_handler(
-    event_type="quality_inspection",
-    handler=quality_check_handler
+# Update entity status
+chain.update_entity_status(
+    entity_id="CONTAINER-409",
+    new_status="in_transit",
+    reason="Departed facility"
 )
 ```
 
-This helps clearly separate verification, reconciliation, and approval logic across distinct modules.
+## Related
+
+* [Domains Module](../modules/domains.md)
+* [Adding a Domain Chain](./add-domain-chain.md)
+* [Cross-Chain Operations](./cross-chain-transactions.md)

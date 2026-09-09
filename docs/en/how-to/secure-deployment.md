@@ -64,24 +64,9 @@ HRC_RATE_LIMIT_RPM=100
 
 Note: actual deployment should combine rate limiting at the reverse proxy (Nginx/Envoy/API Gateway).
 
-## Resource Guard
+## Resource Guard (Note)
 
-Use `ResourceGuardMiddleware` middleware to reject requests when CPU/RAM exceeds thresholds:
-
-```python
-# Integration example (descriptive) in FastAPI app
-from fastapi import FastAPI
-from hierachain.security.resource_guard import ResourceGuardMiddleware
-
-app = FastAPI()
-app.add_middleware(
-    ResourceGuardMiddleware,
-    memory_threshold_percent=85.0,
-    cpu_threshold_percent=85.0,
-)
-```
-
-Module: `hierachain/security/resource_guard.py`. This middleware uses `monitoring/performance_monitor.py` to get metrics.
+No `ResourceGuardMiddleware` or `security/resource_guard.py` exists in code. Actual DoS/limit protections are: `api/middleware.py:add_rate_limit` / `add_payload_limit`, and `HRC_RAM_CRITICAL_THRESHOLD` / `HRC_EVENT_POOL_MAX_SIZE` checks in ordering/storage. Do not import a non-existent `ResourceGuardMiddleware`; combine app-level rate limiting with reverse-proxy limits.
 
 ## Starting the Service
 
@@ -147,11 +132,11 @@ export HRC_HSTS_ENABLED=true
 ### Optional (Enterprise)
 
 ```bash
-# Use external Vault
-export HRC_VAULT_ADDR=https://vault.company.com
+# Use external Vault (actual envs are HRC_VAULT_TOKEN / HRC_VAULT_PATH / HRC_VAULT_URL, not HRC_VAULT_ADDR)
+export HRC_VAULT_TOKEN=your_token
+export HRC_VAULT_PATH=/path/to/vault
 
-# Enable HSM for key management
-export HRC_HSM_ENABLED=true
+# HSM is not a boolean HRC_HSM_ENABLED flag in code; use KeyProvider interface + HRC_VAULT_* / HSM integration externally
 ```
 
 ### Configuration Check

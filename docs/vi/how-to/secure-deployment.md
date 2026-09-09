@@ -64,24 +64,9 @@ HRC_RATE_LIMIT_RPM=100
 
 Lưu ý: triển khai thực tế nên kết hợp rate limit ở reverse proxy (Nginx/Envoy/API Gateway).
 
-## Bảo vệ tài nguyên (Resource Guard)
+## Bảo vệ tài nguyên (Lưu ý)
 
-Sử dụng middleware `ResourceGuardMiddleware` để từ chối request khi CPU/RAM vượt ngưỡng:
-
-```python
-# Ví dụ tích hợp (mang tính mô tả) trong FastAPI app
-from fastapi import FastAPI
-from hierachain.security.resource_guard import ResourceGuardMiddleware
-
-app = FastAPI()
-app.add_middleware(
-    ResourceGuardMiddleware,
-    memory_threshold_percent=85.0,
-    cpu_threshold_percent=85.0,
-)
-```
-
-Mô-đun: `hierachain/security/resource_guard.py`. Middleware này sử dụng `monitoring/performance_monitor.py` để lấy số liệu.
+Không có `ResourceGuardMiddleware` hay `security/resource_guard.py` trong code. Bảo vệ DoS/limit thực tế là: `api/middleware.py:add_rate_limit` / `add_payload_limit`, và kiểm tra `HRC_RAM_CRITICAL_THRESHOLD` / `HRC_EVENT_POOL_MAX_SIZE` trong ordering/storage. Đừng import `ResourceGuardMiddleware` không tồn tại; hãy kết hợp rate limiting ở app với reverse-proxy.
 
 ## Khởi động dịch vụ
 
@@ -147,11 +132,11 @@ export HRC_HSTS_ENABLED=true
 ### Optional (Enterprise)
 
 ```bash
-# Sử dụng Vault bên ngoài
-export HRC_VAULT_ADDR=https://vault.company.com
+# Sử dụng Vault bên ngoài (biến thực tế là HRC_VAULT_TOKEN / HRC_VAULT_PATH / HRC_VAULT_URL, không phải HRC_VAULT_ADDR)
+export HRC_VAULT_TOKEN=your_token
+export HRC_VAULT_PATH=/path/to/vault
 
-# Bật HSM cho key management
-export HRC_HSM_ENABLED=true
+# HSM không có cờ boolean HRC_HSM_ENABLED trong code; dùng interface KeyProvider + HRC_VAULT_* / tích hợp HSM bên ngoài
 ```
 
 ### Kiểm tra cấu hình
