@@ -1,62 +1,39 @@
 ---
 title: "Fault-tolerance & Integrity"
-description: "Protecting system resources and verifying source code/data integrity."
+description: "Actual resource protection and integrity checks in HieraChain (no separate Resource Guard/Integrity module)."
 icon: material/shield-check
 ---
 
 # Fault-tolerance & Integrity
 
-This security layer ensures the system always operates within safe thresholds and that executed code has not been tampered with.
+This page previously described `security/resource_guard.py` and `security/integrity.py`, which do not exist in `hierachain/`. Fault tolerance in the codebase is distributed instead.
 
-## 1. Resource Guard (DoS Protection)
+## Resource protection (actual)
 
-**File**: `hierachain/security/resource_guard.py`
+* Rate and payload limits live in `hierachain/api/middleware.py` (`add_rate_limit`, `add_payload_limit` with `HRC_RATE_LIMIT`, `HRC_RATE_LIMIT_RPM`, `HRC_RATE_LIMIT_BACKEND`, `HRC_TRUSTED_PROXIES`; payload is checked via `request.stream()` with a 1MB limit).
+* Event pool and RAM guards are `HRC_EVENT_POOL_MAX_SIZE` (10k) and `HRC_RAM_CRITICAL_THRESHOLD` (95%), checked in ordering and storage paths.
+* There is no `ResourceGuardMiddleware`. The 70%/90% threshold table and the load shedding in `monitoring/performance_monitor.py` described earlier were fabricated. Use app middleware together with reverse proxy limits.
 
-The steel shield protecting system resources (CPU, RAM):
+## Integrity checks (actual)
 
-*   **Load Shedding**: Automatically rejects new requests when system resources exceed the threshold (e.g., CPU > 90%) to prevent node-wide failure.
-*   **Fast Response**: Immediately returns `503 Service Unavailable` errors to reduce worker processing load.
-*   **Monitoring Integration**: Uses real-time data from `PerformanceMonitor` to make protection decisions.
+There is no startup signature scan in `security/integrity.py`. The actual integrity mechanisms are:
 
-## 2. Integrity Manager
-
-**File**: `hierachain/security/integrity.py`
-
-Verifies system integrity at startup:
-
-*   **Executable Signing**: Checks digital signatures or checksums of critical executable and configuration files.
-*   **Startup Verification**: Prevents the system from starting if code has been detected as tampered.
-*   **Runtime Checks**: Performs periodic scans to ensure in-memory components have not been modified.
-
----
-
-## Resource Protection Mechanism (Resource Guard)
-
-The system uses a 3-stage protection mechanism:
-
-| State | Threshold (CPU/RAM) | Action |
-| :--- | :--- | :--- |
-| **Normal** | < 70% | Accept all requests. |
-| **Warning** | 70% - 90% | Begin rate limiting non-priority requests. |
-| **Critical** | > 90% | Reject all new requests (Load shedding) until resources cool down. |
-
----
-
-## Integrity Flow
+* Merkle and chain links in `hierachain/core/block.py` and `core/merkle_tree.py` (domain-separated `0x01` prefix) and `consensus/ordering/storage.py:_verify_chain_links()` (`previous_hash` chain).
+* Proof verification in `hierachain/hierarchical/main_chain/proofs.py:_verify_proof_in_main_chain` (fallback chain scan) and `security/verify/block_verifier.py`.
+* Rollback integrity in `hierachain/error_mitigation/rollback_manager.py:_verify_rollback_integrity` (`data_hash` check) with a path traversal guard.
 
 ```mermaid
 graph LR
-    A[System Boot] --> B[Load Manifest]
-    B --> C[Calculate File Hashes]
-    C --> D{Match Signatures?}
-    D -- Yes --> E[Proceed to Start Services]
-    D -- No --> F[Log Security Alert]
-    F --> G[Halt Startup]
+    A[Block finalize] --> B[previous_hash check]
+    B --> C[Merkle root verify]
+    C --> D[Proof verify on MainChain]
+    D --> E[Rollback data_hash if needed]
 ```
 
 ---
 
 ## Related
 
-*   [Performance monitoring](../modules/monitoring.md)
-*   [System error handling](../modules/error-mitigation.md)
+*   [Error Mitigation](../modules/error-mitigation.md)
+*   [Monitoring](../modules/monitoring.md)
+*   [Cluster Lockdown](./lockdown-logging.md)

@@ -6,63 +6,60 @@ icon: material/key-chain
 
 # Encryption & Keys
 
-This security layer manages all system "secrets", including encryption keys, signing key pairs, and identity certificates.
+This security layer manages system secrets. That includes encryption keys, signing key pairs and identity certificates.
 
-## 1. Key Manager & Key Providers
+## Key manager and key providers
 
-**File**: `hierachain/security/key_manager.py`, `key_provider.py`
+File: `hierachain/security/key_manager.py`, `key_provider.py`
 
-Manages the creation and usage of key pairs:
+This code creates and uses key pairs:
 
-*   **Ed25519 Support**: Uses the Ed25519 algorithm for high-speed and secure digital signatures.
-*   **Pluggable Providers**: Supports multiple key sources:
+* Ed25519 support uses Ed25519 for fast and secure digital signatures.
+* Pluggable providers support several key sources:
 
-    *   `LocalKeyProvider`: Local storage (In-memory).
-    *   `FileVaultProvider`: Encrypted storage on disk using **AES-256-GCM**.
+    * `LocalKeyProvider` keeps keys in local memory.
+    * `FileVaultProvider` keeps encrypted data on disk with AES-256-GCM.
 
-*   **API Key Lifecycle**: Manages the full API Key lifecycle from creation to revocation.
+* API key lifecycle covers the full API key lifecycle from creation to revocation.
 
-## 2. Certificate Management (X.509)
+## Certificate and identity (MSP)
 
-**File**: `hierachain/security/certificate.py`
+File: `hierachain/security/msp.py` (`Certificate`, `CertificateAuthority`, `HierarchicalMSP`)
 
-Manages digital identities for nodes and services:
+This code manages lightweight internal identities, not X.509:
 
-*   **X.509 Standards**: Complies with enterprise digital certificate standards.
-*   **mTLS Support**: Provides necessary certificates for mutual TLS authentication between components.
-*   **CRL (Certificate Revocation List)**: Maintains a list of revoked certificates to ensure security.
+* Internal certificate is the `Certificate` dataclass with `cert_id`, `subject`, `public_key`, `signature` (Ed25519 via `_sign_certificate`) and `is_valid()` time check. There is no X.509 ASN.1 and no mTLS.
+* CA operations are `CertificateAuthority.issue_certificate()`, `revoke_certificate()` and `verify_certificate()` with an in-memory `issued_certificates` set and `revoked_certificates` set. `HierarchicalMSP` uses this for org and entity registration.
+* Limitation: revocation lives only in memory. There is no CRL distribution, no X.509 chain validation and no mutual TLS between components. TLS is expected at the reverse proxy per architecture rules.
 
-## 3. Key Backup & Recovery
+## Key backup and recovery
 
-**File**: `hierachain/security/key_backup_manager.py`
+Files: `hierachain/cli/key.py`, `hierachain/security/key_provider.py` (`FileVaultProvider`)
 
-Ensures disaster recovery capability:
+There is no dedicated `key_backup_manager.py`. The actual mechanism is minimal:
 
-*   **Encrypted Backups**: Backs up keys in encrypted form with integrity verification via Hash.
-*   **Multi-location Storage**: Supports backup at multiple locations to prevent data loss.
-*   **Secure Cleanup**: Safely removes old backups to prevent leakage.
-
----
-
-## Key Management Hierarchy
-
-HieraChain uses a key hierarchy model for optimal security:
-
-1.  **Master Key**: Root key used to encrypt other keys (typically stored in a high-security environment).
-2.  **Domain Keys**: Keys used for each Sub-Chain.
-3.  **Entity/User Keys**: Signing key pairs for each entity or end-user.
+* Generation runs `python -m hierachain key generate --output validator_key.json` (CLI) to create an Ed25519 pair via `Ed25519PrivateKey.generate()` and write `{private_key, public_key}` hex JSON. The `show` and `verify` commands inspect the result.
+* Encrypted vault (dev and test only) uses `FileVaultProvider` to encrypt the vault file with `PBKDF2HMAC(SHA256, 310_000 iter)` and `Fernet(AES-128-CBC+HMAC)`. This is suitable for dev and test and is documented as not for production. For production use HSM or KMS through the `KeyProvider` interface and `HRC_VAULT_*`.
+* There is no multi-location backup, no SHA-512 integrity check and no auto distribution or cleanup. Operators must copy `validator_key.json` or `.vault` with external backup tooling.
 
 ---
 
-## Certificate Initialization Flow
+## Key scope (actual)
+
+* Validator and node key is a single Ed25519 `KeyPair` per node (via `LocalKeyProvider` or `FileVaultProvider`), referenced by `HRC_VALIDATOR_IDENTITY` and `HRC_MASTER_KEY_FILE`/`HRC_MASTER_KEY_SOURCE`.
+* API keys are managed by `KeyManager` (create, revoke, permission, cached via `KeyStorage`/`KeyCacheManager`), not per-entity signing keys.
+* There is no built-in hierarchy like Master to Domain to Entity. Domain isolation relies on Sub-Chain separation and MSP roles.
+
+---
+
+## Certificate initialization flow (actual)
 
 ```mermaid
 graph LR
-    A[Generate Ed25519 Key Pair] --> B[Create CSR - Certificate Signing Request]
-    B --> C[Hierarchical MSP Review]
-    C --> D[Sign with MSP Root CA]
-    D --> E[Distribute X.509 Certificate]
-    E --> F[Use for Secure Communication]
+    A[Generate Ed25519 Key Pair<br/>cli/key.py] --> B[HierarchicalMSP.register_entity<br/>msp.py]
+    B --> C[CA.issue_certificate<br/>Ed25519 sign]
+    C --> D[Store in issued_certificates]
+    D --> E[verify_certificate / revoke_certificate]
 ```
 
 ---

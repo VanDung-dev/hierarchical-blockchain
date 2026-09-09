@@ -1,62 +1,39 @@
 ---
 title: "Fault-tolerance & Integrity"
-description: "Bảo vệ tài nguyên hệ thống và kiểm tra tính toàn vẹn của mã nguồn/dữ liệu."
+description: "Bảo vệ tài nguyên và kiểm tra toàn vẹn thực tế trong HieraChain (không có Resource Guard/Integrity riêng)."
 icon: material/shield-check
 ---
 
 # Fault-tolerance & Integrity
 
-Lớp bảo mật này đảm bảo hệ thống luôn hoạt động trong ngưỡng an toàn và mã nguồn thực thi không bị thay đổi trái phép.
+Trang này trước đây mô tả `security/resource_guard.py` và `security/integrity.py`, các file này không tồn tại trong `hierachain/`. Khả năng chịu lỗi trong codebase được phân tán ở nhiều nơi khác.
 
-## 1. Resource Guard (DoS Protection)
+## Bảo vệ tài nguyên (thực tế)
 
-**File**: `hierachain/security/resource_guard.py`
+* Giới hạn rate và payload nằm trong `hierachain/api/middleware.py` (`add_rate_limit`, `add_payload_limit` với `HRC_RATE_LIMIT`, `HRC_RATE_LIMIT_RPM`, `HRC_RATE_LIMIT_BACKEND`, `HRC_TRUSTED_PROXIES`; payload được kiểm tra qua `request.stream()` với giới hạn 1MB).
+* Guard cho event pool và RAM là `HRC_EVENT_POOL_MAX_SIZE` (10k) và `HRC_RAM_CRITICAL_THRESHOLD` (95%), được kiểm tra trong các đường dẫn ordering và storage.
+* Không có `ResourceGuardMiddleware`. Bảng ngưỡng 70%/90% và việc shed tải trong `monitoring/performance_monitor.py` mô tả trước đây là bịa. Hãy dùng middleware của app kết hợp với giới hạn ở reverse proxy.
 
-Lá chắn thép bảo vệ tài nguyên hệ thống (CPU, RAM):
+## Kiểm tra toàn vẹn (thực tế)
 
-*   **Load Shedding**: Tự động từ chối các yêu cầu mới khi tài nguyên hệ thống vượt ngưỡng (ví dụ: CPU > 90%) để tránh sập toàn bộ nút.
-*   **Fast Response**: Trả về lỗi `503 Service Unavailable` ngay lập tức để giảm tải cho worker xử lý.
-*   **Monitoring Integration**: Sử dụng dữ liệu thời gian thực từ `PerformanceMonitor` để đưa ra quyết định bảo vệ.
+Không có quét chữ ký lúc khởi động trong `security/integrity.py`. Cơ chế toàn vẹn thực tế là:
 
-## 2. Integrity Manager
-
-**File**: `hierachain/security/integrity.py`
-
-Kiểm tra tính toàn vẹn của hệ thống từ lúc khởi động:
-
-*   **Executable Signing**: Kiểm tra chữ ký số hoặc mã băm (checksum) của các tệp thực thi và cấu hình quan trọng.
-*   **Startup Verification**: Ngăn chặn hệ thống khởi động nếu phát hiện mã nguồn đã bị thay đổi trái phép (Tampered).
-*   **Runtime Checks**: Thực hiện quét định kỳ để đảm bảo các thành phần trong bộ nhớ không bị sửa đổi.
-
----
-
-## Cơ chế Bảo vệ Tài nguyên (Resource Guard)
-
-Hệ thống sử dụng cơ chế bảo vệ 3 giai đoạn:
-
-| Trạng thái | Ngưỡng (CPU/RAM) | Hành động |
-| :--- | :--- | :--- |
-| **Normal** | < 70% | Chấp nhận tất cả yêu cầu. |
-| **Warning** | 70% - 90% | Bắt đầu giới hạn (Rate limit) các yêu cầu không ưu tiên. |
-| **Critical** | > 90% | Từ chối toàn bộ yêu cầu mới (Load shedding) cho đến khi tài nguyên hạ nhiệt. |
-
----
-
-## Luồng Kiểm tra Toàn vẹn (Integrity Flow)
+* Merkle và chain link trong `hierachain/core/block.py` và `core/merkle_tree.py` (tiền tố phân tách domain `0x01`) và `consensus/ordering/storage.py:_verify_chain_links()` (chuỗi `previous_hash`).
+* Xác minh proof trong `hierachain/hierarchical/main_chain/proofs.py:_verify_proof_in_main_chain` (quét fallback) và `security/verify/block_verifier.py`.
+* Tính toàn vẹn rollback trong `hierachain/error_mitigation/rollback_manager.py:_verify_rollback_integrity` (kiểm tra `data_hash`) kèm guard chống path traversal.
 
 ```mermaid
 graph LR
-    A[System Boot] --> B[Load Manifest]
-    B --> C[Calculate File Hashes]
-    C --> D{Match Signatures?}
-    D -- Yes --> E[Proceed to Start Services]
-    D -- No --> F[Log Security Alert]
-    F --> G[Halt Startup]
+    A[Block finalize] --> B[previous_hash check]
+    B --> C[Merkle root verify]
+    C --> D[Proof verify on MainChain]
+    D --> E[Rollback data_hash nếu cần]
 ```
 
 ---
 
 ## Liên quan
 
-*   [Giám sát hiệu năng](../modules/monitoring.md)
-*   [Xử lý lỗi hệ thống](../modules/error-mitigation.md)
+*   [Xử lý lỗi](../modules/error-mitigation.md)
+*   [Giám sát](../modules/monitoring.md)
+*   [Cluster Lockdown](./lockdown-logging.md)

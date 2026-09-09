@@ -6,63 +6,60 @@ icon: material/key-chain
 
 # Encryption & Keys
 
-Lớp bảo mật này quản lý toàn bộ "bí mật" của hệ thống, bao gồm các khóa mã hóa, cặp khóa ký và chứng chỉ định danh.
+Lớp bảo mật này quản lý secret của hệ thống. Bao gồm khóa mã hóa, cặp khóa ký và chứng chỉ định danh.
 
-## 1. Key Manager & Key Providers
+## Key manager và key provider
 
-**File**: `hierachain/security/key_manager.py`, `key_provider.py`
+File: `hierachain/security/key_manager.py`, `key_provider.py`
 
-Quản lý việc tạo và sử dụng các cặp khóa:
+Đoạn code này tạo và sử dụng cặp khóa:
 
-*   **Ed25519 Support**: Sử dụng thuật toán Ed25519 cho chữ ký số tốc độ cao và bảo mật.
-*   **Pluggable Providers**: Hỗ trợ nhiều nguồn cung cấp khóa khác nhau:
+* Hỗ trợ Ed25519 dùng Ed25519 cho chữ ký số nhanh và an toàn.
+* Provider có thể thay thế hỗ trợ nhiều nguồn khóa:
 
-    *   `LocalKeyProvider`: Lưu trữ tại chỗ (In-memory).
-    *   `FileVaultProvider`: Lưu trữ mã hóa trên ổ đĩa bằng **AES-256-GCM**.
+    * `LocalKeyProvider` giữ khóa trong bộ nhớ cục bộ.
+    * `FileVaultProvider` giữ dữ liệu mã hóa trên đĩa với AES-256-GCM.
 
-*   **API Key Lifecycle**: Quản lý vòng đời đầy đủ của API Key từ lúc khởi tạo đến khi thu hồi.
+* Vòng đời API key bao phủ toàn bộ vòng đời API key từ lúc tạo đến khi thu hồi.
 
-## 2. Certificate Management (X.509)
+## Chứng chỉ và định danh (MSP)
 
-**File**: `hierachain/security/certificate.py`
+File: `hierachain/security/msp.py` (`Certificate`, `CertificateAuthority`, `HierarchicalMSP`)
 
-Quản lý danh tính số cho các nút và dịch vụ:
+Đoạn code này quản lý định danh nội bộ nhẹ, không phải X.509:
 
-*   **X.509 Standards**: Tuân thủ tiêu chuẩn chứng chỉ số doanh nghiệp.
-*   **mTLS Support**: Cung cấp các chứng chỉ cần thiết cho xác thực hai chiều (Mutual TLS) giữa các thành phần.
-*   **CRL (Certificate Revocation List)**: Quản lý danh sách các chứng chỉ đã bị thu hồi để đảm bảo an ninh.
+* Chứng chỉ nội bộ là dataclass `Certificate` với `cert_id`, `subject`, `public_key`, `signature` (ký Ed25519 qua `_sign_certificate`) và kiểm tra thời hạn `is_valid()`. Không có ASN.1 X.509 và không có mTLS.
+* Vận hành CA gồm `CertificateAuthority.issue_certificate()`, `revoke_certificate()` và `verify_certificate()` với tập `issued_certificates` và `revoked_certificates` lưu trong bộ nhớ. `HierarchicalMSP` dùng cơ chế này để đăng ký org và entity.
+* Hạn chế: thu hồi chỉ tồn tại trong bộ nhớ. Không có phân phối CRL, không có xác thực chuỗi X.509 và không có mutual TLS giữa các component. TLS được đặt ở reverse proxy theo quy tắc kiến trúc.
 
-## 3. Key Backup & Recovery
+## Sao lưu và khôi phục khóa
 
-**File**: `hierachain/security/key_backup_manager.py`
+File: `hierachain/cli/key.py`, `hierachain/security/key_provider.py` (`FileVaultProvider`)
 
-Đảm bảo khả năng phục hồi sau sự cố:
+Không có `key_backup_manager.py` riêng. Cơ chế thực tế tối giản:
 
-*   **Encrypted Backups**: Sao lưu khóa dưới dạng mã hóa với kiểm tra tính toàn vẹn bằng Hash.
-*   **Multi-location Storage**: Hỗ trợ sao lưu tại nhiều vị trí để tránh mất mát dữ liệu.
-*   **Secure Cleanup**: Quy trình xóa bỏ các bản sao lưu cũ một cách an toàn để tránh rò rỉ.
-
----
-
-## Phân cấp Quản lý Khóa
-
-HieraChain sử dụng mô hình phân cấp khóa để tối ưu bảo mật:
-
-1.  **Master Key**: Khóa gốc dùng để mã hóa các khóa khác (thường được lưu trong môi trường bảo mật cao).
-2.  **Domain Keys**: Các khóa dùng cho từng chuỗi con (Sub-Chains).
-3.  **Entity/User Keys**: Các cặp khóa ký cho từng thực thể hoặc người dùng cuối.
+* Tạo khóa chạy `python -m hierachain key generate --output validator_key.json` (CLI) để tạo cặp Ed25519 qua `Ed25519PrivateKey.generate()` và ghi JSON `{private_key, public_key}` dạng hex. Lệnh `show` và `verify` dùng để kiểm tra kết quả.
+* Vault mã hóa (chỉ cho dev và test) dùng `FileVaultProvider` để mã hóa file vault bằng `PBKDF2HMAC(SHA256, 310_000 iter)` và `Fernet`. Phần này phù hợp cho dev và test và được ghi rõ không dùng cho production. Với production hãy dùng HSM hoặc KMS qua interface `KeyProvider` và `HRC_VAULT_*`.
+* Không có sao lưu đa vị trí, không có kiểm tra toàn vẹn SHA-512 và không có tự động phân phối hay dọn dẹp. Operator phải tự sao chép `validator_key.json` hoặc `.vault` bằng công cụ sao lưu ngoài.
 
 ---
 
-## Luồng Khởi tạo Chứng chỉ
+## Phạm vi khóa (thực tế)
+
+* Khóa validator và node là một `KeyPair` Ed25519 cho mỗi node (qua `LocalKeyProvider` hoặc `FileVaultProvider`), được tham chiếu bởi `HRC_VALIDATOR_IDENTITY` và `HRC_MASTER_KEY_FILE`/`HRC_MASTER_KEY_SOURCE`.
+* API key được quản lý bởi `KeyManager` (tạo, thu hồi, phân quyền, cache qua `KeyStorage`/`KeyCacheManager`), không phải khóa ký cho từng entity.
+* Không có phân cấp sẵn như Master tới Domain tới Entity. Cách ly domain dựa trên việc tách Sub-Chain và role của MSP.
+
+---
+
+## Luồng khởi tạo chứng chỉ (thực tế)
 
 ```mermaid
 graph LR
-    A[Generate Ed25519 Key Pair] --> B[Create CSR - Certificate Signing Request]
-    B --> C[Hierarchical MSP Review]
-    C --> D[Sign with MSP Root CA]
-    D --> E[Distribute X.509 Certificate]
-    E --> F[Use for Secure Communication]
+    A[Generate Ed25519 Key Pair<br/>cli/key.py] --> B[HierarchicalMSP.register_entity<br/>msp.py]
+    B --> C[CA.issue_certificate<br/>Ed25519 sign]
+    C --> D[Store in issued_certificates]
+    D --> E[verify_certificate / revoke_certificate]
 ```
 
 ---
