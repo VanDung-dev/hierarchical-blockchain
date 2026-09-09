@@ -45,15 +45,13 @@ Ví dụ tối thiểu bên dưới minh họa cách tạo một `Sub-Chain`, gh
 ```python
 from hierachain.hierarchical.hierarchy_manager import HierarchyManager
 
-# 1. Khởi tạo Hierarchy Manager (Quản lý các chuỗi)
+# 1. Initialize Hierarchy Manager
 manager = HierarchyManager()
 
-# 2. Tạo một sub-chain cho domain cụ thể (ví dụ: chuỗi cung ứng)
-# Tham số: tên chuỗi, loại domain (generic, v.v.)
+# 2. Create a sub-chain for a specific domain (e.g., supply chain)
 manager.create_sub_chain("supply_chain", "generic")
 
-# 3. Ghi nhận một hoạt động nghiệp vụ (Event) vào Sub-Chain
-# Tham số: tên chuỗi, ID thực thể, loại sự kiện, dữ liệu chi tiết
+# 3. Record a business operation (Event) into the Sub-Chain
 success = manager.start_operation(
     "supply_chain", 
     "PROD-100", 
@@ -61,12 +59,11 @@ success = manager.start_operation(
     {"location": "Factory-A", "operator": "user_01"}
 )
 
-# 4. Neo bằng chứng (Proof) từ Sub-Chain lên Main Chain
-# Điều này giúp bảo chứng tính toàn vẹn của Sub-Chain trên Main Chain
+# 4. Anchor Proof from Sub-Chain to Main Chain
 proof_success = manager.submit_proof_to_main_chain("supply_chain")
 
-print(f"Ghi sự kiện: {'Thành công' if success else 'Thất bại'}")
-print(f"Neo Proof: {'Thành công' if proof_success else 'Thất bại'}")
+print(f"Event recorded: {'Success' if success else 'Failure'}")
+print(f"Proof anchored: {'Success' if proof_success else 'Failure'}")
 ```
 
 ## Dùng CLI (tuỳ chọn)

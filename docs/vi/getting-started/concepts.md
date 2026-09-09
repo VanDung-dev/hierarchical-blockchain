@@ -12,7 +12,7 @@ Trang này tóm tắt các khái niệm nền tảng để đọc và sử dụn
 
 * Chain: Tập hợp các Block được liên kết bằng `previous_hash`. HieraChain có hai lớp chuỗi: `Main Chain` và các `Sub-Chain` theo domain.
 * Block: Nhóm nhiều Event và siêu dữ liệu (header). Xem `hierachain/core/block.py`.
-* Event: Hoạt động nghiệp vụ (không phải giao dịch tiền mã hóa). Được lưu dưới dạng bảng Arrow theo schema trong `hierachain/core/schemas.py`.
+* Event: Hoạt động nghiệp vụ (không phải giao dịch tiền mã hóa). Được lưu dưới dạng bảng Arrow theo schema trong `hierachain/core/block.py:261`.
 * Proof: Dấu vết mật mã (ví dụ Merkle root/hash) đại diện cho trạng thái Sub-Chain, được neo lên Main Chain.
 * Hierarchy: Kiến trúc Main Chain giám sát nhiều Sub-Chain. Quản lý bởi `HierarchyManager`.
 
@@ -76,9 +76,9 @@ classDiagram
 
 ## Tệp mã nguồn liên quan
 
-* Core: `hierachain/core/{block.py, blockchain.py, schemas.py}`
-* Phân cấp: `hierachain/hierarchical/{main_chain.py, sub_chain.py, hierarchy_manager.py}`
-* API: `hierachain/api/ledger/{endpoints.py, schemas.py}`
+* Core: `hierachain/core/block.py`, `hierachain/core/blockchain.py`
+* Phân cấp: `hierachain/hierarchical/main_chain/base.py`, `hierachain/hierarchical/sub_chain/base.py`, `hierachain/hierarchical/hierarchy_manager/base.py`
+* API: `hierachain/api/ledger/router.py`, `hierachain/api/ledger/schemas.py`
 * Bảo mật: `hierachain/security/*`
 * Cấu hình: `hierachain/config/settings.py`
 

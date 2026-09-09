@@ -12,7 +12,7 @@ This page summarizes the foundational concepts for reading and using HieraChain 
 
 * Chain: A collection of Blocks linked by `previous_hash`. HieraChain has two chain layers: `Main Chain` and domain-specific `Sub-Chains`.
 * Block: A group of Events with metadata (header). See `hierachain/core/block.py`.
-* Event: A business operation (not a cryptocurrency transaction). Stored as Arrow tables per schema in `hierachain/core/schemas.py`.
+* Event: A business operation (not a cryptocurrency transaction). Stored as Arrow tables per schema in `hierachain/core/block.py:261` (`EVENT_SCHEMA`).
 * Proof: A cryptographic footprint (e.g. Merkle root/hash) representing Sub-Chain state, anchored to the Main Chain.
 * Hierarchy: Architecture where Main Chain supervises multiple Sub-Chains. Managed by `HierarchyManager`.
 
@@ -76,9 +76,9 @@ classDiagram
 
 ## Related Source Files
 
-* Core: `hierachain/core/{block.py, blockchain.py, schemas.py}`
-* Hierarchical: `hierachain/hierarchical/{main_chain.py, sub_chain.py, hierarchy_manager.py}`
-* API: `hierachain/api/ledger/{endpoints.py, schemas.py}`
+* Core: `hierachain/core/block.py`, `hierachain/core/blockchain.py`
+* Hierarchical: `hierachain/hierarchical/main_chain/base.py`, `hierachain/hierarchical/sub_chain/base.py`, `hierachain/hierarchical/hierarchy_manager/base.py`
+* API: `hierachain/api/ledger/router.py`, `hierachain/api/ledger/schemas.py`
 * Security: `hierachain/security/*`
 * Configuration: `hierachain/config/settings.py`
 
