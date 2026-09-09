@@ -13,11 +13,11 @@ icon: material/alphabetical
 | Blockchain | Block chain management; `hierachain/core/blockchain.py`. |
 | Consensus | Block approval mechanism (PoA, PoF, BFT); `hierachain/consensus/*`, `hierachain/hierarchical/consensus/*`. |
 | Membership Service Provider | MSP; identity/organization management; `hierachain/security/msp.py`, `hierachain/security/identity.py`. |
-| Policy | Access/resource control; `hierachain/security/policy_engine.py`, `hierachain/security/resource_guard.py`. |
+| Policy | Access/resource control; `hierachain/security/policy_engine.py`, `hierachain/security/policy_types.py`. No `resource_guard.py` (fabricated). |
 | World State | Current data state; `hierachain/state/world_state.py`. |
 | Journal | Transaction log; `hierachain/error_mitigation/journal.py`. |
 | Rollback | State restoration; `hierachain/error_mitigation/rollback_manager.py`. |
-| Recovery | Error recovery mechanism; `hierachain/error_mitigation/recovery_engine.py`. |
+| Recovery | Error recovery via `hierachain/error_mitigation/rollback_manager.py`, `consensus_recovery.py`, `network_recovery.py` (no `recovery_engine.py`). |
 | Ordering | Event ordering; `hierachain/consensus/ordering/*`. |
 | Transport | Network communication; `hierachain/network/zmq_transport.py`. |
 | Byzantine Fault Tolerance | BFT; `hierachain/consensus/bft/*`. |
@@ -40,7 +40,7 @@ icon: material/alphabetical
 | API Ledger | REST API Ledger; `hierachain/api/ledger/*`. |
 | API business | REST API business; `hierachain/api/business/*`. |
 | API Admin | REST API Admin; `hierachain/api/admin/*`. |
-| Cross-level State Sync | Cross-tier state synchronization; `hierachain/cluster/state_sync_manager.py`. |
+| Cross-level State Sync | Cross-tier sync via `hierachain/cluster/state_sync_manager.py` + `hierachain/hierarchical/hierarchy_manager/` + `HRC_CROSS_LEVEL_*` settings. |
 | Kubernetes Namespace | Sub-Chain namespace isolation; `hierachain/hierarchical/k8s_namespace_manager/operations.py`. |
 | Identity Manager | Organization/user/role management; `hierachain/security/identity.py`. |
-| Certificate | X.509 certificate management; `hierachain/security/certificate.py`. |
+| Certificate | Internal `Certificate` dataclass in `hierachain/security/msp.py` (not X.509, no `certificate.py`). |
